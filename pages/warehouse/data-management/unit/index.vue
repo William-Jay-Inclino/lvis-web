@@ -42,10 +42,10 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="item in items">
-                                        <td> {{ item.name }} </td>
+                                    <tr v-for="i in items">
+                                        <td> {{ i.name }} </td>
                                         <td class="text-center">
-                                            <button @click="onClickEdit(item.id)" class="btn btn-sm btn-light">
+                                            <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
                                                 <i class="fas fa-edit text-primary"></i>
                                             </button>
                                         </td>
@@ -86,12 +86,13 @@
 
 <script setup lang="ts">
 
-    import * as api from '~/composables/warehouse/unit/unit.api'
-    import type { Unit } from '~/composables/warehouse/unit/unit.types';
-
     definePageMeta({
         layout: "layout-admin"
     })
+
+    import * as api from '~/composables/warehouse/unit/unit.api'
+    import type { Unit } from '~/composables/warehouse/unit/unit.types';
+
 
     const router = useRouter()
     const items = ref<Unit[]>([])
