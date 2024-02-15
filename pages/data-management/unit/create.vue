@@ -1,0 +1,65 @@
+<template>
+    <div>
+        <h1 class="text-secondary">Create Unit</h1>
+        <hr>
+        
+        <form @submit.prevent="save()" class="row justify-content-center pt-5">
+
+            <div class="col-lg-6">
+                <div class="mb-3">
+                    <label class="form-label">Name</label>
+                    <input type="text" class="form-control" v-model="name" required>
+                </div>
+        
+                <div class="d-flex justify-content-end gap-2">
+                    <nuxt-link class="btn btn-secondary" to="/data-management/unit">Back</nuxt-link>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </form>
+
+
+    </div>
+
+</template>
+
+
+<script setup lang="ts">
+
+    definePageMeta({
+        layout: "layout-admin"
+    })
+
+    import * as api from './unit.api'
+    import type { CreateUnitInput } from './unit.types';
+    import Swal from 'sweetalert2'
+
+    const router = useRouter();
+    const name = ref('')
+
+    async function save() {
+
+        const data: CreateUnitInput = {
+            name: name.value
+        }
+        
+        const response = await api.create(data)
+
+        console.log('response', response)
+
+        if(response.success && response.data) {
+
+            router.push(`/data-management/unit/success/${response.data.id}`);
+            
+        }else{
+            Swal.fire({
+                title: 'Error!',
+                text: response.msg,
+                icon: 'error',
+                position: 'top',
+            })
+        }
+
+    }
+
+</script>
