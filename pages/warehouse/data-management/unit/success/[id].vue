@@ -46,8 +46,8 @@
         layout: "layout-admin"
     })
 
-    import type { Unit } from '../unit.types';
-    import * as api from '../unit.api'
+    import * as api from '~/composables/warehouse/unit/unit.api'
+    import type { CreateUnitInput, Unit } from '~/composables/warehouse/unit/unit.types';
 
     const route = useRoute()
     const item = ref<Unit | undefined>()

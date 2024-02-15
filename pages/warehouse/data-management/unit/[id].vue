@@ -32,8 +32,8 @@
         layout: "layout-admin"
     })
 
-    import * as api from './unit.api'
-    import type { CreateUnitInput, Unit } from './unit.types';
+    import * as api from '~/composables/warehouse/unit/unit.api'
+    import type { CreateUnitInput, Unit } from '~/composables/warehouse/unit/unit.types';
     import Swal from 'sweetalert2'
 
     const route = useRoute()

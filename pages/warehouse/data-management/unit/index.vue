@@ -56,8 +56,8 @@
 
 <script setup lang="ts">
 
-    import * as api from './unit.api'
-    import type { Unit } from './unit.types';
+    import * as api from '~/composables/warehouse/unit/unit.api'
+    import type { Unit } from '~/composables/warehouse/unit/unit.types';
 
     definePageMeta({
         layout: "layout-admin"
@@ -67,7 +67,8 @@
     const items = ref<Unit[]>([])
 
     onMounted( async() => {
-        items.value = await api.findAll()
+        const response = await api.findAll()
+        items.value = response.data
     })
 
     function onClickEdit(id: string) {

@@ -1,14 +1,19 @@
 import { sendRequest } from "~/composables/api"; 
-import type { Unit, CreateUnitInput, MutationResponse } from "./unit.types";
+import type { Unit, CreateUnitInput, MutationResponse, FindAllResponse } from "./unit.types";
 
 
 
-export async function findAll(): Promise<Unit[]> {
+export async function findAll(): Promise<FindAllResponse> {
     const query = `
         query {
             units {
-                id
-                name
+                data {
+                    id
+                    name
+                }
+                totalItems
+                currentPage
+                totalPages
             }
         }
     `;

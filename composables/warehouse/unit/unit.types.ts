@@ -5,6 +5,12 @@ export interface Unit {
     name: string 
 }
 
+export interface FindAllResponse {
+    data: Unit[]
+    totalItems: number
+    currentPage: number
+    totalPages: number
+}
 
 export interface CreateUnitInput {
     name: string
