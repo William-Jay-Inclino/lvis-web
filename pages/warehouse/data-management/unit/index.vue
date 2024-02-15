@@ -99,7 +99,7 @@
         currentPage: 0,
         totalPages: 0,
         totalItems: 0,
-        pageSize: 3,
+        pageSize: 15,
     }
     const searchField = ref('name') 
     const searchValue = ref(null) 
