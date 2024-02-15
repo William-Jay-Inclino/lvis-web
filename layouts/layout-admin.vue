@@ -14,7 +14,7 @@
                                 Purchasing
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><nuxt-link class="dropdown-item" to="/purchasing/canvass">Canvass</nuxt-link></li>
+                                <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/canvass">Canvass</nuxt-link></li>
                                 <li><a class="dropdown-item" href="#">RV</a></li>
                                 <li><a class="dropdown-item" href="#">SPR</a></li>
                                 <li><a class="dropdown-item" href="#">JO</a></li>
@@ -28,7 +28,7 @@
                                 Data Mgmt
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><nuxt-link class="dropdown-item" to="/data-management/unit">Unit</nuxt-link></li>
+                                <li><nuxt-link class="dropdown-item" to="/warehouse/data-management/unit">Unit</nuxt-link></li>
                                 <li><a class="dropdown-item" href="#">Item Brand</a></li>
                                 <li><a class="dropdown-item" href="#">Vehicle</a></li>
                                 <li><a class="dropdown-item" href="#">Supplier</a></li>

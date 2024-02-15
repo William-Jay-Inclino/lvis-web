@@ -6,7 +6,7 @@
                 <h1 class="text-secondary">Unit</h1>
             </div>
             <div class="col">
-                <nuxt-link class="btn btn-primary float-end" to="/data-management/unit/create">Add Unit</nuxt-link>
+                <nuxt-link class="btn btn-primary float-end" to="unit/create">Add Unit</nuxt-link>
             </div>
         </div>
 
@@ -71,7 +71,7 @@
     })
 
     function onClickEdit(id: string) {
-        router.push('/data-management/unit/' + id)
+        router.push('/warehouse/data-management/unit/' + id)
     }
 
 </script>

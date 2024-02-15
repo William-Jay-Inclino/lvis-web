@@ -5,7 +5,7 @@
                 <h1 class="text-secondary">Canvass</h1>
             </div>
             <div class="col">
-                <nuxt-link class="btn btn-primary float-end" to="/purchasing/canvass/create">Add Canvass</nuxt-link>
+                <nuxt-link class="btn btn-primary float-end" to="/warehouse/purchasing/canvass/create">Add Canvass</nuxt-link>
             </div>
         </div>
 

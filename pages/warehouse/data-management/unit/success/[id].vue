@@ -25,9 +25,9 @@
                 <div class="row">
                     <div class="col">
                         <div class="d-flex justify-content-end gap-2">
-                            <nuxt-link class="btn btn-secondary" to="/data-management/unit">Go to list</nuxt-link>
-                            <nuxt-link class="btn btn-success" :to="`/data-management/unit/${item.id}`">Update</nuxt-link>
-                            <nuxt-link class="btn btn-primary" to="/data-management/unit/create">Add New</nuxt-link>
+                            <nuxt-link class="btn btn-secondary" to="/warehouse/data-management/unit">Go to list</nuxt-link>
+                            <nuxt-link class="btn btn-success" :to="`/warehouse/data-management/unit/${item.id}`">Update</nuxt-link>
+                            <nuxt-link class="btn btn-primary" to="/warehouse/data-management/unit/create">Add New</nuxt-link>
                         </div>
                     </div>
                 </div>

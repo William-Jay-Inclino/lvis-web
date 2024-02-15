@@ -12,7 +12,7 @@
                 </div>
         
                 <div class="d-flex justify-content-end gap-2">
-                    <nuxt-link class="btn btn-secondary" to="/data-management/unit">Back</nuxt-link>
+                    <nuxt-link class="btn btn-secondary" to="/warehouse/data-management/unit">Back</nuxt-link>
                     <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </div>
@@ -49,7 +49,7 @@
 
         if(response.success && response.data) {
 
-            router.push(`/data-management/unit/success/${response.data.id}`);
+            router.push(`/warehouse/data-management/unit/success/${response.data.id}`);
             
         }else{
             Swal.fire({
