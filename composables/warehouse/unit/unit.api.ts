@@ -3,10 +3,27 @@ import type { Unit, CreateUnitInput, MutationResponse, FindAllResponse } from ".
 
 
 
-export async function findAll(): Promise<FindAllResponse> {
+export async function findAll(payload: {page: number, pageSize: number, searchField: string | null, searchValue: string | null}): Promise<FindAllResponse> {
+    
+    const { page, pageSize, searchField, searchValue } = payload;
+
+    let field = null
+    let value = null
+
+    if(searchValue) {
+        field = `"${searchField}"`
+        value = `"${searchValue}"`
+    } 
+
+
     const query = `
         query {
-            units {
+            units(
+                page: ${page},
+                pageSize: ${pageSize},
+                searchField: ${field},
+                searchValue: ${value},
+            ) {
                 data {
                     id
                     name

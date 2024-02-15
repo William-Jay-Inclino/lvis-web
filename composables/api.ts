@@ -20,7 +20,7 @@ interface AuthUser {
 
 export const sendRequest = async (queryOrMutation: string, variables?: Record<string, any>): Promise<AxiosResponse> => {
     console.log('sendRequest()', queryOrMutation);
-    // console.log('=== data ===', JSON.stringify(variables))
+    console.log('=== variables ===', JSON.stringify(variables))
 
     const authUserJson = localStorage.getItem('authUser')
 
