@@ -8,10 +8,10 @@
             <div class="col">
                 <ul class="nav nav-tabs justify-content-center">
                     <li class="nav-item" @click="isCanvassDetailForm = true">
-                        <a class="nav-link" :class="{'active': isCanvassDetailForm}" href="#">Canvass Detail Form</a>
+                        <a class="nav-link" :class="{'active': isCanvassDetailForm}" href="#">Update Canvass Detail</a>
                     </li>
                     <li class="nav-item" @click="isCanvassDetailForm = false">
-                        <a class="nav-link" :class="{'active': !isCanvassDetailForm}" href="#">Canvass Items</a>
+                        <a class="nav-link" :class="{'active': !isCanvassDetailForm}" href="#">Update Canvass Items</a>
                     </li>
                 </ul>
             </div>
@@ -196,13 +196,18 @@
         layout: "layout-admin"
     })
 
+    const _canvassErrorsInitial = {
+        requisitioner: false,
+        purpose: false
+    }
+
     const isMobile = ref(false)
     const mobileWidth = 768
     const route = useRoute()
     const isCanvassDetailForm = ref(true)
     const canvass = ref<Canvass>({} as Canvass)
+    const canvassErrors = ref({..._canvassErrorsInitial})
     const canvassItems = ref<CanvassItem[]>([])
-
     const employees = ref<Employee[]>([])
     const brands = ref<Brand[]>([])
     const units = ref<Unit[]>([])
@@ -235,6 +240,28 @@
 
     function checkMobile() {
         isMobile.value = window.innerWidth < mobileWidth
+    }
+
+    function updateCanvassDetail() {
+
+        canvassErrors.value = {..._canvassErrorsInitial}
+
+        if(!canvass.value.requested_by) {
+            canvassErrors.value.requisitioner = true 
+        }
+
+        if(canvass.value.purpose.trim() === '') {
+            canvassErrors.value.purpose = true 
+        }
+
+        const hasError = Object.values(canvassErrors.value).includes(true);
+
+        if(hasError) {
+            return 
+        }
+
+
+
     }
 
 
