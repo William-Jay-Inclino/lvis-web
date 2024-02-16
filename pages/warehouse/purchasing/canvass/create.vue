@@ -30,12 +30,13 @@
                             <label class="form-label">
                                 Requisitioner <span class="text-danger">*</span>
                             </label>
-                            <select v-model="formData.requested_by_id" class="form-select" aria-label="Default select example">
+                            <v-select :options="['Canada', 'United States']"></v-select>
+                            <!-- <select v-model="formData.requested_by_id" class="form-select" aria-label="Default select example">
                                 <option selected>Select Employee</option>
                                 <option v-for="employee in employees" :value="employee.id">
                                     {{ getFullname(employee.firstname, employee.middlename, employee.lastname) }}
                                 </option>
-                            </select>
+                            </select> -->
                             <small class="text-danger" v-show="formDataErrors.requested_by"> This field is required </small>
                         </div>
 
@@ -203,6 +204,9 @@
     const today = moment().format('YYYY-MM-DD')
     const closeItemModal = ref<HTMLButtonElement>()
 
+    const options = ref(['list', 'of', 'options'])
+    const value = ref(null)
+
     const _formDataErrorsInitial = {
         requested_by: false,
         purpose: false,
@@ -322,3 +326,4 @@
     }
 
 </script>
+

@@ -19,6 +19,7 @@ export default defineNuxtConfig({
         }
     },
     plugins: [
-        { src: '~/plugins/vue-toastification.ts', mode: 'client' }
+        { src: '~/plugins/vue-toastification.ts', mode: 'client' },
+        { src: '~/plugins/vue-select.ts', mode: 'client' },
     ]
 })
