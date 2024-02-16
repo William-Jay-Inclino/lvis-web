@@ -2,10 +2,10 @@
     <div>
         <div class="row">
             <div class="col">
-                <h1 class="text-secondary">Search Canvass</h1>
+                <h1 class="text-warning">Search Canvass</h1>
             </div>
             <div class="col">
-                <nuxt-link class="btn btn-primary float-end" to="/warehouse/purchasing/canvass/create">Add Canvass</nuxt-link>
+                <nuxt-link class="btn btn-primary float-end" to="/warehouse/purchasing/canvass/create">Create Canvass</nuxt-link>
             </div>
         </div>
 

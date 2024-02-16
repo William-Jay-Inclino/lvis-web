@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1 class="text-secondary">Create Canvass</h1>
+        <h1 class="text-warning">Create Canvass</h1>
         <hr>
         
         <div class="row">
@@ -48,21 +48,13 @@
                         </div>
                 
                         <div class="d-flex justify-content-end gap-2">
-                            <nuxt-link class="btn btn-secondary" to="/warehouse/data-management/unit">Cancel</nuxt-link>
+                            <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">Cancel</nuxt-link>
                             <button @click="onClickNextStep1()" type="button" class="btn btn-primary">Next</button>
                         </div>
 
                     </div>
 
                     <div v-show="currentStep === 2" class="col-lg-12">
-
-                        <div class="row">
-                            <div class="col">
-                                <button type="button" class="btn btn-outline-primary btn-sm float-end" data-bs-toggle="modal" data-bs-target="#addItemModal">
-                                    Add Item
-                                </button>
-                            </div>
-                        </div>
 
                         <div class="row">
                             <div class="col">
@@ -101,6 +93,16 @@
                                                 </td>
                                             </tr>
                                         </tbody>
+
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="6" class="text-center">
+                                                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addItemModal">
+                                                        Add Item
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tfoot>
         
                                     </table>
         
@@ -110,7 +112,7 @@
 
                         <div class="d-flex justify-content-end gap-2">
                             <button @click="currentStep--" type="button" class="btn btn-secondary">Back</button>
-                            <button type="button" class="btn btn-primary">Save</button>
+                            <button :disabled="formData.canvass_items.length === 0" type="button" class="btn btn-primary">Save</button>
                         </div>
 
                     </div>

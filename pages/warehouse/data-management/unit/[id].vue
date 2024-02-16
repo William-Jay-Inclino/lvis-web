@@ -1,7 +1,7 @@
 <template>
     <div>
 
-        <h1 class="text-secondary">Update Unit</h1>
+        <h1 class="text-warning">Update Unit</h1>
         <hr>
         
         <form @submit.prevent="update()" class="row justify-content-center pt-5" v-if="item">
