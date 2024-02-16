@@ -4,6 +4,7 @@ export interface Employee {
     firstname: string
     middlename: string
     lastname: string
+    fullname?: string 
 }
 
 export interface Canvass {
@@ -40,7 +41,7 @@ export interface CreateCanvassInput {
     date_requested: string 
     purpose: string 
     notes: string 
-    requested_by_id: string 
+    requested_by: Employee | null 
     canvass_items: CreateCanvassItemSubInput[]
 }
 

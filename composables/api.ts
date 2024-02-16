@@ -1,8 +1,7 @@
 import axios, { type AxiosResponse } from 'axios';
+import { GRAPHQL_API_URL } from './config';
 
-const apiUrl = 'http://localhost:4000/graphql'
-
-console.log('apiUrl', apiUrl)
+console.log('GRAPHQL_API_URL', GRAPHQL_API_URL)
 
 enum USER_STATUS {
     ACTIVE = 1,
@@ -37,7 +36,7 @@ export const sendRequest = async (queryOrMutation: string, variables?: Record<st
         };
 
         return await axios.post(
-            apiUrl,
+            GRAPHQL_API_URL,
             requestData,
             { 
                 headers: { 

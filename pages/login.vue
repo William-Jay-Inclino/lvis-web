@@ -26,6 +26,7 @@
     import { ref } from 'vue'
     import axios from 'axios'
     import { AxiosError } from 'axios'
+    import { API_URL } from '~/composables/config'
 
     const router = useRouter();
     const email = ref('');
@@ -38,7 +39,8 @@
     async function login() {
         console.log('login()');
         try {
-            const response = await axios.post('http://localhost:4000/auth/login', {
+
+            const response = await axios.post(API_URL + '/auth/login', {
                 username: email.value,
                 password: password.value
             });

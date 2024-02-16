@@ -30,13 +30,7 @@
                             <label class="form-label">
                                 Requisitioner <span class="text-danger">*</span>
                             </label>
-                            <v-select :options="['Canada', 'United States']"></v-select>
-                            <!-- <select v-model="formData.requested_by_id" class="form-select" aria-label="Default select example">
-                                <option selected>Select Employee</option>
-                                <option v-for="employee in employees" :value="employee.id">
-                                    {{ getFullname(employee.firstname, employee.middlename, employee.lastname) }}
-                                </option>
-                            </select> -->
+                            <v-select :options="employees" label="fullname" v-model="formData.requested_by"></v-select>
                             <small class="text-danger" v-show="formDataErrors.requested_by"> This field is required </small>
                         </div>
 
@@ -204,9 +198,6 @@
     const today = moment().format('YYYY-MM-DD')
     const closeItemModal = ref<HTMLButtonElement>()
 
-    const options = ref(['list', 'of', 'options'])
-    const value = ref(null)
-
     const _formDataErrorsInitial = {
         requested_by: false,
         purpose: false,
@@ -228,7 +219,7 @@
         date_requested: today,
         purpose: '',
         notes: '',
-        requested_by_id: '',
+        requested_by: null,
         canvass_items: []
     })
 
@@ -243,7 +234,10 @@
 
         const response = await api.fetchFormData()
 
-        employees.value = response.employees
+        employees.value = response.employees.map((i) => {
+            i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
+            return i
+        })
         brands.value = response.brands
         units.value = response.units
 
@@ -258,7 +252,7 @@
             formDataErrors.value.purpose = true
         }
 
-        if(formData.value.requested_by_id.trim() === '') {
+        if(!formData.value.requested_by) {
             formDataErrors.value.requested_by = true
         }
 
