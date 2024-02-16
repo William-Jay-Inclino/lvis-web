@@ -2,7 +2,7 @@
     <div>
         <div class="row">
             <div class="col">
-                <h1 class="text-secondary">Canvass</h1>
+                <h1 class="text-secondary">Search Canvass</h1>
             </div>
             <div class="col">
                 <nuxt-link class="btn btn-primary float-end" to="/warehouse/purchasing/canvass/create">Add Canvass</nuxt-link>
@@ -15,7 +15,7 @@
             <div class="col">
                 <div class="mb-3">
                     <label class="form-label">RC Number</label>
-                    <input type="text" class="form-control">
+                    <input v-model="rcNumber" type="text" class="form-control">
                 </div>
             </div>
             <div class="col">
@@ -27,8 +27,7 @@
             <div class="col">
                 <div class="mb-3">
                     <label class="form-label">Requisitioner</label>
-                    <!-- <input type="text" class="form-control"> -->
-                    <search-select></search-select>
+                    <input type="text" class="form-control">
                 </div>
             </div>
         </div>
@@ -117,7 +116,6 @@
     import moment from 'moment'
     
 
-    const value = ref(null)
     const router = useRouter()
     const items = ref<Canvass[]>([])
     const _paginationInitial = {
@@ -126,14 +124,10 @@
         totalItems: 0,
         pageSize: 15,
     }
+    const rcNumber = ref('')
     const date_requested = ref(null)
     const requested_by = ref<Employee | null>(null)
     const isInitialLoad = ref(true)
-    const options = ref([
-        { id: 1, name: 'Option 1' },
-        { id: 2, name: 'Option 2' },
-        { id: 3, name: 'Option 3' }
-    ])
     const pagination = ref({..._paginationInitial}) 
 
     function onClickEdit(id: string) {
@@ -155,6 +149,26 @@
     }
 
     async function search() {
+
+        isInitialLoad.value = false
+
+        if(rcNumber.value.trim() !== '') {
+
+            const response = await api.findByRcNumber(rcNumber.value)
+
+            console.log('response', response)
+
+            if(response) {
+                items.value.push(response)
+                return
+            }
+
+            items.value = []
+
+            return
+
+        }
+
         const { data, currentPage, totalItems, totalPages } = await api.findAll({
             page: 1,
             pageSize: pagination.value.pageSize,

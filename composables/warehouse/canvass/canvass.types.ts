@@ -36,10 +36,35 @@ export interface Canvass {
     updated_at: Date;
 }
 
+export interface CreateCanvassInput {
+    date_requested: string 
+    purpose: string 
+    notes: string 
+    requested_by_id: string 
+    canvass_items: CreateCanvassItemSubInput[]
+}
+
+export interface CreateCanvassItemSubInput {
+    description: string 
+    brand: Brand | null
+    unit: Unit | null
+    quantity: number 
+}
 
 export interface FindAllResponse {
     data: Canvass[]
     totalItems: number
     currentPage: number
     totalPages: number
+}
+
+
+export interface Brand {
+    id: string 
+    name: string 
+}
+
+export interface Unit {
+    id: string 
+    name: string 
 }
