@@ -1,6 +1,6 @@
 <template>
 
-    <div class="row justify-content-center pt-5">
+    <div class="row justify-content-center">
 
         <div class="col-lg-6">
 

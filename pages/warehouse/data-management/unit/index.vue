@@ -3,7 +3,7 @@
 
         <div class="row">
             <div class="col">
-                <h1 class="text-warning">Unit Management</h1>
+                <h2 class="text-warning">Unit Management</h2>
             </div>
             <div class="col">
                 <nuxt-link class="btn btn-primary float-end" to="unit/create">Create Unit</nuxt-link>

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1 class="text-warning">Create Unit</h1>
+        <h2 class="text-warning">Create Unit</h2>
         <hr>
         
         <form @submit.prevent="save()" class="row justify-content-center pt-5">

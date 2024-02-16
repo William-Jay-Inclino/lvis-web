@@ -1,9 +1,9 @@
 <template>
     <div>
-        <h1 class="text-warning">Create Canvass</h1>
+        <h2 class="text-warning">Create Canvass</h2>
         <hr>
         
-        <div class="row">
+        <div class="row pt-3">
             <div class="col">
                 <span class="text-secondary">
                     Step {{ currentStep }} of 2: 
@@ -23,14 +23,16 @@
                             <label class="form-label">
                                 Date Requested <span class="text-danger">*</span>
                             </label>
-                            <input type="date" v-model="formData.date_requested" class="form-control" readonly>
+                            <input type="date" :value="formData.date_requested" class="form-control" readonly>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">
                                 Requisitioner <span class="text-danger">*</span>
                             </label>
-                            <v-select :options="employees" label="fullname" v-model="formData.requested_by"></v-select>
+                            <client-only>
+                                <v-select :options="employees" label="fullname" v-model="formData.requested_by"></v-select>
+                            </client-only>
                             <small class="text-danger" v-show="formDataErrors.requested_by"> This field is required </small>
                         </div>
 
@@ -54,65 +56,121 @@
 
                     </div>
 
-                    <div v-show="currentStep === 2" class="col-lg-12">
+                    <div v-show="currentStep === 2" class="col-lg-10 col-md-10 col-sm-12">
 
                         <div class="row">
                             <div class="col">
-                                <div class="table-responsive">
-        
-                                    <table class="table table-hover">
-        
-                                        <thead>
-                                            <tr>
-                                                <th class="text-muted">No.</th>
-                                                <th class="text-muted">
-                                                    Description <span class="text-danger"> * </span>
-                                                </th>
-                                                <th class="text-muted">Brand</th>
-                                                <th class="text-muted">Unit</th>
-                                                <th class="text-muted">
-                                                    Quantity <span class="text-danger"> * </span>
-                                                </th>
-                                                <th class="text-muted text-center">
-                                                    Remove
-                                                </th>
-                                            </tr>
-                                        </thead>
-        
-                                        <tbody>
-                                            <tr v-for="item, i in formData.canvass_items">
-                                                <td class="text-muted"> {{ i + 1 }} </td>
-                                                <td class="text-muted"> {{ item.description }} </td>
-                                                <td class="text-muted"> {{ item.brand?.name }} </td>
-                                                <td class="text-muted"> {{ item.unit?.name }} </td>
-                                                <td class="text-muted"> {{ item.description }} </td>
-                                                <td class="text-center">
-                                                    <button @click="removeCanvassItem(i)" class="btn btn-sm btn-light">
-                                                        <i class="fas fa-trash text-danger"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        </tbody>
 
-                                        <tfoot>
-                                            <tr>
-                                                <td colspan="6" class="text-center">
-                                                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addItemModal">
-                                                        Add Item
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        </tfoot>
-        
-                                    </table>
-        
+                                <div v-if="!isMobile">
+                                    <div class="table-responsive">
+            
+                                        <table class="table table-hover">
+            
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-muted">No.</th>
+                                                    <th class="text-muted">
+                                                        Description <span class="text-danger"> * </span>
+                                                    </th>
+                                                    <th class="text-muted">Brand</th>
+                                                    <th class="text-muted">Unit</th>
+                                                    <th class="text-muted">
+                                                        Quantity <span class="text-danger"> * </span>
+                                                    </th>
+                                                    <th class="text-muted text-center">
+                                                        Remove
+                                                    </th>
+                                                </tr>
+                                            </thead>
+            
+                                            <tbody>
+                                                <tr v-for="item, i in formData.canvass_items">
+                                                    <td class="text-muted"> {{ i + 1 }} </td>
+                                                    <td class="text-muted"> {{ item.description }} </td>
+                                                    <td> {{ item.brand ? item.brand.name : '' }} </td>
+                                                    <td> {{ item.unit ? item.unit.name : '' }} </td>
+                                                    <td class="text-muted"> {{ item.quantity }} </td>
+                                                    <td class="text-center">
+                                                        <button @click="removeCanvassItem(i)" class="btn btn-sm btn-light">
+                                                            <i class="fas fa-trash text-danger"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+    
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="6" class="text-center">
+                                                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addItemModal">
+                                                            Add Item
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
+            
+                                        </table>
+            
+                                    </div>
                                 </div>
+
+                                <div v-else>
+
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="table-responsive">
+                                                <table v-for="item, i in formData.canvass_items" class="table table-hover table-bordered">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td width="50%" class="text-white bg-secondary">No.</td>
+                                                            <td class="text-white bg-secondary"> {{ i + 1 }} </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-muted">Description</td>
+                                                            <td> {{ item.description }} </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-muted">Brand</td>
+                                                            <td> {{ item.brand ? item.brand.name : '' }} </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-muted">Unit</td>
+                                                            <td> {{ item.unit ? item.unit.name : '' }} </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-muted">Quantity</td>
+                                                            <td> {{ item.quantity }} </td>
+                                                        </tr>
+                                                        <tr class="text-center">
+                                                            <td colspan="2">
+                                                                <button @click="removeCanvassItem(i)" class="btn btn-sm btn-light">
+                                                            <i class="fas fa-trash text-danger"></i>
+                                                        </button>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col d-flex justify-content-center">
+                                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addItemModal">
+                                                Add Item
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <hr>
+
+                                </div>
+
                             </div>
                         </div>
 
-                        <div class="d-flex justify-content-end gap-2">
+                        <div class="d-flex justify-content-end gap-2 mb-3">
                             <button @click="currentStep--" type="button" class="btn btn-secondary">Back</button>
-                            <button :disabled="formData.canvass_items.length === 0" type="button" class="btn btn-primary">Save</button>
+                            <button @click="save()" :disabled="formData.canvass_items.length === 0" type="button" class="btn btn-primary">Save</button>
                         </div>
 
                     </div>
@@ -143,17 +201,15 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Brand</label>
-                        <select v-model="addCanvassItemData.brand" class="form-select" aria-label="Default select example">
-                            <option selected>Select Brand</option>
-                            <option v-for="brand in brands" :value="brand"> {{ brand.name }} </option>
-                        </select>
+                        <client-only>
+                            <v-select :options="brands" label="name" v-model="addCanvassItemData.brand"></v-select>
+                        </client-only>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Unit</label>
-                        <select v-model="addCanvassItemData.unit" class="form-select" aria-label="Default select example">
-                            <option selected>Select Unit</option>
-                            <option v-for="unit in units" :value="unit"> {{ unit.name }} </option>
-                        </select>
+                        <client-only>
+                            <v-select :options="units" label="name" v-model="addCanvassItemData.unit"></v-select>
+                        </client-only>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
@@ -194,6 +250,8 @@
     import { getFullname } from '~/composables/helpers'
     import { useToast } from "vue-toastification";
 
+    const isMobile = ref(false)
+    const mobileWidth = 768
     const router = useRouter();
     const toast = useToast();
     const currentStep = ref(1)
@@ -210,7 +268,7 @@
         quantity: false,
     }
 
-    const _addCanvassItemDataInitial = {
+    const _addCanvassItemDataInitial: CreateCanvassItemSubInput = {
         description: '',
         brand: null,
         unit: null,
@@ -234,7 +292,11 @@
 
     onMounted( async() => {
 
-        const response = await api.fetchFormData()
+        isMobile.value = window.innerWidth < mobileWidth
+
+        window.addEventListener('resize', checkMobile);
+
+        const response = await api.fetchFormDataInCreate()
 
         employees.value = response.employees.map((i) => {
             i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
@@ -244,7 +306,6 @@
         units.value = response.units
 
     })
-
 
     async function onClickNextStep1() {
 
@@ -319,6 +380,27 @@
             }
         });
 
+    }
+
+    async function save() {
+
+        const response = await api.create(formData.value)
+
+        if(response.success && response.data) {
+            router.push(`/warehouse/purchasing/canvass/success/${response.data.id}`);
+        }else {
+            Swal.fire({
+                title: 'Error!',
+                text: response.msg,
+                icon: 'error',
+                position: 'top',
+            })
+        }
+
+    }
+
+    function checkMobile() {
+        isMobile.value = window.innerWidth < mobileWidth
     }
 
 </script>

@@ -1,10 +1,10 @@
 <template>
-    <div>
+    <div v-if="item">
 
-        <h1 class="text-warning">Update Unit</h1>
+        <h2 class="text-warning">Update Unit</h2>
         <hr>
         
-        <form @submit.prevent="update()" class="row justify-content-center pt-5" v-if="item">
+        <form @submit.prevent="update()" class="row justify-content-center pt-5">
 
             <div class="col-lg-6">
                 <div class="mb-3">

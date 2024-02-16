@@ -12,7 +12,7 @@ export interface Canvass {
   
     rc_number: string;
   
-    date_requested: Date;
+    date_requested: string;
   
     purpose: string;
   
@@ -31,10 +31,21 @@ export interface Canvass {
     // rv?: RV
   
     // spr?: SPR
+
+    canvass_items: CanvassItem[]
   
     created_at: Date;
   
     updated_at: Date;
+}
+
+export interface CanvassItem {
+    id: string 
+    description: string 
+    brand: Brand | null
+    unit: Unit | null
+    quantity: number 
+
 }
 
 export interface CreateCanvassInput {
@@ -45,6 +56,12 @@ export interface CreateCanvassInput {
     canvass_items: CreateCanvassItemSubInput[]
 }
 
+export interface UpdateCanvassInput {
+    purpose: string 
+    notes: string 
+    requested_by: Employee | null 
+}
+
 export interface CreateCanvassItemSubInput {
     description: string 
     brand: Brand | null
@@ -52,11 +69,18 @@ export interface CreateCanvassItemSubInput {
     quantity: number 
 }
 
+
 export interface FindAllResponse {
     data: Canvass[]
     totalItems: number
     currentPage: number
     totalPages: number
+}
+
+export interface MutationResponse {
+    success: boolean 
+    msg: string 
+    data?: Canvass
 }
 
 

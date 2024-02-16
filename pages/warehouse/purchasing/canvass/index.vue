@@ -2,7 +2,7 @@
     <div>
         <div class="row">
             <div class="col">
-                <h1 class="text-warning">Search Canvass</h1>
+                <h2 class="text-warning">Search Canvass</h2>
             </div>
             <div class="col">
                 <nuxt-link class="btn btn-primary float-end" to="/warehouse/purchasing/canvass/create">Create Canvass</nuxt-link>
@@ -12,19 +12,19 @@
         <hr>
 
         <div class="row pt-3">
-            <div class="col">
+            <div class="col-lg-4 col-md-6 col-sm-12">
                 <div class="mb-3">
                     <label class="form-label">RC Number</label>
                     <input v-model="rcNumber" type="text" class="form-control">
                 </div>
             </div>
-            <div class="col">
+            <div class="col-lg-4 col-md-6 col-sm-12">
                 <div class="mb-3">
                     <label class="form-label">Date</label>
                     <input type="date" class="form-control">
                 </div>
             </div>
-            <div class="col">
+            <div class="col-lg-4 col-md-6 col-sm-12">
                 <div class="mb-3">
                     <label class="form-label">Requisitioner</label>
                     <input type="text" class="form-control">

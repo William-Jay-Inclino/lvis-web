@@ -1,9 +1,9 @@
 <template>
-    <div>
+    <div class="container px-0" style="background-color: white; height: 100vh;">
         <nav class="navbar sticky-top navbar-expand-lg navbar-dark" style="background-color: #1877F2;">
-            <div class="container-fluid">
+            <div class="container">
                 <a class="navbar-brand" href="#">Leyeco V - Warehouse</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
                 <span class="navbar-toggler-icon"></span>
                 </button>
 
@@ -62,4 +62,89 @@
         </div>
 
     </div>
+
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <div class="offcanvas-header">
+            <img src="/Me.jpg" alt="Profile Picture" class="img-fluid">
+        </div>
+        <div class="offcanvas-body d-flex flex-column">
+            <ul class="nav flex-column mb-3">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">User Account</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Activity Log</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Purchasing
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/canvass">Canvass</nuxt-link></li>
+                        <li><a class="dropdown-item" href="#">RV</a></li>
+                        <li><a class="dropdown-item" href="#">SPR</a></li>
+                        <li><a class="dropdown-item" href="#">JO</a></li>
+                        <li><a class="dropdown-item" href="#">MEQS</a></li>
+                        <li><a class="dropdown-item" href="#">PO</a></li>
+                        <li><a class="dropdown-item" href="#">RR</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Data Management
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><nuxt-link class="dropdown-item" to="/warehouse/data-management/unit">Unit</nuxt-link></li>
+                        <li><a class="dropdown-item" href="#">Item Brand</a></li>
+                        <li><a class="dropdown-item" href="#">Vehicle</a></li>
+                        <li><a class="dropdown-item" href="#">Supplier</a></li>
+                        <li><a class="dropdown-item" href="#">Stock Inventory</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="mt-auto d-grid">
+                <nuxt-link class="btn btn-outline-danger btn-block" to="/login">Logout</nuxt-link>
+            </div>
+        </div>
+    </div>
+
+
+
 </template>
+
+
+<style scoped>
+    .nav-item {
+        padding: 0.5rem 1rem;
+        transition: background-color 0.3s;
+    }
+
+    .nav-item:hover {
+        background-color: #f8f9fa; /* Lighter grey for hover effect */
+        
+    }
+
+    .nav-link {
+        color: #343a40; /* Dark text color */
+        transition: color 0.3s;
+    }
+
+    .nav-link:hover {
+        color: #212529; /* Darker text color on hover */
+    }
+
+    .dropdown-menu {
+        background-color: #f8f9fa; /* Light grey background for dropdown menu */
+    }
+
+    .dropdown-item {
+        color: #343a40; /* Dark text color */
+        transition: color 0.3s;
+    }
+
+    .dropdown-item:hover {
+        color: #212529; /* Darker text color on hover */
+        background-color: #e9ecef; /* Lighter grey background on hover */
+    }
+</style>
