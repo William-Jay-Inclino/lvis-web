@@ -120,18 +120,9 @@
         transition: background-color 0.3s;
     }
 
-    .nav-item:hover {
-        background-color: #f8f9fa; /* Lighter grey for hover effect */
-        
-    }
-
     .nav-link {
         color: #343a40; /* Dark text color */
         transition: color 0.3s;
-    }
-
-    .nav-link:hover {
-        color: #212529; /* Darker text color on hover */
     }
 
     .dropdown-menu {
@@ -139,12 +130,7 @@
     }
 
     .dropdown-item {
-        color: #343a40; /* Dark text color */
+        color: #343a40;
         transition: color 0.3s;
-    }
-
-    .dropdown-item:hover {
-        color: #212529; /* Darker text color on hover */
-        background-color: #e9ecef; /* Lighter grey background on hover */
     }
 </style>
