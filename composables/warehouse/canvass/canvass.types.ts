@@ -20,7 +20,7 @@ export interface Canvass {
   
     requested_by_id: string;
   
-    requested_by?: Employee;
+    requested_by: Employee | null;
   
     // canvass_items: CanvassItem[];
   

@@ -23,7 +23,7 @@
                             <label class="form-label">
                                 Date Requested <span class="text-danger">*</span>
                             </label>
-                            <input type="date" :value="formData.date_requested" class="form-control" readonly>
+                            <input type="date" :value="formData.date_requested" class="form-control" disabled>
                         </div>
 
                         <div class="mb-3">
@@ -117,8 +117,8 @@
 
                                     <div class="row">
                                         <div class="col">
-                                            <div class="table-responsive">
-                                                <table v-for="item, i in formData.canvass_items" class="table table-hover table-bordered">
+                                            <div v-for="item, i in formData.canvass_items" class="table-responsive">
+                                                <table class="table table-hover table-bordered">
                                                     <tbody>
                                                         <tr>
                                                             <td width="50%" class="text-white bg-secondary">No.</td>

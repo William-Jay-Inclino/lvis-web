@@ -23,9 +23,16 @@
 
                 <div class="mb-3">
                     <label class="form-label">
-                        Date Requested <span class="text-danger">*</span>
+                        RC Number
                     </label>
-                    <input type="date" :value="canvass.date_requested" class="form-control" readonly>
+                    <input type="text" :value="canvass.rc_number" class="form-control" disabled>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">
+                        Date Requested
+                    </label>
+                    <input type="date" :value="canvass.date_requested" class="form-control" disabled>
                 </div>
 
                 <div class="mb-3">
@@ -52,8 +59,8 @@
                 </div>
         
                 <div class="d-flex justify-content-end gap-2 mb-3">
-                    <button type="button" class="btn btn-secondary">Back</button>
-                    <button type="button" class="btn btn-success">Update</button>
+                    <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">Back</nuxt-link>
+                    <button @click="updateCanvassDetail()" type="button" class="btn btn-success">Update</button>
                 </div>
 
             </div>
@@ -120,9 +127,9 @@
     
                     <div class="row">
                         <div class="col">
-                            <div class="table-responsive">
+                            <div v-for="item, i in canvassItems" class="table-responsive">
             
-                                <table v-for="item, i in canvassItems" class="table table-hover table-bordered">
+                                <table class="table table-hover table-bordered">
                                     <tbody>
                                         <tr>
                                             <td width="50%" class="text-white bg-secondary">No.</td>
@@ -172,8 +179,7 @@
     
     
                 <div class="d-flex justify-content-end gap-2 mb-3">
-                    <button type="button" class="btn btn-secondary">Back</button>
-                    <button type="button" class="btn btn-success">Update</button>
+                    <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">Back</nuxt-link>
                 </div>
             </div>
 
@@ -188,9 +194,10 @@
 
 
 <script setup lang="ts">
-    import type { Brand, Canvass, CanvassItem, Employee, Unit } from '~/composables/warehouse/canvass/canvass.types';
+    import type { Brand, Canvass, CanvassItem, Employee, Unit, UpdateCanvassInput } from '~/composables/warehouse/canvass/canvass.types';
     import * as api from '~/composables/warehouse/canvass/canvass.api'
     import moment from 'moment';
+    import Swal from 'sweetalert2'
 
     definePageMeta({
         layout: "layout-admin"
@@ -242,7 +249,7 @@
         isMobile.value = window.innerWidth < mobileWidth
     }
 
-    function updateCanvassDetail() {
+    async function updateCanvassDetail() {
 
         canvassErrors.value = {..._canvassErrorsInitial}
 
@@ -260,7 +267,29 @@
             return 
         }
 
+        const data: UpdateCanvassInput = {
+            purpose: canvass.value.purpose,
+            notes: canvass.value.notes,
+            requested_by: canvass.value.requested_by
+        }
 
+        const response = await api.update(canvass.value.id, data)
+
+        if(response.success && response.data) {
+            Swal.fire({
+                title: 'Success!',
+                text: response.msg,
+                icon: 'success',
+                position: 'top',
+            })
+        } else {
+            Swal.fire({
+                title: 'Error!',
+                text: response.msg,
+                icon: 'error',
+                position: 'top',
+            })
+        }
 
     }
 

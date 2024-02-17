@@ -1,13 +1,6 @@
 <template>
     <div>
-        <div class="row">
-            <div class="col">
-                <h2 class="text-warning">Search Canvass</h2>
-            </div>
-            <div class="col">
-                <nuxt-link class="btn btn-primary float-end" to="/warehouse/purchasing/canvass/create">Create Canvass</nuxt-link>
-            </div>
-        </div>
+        <h2 class="text-warning">Search Canvass</h2>
 
         <hr>
 
@@ -34,9 +27,14 @@
 
         <div class="d-flex justify-content-end gap-2">
             <button @click="search()" class="btn btn-primary">Search</button>
+            <nuxt-link class="btn btn-primary float-end" to="/warehouse/purchasing/canvass/create">Create Canvass</nuxt-link>
         </div>
 
-        <hr>
+        <div class="h6wrapper mb-3 mt-3" v-show="!isInitialLoad">
+            <hr class="result">
+                <h6 class="text-warning"><i>Search results...</i></h6>
+            <hr class="result">
+        </div>
 
         <div class="row justify-content-center pt-3">
 
@@ -48,32 +46,73 @@
 
                 <div class="row">
                     <div class="col">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>RC Number</th>
-                                        <th>Requisitioner</th>
-                                        <th>Date</th>
-                                        <th class="text-center">
-                                            <i class="fas fa-cog"></i>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="i in items">
-                                        <td> {{ i.rc_number }} </td>
-                                        <td> {{ getFullname(i.requested_by!.firstname, i.requested_by!.middlename, i.requested_by!.lastname) }} </td>
-                                        <td> {{ moment(i.date_requested).format('YYYY-MM-DD') }} </td>
-                                        <td class="text-center">
-                                            <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
-                                                <i class="fas fa-edit text-primary"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+
+
+                        <div v-if="!isMobile">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>RC Number</th>
+                                            <th>Requisitioner</th>
+                                            <th>Date</th>
+                                            <th class="text-center">
+                                                <i class="fas fa-cog"></i>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="i in items">
+                                            <td> {{ i.rc_number }} </td>
+                                            <td> {{ getFullname(i.requested_by!.firstname, i.requested_by!.middlename, i.requested_by!.lastname) }} </td>
+                                            <td> {{ moment(i.date_requested).format('YYYY-MM-DD') }} </td>
+                                            <td class="text-center">
+                                                <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
+                                                    <i class="fas fa-edit text-primary"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
+
+                        <div v-else>
+
+                            <div v-for="i in items" class="table-responsive">
+
+                                <table class="table table-hover table-bordered">
+
+                                    <tbody>
+                                        <tr>
+                                            <td width="50%" class="bg-secondary text-white"> RC Number </td>
+                                            <td class="bg-secondary text-white"> {{ i.rc_number }} </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-muted"> Requisitioner </td>
+                                            <td> {{ getFullname(i.requested_by!.firstname, i.requested_by!.middlename, i.requested_by!.lastname) }} </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-muted"> Date </td>
+                                            <td> {{ moment(i.date_requested).format('YYYY-MM-DD') }} </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" class="text-center">
+                                                <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
+                                                    <i class="fas fa-edit text-primary"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+
+                                </table>
+
+
+                            </div>
+
+                        </div>
+
+
                     </div>
                 </div>
 
@@ -116,6 +155,8 @@
     import moment from 'moment'
     
 
+    const isMobile = ref(false)
+    const mobileWidth = 768
     const router = useRouter()
     const items = ref<Canvass[]>([])
     const _paginationInitial = {
@@ -129,6 +170,12 @@
     const requested_by = ref<Employee | null>(null)
     const isInitialLoad = ref(true)
     const pagination = ref({..._paginationInitial}) 
+
+
+    onMounted( () => {
+        isMobile.value = window.innerWidth < mobileWidth
+    })
+
 
     function onClickEdit(id: string) {
         router.push('/warehouse/purchasing/canvass/' + id)
@@ -182,4 +229,30 @@
         pagination.value.totalPages = totalPages  
     }
 
+    function checkMobile() {
+        isMobile.value = window.innerWidth < mobileWidth
+    }
+
 </script>
+
+
+
+<style scoped>
+
+    hr.result {
+        flex: 1;
+        margin: 0 10px;
+        border: none;
+        border-top: 1px solid #333;
+        }
+
+    h6 {
+        margin: 0;
+    }
+
+    .h6wrapper {
+        display: flex;
+        align-items: center;
+    }
+
+</style>

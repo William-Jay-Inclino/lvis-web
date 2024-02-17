@@ -56,7 +56,7 @@
     
             <div class="container">
     
-                <div class="mt-5">
+                <div class="mt-3">
                     <slot />
     
                 </div>

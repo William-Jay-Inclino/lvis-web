@@ -1,4 +1,4 @@
-import type { Brand, Canvass, CreateCanvassInput, Employee, FindAllResponse, MutationResponse, Unit } from "./canvass.types";
+import type { Brand, Canvass, CreateCanvassInput, Employee, FindAllResponse, MutationResponse, Unit, UpdateCanvassInput } from "./canvass.types";
 
 
 export async function findAll(payload: {page: number, pageSize: number, date_requested: string | null, requested_by_id: string | null}): Promise<FindAllResponse> {
@@ -188,6 +188,51 @@ export async function findByRcNumber(rcNumber: string): Promise<Canvass | undefi
     }
 }
 
+export async function findOne(id: string): Promise<Canvass | undefined> {
+    const query = `
+        query {
+            canvass(id: "${id}") {
+                id
+                rc_number
+                date_requested
+                purpose 
+                notes
+                requested_by {
+                    id
+                    firstname
+                    middlename
+                    lastname
+                }
+                canvass_items {
+                    description
+                    unit {
+                        name
+                    }
+                    brand {
+                        name
+                    }
+                    quantity
+                }
+            }
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        if(response.data && response.data.data && response.data.data.canvass) {
+            return response.data.data.canvass;
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+    } catch (error) {
+        console.error(error);
+        return undefined
+    }
+}
+
 export async function fetchFormDataInCreate(): Promise<{
     employees: Employee[],
     brands: Brand[],
@@ -327,4 +372,51 @@ export async function create(input: CreateCanvassInput): Promise<MutationRespons
             msg: 'Failed to create Canvass. Please contact system administrator'
         };
     }
+}
+
+export async function update(id: string, input: UpdateCanvassInput): Promise<MutationResponse> {
+
+    const mutation = `
+
+        mutation {
+            updateCanvass(
+                id: "${id}",
+                input: {
+                    purpose: "${input.purpose}"
+                    notes: "${input.notes}"
+                    requested_by_id: "${input.requested_by?.id}"
+                }
+            ) {
+                id
+                rc_number
+            }
+        }
+    
+    `
+
+    try {
+        const response = await sendRequest(mutation);
+        console.log('response', response);
+
+        if(response.data && response.data.data && response.data.data.updateCanvass) {
+            return {
+                success: true,
+                msg: 'Canvass updated successfully!',
+                data: response.data.data.updateCanvass 
+            };
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+    } catch (error) {
+        console.error(error);
+        
+        return {
+            success: false,
+            msg: 'Failed to Update Canvass. Please contact system administrator'
+        };
+    }
+
+
+
 }
