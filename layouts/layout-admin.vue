@@ -17,7 +17,7 @@
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/canvass">Canvass</nuxt-link></li>
-                                    <li><a class="dropdown-item" href="#">RV</a></li>
+                                    <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/rv">RV</nuxt-link></li>
                                     <li><a class="dropdown-item" href="#">SPR</a></li>
                                     <li><a class="dropdown-item" href="#">JO</a></li>
                                     <li><a class="dropdown-item" href="#">MEQS</a></li>

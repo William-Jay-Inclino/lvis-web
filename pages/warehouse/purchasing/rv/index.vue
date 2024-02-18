@@ -1,11 +1,19 @@
 <template>
     <div>
-        <h2 class="text-warning">Search Canvass</h2>
+        <h2 class="text-warning">Search RV</h2>
 
         <hr>
 
         <div class="row pt-3">
-            <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="col-lg-3 col-md-6 col-sm-12">
+                <div class="mb-3">
+                    <label class="form-label">RV Number</label>
+                    <client-only>
+                        <v-select :options="rvs" label="rv_number" v-model="rv"></v-select>
+                    </client-only>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-12">
                 <div class="mb-3">
                     <label class="form-label">RC Number</label>
                     <client-only>
@@ -13,13 +21,13 @@
                     </client-only>
                 </div>
             </div>
-            <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="col-lg-3 col-md-6 col-sm-12">
                 <div class="mb-3">
                     <label class="form-label">Date</label>
                     <input v-model="date_requested" type="date" class="form-control">
                 </div>
             </div>
-            <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="col-lg-3 col-md-6 col-sm-12">
                 <div class="mb-3">
                     <label class="form-label">Requisitioner</label>
                     <client-only>
@@ -31,7 +39,7 @@
 
         <div class="d-flex justify-content-end gap-2">
             <button @click="search()" class="btn btn-primary">Search</button>
-            <nuxt-link class="btn btn-primary float-end" to="/warehouse/purchasing/canvass/create">Create Canvass</nuxt-link>
+            <nuxt-link class="btn btn-primary float-end" to="/warehouse/purchasing/rv/create">Create RV</nuxt-link>
         </div>
 
         <div class="h6wrapper mb-3 mt-3" v-show="!isInitialLoad">
@@ -52,11 +60,12 @@
                     <div class="col">
 
 
-                        <div v-if="!isMobile">
+                        <div>
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
+                                            <th>RV Number</th>
                                             <th>RC Number</th>
                                             <th>Requisitioner</th>
                                             <th>Date</th>
@@ -66,7 +75,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="i in items">
+                                        <!-- <tr v-for="i in items">
                                             <td> {{ i.rc_number }} </td>
                                             <td> {{ getFullname(i.requested_by!.firstname, i.requested_by!.middlename, i.requested_by!.lastname) }} </td>
                                             <td> {{ moment(i.date_requested).format('YYYY-MM-DD') }} </td>
@@ -75,13 +84,13 @@
                                                     <i class="fas fa-edit text-primary"></i>
                                                 </button>
                                             </td>
-                                        </tr>
+                                        </tr> -->
                                     </tbody>
                                 </table>
                             </div>
                         </div>
 
-                        <div v-else>
+                        <!-- <div v-else>
 
                             <div v-for="i in items" class="table-responsive">
 
@@ -114,13 +123,13 @@
 
                             </div>
 
-                        </div>
+                        </div> -->
 
 
                     </div>
                 </div>
 
-                <div class="row">
+                <!-- <div class="row">
                     <div class="col">
                         <nav>
                             <ul class="pagination justify-content-center">
@@ -136,7 +145,7 @@
                             </ul>
                         </nav>
                     </div>
-                </div>
+                </div> -->
                 
 
             </div>
@@ -148,16 +157,14 @@
 
 
 <script setup lang="ts">
+    import type { Canvass, Employee } from '~/composables/warehouse/canvass/canvass.types';
+    import type { RV } from '~/composables/warehouse/rv/rv.types';
+    import * as rvApi from '~/composables/warehouse/rv/rv.api'
+
 
     definePageMeta({
         layout: "layout-admin"
     })
-
-    import * as api from '~/composables/warehouse/canvass/canvass.api'
-    import type { Canvass, Employee } from '~/composables/warehouse/canvass/canvass.types';
-    import { getFullname } from '~/composables/helpers'
-    import moment from 'moment'
-    
 
     const router = useRouter()
     const mobileWidth = 768
@@ -165,7 +172,8 @@
     // flags
     const isMobile = ref(false)
     const isInitialLoad = ref(true)
-    
+
+    // pagination
     const _paginationInitial = {
         currentPage: 0,
         totalPages: 0,
@@ -173,28 +181,32 @@
         pageSize: 15,
     }
     const pagination = ref({..._paginationInitial})
-    
+
+
     // search filters
     const canvass = ref<Canvass | null>(null)
+    const rv = ref<RV | null>(null)
     const date_requested = ref(null)
     const requested_by = ref<Employee | null>(null)
     const canvasses = ref<Canvass[]>([])
+    const rvs = ref<RV[]>([])
     const employees = ref<Employee[]>([])
     // ----------------
 
-
+    
     // table data
-    const items = ref<Canvass[]>([])
-     
+    const items = ref<RV[]>([])
+
 
     onMounted( async() => {
         isMobile.value = window.innerWidth < mobileWidth
 
         window.addEventListener('resize', checkMobile);
 
-        const response = await api.fetchDataInSearchFilters()
+        const response = await rvApi.fetchDataInSearchFilters()
 
         canvasses.value = response.canvasses
+        rvs.value = response.rvs
         employees.value = response.employees.map((i) => {
             i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
             return i
@@ -204,55 +216,27 @@
 
 
     function onClickEdit(id: string) {
-        router.push('/warehouse/purchasing/canvass/' + id)
+        router.push('/warehouse/purchasing/rv/' + id)
     }
 
     async function changePage(page: number) {
-        const { data, currentPage, totalItems, totalPages } = await api.findAll({
-            page,
-            pageSize: pagination.value.pageSize,
-            date_requested: null,
-            requested_by_id: null
+        console.log('changePage')
+        // const { data, currentPage, totalItems, totalPages } = await api.findAll({
+        //     page,
+        //     pageSize: pagination.value.pageSize,
+        //     date_requested: null,
+        //     requested_by_id: null
             
-        })
-        items.value = data
-        pagination.value.totalItems = totalItems
-        pagination.value.currentPage = currentPage
-        pagination.value.totalPages = totalPages
+        // })
+        // items.value = data
+        // pagination.value.totalItems = totalItems
+        // pagination.value.currentPage = currentPage
+        // pagination.value.totalPages = totalPages
     }
 
     async function search() {
 
-        isInitialLoad.value = false
-
-        if(canvass.value) {
-
-            items.value = []
-
-            const response = await api.findByRcNumber(canvass.value.rc_number)
-
-            console.log('response', response)
-
-            if(response) {
-                items.value.push(response)
-                return
-            }
-
-            return
-
-        }
-
-        const { data, currentPage, totalItems, totalPages } = await api.findAll({
-            page: 1,
-            pageSize: pagination.value.pageSize,
-            date_requested: date_requested.value,
-            requested_by_id: requested_by.value ? requested_by.value.id : null
-            
-        })
-        items.value = data
-        pagination.value.totalItems = totalItems
-        pagination.value.currentPage = currentPage
-        pagination.value.totalPages = totalPages  
+        console.log('search')
     }
 
     function checkMobile() {
