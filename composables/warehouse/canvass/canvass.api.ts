@@ -52,111 +52,6 @@ export async function findAll(payload: {page: number, pageSize: number, date_req
     }
 }
 
-export async function fetchFormDataInUpdate(id: string): Promise<{
-    canvass: Canvass | undefined,
-    employees: Employee[],
-    brands: Brand[],
-    units: Unit[],
-}> {
-    const query = `
-        query {
-            canvass(id: "${id}") {
-                id
-                rc_number
-                date_requested
-                purpose
-                notes
-                requested_by {
-                    id
-                    firstname
-                    middlename
-                    lastname
-                }
-                canvass_items{
-                    id
-                    description
-                    brand {
-                        id
-                        name
-                    }
-                    unit {
-                        id
-                        name
-                    }
-                    quantity
-                }
-            },
-            employees(page: 1, pageSize: 50) {
-                data {
-                    id
-                    firstname
-                    middlename
-                    lastname
-                }
-                },
-                brands{
-                    id
-                    name
-                }
-                units(page: 1, pageSize: 50){
-                data {
-                    id
-                    name
-                }
-            }
-        }
-    `;
-
-    try {
-        const response = await sendRequest(query);
-        console.log('response', response)
-
-        let employees = []
-        let brands = []
-        let units = []
-
-        if(!response.data || !response.data.data) {
-            throw new Error(JSON.stringify(response.data.errors));
-        }
-
-        const data = response.data.data
-
-        if(!data.canvass) {
-            throw new Error(JSON.stringify(response.data.errors));
-        }
-
-        const canvass = data.canvass
-
-        if(data.employees && data.employees.data) {
-            employees = response.data.data.employees.data
-        }
-
-        if(data.brands) { // temp
-            brands = data.brands
-        }
-
-        if(data.units && data.units.data) {
-            units = response.data.data.units.data
-        }
-
-        return {
-            canvass,
-            employees,
-            brands,
-            units
-        }
-
-    } catch (error) {
-        console.error(error);
-        return {
-            canvass: undefined,
-            employees: [],
-            brands: [],
-            units: []
-        }
-    }
-}
-
 export async function findByRcNumber(rcNumber: string): Promise<Canvass | undefined> {
     const query = `
         query {
@@ -307,6 +202,167 @@ export async function fetchFormDataInCreate(): Promise<{
     }
     
 
+}
+
+export async function fetchFormDataInUpdate(id: string): Promise<{
+    canvass: Canvass | undefined,
+    employees: Employee[],
+    brands: Brand[],
+    units: Unit[],
+}> {
+    const query = `
+        query {
+            canvass(id: "${id}") {
+                id
+                rc_number
+                date_requested
+                purpose
+                notes
+                requested_by {
+                    id
+                    firstname
+                    middlename
+                    lastname
+                }
+                canvass_items{
+                    id
+                    description
+                    brand {
+                        id
+                        name
+                    }
+                    unit {
+                        id
+                        name
+                    }
+                    quantity
+                }
+            },
+            employees(page: 1, pageSize: 50) {
+                data {
+                    id
+                    firstname
+                    middlename
+                    lastname
+                }
+                },
+                brands{
+                    id
+                    name
+                }
+                units(page: 1, pageSize: 50){
+                data {
+                    id
+                    name
+                }
+            }
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        let employees = []
+        let brands = []
+        let units = []
+
+        if(!response.data || !response.data.data) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+
+        const data = response.data.data
+
+        if(!data.canvass) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+
+        const canvass = data.canvass
+
+        if(data.employees && data.employees.data) {
+            employees = response.data.data.employees.data
+        }
+
+        if(data.brands) { // temp
+            brands = data.brands
+        }
+
+        if(data.units && data.units.data) {
+            units = response.data.data.units.data
+        }
+
+        return {
+            canvass,
+            employees,
+            brands,
+            units
+        }
+
+    } catch (error) {
+        console.error(error);
+        return {
+            canvass: undefined,
+            employees: [],
+            brands: [],
+            units: []
+        }
+    }
+}
+
+export async function fetchDataInSearchFilters(): Promise<{
+    canvasses: Canvass[],
+    employees: Employee[]
+}> {
+    const query = `
+        query {
+            canvasses(page: 1, pageSize: 10) {
+                data{
+                    rc_number
+                }
+            },
+            employees(page: 1, pageSize: 50) {
+                data {
+                    id
+                    firstname
+                    middlename
+                    lastname
+                }
+            }
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        let canvasses = []
+        let employees = []
+
+        if(!response.data || !response.data.data) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+
+        const data = response.data.data
+
+        if(data.employees && data.employees.data) {
+            employees = response.data.data.employees.data
+        }
+
+        if(data.canvasses && data.canvasses.data) { 
+            canvasses = data.canvasses.data
+        }
+        return {
+            canvasses,
+            employees
+        }
+
+    } catch (error) {
+        console.error(error);
+        return {
+            canvasses: [],
+            employees: [],
+        }
+    }
 }
 
 export async function create(input: CreateCanvassInput): Promise<MutationResponse> {

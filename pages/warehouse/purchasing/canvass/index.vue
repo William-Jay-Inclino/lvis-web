@@ -8,19 +8,23 @@
             <div class="col-lg-4 col-md-6 col-sm-12">
                 <div class="mb-3">
                     <label class="form-label">RC Number</label>
-                    <input v-model="rcNumber" type="text" class="form-control">
+                    <client-only>
+                        <v-select :options="canvasses" label="rc_number" v-model="canvass"></v-select>
+                    </client-only>
                 </div>
             </div>
             <div class="col-lg-4 col-md-6 col-sm-12">
                 <div class="mb-3">
                     <label class="form-label">Date</label>
-                    <input type="date" class="form-control">
+                    <input v-model="date_requested" type="date" class="form-control">
                 </div>
             </div>
             <div class="col-lg-4 col-md-6 col-sm-12">
                 <div class="mb-3">
                     <label class="form-label">Requisitioner</label>
-                    <input type="text" class="form-control">
+                    <client-only>
+                        <v-select :options="employees" label="fullname" v-model="requested_by"></v-select>
+                    </client-only>
                 </div>
             </div>
         </div>
@@ -165,17 +169,33 @@
         totalItems: 0,
         pageSize: 15,
     }
-    const rcNumber = ref('')
+    
+    // search filters
+    const canvass = ref<Canvass | null>(null)
     const date_requested = ref(null)
     const requested_by = ref<Employee | null>(null)
+    // ----------------
+
+
     const isInitialLoad = ref(true)
     const pagination = ref({..._paginationInitial}) 
 
+    const canvasses = ref<Canvass[]>([])
+    const employees = ref<Employee[]>([])
 
-    onMounted( () => {
+    onMounted( async() => {
         isMobile.value = window.innerWidth < mobileWidth
 
         window.addEventListener('resize', checkMobile);
+
+        const response = await api.fetchDataInSearchFilters()
+
+        canvasses.value = response.canvasses
+        employees.value = response.employees.map((i) => {
+            i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
+            return i
+        })
+
     })
 
 
@@ -201,11 +221,11 @@
 
         isInitialLoad.value = false
 
-        if(rcNumber.value.trim() !== '') {
+        if(canvass.value) {
 
             items.value = []
 
-            const response = await api.findByRcNumber(rcNumber.value)
+            const response = await api.findByRcNumber(canvass.value.rc_number)
 
             console.log('response', response)
 
