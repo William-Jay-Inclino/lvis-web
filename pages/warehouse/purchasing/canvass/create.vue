@@ -130,11 +130,11 @@
                                                         </tr>
                                                         <tr>
                                                             <td class="text-muted">Brand</td>
-                                                            <td> {{ item.brand ? item.brand.name : '' }} </td>
+                                                            <td> {{ item.brand ? item.brand.name : 'N/A' }} </td>
                                                         </tr>
                                                         <tr>
                                                             <td class="text-muted">Unit</td>
-                                                            <td> {{ item.unit ? item.unit.name : '' }} </td>
+                                                            <td> {{ item.unit ? item.unit.name : 'N/A' }} </td>
                                                         </tr>
                                                         <tr>
                                                             <td class="text-muted">Quantity</td>
@@ -142,8 +142,8 @@
                                                         </tr>
                                                         <tr class="text-center">
                                                             <td colspan="2">
-                                                                <button @click="removeCanvassItem(i)" class="btn btn-sm btn-light">
-                                                            <i class="fas fa-trash text-danger"></i>
+                                                                <button @click="removeCanvassItem(i)" class="btn btn-sm btn-light w-100">
+                                                                <i class="fas fa-trash text-danger"></i>
                                                         </button>
                                                             </td>
                                                         </tr>

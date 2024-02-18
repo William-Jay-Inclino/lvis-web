@@ -1,3 +1,4 @@
+import type { CanvassItem } from "./canvass-item.types"
 
 export interface Employee {
     id: string
@@ -37,15 +38,6 @@ export interface Canvass {
     created_at: Date;
   
     updated_at: Date;
-}
-
-export interface CanvassItem {
-    id: string 
-    description: string 
-    brand: Brand | null
-    unit: Unit | null
-    quantity: number 
-
 }
 
 export interface CreateCanvassInput {

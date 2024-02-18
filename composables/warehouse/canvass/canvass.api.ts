@@ -76,15 +76,17 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                     id
                     description
                     brand {
+                        id
                         name
                     }
                     unit {
+                        id
                         name
                     }
                     quantity
                 }
             },
-            employees(page: 1, pageSize: 10) {
+            employees(page: 1, pageSize: 50) {
                 data {
                     id
                     firstname
@@ -96,7 +98,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                     id
                     name
                 }
-                units(page: 1, pageSize: 10){
+                units(page: 1, pageSize: 50){
                 data {
                     id
                     name
@@ -308,12 +310,27 @@ export async function fetchFormDataInCreate(): Promise<{
 }
 
 export async function create(input: CreateCanvassInput): Promise<MutationResponse> {
+
+
+
     const canvassItems = input.canvass_items.map(item => {
+
+        let brandId = null 
+        let unitId = null 
+    
+        if(item.brand) {
+            brandId = `"${item.brand.id}"`
+        }
+
+        if(item.unit) {
+            unitId = `"${item.unit.id}"`
+        }
+
         return `
         {
           description: "${item.description}"
-          brand_id: "${item.brand?.id}"
-          unit_id: "${item.unit?.id}"
+          brand_id: ${brandId}
+          unit_id: ${unitId}
           quantity: ${item.quantity}
         }`;
     }).join(', ');

@@ -98,7 +98,7 @@
                                         </tr>
                                         <tr>
                                             <td colspan="2" class="text-center">
-                                                <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
+                                                <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light w-100">
                                                     <i class="fas fa-edit text-primary"></i>
                                                 </button>
                                             </td>
@@ -174,6 +174,8 @@
 
     onMounted( () => {
         isMobile.value = window.innerWidth < mobileWidth
+
+        window.addEventListener('resize', checkMobile);
     })
 
 
@@ -201,6 +203,8 @@
 
         if(rcNumber.value.trim() !== '') {
 
+            items.value = []
+
             const response = await api.findByRcNumber(rcNumber.value)
 
             console.log('response', response)
@@ -209,8 +213,6 @@
                 items.value.push(response)
                 return
             }
-
-            items.value = []
 
             return
 

@@ -87,21 +87,24 @@
                                         Quantity <span class="text-danger"> * </span>
                                     </th>
                                     <th class="text-muted text-center">
-                                        Remove
+                                        <i class="fas fa-cog"></i>
                                     </th>
                                 </tr>
                             </thead>
     
                             <tbody>
-                                <tr v-for="item, i in canvassItems">
+                                <tr v-for="item, i in canvass.canvass_items">
                                     <td class="text-muted"> {{ i + 1 }} </td>
                                     <td class="text-muted"> {{ item.description }} </td>
-                                    <td class="text-muted"> {{ item.brand ? item.brand.name : '' }} </td>
-                                    <td class="text-muted"> {{ item.unit ? item.unit.name : '' }} </td>
+                                    <td class="text-muted"> {{ item.brand ? item.brand.name : 'N/A' }} </td>
+                                    <td class="text-muted"> {{ item.unit ? item.unit.name : 'N/A' }} </td>
                                     <td class="text-muted"> {{ item.quantity }} </td>
                                     <td class="text-muted text-center">
-                                        <button class="btn btn-sm btn-light">
+                                        <button @click="removeCanvassItem(i)" class="btn btn-sm btn-light">
                                             <i class="fas fa-trash text-danger"></i>
+                                        </button>
+                                        <button @click="onClickEditCanvassItem(i)" class="btn btn-sm btn-light">
+                                            <i class="fas fa-edit text-primary"></i>
                                         </button>
                                     </td>
                                 </tr>
@@ -110,7 +113,7 @@
                             <tfoot>
                                 <tr>
                                     <td colspan="6" class="text-center">
-                                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addItemModal">
+                                        <button @click="onClickAddCanvassItem()" type="button" class="btn btn-primary btn-sm">
                                             Add Item
                                         </button>
                                     </td>
@@ -127,7 +130,7 @@
     
                     <div class="row">
                         <div class="col">
-                            <div v-for="item, i in canvassItems" class="table-responsive">
+                            <div v-for="item, i in canvass.canvass_items" class="table-responsive">
             
                                 <table class="table table-hover table-bordered">
                                     <tbody>
@@ -141,20 +144,25 @@
                                         </tr>
                                         <tr>
                                             <td class="text-muted">Brand</td>
-                                            <td> {{ item.brand ? item.brand.name : '' }} </td>
+                                            <td> {{ item.brand ? item.brand.name : 'N/A' }} </td>
                                         </tr>
                                         <tr>
                                             <td class="text-muted">Unit</td>
-                                            <td> {{ item.unit ? item.unit.name : '' }} </td>
+                                            <td> {{ item.unit ? item.unit.name : 'N/A' }} </td>
                                         </tr>
                                         <tr>
                                             <td class="text-muted">Quantity</td>
                                             <td> {{ item.quantity }} </td>
                                         </tr>
                                         <tr class="text-center">
-                                            <td colspan="2">
-                                                <button class="btn btn-sm btn-light">
+                                            <td>
+                                                <button @click="removeCanvassItem(i)" class="btn btn-sm btn-light w-100">
                                                     <i class="fas fa-trash text-danger"></i>
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <button @click="onClickEditCanvassItem(i)" class="btn btn-sm btn-light w-100">
+                                                    <i class="fas fa-edit text-primary"></i>
                                                 </button>
                                             </td>
                                         </tr>
@@ -167,7 +175,7 @@
     
                     <div class="row">
                         <div class="col d-flex justify-content-center">
-                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addItemModal">
+                            <button @click="onClickAddCanvassItem()" type="button" class="btn btn-primary btn-sm">
                                 Add Item
                             </button>
                         </div>
@@ -187,6 +195,58 @@
 
         </div>
 
+        <button ref="canvassItemModalBtn" v-show="false" data-bs-toggle="modal" data-bs-target="#addItemModal">
+            open canvass item modal
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">{{ isCanvassItemModalAdd ? 'Add' : 'Edit' }} Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Description <span class="text-danger">*</span>
+                        </label>
+                        <textarea v-model="canvassItem.description" class="form-control" rows="3"></textarea>
+                        <small class="text-danger" v-show="canvassItemErrors.description">
+                            This field is required
+                        </small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Brand</label>
+                        <client-only>
+                            <v-select v-model="canvassItem.brand" :options="brands" label="name"></v-select>
+                        </client-only>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Unit</label>
+                        <client-only>
+                            <v-select v-model="canvassItem.unit" :options="units" label="name"></v-select>
+                        </client-only>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Quantity <span class="text-danger">*</span>
+                        </label>
+                        <input v-model="canvassItem.quantity" type="number" class="form-control">
+                        <small class="text-danger" v-show="canvassItemErrors.quantity">
+                            This field is required and quantity must be greater than 0
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button ref="closeItemModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button v-if="isCanvassItemModalAdd" @click="createCanvassItem()" type="button" class="btn btn-primary">Add Item</button>
+                    <button v-else @click="updateCanvassItem()" type="button" class="btn btn-success">Edit Item</button>
+                </div>
+                </div>
+            </div>
+        </div>
 
     </div>
 
@@ -194,10 +254,13 @@
 
 
 <script setup lang="ts">
-    import type { Brand, Canvass, CanvassItem, Employee, Unit, UpdateCanvassInput } from '~/composables/warehouse/canvass/canvass.types';
-    import * as api from '~/composables/warehouse/canvass/canvass.api'
+    import type { Brand, Canvass, Employee, Unit, UpdateCanvassInput } from '~/composables/warehouse/canvass/canvass.types';
+    import * as canvassApi from '~/composables/warehouse/canvass/canvass.api'
+    import * as canvassItemApi from '~/composables/warehouse/canvass/canvass-item.api'
     import moment from 'moment';
     import Swal from 'sweetalert2'
+    import type { CanvassItem, CreateCanvassItemInput, UpdateCanvassItemInput } from '~/composables/warehouse/canvass/canvass-item.types';
+    import { useToast } from "vue-toastification";
 
     definePageMeta({
         layout: "layout-admin"
@@ -208,16 +271,40 @@
         purpose: false
     }
 
+    const _canvassItemErrorsInitial = {
+        description: false,
+        quantity: false
+    }
+
+    const toast = useToast();
+    const route = useRoute()
     const isMobile = ref(false)
     const mobileWidth = 768
-    const route = useRoute()
-    const isCanvassDetailForm = ref(true)
-    const canvass = ref<Canvass>({} as Canvass)
-    const canvassErrors = ref({..._canvassErrorsInitial})
-    const canvassItems = ref<CanvassItem[]>([])
+    const closeItemModal = ref<HTMLButtonElement>()
+    const canvassItemModalBtn = ref<HTMLButtonElement>()
+    const isCanvassItemModalAdd = ref(false)
+
     const employees = ref<Employee[]>([])
     const brands = ref<Brand[]>([])
     const units = ref<Unit[]>([])
+
+    const isCanvassDetailForm = ref(true)
+    const _canvassItemInitial: CanvassItem = {
+        id: '',
+        canvass_id: '',
+        description: '',
+        brand: null,
+        unit: null,
+        quantity: 0
+    }
+
+    const canvass = ref<Canvass>({} as Canvass)
+    const canvassItem = ref<CanvassItem>({..._canvassItemInitial})
+
+    const canvassErrors = ref({..._canvassErrorsInitial})
+    const canvassItemErrors = ref({..._canvassItemErrorsInitial})
+
+
 
     onMounted( async() => {
 
@@ -225,7 +312,7 @@
 
         window.addEventListener('resize', checkMobile);
 
-        let response = await api.fetchFormDataInUpdate(route.params.id as string)
+        let response = await canvassApi.fetchFormDataInUpdate(route.params.id as string)
 
         if(response.canvass) {
             response.canvass.date_requested = moment(response.canvass.date_requested).format('YYYY-MM-DD')
@@ -233,7 +320,6 @@
             const requestedBy = response.canvass.requested_by 
             requestedBy!['fullname'] = getFullname(requestedBy!.firstname, requestedBy!.middlename, requestedBy!.lastname)
             canvass.value = response.canvass
-            canvassItems.value = canvass.value.canvass_items
         }
 
         employees.value = response.employees.map((i) => {
@@ -273,7 +359,7 @@
             requested_by: canvass.value.requested_by
         }
 
-        const response = await api.update(canvass.value.id, data)
+        const response = await canvassApi.update(canvass.value.id, data)
 
         if(response.success && response.data) {
             Swal.fire({
@@ -293,5 +379,150 @@
 
     }
 
+    function isValidCanvassItem(): boolean {
+        canvassItemErrors.value = {..._canvassItemErrorsInitial}
+
+        if(canvassItem.value.description.trim() === '') {
+            canvassItemErrors.value.description = true 
+        }
+
+        if(canvassItem.value.quantity <= 0) {
+            canvassItemErrors.value.quantity = true 
+        }
+
+        const hasError = Object.values(canvassItemErrors.value).includes(true);
+
+        if(hasError) {
+            return false 
+        }
+
+        return true
+    }
+
+    async function createCanvassItem() {
+
+        if(!isValidCanvassItem()) return 
+
+        const data: CreateCanvassItemInput = {
+            canvass_id: canvass.value.id,
+            description: canvassItem.value.description,
+            brand: canvassItem.value.brand,
+            unit: canvassItem.value.unit,
+            quantity: canvassItem.value.quantity
+        }
+
+        const response = await canvassItemApi.create(data)
+
+        if(response.success && response.data) {
+            toast.success(response.msg)
+
+            canvass.value.canvass_items.push(response.data)
+
+            canvassItem.value = {..._canvassItemInitial}
+
+            closeItemModal.value?.click()
+
+        } else {
+            Swal.fire({
+                title: 'Error!',
+                text: response.msg,
+                icon: 'error',
+                position: 'top',
+            })
+        }
+
+    }
+
+    async function updateCanvassItem() {
+
+        if(!isValidCanvassItem()) return 
+
+        const data: UpdateCanvassItemInput = {
+            description: canvassItem.value.description,
+            brand: canvassItem.value.brand,
+            unit: canvassItem.value.unit,
+            quantity: canvassItem.value.quantity
+        }
+
+        const response = await canvassItemApi.update(canvassItem.value.id, data)
+
+        if(response.success && response.data) {
+            toast.success(response.msg)
+
+            const prevCanvassItemIndx = canvass.value.canvass_items.findIndex(i => i.id === canvassItem.value.id)
+            canvass.value.canvass_items[prevCanvassItemIndx] = {...response.data}
+            canvassItem.value = {..._canvassItemInitial}
+
+            closeItemModal.value?.click()
+
+        } else {
+            Swal.fire({
+                title: 'Error!',
+                text: response.msg,
+                icon: 'error',
+                position: 'top',
+            })
+        }
+
+    }
+
+    async function removeCanvassItem(indx: number) {
+
+        const item = canvass.value.canvass_items[indx]
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: `Item no. ${indx + 1} with description "${item.description}" will be removed!`,
+            position: "top",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#e74a3b",
+            cancelButtonColor: "#6c757d",
+            confirmButtonText: "Yes, delete it!",
+            reverseButtons: true,
+            }).then( async(result) => {
+            if (result.isConfirmed) {
+                
+                const response = await canvassItemApi.remove(item.id)
+
+                if(response.success) {
+                    
+                    toast.success('Item removed!')
+
+                    canvass.value.canvass_items.splice(indx, 1)
+
+                }else {
+
+                    Swal.fire({
+                        title: 'Error!',
+                        text: response.msg,
+                        icon: 'error',
+                        position: 'top',
+                    })
+
+                }
+
+            }
+        });
+
+    }
+
+    function onClickEditCanvassItem(indx: number) {
+
+        const item = canvass.value.canvass_items[indx]
+
+        canvassItem.value = {...item}
+
+        isCanvassItemModalAdd.value = false
+        canvassItemModalBtn.value?.click()
+
+    }
+
+    function onClickAddCanvassItem() {
+
+        isCanvassItemModalAdd.value = true
+        canvassItemModalBtn.value?.click()
+
+    }
 
 </script>
