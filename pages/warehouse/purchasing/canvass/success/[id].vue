@@ -65,11 +65,11 @@
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
-                                            <th class="text-muted"> No. </th>
-                                            <th class="text-muted"> Description </th>
-                                            <th class="text-muted"> Brand </th>
-                                            <th class="text-muted"> Unit </th>
-                                            <th class="text-muted"> Quantity </th>
+                                            <th class="bg-secondary text-white"> No. </th>
+                                            <th class="bg-secondary text-white"> Description </th>
+                                            <th class="bg-secondary text-white"> Brand </th>
+                                            <th class="bg-secondary text-white"> Unit </th>
+                                            <th class="bg-secondary text-white"> Quantity </th>
                                         </tr>
                                     </thead>
                                     <tbody>

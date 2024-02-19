@@ -21,7 +21,12 @@
                                 RC Number <span class="text-danger">*</span>
                             </label>
                             <client-only>
-                                <v-select :options="canvasses" label="rc_number" v-model="rvData.canvass"></v-select>
+                                <v-select @option:selected="onRcNumberSelected" :options="canvasses" label="rc_number" v-model="rvData.canvass">
+                                    <template v-slot:option="option">
+                                        <span v-if="option.is_referenced" class="text-danger">{{ option.rc_number }}</span>
+                                        <span v-else>{{ option.rc_number }}</span>
+                                    </template>
+                                </v-select>
                             </client-only>
                             <nuxt-link v-if="rvData.canvass" class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/canvass/' + rvData.canvass.id" target="_blank">View info</nuxt-link>
                             <small class="text-danger" v-if="rvDataErrors.canvass"> This field is required </small>
@@ -124,6 +129,8 @@
 
     const rvDataErrors = ref({..._rvDataErrorsInitial})
 
+    let currentCanvass: Canvass | null = null
+
     const rvData = ref<CreateRvInput>({
         canvass: null,
         supervisor: null,
@@ -134,7 +141,6 @@
         approvers: []
     })
 
-    // const formDataErrors = ref({..._formDataErrorsInitial})
     const canvasses = ref<Canvass[]>([])
     const employees = ref<Employee[]>([])
 
@@ -154,6 +160,23 @@
         })
 
         rvData.value.approvers = response.approvers
+
+    })
+
+    const canvassId = computed( () => {
+        if(rvData.value.canvass) {
+            return rvData.value.canvass.id
+        }
+        return null
+    })
+
+    // set currentCanvass to null if rc number field is deselected
+    watch(canvassId, (val) => {
+
+        if(!val) {
+            console.log('rc number deselected')
+            currentCanvass = null
+        }
 
     })
 
@@ -206,6 +229,20 @@
 
     function checkMobile() {
         isMobile.value = window.innerWidth < mobileWidth
+    }
+
+    // check if canvass is_referenced. If true then rollback to previous canvass else set new current canvass
+    function onRcNumberSelected(payload: Canvass) {
+        console.log('onRcNumberSelected()', payload)
+        if(payload.is_referenced) {
+            if(currentCanvass) {
+                rvData.value.canvass = currentCanvass
+            }else{
+                rvData.value.canvass = null
+            }
+        }else{
+            currentCanvass = payload
+        }
     }
 
 </script>

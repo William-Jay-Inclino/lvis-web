@@ -1,3 +1,4 @@
+import { APPROVER_SUPERVISOR_LABEL } from "~/utils/config";
 import type { Canvass, Employee } from "../canvass/canvass.types";
 import type { CreateRvInput, FindAllResponse, MutationResponse, RV, RvApproverSettings } from "./rv.types";
 import { sendRequest } from "~/utils/api"
@@ -278,6 +279,7 @@ export async function fetchFormDataInCreate(): Promise<{
                         lastname
                     }
                     purpose
+                    is_referenced
                 }
             },
             employees(page: 1, pageSize: 50) {
@@ -359,7 +361,7 @@ export async function create(input: CreateRvInput): Promise<MutationResponse> {
     input.approvers.push({
         approver_id: input.supervisor!.id,
         approver: input.supervisor,
-        label: 'Imd. Sup,',
+        label: APPROVER_SUPERVISOR_LABEL,
         order: 1
     })
 

@@ -79,7 +79,6 @@
                                             <td> {{ i.rv_number }} </td>
                                             <td> {{ i.canvass.rc_number }} </td>
                                             <td> {{ getFullname(i.canvass.requested_by!.firstname, i.canvass.requested_by!.middlename, i.canvass.requested_by!.lastname) }} </td>
-                                            <td> {{ moment(Number(i.date_requested)).format('YYYY-MM-DD') }} </td>
                                             <td> {{ formatDate(i.date_requested) }} </td>
                                             <td class="text-center">
                                                 <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light text-primary">

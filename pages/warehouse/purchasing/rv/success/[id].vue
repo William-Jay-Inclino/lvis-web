@@ -83,11 +83,11 @@
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
-                                            <th class="text-muted"> Order </th>
-                                            <th class="text-muted"> Label </th>
-                                            <th class="text-muted"> Approver </th>
-                                            <th class="text-muted"> Approver Proxy </th>
-                                            <th class="text-muted"> Status </th>
+                                            <th class="bg-secondary text-white"> Order </th>
+                                            <th class="bg-secondary text-white"> Label </th>
+                                            <th class="bg-secondary text-white"> Approver </th>
+                                            <th class="bg-secondary text-white"> Approver Proxy </th>
+                                            <th class="bg-secondary text-white"> Status </th>
                                         </tr>
                                     </thead>
                                     <tbody>
