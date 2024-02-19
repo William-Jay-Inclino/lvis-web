@@ -50,8 +50,12 @@
                         </div>
                 
                         <div class="d-flex justify-content-end gap-2">
-                            <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">Cancel</nuxt-link>
-                            <button @click="onClickNextStep1()" type="button" class="btn btn-primary">Next</button>
+                            <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">
+                                <i class="fas fa-times"></i> Cancel
+                            </nuxt-link>
+                            <button @click="onClickNextStep1()" type="button" class="btn btn-primary">
+                                <i class="fas fa-arrow-right"></i> Next
+                            </button>
                         </div>
 
                     </div>
@@ -102,7 +106,7 @@
                                                 <tr>
                                                     <td colspan="6" class="text-center">
                                                         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addItemModal">
-                                                            Add Item
+                                                            <i class="fas fa-plus-circle"></i> Add Item
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -156,7 +160,7 @@
                                     <div class="row">
                                         <div class="col d-flex justify-content-center">
                                             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addItemModal">
-                                                Add Item
+                                                <i class="fas fa-plus-circle"></i> Add Item
                                             </button>
                                         </div>
                                     </div>
@@ -169,8 +173,12 @@
                         </div>
 
                         <div class="d-flex justify-content-end gap-2 mb-3">
-                            <button @click="currentStep--" type="button" class="btn btn-secondary">Back</button>
-                            <button @click="save()" :disabled="formData.canvass_items.length === 0" type="button" class="btn btn-primary">Save</button>
+                            <button @click="currentStep--" type="button" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </button>
+                            <button @click="save()" :disabled="formData.canvass_items.length === 0" type="button" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save
+                            </button>
                         </div>
 
                     </div>
@@ -222,8 +230,12 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button ref="closeItemModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button @click="addCanvassItem()" type="button" class="btn btn-primary">Add Item</button>
+                    <button ref="closeItemModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-close"></i> Close
+                    </button>
+                    <button @click="addCanvassItem()" type="button" class="btn btn-primary">
+                        <i class="fas fa-plus-circle"></i> Add Item
+                    </button>
                 </div>
                 </div>
             </div>

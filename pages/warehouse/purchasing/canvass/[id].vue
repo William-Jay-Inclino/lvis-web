@@ -59,8 +59,15 @@
                 </div>
         
                 <div class="d-flex justify-content-end gap-2 mb-3">
-                    <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">Back</nuxt-link>
-                    <button @click="updateCanvassDetail()" type="button" class="btn btn-success">Update</button>
+                    <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </nuxt-link>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-print"></i> Print
+                    </button>
+                    <button @click="updateCanvassDetail()" class="btn btn-success">
+                        <i class="fas fa-sync"></i> Update
+                    </button>
                 </div>
 
             </div>
@@ -114,7 +121,7 @@
                                 <tr>
                                     <td colspan="6" class="text-center">
                                         <button @click="onClickAddCanvassItem()" type="button" class="btn btn-primary btn-sm">
-                                            Add Item
+                                            <i class="fas fa-plus-circle"></i> Add Item
                                         </button>
                                     </td>
                                 </tr>
@@ -176,7 +183,7 @@
                     <div class="row">
                         <div class="col d-flex justify-content-center">
                             <button @click="onClickAddCanvassItem()" type="button" class="btn btn-primary btn-sm">
-                                Add Item
+                                <i class="fas fa-plus-circle"></i> Add Item
                             </button>
                         </div>
                     </div>
@@ -240,9 +247,15 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button ref="closeItemModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button v-if="isCanvassItemModalAdd" @click="createCanvassItem()" type="button" class="btn btn-primary">Add Item</button>
-                    <button v-else @click="updateCanvassItem()" type="button" class="btn btn-success">Edit Item</button>
+                    <button ref="closeItemModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-close"></i> Close
+                    </button>
+                    <button v-if="isCanvassItemModalAdd" @click="createCanvassItem()" type="button" class="btn btn-primary">
+                        <i class="fas fa-plus-circle"></i> Add Item
+                    </button>
+                    <button v-else @click="updateCanvassItem()" type="button" class="btn btn-success">
+                        <i class="fas fa-edit"></i> Edit Item
+                    </button>
                 </div>
                 </div>
             </div>

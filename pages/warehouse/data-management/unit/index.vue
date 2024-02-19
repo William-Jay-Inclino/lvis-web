@@ -6,7 +6,9 @@
                 <h2 class="text-warning">Unit Mgmt</h2>
             </div>
             <div class="col">
-                <nuxt-link class="btn btn-primary float-end" to="unit/create">Create Unit</nuxt-link>
+                <nuxt-link class="btn btn-primary float-end" to="unit/create">
+                    <i class="fas fa-plus"></i> Create Unit
+                </nuxt-link>
             </div>
         </div>
 
@@ -16,7 +18,9 @@
             <div class="col-lg-6">
                 <div class="input-group mb-3">
                     <input type="text" class="form-control" placeholder="Enter name..." v-model="searchValue">
-                    <button class="btn btn-primary" @click="search()">Search</button>
+                    <button class="btn btn-primary" @click="search()">
+                        <i class="fas fa-search"></i> Search
+                    </button>
                 </div>
             </div>
         </div>
@@ -35,15 +39,15 @@
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Name</th>
-                                        <th class="text-center">
+                                        <th class="bg-secondary text-white">Name</th>
+                                        <th class="text-center bg-secondary text-white">
                                             <i class="fas fa-cog"></i>
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr v-for="i in items">
-                                        <td> {{ i.name }} </td>
+                                        <td class="text-muted"> {{ i.name }} </td>
                                         <td class="text-center">
                                             <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
                                                 <i class="fas fa-edit text-primary"></i>

@@ -30,8 +30,12 @@
         </div>
 
         <div class="d-flex justify-content-end gap-2">
-            <button @click="search()" class="btn btn-primary">Search</button>
-            <nuxt-link class="btn btn-primary float-end" to="/warehouse/purchasing/canvass/create">Create Canvass</nuxt-link>
+            <button @click="search()" class="btn btn-primary">
+                <i class="fas fa-search"></i> Search
+            </button>
+            <nuxt-link class="btn btn-primary float-end" to="/warehouse/purchasing/canvass/create">
+                <i class="fas fa-plus"></i> Create Canvass
+            </nuxt-link>
         </div>
 
         <div class="h6wrapper mb-3 mt-3" v-show="!isInitialLoad">
@@ -57,22 +61,22 @@
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th class="text-muted">RC Number</th>
-                                            <th class="text-muted">Requisitioner</th>
-                                            <th class="text-muted">Date</th>
-                                            <th class="text-center text-muted">
+                                            <th class="bg-secondary text-white">RC Number</th>
+                                            <th class="bg-secondary text-white">Requisitioner</th>
+                                            <th class="bg-secondary text-white">Date</th>
+                                            <th class="text-center bg-secondary text-white">
                                                 <i class="fas fa-info-circle"></i>
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr v-for="i in items">
-                                            <td> {{ i.rc_number }} </td>
-                                            <td> {{ getFullname(i.requested_by!.firstname, i.requested_by!.middlename, i.requested_by!.lastname) }} </td>
-                                            <td> {{ formatDate(i.date_requested) }} </td>
+                                            <td class="text-muted"> {{ i.rc_number }} </td>
+                                            <td class="text-muted"> {{ getFullname(i.requested_by!.firstname, i.requested_by!.middlename, i.requested_by!.lastname) }} </td>
+                                            <td class="text-muted"> {{ formatDate(i.date_requested) }} </td>
                                             <td class="text-center">
                                                 <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light text-primary">
-                                                    View Details
+                                                    <i class="fas fa-edit"></i>
                                                 </button>
                                             </td>
                                         </tr>

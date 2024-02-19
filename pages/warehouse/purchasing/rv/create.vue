@@ -86,8 +86,12 @@
                         </div>
                 
                         <div class="d-flex justify-content-end gap-2">
-                            <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rv">Cancel</nuxt-link>
-                            <button @click="save()" type="button" class="btn btn-primary">Save</button>
+                            <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rv">
+                                <i class="fas fa-times"></i> Cancel
+                            </nuxt-link>
+                            <button @click="save()" type="button" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save
+                            </button>
                         </div>
 
                     </div>

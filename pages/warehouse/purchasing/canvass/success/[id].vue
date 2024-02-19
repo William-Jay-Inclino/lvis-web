@@ -130,9 +130,15 @@
                 <div class="row mb-3 pt-3">
                     <div class="col">
                         <div class="d-flex justify-content-end gap-2">
-                            <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">Go to list</nuxt-link>
-                            <nuxt-link class="btn btn-success" :to="`/warehouse/purchasing/canvass/${item.id}`">Update</nuxt-link>
-                            <nuxt-link class="btn btn-primary" to="/warehouse/purchasing/canvass/create">Add New</nuxt-link>
+                            <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">
+                                <i class="fas fa-search"></i> Search
+                            </nuxt-link>
+                            <nuxt-link class="btn btn-success" :to="`/warehouse/purchasing/canvass/${item.id}`">
+                                <i class="fas fa-sync"></i> Update
+                            </nuxt-link>
+                            <nuxt-link class="btn btn-primary" to="/warehouse/purchasing/canvass/create">
+                                <i class="fas fa-plus"></i> Add New
+                            </nuxt-link>
                         </div>
                     </div>
                 </div>

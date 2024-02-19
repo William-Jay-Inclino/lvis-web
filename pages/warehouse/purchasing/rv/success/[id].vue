@@ -166,9 +166,17 @@
                 <div class="row mb-3 pt-3">
                     <div class="col">
                         <div class="d-flex justify-content-end gap-2">
-                            <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rv">Go to list</nuxt-link>
-                            <nuxt-link class="btn btn-success" :to="`/warehouse/purchasing/rv/${item.id}`">Update</nuxt-link>
-                            <nuxt-link class="btn btn-primary" to="/warehouse/purchasing/rv/create">Add New</nuxt-link>
+                            <div class="d-flex justify-content-end gap-2">
+                                <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rv">
+                                    <i class="fas fa-search"></i> Search
+                                </nuxt-link>
+                                <nuxt-link class="btn btn-success" :to="`/warehouse/purchasing/rv/${item.id}`">
+                                    <i class="fas fa-sync"></i> Update
+                                </nuxt-link>
+                                <nuxt-link class="btn btn-primary" to="/warehouse/purchasing/rv/create">
+                                    <i class="fas fa-plus"></i> Add New
+                                </nuxt-link>
+                            </div>
                         </div>
                     </div>
                 </div>
