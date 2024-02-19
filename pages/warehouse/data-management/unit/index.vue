@@ -92,6 +92,7 @@
 
     import * as api from '~/composables/warehouse/unit/unit.api'
     import type { Unit } from '~/composables/warehouse/unit/unit.types';
+    import { PAGINATION_SIZE } from '~/utils/config'
 
 
     const router = useRouter()
@@ -100,7 +101,7 @@
         currentPage: 0,
         totalPages: 0,
         totalItems: 0,
-        pageSize: 15,
+        pageSize: PAGINATION_SIZE,
     }
     const searchField = ref('name') 
     const searchValue = ref(null) 

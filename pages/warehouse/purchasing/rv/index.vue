@@ -60,7 +60,7 @@
                     <div class="col">
 
 
-                        <div>
+                        <div v-if="!isMobile">
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
@@ -75,22 +75,23 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <!-- <tr v-for="i in items">
-                                            <td> {{ i.rc_number }} </td>
-                                            <td> {{ getFullname(i.requested_by!.firstname, i.requested_by!.middlename, i.requested_by!.lastname) }} </td>
-                                            <td> {{ moment(i.date_requested).format('YYYY-MM-DD') }} </td>
+                                        <tr v-for="i in items">
+                                            <td> {{ i.rv_number }} </td>
+                                            <td> {{ i.canvass.rc_number }} </td>
+                                            <td> {{ getFullname(i.canvass.requested_by!.firstname, i.canvass.requested_by!.middlename, i.canvass.requested_by!.lastname) }} </td>
+                                            <td> {{ moment(Number(i.date_requested)).format('YYYY-MM-DD') }} </td>
                                             <td class="text-center">
                                                 <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
                                                     <i class="fas fa-edit text-primary"></i>
                                                 </button>
                                             </td>
-                                        </tr> -->
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
 
-                        <!-- <div v-else>
+                        <div v-else>
 
                             <div v-for="i in items" class="table-responsive">
 
@@ -98,12 +99,16 @@
 
                                     <tbody>
                                         <tr>
+                                            <td width="50%" class="bg-secondary text-white"> RV Number </td>
+                                            <td class="bg-secondary text-white"> {{ i.rv_number }} </td>
+                                        </tr>
+                                        <tr>
                                             <td width="50%" class="bg-secondary text-white"> RC Number </td>
-                                            <td class="bg-secondary text-white"> {{ i.rc_number }} </td>
+                                            <td class="bg-secondary text-white"> {{ i.canvass.rc_number }} </td>
                                         </tr>
                                         <tr>
                                             <td class="text-muted"> Requisitioner </td>
-                                            <td> {{ getFullname(i.requested_by!.firstname, i.requested_by!.middlename, i.requested_by!.lastname) }} </td>
+                                            <td> {{ getFullname(i.canvass.requested_by!.firstname, i.canvass.requested_by!.middlename, i.canvass.requested_by!.lastname) }} </td>
                                         </tr>
                                         <tr>
                                             <td class="text-muted"> Date </td>
@@ -123,13 +128,13 @@
 
                             </div>
 
-                        </div> -->
+                        </div>
 
 
                     </div>
                 </div>
 
-                <!-- <div class="row">
+                <div class="row">
                     <div class="col">
                         <nav>
                             <ul class="pagination justify-content-center">
@@ -145,7 +150,7 @@
                             </ul>
                         </nav>
                     </div>
-                </div> -->
+                </div>
                 
 
             </div>
@@ -160,6 +165,9 @@
     import type { Canvass, Employee } from '~/composables/warehouse/canvass/canvass.types';
     import type { RV } from '~/composables/warehouse/rv/rv.types';
     import * as rvApi from '~/composables/warehouse/rv/rv.api'
+    import moment from 'moment'
+    import { getFullname } from '~/utils/helpers'
+    import { PAGINATION_SIZE } from '~/utils/config'
 
 
     definePageMeta({
@@ -178,7 +186,7 @@
         currentPage: 0,
         totalPages: 0,
         totalItems: 0,
-        pageSize: 15,
+        pageSize: PAGINATION_SIZE,
     }
     const pagination = ref({..._paginationInitial})
 
@@ -220,23 +228,59 @@
     }
 
     async function changePage(page: number) {
-        console.log('changePage')
-        // const { data, currentPage, totalItems, totalPages } = await api.findAll({
-        //     page,
-        //     pageSize: pagination.value.pageSize,
-        //     date_requested: null,
-        //     requested_by_id: null
+        const { data, currentPage, totalItems, totalPages } = await rvApi.findAll({
+            page,
+            pageSize: pagination.value.pageSize,
+            date_requested: null,
+            requested_by_id: null
             
-        // })
-        // items.value = data
-        // pagination.value.totalItems = totalItems
-        // pagination.value.currentPage = currentPage
-        // pagination.value.totalPages = totalPages
+        })
+        items.value = data
+        pagination.value.totalItems = totalItems
+        pagination.value.currentPage = currentPage
+        pagination.value.totalPages = totalPages
     }
 
     async function search() {
 
-        console.log('search')
+        isInitialLoad.value = false
+
+        items.value = []
+
+        // find by RV NUMBER
+        if(rv.value) {
+            const response = await rvApi.findByRvNumber(rv.value.rv_number)
+            if(response) {
+                items.value.push(response)
+                return
+            }
+            return
+        }
+
+        // find by RC NUMBER
+        if(canvass.value) {
+            const response = await rvApi.findByRcNumber(canvass.value.rc_number)
+            if(response) {
+                items.value.push(response)
+                return
+            }
+            return
+        }
+
+
+        // find by DATE REQUESTED and/or REQUISITIONER
+        const { data, currentPage, totalItems, totalPages } = await rvApi.findAll({
+            page: 1,
+            pageSize: pagination.value.pageSize,
+            date_requested: date_requested.value,
+            requested_by_id: requested_by.value ? requested_by.value.id : null
+            
+        })
+        items.value = data
+        pagination.value.totalItems = totalItems
+        pagination.value.currentPage = currentPage
+        pagination.value.totalPages = totalPages
+
     }
 
     function checkMobile() {

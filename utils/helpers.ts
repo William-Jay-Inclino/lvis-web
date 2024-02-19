@@ -1,3 +1,4 @@
+import moment from "moment";
 
 
 export function getFullname(firstname: string, middlename: string | null, lastname: string){
@@ -13,4 +14,13 @@ export function convertMiddleNameToInitial(middleName: string) {
     } else {
         return "";
     }
+}
+
+export function formatDate(d: any) {
+    let date = d;
+    if (!isNaN(d)) {
+        date = Number(d) < 10000000000 ? Number(d) * 1000 : Number(d);
+    }
+
+    return moment(date).format('YYYY-MM-DD');
 }

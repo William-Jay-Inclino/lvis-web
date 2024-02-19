@@ -25,3 +25,11 @@ export interface RV {
   status: number
   
 }
+
+
+export interface FindAllResponse {
+  data: RV[]
+  totalItems: number
+  currentPage: number
+  totalPages: number
+}

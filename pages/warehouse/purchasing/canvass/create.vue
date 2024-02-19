@@ -247,7 +247,7 @@
     import Swal from 'sweetalert2'
     import type { Brand, CreateCanvassInput, CreateCanvassItemSubInput, Employee } from '~/composables/warehouse/canvass/canvass.types';
     import moment from 'moment';
-    import { getFullname } from '~/composables/helpers'
+    import { getFullname } from '~/utils/helpers'
     import { useToast } from "vue-toastification";
 
     const isMobile = ref(false)

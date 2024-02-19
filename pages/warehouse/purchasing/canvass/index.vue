@@ -155,8 +155,9 @@
 
     import * as api from '~/composables/warehouse/canvass/canvass.api'
     import type { Canvass, Employee } from '~/composables/warehouse/canvass/canvass.types';
-    import { getFullname } from '~/composables/helpers'
+    import { getFullname } from '~/utils/helpers'
     import moment from 'moment'
+    import { PAGINATION_SIZE } from '~/utils/config'
     
 
     const router = useRouter()
@@ -170,7 +171,7 @@
         currentPage: 0,
         totalPages: 0,
         totalItems: 0,
-        pageSize: 15,
+        pageSize: PAGINATION_SIZE,
     }
     const pagination = ref({..._paginationInitial})
     
@@ -211,8 +212,8 @@
         const { data, currentPage, totalItems, totalPages } = await api.findAll({
             page,
             pageSize: pagination.value.pageSize,
-            date_requested: null,
-            requested_by_id: null
+            date_requested: date_requested.value,
+            requested_by_id: requested_by.value ? requested_by.value.id : null
             
         })
         items.value = data
@@ -225,9 +226,9 @@
 
         isInitialLoad.value = false
 
-        if(canvass.value) {
+        items.value = []
 
-            items.value = []
+        if(canvass.value) {
 
             const response = await api.findByRcNumber(canvass.value.rc_number)
 

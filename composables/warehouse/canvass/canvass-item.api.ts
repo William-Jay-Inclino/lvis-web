@@ -1,4 +1,5 @@
 import type { CreateCanvassItemInput, MutationResponse, UpdateCanvassItemInput } from "./canvass-item.types";
+import { sendRequest } from "~/utils/api"
 
 export async function create(input: CreateCanvassItemInput): Promise<MutationResponse> {
 
