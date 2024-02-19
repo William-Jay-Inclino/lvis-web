@@ -57,11 +57,11 @@
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th>RC Number</th>
-                                            <th>Requisitioner</th>
-                                            <th>Date</th>
-                                            <th class="text-center">
-                                                <i class="fas fa-cog"></i>
+                                            <th class="text-muted">RC Number</th>
+                                            <th class="text-muted">Requisitioner</th>
+                                            <th class="text-muted">Date</th>
+                                            <th class="text-center text-muted">
+                                                <i class="fas fa-info-circle"></i>
                                             </th>
                                         </tr>
                                     </thead>
@@ -69,10 +69,10 @@
                                         <tr v-for="i in items">
                                             <td> {{ i.rc_number }} </td>
                                             <td> {{ getFullname(i.requested_by!.firstname, i.requested_by!.middlename, i.requested_by!.lastname) }} </td>
-                                            <td> {{ moment(i.date_requested).format('YYYY-MM-DD') }} </td>
+                                            <td> {{ formatDate(i.date_requested) }} </td>
                                             <td class="text-center">
-                                                <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
-                                                    <i class="fas fa-edit text-primary"></i>
+                                                <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light text-primary">
+                                                    View Details
                                                 </button>
                                             </td>
                                         </tr>
@@ -102,8 +102,8 @@
                                         </tr>
                                         <tr>
                                             <td colspan="2" class="text-center">
-                                                <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light w-100">
-                                                    <i class="fas fa-edit text-primary"></i>
+                                                <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light text-primary w-100">
+                                                    View Details
                                                 </button>
                                             </td>
                                         </tr>
@@ -155,7 +155,7 @@
 
     import * as api from '~/composables/warehouse/canvass/canvass.api'
     import type { Canvass, Employee } from '~/composables/warehouse/canvass/canvass.types';
-    import { getFullname } from '~/utils/helpers'
+    import { getFullname, formatDate } from '~/utils/helpers'
     import moment from 'moment'
     import { PAGINATION_SIZE } from '~/utils/config'
     

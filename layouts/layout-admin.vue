@@ -84,7 +84,7 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/canvass">Canvass</nuxt-link></li>
-                            <li><a class="dropdown-item" href="#">RV</a></li>
+                            <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/rv">RV</nuxt-link></li>
                             <li><a class="dropdown-item" href="#">SPR</a></li>
                             <li><a class="dropdown-item" href="#">JO</a></li>
                             <li><a class="dropdown-item" href="#">MEQS</a></li>
@@ -145,6 +145,7 @@
         box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
         height: 100vh;
         padding: 0px 20px 20px 20px;
+        overflow-y: auto;
     }
 
 </style>

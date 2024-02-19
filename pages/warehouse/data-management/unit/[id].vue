@@ -4,7 +4,7 @@
         <h2 class="text-warning">Update Unit</h2>
         <hr>
         
-        <form @submit.prevent="update()" class="row justify-content-center pt-5">
+        <form @submit.prevent="update()" class="row justify-content-center pt-3">
 
             <div class="col-lg-6">
                 <div class="mb-3">

@@ -21,7 +21,7 @@
 
                         <div class="mb-3">
                             <label class="form-label">
-                                Date Requested <span class="text-danger">*</span>
+                                Date
                             </label>
                             <input type="date" :value="formData.date_requested" class="form-control" disabled>
                         </div>

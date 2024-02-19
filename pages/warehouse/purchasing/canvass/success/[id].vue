@@ -127,7 +127,7 @@
                     </div>
                 </div>
 
-                <div class="row mb-3">
+                <div class="row mb-3 pt-3">
                     <div class="col">
                         <div class="d-flex justify-content-end gap-2">
                             <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">Go to list</nuxt-link>
@@ -152,7 +152,7 @@
     })
 
     import * as api from '~/composables/warehouse/canvass/canvass.api'
-    import type { CreateCanvassInput, Canvass } from '~/composables/warehouse/canvass/canvass.types';
+    import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
 
     const route = useRoute()
     const item = ref<Canvass | undefined>()

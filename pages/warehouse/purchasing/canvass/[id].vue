@@ -30,7 +30,7 @@
 
                 <div class="mb-3">
                     <label class="form-label">
-                        Date Requested
+                        Date
                     </label>
                     <input type="date" :value="canvass.date_requested" class="form-control" disabled>
                 </div>

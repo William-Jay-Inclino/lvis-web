@@ -65,12 +65,12 @@
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th>RV Number</th>
-                                            <th>RC Number</th>
-                                            <th>Requisitioner</th>
-                                            <th>Date</th>
-                                            <th class="text-center">
-                                                <i class="fas fa-cog"></i>
+                                            <th class="text-muted">RV Number</th>
+                                            <th class="text-muted">RC Number</th>
+                                            <th class="text-muted">Requisitioner</th>
+                                            <th class="text-muted">Date</th>
+                                            <th class="text-center text-muted">
+                                                <i class="fas fa-info-circle"></i>
                                             </th>
                                         </tr>
                                     </thead>
@@ -80,9 +80,10 @@
                                             <td> {{ i.canvass.rc_number }} </td>
                                             <td> {{ getFullname(i.canvass.requested_by!.firstname, i.canvass.requested_by!.middlename, i.canvass.requested_by!.lastname) }} </td>
                                             <td> {{ moment(Number(i.date_requested)).format('YYYY-MM-DD') }} </td>
+                                            <td> {{ formatDate(i.date_requested) }} </td>
                                             <td class="text-center">
-                                                <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
-                                                    <i class="fas fa-edit text-primary"></i>
+                                                <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light text-primary">
+                                                    View Details
                                                 </button>
                                             </td>
                                         </tr>
@@ -103,8 +104,8 @@
                                             <td class="bg-secondary text-white"> {{ i.rv_number }} </td>
                                         </tr>
                                         <tr>
-                                            <td width="50%" class="bg-secondary text-white"> RC Number </td>
-                                            <td class="bg-secondary text-white"> {{ i.canvass.rc_number }} </td>
+                                            <td class="text-muted"> RC Number </td>
+                                            <td> {{ i.canvass.rc_number }} </td>
                                         </tr>
                                         <tr>
                                             <td class="text-muted"> Requisitioner </td>
@@ -116,8 +117,8 @@
                                         </tr>
                                         <tr>
                                             <td colspan="2" class="text-center">
-                                                <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light w-100">
-                                                    <i class="fas fa-edit text-primary"></i>
+                                                <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light text-primary w-100">
+                                                    View Details
                                                 </button>
                                             </td>
                                         </tr>
@@ -166,7 +167,7 @@
     import type { RV } from '~/composables/warehouse/rv/rv.types';
     import * as rvApi from '~/composables/warehouse/rv/rv.api'
     import moment from 'moment'
-    import { getFullname } from '~/utils/helpers'
+    import { getFullname, formatDate } from '~/utils/helpers'
     import { PAGINATION_SIZE } from '~/utils/config'
 
 

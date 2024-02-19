@@ -26,7 +26,7 @@
     import { ref } from 'vue'
     import axios from 'axios'
     import { AxiosError } from 'axios'
-    import { API_URL } from '~/composables/config'
+    import { API_URL } from '~/utils/config'
 
     const router = useRouter();
     const email = ref('');
