@@ -370,6 +370,108 @@ export async function fetchFormDataInCreate(): Promise<{
 
 }
 
+export async function fetchFormDataInUpdate(id: string): Promise<{
+    employees: Employee[],
+    rv: RV | undefined
+}> {
+    const query = `
+        query {
+            rv(id: "${id}") {
+                id
+                rv_number
+                canvass {
+                    rc_number
+                    requested_by {
+                        id
+                        firstname
+                        middlename
+                        lastname
+                    }
+                    purpose
+                }
+                classification {
+                    id
+                    name
+                }
+                supervisor {
+                    id
+                    firstname
+                    middlename
+                    lastname
+                }
+                date_requested
+                work_order_no
+                work_order_date
+                notes
+                status
+                rv_approvers {
+                    approver {
+                        id
+                        firstname
+                        middlename
+                        lastname
+                    }
+                    approver_proxy {
+                        id
+                        firstname
+                        middlename
+                        lastname
+                    }
+                    date_approval 
+                    notes
+                    status
+                    label
+                    order
+                }
+
+            },
+            employees(page: 1, pageSize: 50) {
+                data {
+                    id
+                    firstname
+                    middlename
+                    lastname
+                }
+            }
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        let employees = []
+
+        if(!response.data || !response.data.data) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+
+        const data = response.data.data
+
+        if(!data.rv) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+
+        const rv = data.rv
+
+        if(data.employees && data.employees.data) {
+            employees = response.data.data.employees.data
+        }
+
+        return {
+            rv,
+            employees,
+        }
+
+    } catch (error) {
+        console.error(error);
+        return {
+            rv: undefined,
+            employees: [],
+        }
+    }
+}
+
 export async function create(input: CreateRvInput): Promise<MutationResponse> {
 
     let work_order_no = null

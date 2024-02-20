@@ -79,6 +79,14 @@ export interface CreateRvInput {
   approvers: RvApproverSettings[];
 }
 
+export interface UpdateRvInput {
+  supervisor: Employee | null;
+  classification: Classification | null;
+  work_order_no: string;
+  work_order_date: string | null;
+  notes: string;
+}
+
 
 export interface RvApproverSettings {
   approver_id: string,

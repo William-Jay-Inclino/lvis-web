@@ -274,6 +274,7 @@
     import Swal from 'sweetalert2'
     import type { CanvassItem, CreateCanvassItemInput, UpdateCanvassItemInput } from '~/composables/warehouse/canvass/canvass-item.types';
     import { useToast } from "vue-toastification";
+    import { formatToValidHtmlDate } from '~/utils/helpers'
 
     definePageMeta({
         layout: "layout-admin"
@@ -328,7 +329,7 @@
         let response = await canvassApi.fetchFormDataInUpdate(route.params.id as string)
 
         if(response.canvass) {
-            response.canvass.date_requested = moment(response.canvass.date_requested).format('YYYY-MM-DD')
+            response.canvass.date_requested = formatToValidHtmlDate(response.canvass.date_requested)
             
             const requestedBy = response.canvass.requested_by 
             requestedBy!['fullname'] = getFullname(requestedBy!.firstname, requestedBy!.middlename, requestedBy!.lastname)

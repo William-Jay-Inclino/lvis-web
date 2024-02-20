@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <h2 class="text-warning">Create RV</h2>
+    <div v-if="rvData && rvData.canvass">
+        <h2 class="text-warning">Update RV</h2>
         <hr>
 
         <div class="row pb-3">
@@ -20,16 +20,7 @@
                             <label class="form-label">
                                 RC Number <span class="text-danger">*</span>
                             </label>
-                            <client-only>
-                                <v-select @option:selected="onRcNumberSelected" :options="canvasses" label="rc_number" v-model="rvData.canvass">
-                                    <template v-slot:option="option">
-                                        <span v-if="option.is_referenced" class="text-danger">{{ option.rc_number }}</span>
-                                        <span v-else>{{ option.rc_number }}</span>
-                                    </template>
-                                </v-select>
-                            </client-only>
-                            <nuxt-link v-if="rvData.canvass" class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/canvass/' + rvData.canvass.id" target="_blank">View info</nuxt-link>
-                            <small class="text-danger" v-if="rvDataErrors.canvass"> This field is required </small>
+                            <input type="text" class="form-control" :value="rvData.canvass.rc_number" disabled>
                         </div>
 
                         <div class="mb-3">
@@ -37,21 +28,18 @@
                                 Requisitioner
                             </label>
                             <input 
-                                v-if="rvData.canvass" 
-                                :value="getFullname(rvData.canvass.requested_by!.firstname, rvData.canvass.requested_by!.middlename, rvData.canvass.requested_by!.lastname)" 
+                                :value="rvData.canvass.requested_by?.fullname" 
                                 type="text" 
                                 class="form-control" 
                                 disabled
                             >
-                            <input v-else type="text" class="form-control" disabled>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">
                                 Purpose
                             </label>
-                            <textarea v-if="rvData.canvass" :value="rvData.canvass.purpose" class="form-control" rows="3" disabled> </textarea>
-                            <textarea v-else class="form-control" rows="3" disabled> </textarea>
+                            <textarea :value="rvData.canvass.purpose" class="form-control" rows="3" disabled> </textarea>
                         </div>
 
                         <div class="mb-3">
@@ -89,8 +77,8 @@
                             <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rv">
                                 <i class="fas fa-times"></i> Cancel
                             </nuxt-link>
-                            <button @click="save()" type="button" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Save
+                            <button @click="update()" type="button" class="btn btn-success">
+                                <i class="fas fa-sync"></i> Update
                             </button>
                         </div>
 
@@ -114,36 +102,26 @@
 
     import Swal from 'sweetalert2'
     import moment from 'moment';
-    import { getFullname } from '~/utils/helpers'
+    import { getFullname, formatToValidHtmlDate } from '~/utils/helpers'
     import { useToast } from "vue-toastification";
     import * as rvApi from '~/composables/warehouse/rv/rv.api'
-    import type { Canvass, Employee } from '~/composables/warehouse/canvass/canvass.types';
-    import type { CreateRvInput } from '~/composables/warehouse/rv/rv.types';
+    import type { Employee } from '~/composables/warehouse/canvass/canvass.types';
+    import type { RV, UpdateRvInput } from '~/composables/warehouse/rv/rv.types';
 
+    const route = useRoute()
+    const router = useRouter();
     const isMobile = ref(false)
     const mobileWidth = 768
-    const router = useRouter();
     const toast = useToast();
     const today = moment().format('YYYY-MM-DD')
 
     const _rvDataErrorsInitial = {
-        canvass: false,
         supervisor: false,
     }
 
     const rvDataErrors = ref({..._rvDataErrorsInitial})
 
-    let currentCanvass: Canvass | null = null
-
-    // const rvData = ref<CreateRvInput>({
-    //     supervisor: null,
-    //     classification: null,
-    //     date_requested: today,
-    //     work_order_no: '',
-    //     work_order_date: null,
-    //     notes: '',
-    //     approvers: []
-    // })
+    const rvData = ref<RV>({} as RV)
 
     const employees = ref<Employee[]>([])
 
@@ -153,22 +131,44 @@
 
         window.addEventListener('resize', checkMobile);
 
-        // const response = await rvApi.fetchFormDataInCreate()
+        let response = await rvApi.fetchFormDataInUpdate(route.params.id as string)
 
-        // canvasses.value = response.canvasses
+        if(response.rv) {
+            setRvData(response.rv) 
+        }
 
-        // employees.value = response.employees.map((i) => {
-        //     i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
-        //     return i
-        // })
-
-        // rvData.value.approvers = response.approvers
+        employees.value = response.employees.map((i) => {
+            i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
+            return i
+        })
 
     })
 
-    async function save() {
+    function setRvData(data: RV) {
+        data.date_requested = formatToValidHtmlDate(data.date_requested)
+            
+        const requestedBy = data.canvass.requested_by
+        requestedBy!['fullname'] = getFullname(requestedBy!.firstname, requestedBy!.middlename, requestedBy!.lastname)
 
-        console.log('save')
+        const supervisor = data.supervisor
+        supervisor['fullname'] = getFullname(supervisor.firstname, supervisor.middlename, supervisor.lastname)
+
+        if(data.work_order_date) {
+            data.work_order_date = moment(data.date_requested).format('YYYY-MM-DD')
+        }
+
+        data.rv_approvers.map(i => {
+            i.date_approval = moment(i.date_approval).format('YYYY-MM-DD')
+            return i
+        })
+
+        rvData.value = data
+
+    }
+
+    async function update() {
+
+        console.log('update')
 
         // if(!isValid()){
         //     return 

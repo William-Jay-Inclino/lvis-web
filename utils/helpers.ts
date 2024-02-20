@@ -30,3 +30,14 @@ export function formatDate(d: any) {
     // return moment(date).format('YYYY-MM-DD');
     return moment(date).format('DD MMM YYYY');
 }
+
+export function formatToValidHtmlDate(d: any): string {
+
+    let date = d;
+    if (!isNaN(d)) {
+        date = Number(d) < 10000000000 ? Number(d) * 1000 : Number(d);
+    }
+
+    return moment(date).format('YYYY-MM-DD')
+
+}
