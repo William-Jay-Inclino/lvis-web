@@ -367,26 +367,30 @@ export async function fetchDataInSearchFilters(): Promise<{
 
 export async function create(input: CreateCanvassInput): Promise<MutationResponse> {
 
-
-
     const canvassItems = input.canvass_items.map(item => {
 
         let brandId = null 
         let unitId = null 
+        let brandName = '' 
+        let unitName = '' 
     
         if(item.brand) {
             brandId = `"${item.brand.id}"`
+            brandName = `"${item.brand.name}"`
         }
 
         if(item.unit) {
             unitId = `"${item.unit.id}"`
+            unitName = `"${item.unit.name}"`
         }
 
         return `
         {
           description: "${item.description}"
           brand_id: ${brandId}
+          brand_name: ${brandName}
           unit_id: ${unitId}
+          unit_name: ${unitName}
           quantity: ${item.quantity}
         }`;
     }).join(', ');
@@ -399,6 +403,7 @@ export async function create(input: CreateCanvassInput): Promise<MutationRespons
                     purpose: "${input.purpose}"
                     notes: "${input.notes}"
                     requested_by_id: "${input.requested_by?.id}"
+                    requested_by_fullname: "${input.requested_by?.fullname}"
                     canvass_items: [${canvassItems}]
                 }
             ) {
@@ -458,6 +463,7 @@ export async function update(id: string, input: UpdateCanvassInput): Promise<Mut
                     purpose: "${input.purpose}"
                     notes: "${input.notes}"
                     requested_by_id: "${input.requested_by?.id}"
+                    requested_by_fullname: "${input.requested_by?.fullname}"
                 }
             ) {
                 id
