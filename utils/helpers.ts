@@ -18,6 +18,8 @@ export function convertMiddleNameToInitial(middleName: string) {
 
 export function formatDate(d: any) {
 
+    console.log('d', d)
+
     if(!d) {
         return ""
     }

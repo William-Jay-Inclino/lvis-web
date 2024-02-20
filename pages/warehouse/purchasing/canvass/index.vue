@@ -161,11 +161,10 @@
     import type { Canvass, Employee } from '~/composables/warehouse/canvass/canvass.types';
     import { getFullname, formatDate } from '~/utils/helpers'
     import moment from 'moment'
-    import { PAGINATION_SIZE } from '~/utils/config'
+    import { MOBILE_WIDTH, PAGINATION_SIZE } from '~/utils/config'
     
 
     const router = useRouter()
-    const mobileWidth = 768
 
     // flags
     const isMobile = ref(false)
@@ -193,7 +192,7 @@
      
 
     onMounted( async() => {
-        isMobile.value = window.innerWidth < mobileWidth
+        isMobile.value = window.innerWidth < MOBILE_WIDTH
 
         window.addEventListener('resize', checkMobile);
 
@@ -261,7 +260,7 @@
     }
 
     function checkMobile() {
-        isMobile.value = window.innerWidth < mobileWidth
+        isMobile.value = window.innerWidth < MOBILE_WIDTH
     }
 
 </script>

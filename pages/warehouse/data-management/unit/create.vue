@@ -13,7 +13,7 @@
         
                 <div class="d-flex justify-content-end gap-2">
                     <nuxt-link class="btn btn-secondary" to="/warehouse/data-management/unit">
-                        <i class="fas fa-arrow-left"></i> Back
+                        <i class="fas fa-chevron-left"></i> Back
                     </nuxt-link>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i> Save

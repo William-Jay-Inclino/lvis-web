@@ -1,5 +1,5 @@
 <template>
-    <div v-if="canvass">
+    <div v-if="canvass" class="mb-3">
 
         <h2 class="text-warning">Update Canvass</h2>
         <hr>
@@ -8,10 +8,14 @@
             <div class="col">
                 <ul class="nav nav-tabs justify-content-center">
                     <li class="nav-item" @click="isCanvassDetailForm = true">
-                        <a class="nav-link" :class="{'active': isCanvassDetailForm}" href="#">Update Canvass Detail</a>
+                        <a class="nav-link" :class="{'active': isCanvassDetailForm}" href="#">
+                            <i class="fas fa-info-circle"></i> Canvass Detail
+                        </a>
                     </li>
                     <li class="nav-item" @click="isCanvassDetailForm = false">
-                        <a class="nav-link" :class="{'active': !isCanvassDetailForm}" href="#">Update Canvass Items</a>
+                        <a class="nav-link" :class="{'active': !isCanvassDetailForm}" href="#">
+                            <i class="fas fa-shopping-cart"></i> Canvass Items
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -42,7 +46,7 @@
                     <client-only>
                         <v-select :options="employees" label="fullname" v-model="canvass.requested_by"></v-select>
                     </client-only>
-                    <!-- <small class="text-danger"> This field is required </small> -->
+                    <small class="text-danger fst-italic" v-if="canvassErrors.requisitioner"> This field is required </small>
                 </div>
 
                 <div class="mb-3">
@@ -50,7 +54,7 @@
                         Purpose <span class="text-danger">*</span>
                     </label>
                     <textarea class="form-control" rows="3" v-model="canvass.purpose"></textarea>
-                    <!-- <small class="text-danger" v-show="formDataErrors.purpose"> This field is required </small> -->
+                    <small class="text-danger fst-italic" v-show="canvassErrors.purpose"> This field is required </small>
                 </div>
 
                 <div class="mb-3">
@@ -58,9 +62,9 @@
                     <textarea class="form-control" rows="3" v-model="canvass.notes"></textarea>
                 </div>
         
-                <div class="d-flex justify-content-end gap-2 mb-3">
+                <div class="d-flex justify-content-end gap-2 pt-3">
                     <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">
-                        <i class="fas fa-arrow-left"></i> Back
+                        <i class="fas fa-chevron-left"></i> Back
                     </nuxt-link>
                     <button class="btn btn-primary">
                         <i class="fas fa-print"></i> Print
@@ -84,16 +88,16 @@
     
                             <thead>
                                 <tr>
-                                    <th class="text-muted">No.</th>
-                                    <th class="text-muted">
+                                    <th class="bg-secondary text-white">No.</th>
+                                    <th class="bg-secondary text-white">
                                         Description <span class="text-danger"> * </span>
                                     </th>
-                                    <th class="text-muted">Brand</th>
-                                    <th class="text-muted">Unit</th>
-                                    <th class="text-muted">
+                                    <th class="bg-secondary text-white">Brand</th>
+                                    <th class="bg-secondary text-white">Unit</th>
+                                    <th class="bg-secondary text-white">
                                         Quantity <span class="text-danger"> * </span>
                                     </th>
-                                    <th class="text-muted text-center">
+                                    <th class="bg-secondary text-white text-center">
                                         <i class="fas fa-cog"></i>
                                     </th>
                                 </tr>
@@ -107,10 +111,10 @@
                                     <td class="text-muted"> {{ item.unit ? item.unit.name : 'N/A' }} </td>
                                     <td class="text-muted"> {{ item.quantity }} </td>
                                     <td class="text-muted text-center">
-                                        <button @click="removeCanvassItem(i)" class="btn btn-sm btn-light">
+                                        <button @click="removeCanvassItem(i)" class="btn btn-sm btn-light w-50">
                                             <i class="fas fa-trash text-danger"></i>
                                         </button>
-                                        <button @click="onClickEditCanvassItem(i)" class="btn btn-sm btn-light">
+                                        <button @click="onClickEditCanvassItem(i)" class="btn btn-sm btn-light w-50">
                                             <i class="fas fa-edit text-primary"></i>
                                         </button>
                                     </td>
@@ -162,13 +166,12 @@
                                             <td> {{ item.quantity }} </td>
                                         </tr>
                                         <tr class="text-center">
-                                            <td>
-                                                <button @click="removeCanvassItem(i)" class="btn btn-sm btn-light w-100">
+                                            <td colspan="2">
+                                                <button @click="removeCanvassItem(i)" class="btn btn-sm btn-light w-50">
                                                     <i class="fas fa-trash text-danger"></i>
                                                 </button>
-                                            </td>
-                                            <td>
-                                                <button @click="onClickEditCanvassItem(i)" class="btn btn-sm btn-light w-100">
+
+                                                <button @click="onClickEditCanvassItem(i)" class="btn btn-sm btn-light w-50">
                                                     <i class="fas fa-edit text-primary"></i>
                                                 </button>
                                             </td>
@@ -193,8 +196,10 @@
                 </div>
     
     
-                <div class="d-flex justify-content-end gap-2 mb-3">
-                    <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">Back</nuxt-link>
+                <div class="d-flex justify-content-end gap-2 mb-3 pt-3">
+                    <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">
+                        <i class="fas fa-chevron-left"></i> Back
+                    </nuxt-link>
                 </div>
             </div>
 
@@ -275,6 +280,7 @@
     import type { CanvassItem, CreateCanvassItemInput, UpdateCanvassItemInput } from '~/composables/warehouse/canvass/canvass-item.types';
     import { useToast } from "vue-toastification";
     import { formatToValidHtmlDate } from '~/utils/helpers'
+import { MOBILE_WIDTH } from '~/utils/config';
 
     definePageMeta({
         layout: "layout-admin"
@@ -293,7 +299,6 @@
     const toast = useToast();
     const route = useRoute()
     const isMobile = ref(false)
-    const mobileWidth = 768
     const closeItemModal = ref<HTMLButtonElement>()
     const canvassItemModalBtn = ref<HTMLButtonElement>()
     const isCanvassItemModalAdd = ref(false)
@@ -322,7 +327,7 @@
 
     onMounted( async() => {
 
-        isMobile.value = window.innerWidth < mobileWidth
+        isMobile.value = window.innerWidth < MOBILE_WIDTH
 
         window.addEventListener('resize', checkMobile);
 
@@ -346,7 +351,7 @@
     })
 
     function checkMobile() {
-        isMobile.value = window.innerWidth < mobileWidth
+        isMobile.value = window.innerWidth < MOBILE_WIDTH
     }
 
     async function updateCanvassDetail() {

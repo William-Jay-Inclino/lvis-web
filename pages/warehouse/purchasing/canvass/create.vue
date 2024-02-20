@@ -33,7 +33,7 @@
                             <client-only>
                                 <v-select :options="employees" label="fullname" v-model="formData.requested_by"></v-select>
                             </client-only>
-                            <small class="text-danger" v-show="formDataErrors.requested_by"> This field is required </small>
+                            <small class="text-danger fst-italic" v-show="formDataErrors.requested_by"> This field is required </small>
                         </div>
 
                         <div class="mb-3">
@@ -41,7 +41,7 @@
                                 Purpose <span class="text-danger">*</span>
                             </label>
                             <textarea v-model="formData.purpose" class="form-control" rows="3"></textarea>
-                            <small class="text-danger" v-show="formDataErrors.purpose"> This field is required </small>
+                            <small class="text-danger fst-italic" v-show="formDataErrors.purpose"> This field is required </small>
                         </div>
 
                         <div class="mb-3">
@@ -51,10 +51,10 @@
                 
                         <div class="d-flex justify-content-end gap-2">
                             <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">
-                                <i class="fas fa-times"></i> Cancel
+                                <i class="fas fa-chevron-left"></i> Back
                             </nuxt-link>
                             <button @click="onClickNextStep1()" type="button" class="btn btn-primary">
-                                <i class="fas fa-arrow-right"></i> Next
+                                <i class="fas fa-chevron-right"></i> Next
                             </button>
                         </div>
 
@@ -174,7 +174,7 @@
 
                         <div class="d-flex justify-content-end gap-2 mb-3">
                             <button @click="currentStep--" type="button" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left"></i> Back
+                                <i class="fas fa-chevron-left"></i> Back
                             </button>
                             <button @click="save()" :disabled="formData.canvass_items.length === 0" type="button" class="btn btn-primary">
                                 <i class="fas fa-save"></i> Save
@@ -203,7 +203,7 @@
                             Description <span class="text-danger">*</span>
                         </label>
                         <textarea v-model="addCanvassItemData.description" class="form-control" rows="3"></textarea>
-                        <small class="text-danger" v-show="addCanvassItemDataErrors.description">
+                        <small class="text-danger fst-italic" v-show="addCanvassItemDataErrors.description">
                             This field is required
                         </small>
                     </div>
@@ -224,7 +224,7 @@
                             Quantity <span class="text-danger">*</span>
                         </label>
                         <input v-model="addCanvassItemData.quantity" type="number" class="form-control">
-                        <small class="text-danger" v-show="addCanvassItemDataErrors.quantity">
+                        <small class="text-danger fst-italic" v-show="addCanvassItemDataErrors.quantity">
                             This field is required and quantity must be greater than 0
                         </small>
                     </div>
@@ -261,9 +261,9 @@
     import moment from 'moment';
     import { getFullname } from '~/utils/helpers'
     import { useToast } from "vue-toastification";
+import { MOBILE_WIDTH } from '~/utils/config';
 
     const isMobile = ref(false)
-    const mobileWidth = 768
     const router = useRouter();
     const toast = useToast();
     const currentStep = ref(1)
@@ -304,7 +304,7 @@
 
     onMounted( async() => {
 
-        isMobile.value = window.innerWidth < mobileWidth
+        isMobile.value = window.innerWidth < MOBILE_WIDTH
 
         window.addEventListener('resize', checkMobile);
 
@@ -412,7 +412,7 @@
     }
 
     function checkMobile() {
-        isMobile.value = window.innerWidth < mobileWidth
+        isMobile.value = window.innerWidth < MOBILE_WIDTH
     }
 
 </script>

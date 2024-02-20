@@ -159,15 +159,15 @@
 
     import * as api from '~/composables/warehouse/canvass/canvass.api'
     import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
+    import { MOBILE_WIDTH } from '~/utils/config';
 
     const route = useRoute()
     const item = ref<Canvass | undefined>()
     const isMobile = ref(false)
-    const mobileWidth = 768
 
     onMounted( async() => {
 
-        isMobile.value = window.innerWidth < mobileWidth
+        isMobile.value = window.innerWidth < MOBILE_WIDTH
 
         window.addEventListener('resize', checkMobile);
 
@@ -176,7 +176,7 @@
     })
 
     function checkMobile() {
-        isMobile.value = window.innerWidth < mobileWidth
+        isMobile.value = window.innerWidth < MOBILE_WIDTH
     }
 
 

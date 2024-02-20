@@ -6,3 +6,5 @@ export const GRAPHQL_API_URL = process.env.GRAPHQL_API_URL || 'http://localhost:
 export const PAGINATION_SIZE = 15
 
 export const APPROVER_SUPERVISOR_LABEL = 'Imd. Sup.'
+
+export const MOBILE_WIDTH = 768

@@ -1,6 +1,6 @@
 import { APPROVER_SUPERVISOR_LABEL } from "~/utils/config";
 import type { Canvass, Classification, Employee } from "../canvass/canvass.types";
-import type { CreateRvInput, FindAllResponse, MutationResponse, RV, RvApproverSettings } from "./rv.types";
+import type { CreateRvInput, FindAllResponse, MutationResponse, RV, RvApproverSettings, UpdateRvInput } from "./rv.types";
 import { sendRequest } from "~/utils/api"
 
 export async function fetchDataInSearchFilters(): Promise<{
@@ -372,6 +372,7 @@ export async function fetchFormDataInCreate(): Promise<{
 
 export async function fetchFormDataInUpdate(id: string): Promise<{
     employees: Employee[],
+    classifications: Classification[],
     rv: RV | undefined
 }> {
     const query = `
@@ -432,6 +433,10 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                     middlename
                     lastname
                 }
+            },
+            classifications{
+                id
+                name
             }
         }
     `;
@@ -440,7 +445,8 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
         const response = await sendRequest(query);
         console.log('response', response)
 
-        let employees = []
+        let employees: Employee[] = []
+        let classifications: Classification[] = []
 
         if(!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
@@ -458,9 +464,14 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
             employees = response.data.data.employees.data
         }
 
+        if(data.classifications) {
+            classifications = response.data.data.classifications
+        }
+
         return {
             rv,
             employees,
+            classifications,
         }
 
     } catch (error) {
@@ -468,6 +479,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
         return {
             rv: undefined,
             employees: [],
+            classifications: [],
         }
     }
 }
@@ -554,6 +566,83 @@ export async function create(input: CreateRvInput): Promise<MutationResponse> {
         return {
             success: false,
             msg: 'Failed to create RV. Please contact system administrator'
+        };
+    }
+}
+
+export async function update(id: string, input: UpdateRvInput): Promise<MutationResponse> {
+
+    let work_order_no = null
+    let work_order_date = null
+    let classification_id = null
+
+    if(input.work_order_no) {
+        work_order_no = `"${input.work_order_no}"`
+    }
+
+    if(input.work_order_date) {
+        work_order_date = `"${input.work_order_date}"`
+    }
+
+    if(input.classification) {
+        classification_id = `"${input.classification.id}"`
+    }
+
+    const mutation = `
+        mutation {
+            updateRv(
+                id: "${id}",
+                input: {
+                    supervisor_id: "${input.supervisor?.id}"
+                    work_order_no: ${work_order_no}
+                    work_order_date: ${work_order_date}
+                    classification_id: ${classification_id}
+                    notes: "${input.notes}"
+                }
+            ) {
+                id
+                rv_approvers {
+                    approver {
+                        id
+                        firstname
+                        middlename
+                        lastname
+                    }
+                    approver_proxy {
+                        id
+                        firstname
+                        middlename
+                        lastname
+                    }
+                    date_approval 
+                    notes
+                    status
+                    label
+                    order
+                }
+            }
+        }`;
+
+    try {
+        const response = await sendRequest(mutation);
+        console.log('response', response);
+
+        if(response.data && response.data.data && response.data.data.updateRv) {
+            return {
+                success: true,
+                msg: 'RV updated successfully!',
+                data: response.data.data.updateRv 
+            };
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+    } catch (error) {
+        console.error(error);
+        
+        return {
+            success: false,
+            msg: 'Failed to update RV. Please contact system administrator'
         };
     }
 }

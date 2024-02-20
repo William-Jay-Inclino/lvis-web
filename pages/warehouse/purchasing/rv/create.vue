@@ -29,7 +29,7 @@
                                 </v-select>
                             </client-only>
                             <nuxt-link v-if="rvData.canvass" class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/canvass/' + rvData.canvass.id" target="_blank">View info</nuxt-link>
-                            <small class="text-danger" v-if="rvDataErrors.canvass"> This field is required </small>
+                            <small class="text-danger fst-italic" v-if="rvDataErrors.canvass"> This field is required </small>
                         </div>
 
                         <div class="mb-3">
@@ -61,7 +61,7 @@
                             <client-only>
                                 <v-select :options="employees" label="fullname" v-model="rvData.supervisor"></v-select>
                             </client-only>
-                            <small class="text-danger" v-if="rvDataErrors.supervisor"> This field is required </small>
+                            <small class="text-danger fst-italic" v-if="rvDataErrors.supervisor"> This field is required </small>
                         </div>
 
                         <div class="mb-3">
@@ -96,7 +96,7 @@
                 
                         <div class="d-flex justify-content-end gap-2">
                             <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rv">
-                                <i class="fas fa-times"></i> Cancel
+                                <i class="fas fa-chevron-left"></i> Back
                             </nuxt-link>
                             <button @click="save()" type="button" class="btn btn-primary">
                                 <i class="fas fa-save"></i> Save
@@ -128,9 +128,9 @@
     import * as rvApi from '~/composables/warehouse/rv/rv.api'
     import type { Canvass, Classification, Employee } from '~/composables/warehouse/canvass/canvass.types';
     import type { CreateRvInput } from '~/composables/warehouse/rv/rv.types';
+import { MOBILE_WIDTH } from '~/utils/config';
 
     const isMobile = ref(false)
-    const mobileWidth = 768
     const router = useRouter();
     const toast = useToast();
     const today = moment().format('YYYY-MM-DD')
@@ -161,7 +161,7 @@
 
     onMounted( async() => {
 
-        isMobile.value = window.innerWidth < mobileWidth
+        isMobile.value = window.innerWidth < MOBILE_WIDTH
 
         window.addEventListener('resize', checkMobile);
 
@@ -244,7 +244,7 @@
     }
 
     function checkMobile() {
-        isMobile.value = window.innerWidth < mobileWidth
+        isMobile.value = window.innerWidth < MOBILE_WIDTH
     }
 
     // check if canvass is_referenced. If true then rollback to previous canvass else set new current canvass
