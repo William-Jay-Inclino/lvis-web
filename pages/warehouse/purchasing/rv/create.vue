@@ -98,8 +98,8 @@
                             <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rv">
                                 <i class="fas fa-chevron-left"></i> Back
                             </nuxt-link>
-                            <button @click="save()" type="button" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Save
+                            <button @click="save()" type="button" class="btn btn-primary" :disabled="isSaving">
+                                <i class="fas fa-save"></i> {{ isSaving ? 'Saving...' : 'Save' }}
                             </button>
                         </div>
 
@@ -128,9 +128,12 @@
     import * as rvApi from '~/composables/warehouse/rv/rv.api'
     import type { Canvass, Classification, Employee } from '~/composables/warehouse/canvass/canvass.types';
     import type { CreateRvInput } from '~/composables/warehouse/rv/rv.types';
-import { MOBILE_WIDTH } from '~/utils/config';
+    import { MOBILE_WIDTH } from '~/utils/config';
 
+    // flags
     const isMobile = ref(false)
+    const isSaving = ref(false)
+
     const router = useRouter();
     const toast = useToast();
     const today = moment().format('YYYY-MM-DD')
@@ -206,7 +209,9 @@ import { MOBILE_WIDTH } from '~/utils/config';
 
         console.log('saving...')
 
+        isSaving.value = true
         const response = await rvApi.create(rvData.value)
+        isSaving.value = false
 
         if(response.success && response.data) {
             router.push(`/warehouse/purchasing/rv/success/${response.data.id}`);

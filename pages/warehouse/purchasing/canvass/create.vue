@@ -176,8 +176,8 @@
                             <button @click="currentStep--" type="button" class="btn btn-secondary">
                                 <i class="fas fa-chevron-left"></i> Back
                             </button>
-                            <button @click="save()" :disabled="formData.canvass_items.length === 0" type="button" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Save
+                            <button @click="save()" :disabled="formData.canvass_items.length === 0 || isSaving" type="button" class="btn btn-primary">
+                                <i class="fas fa-save"></i> {{ isSaving ? 'Saving...' : 'Save' }}
                             </button>
                         </div>
 
@@ -261,9 +261,12 @@
     import moment from 'moment';
     import { getFullname } from '~/utils/helpers'
     import { useToast } from "vue-toastification";
-import { MOBILE_WIDTH } from '~/utils/config';
+    import { MOBILE_WIDTH } from '~/utils/config';
 
+    // flags
     const isMobile = ref(false)
+    const isSaving = ref(false)
+
     const router = useRouter();
     const toast = useToast();
     const currentStep = ref(1)
@@ -396,7 +399,11 @@ import { MOBILE_WIDTH } from '~/utils/config';
 
     async function save() {
 
+        isSaving.value = true
+
         const response = await api.create(formData.value)
+
+        isSaving.value = false
 
         if(response.success && response.data) {
             router.push(`/warehouse/purchasing/canvass/success/${response.data.id}`);

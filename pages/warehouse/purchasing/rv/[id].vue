@@ -63,6 +63,9 @@
                         <v-select :options="employees" label="fullname" v-model="rvData.supervisor"></v-select>
                     </client-only>
                     <small class="text-danger fst-italic" v-if="rvDataErrors.supervisor"> This field is required </small>
+                    <small class="text-muted fst-italic">
+                        Note: Updating the supervisor will also update the designated approver
+                    </small>
                 </div>
 
                 <div class="mb-3">
@@ -105,8 +108,8 @@
                     <button @click="update()" type="button" class="btn btn-primary">
                         <i class="fas fa-print"></i> Print
                     </button>
-                    <button @click="update()" type="button" class="btn btn-success">
-                        <i class="fas fa-sync"></i> Update
+                    <button @click="update()" type="button" class="btn btn-success" :disabled="isUpdating">
+                        <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
                     </button>
                 </div>
             </div>
@@ -223,6 +226,7 @@
 
     const isMobile = ref(false)
     const isRVDetailForm = ref(true)
+    const isUpdating = ref(false)
 
     const toast = useToast();
     const today = moment().format('YYYY-MM-DD')
@@ -291,7 +295,9 @@
 
         console.log('updating...')
 
+        isUpdating.value = true
         const response = await rvApi.update(rvData.value.id, rvData.value)
+        isUpdating.value = false
 
         if(response.success && response.data) {
             Swal.fire({

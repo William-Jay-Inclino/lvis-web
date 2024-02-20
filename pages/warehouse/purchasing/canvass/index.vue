@@ -30,15 +30,15 @@
         </div>
 
         <div class="d-flex justify-content-end gap-2">
-            <button @click="search()" class="btn btn-primary">
-                <i class="fas fa-search"></i> Search
+            <button @click="search()" class="btn btn-primary" :disabled="isSearching">
+                <i class="fas fa-search"></i> {{ isSearching ? 'Searching...' : 'Search' }}
             </button>
             <nuxt-link class="btn btn-primary float-end" to="/warehouse/purchasing/canvass/create">
                 <i class="fas fa-plus"></i> Create Canvass
             </nuxt-link>
         </div>
 
-        <div class="h6wrapper mb-3 mt-3" v-show="!isInitialLoad">
+        <div class="h6wrapper mb-3 mt-3" v-show="!isInitialLoad && !isSearching && !isPaginating">
             <hr class="result">
                 <h6 class="text-warning"><i>Search results...</i></h6>
             <hr class="result">
@@ -46,7 +46,11 @@
 
         <div class="row justify-content-center pt-3">
 
-            <div class="text-center text-muted" v-show="items.length === 0 && !isInitialLoad">
+            <div class="text-center text-muted fst-italic" v-show="isSearching || isPaginating">
+                Please wait...
+            </div>
+
+            <div class="text-center text-muted fst-italic" v-show="items.length === 0 && (!isInitialLoad && !isSearching)">
                 No results found
             </div>
 
@@ -169,6 +173,8 @@
     // flags
     const isMobile = ref(false)
     const isInitialLoad = ref(true)
+    const isSearching = ref(false)
+    const isPaginating = ref(false)
     
     const _paginationInitial = {
         currentPage: 0,
@@ -212,6 +218,9 @@
     }
 
     async function changePage(page: number) {
+
+        isPaginating.value = true
+
         const { data, currentPage, totalItems, totalPages } = await api.findAll({
             page,
             pageSize: pagination.value.pageSize,
@@ -219,6 +228,8 @@
             requested_by_id: requested_by.value ? requested_by.value.id : null
             
         })
+
+        isPaginating.value = false
         items.value = data
         pagination.value.totalItems = totalItems
         pagination.value.currentPage = currentPage
@@ -228,12 +239,14 @@
     async function search() {
 
         isInitialLoad.value = false
+        isSearching.value = true
 
         items.value = []
 
         if(canvass.value) {
 
             const response = await api.findByRcNumber(canvass.value.rc_number)
+            isSearching.value = false
 
             console.log('response', response)
 
@@ -253,6 +266,9 @@
             requested_by_id: requested_by.value ? requested_by.value.id : null
             
         })
+
+        isSearching.value = false
+
         items.value = data
         pagination.value.totalItems = totalItems
         pagination.value.currentPage = currentPage

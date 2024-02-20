@@ -69,8 +69,8 @@
                     <button class="btn btn-primary">
                         <i class="fas fa-print"></i> Print
                     </button>
-                    <button @click="updateCanvassDetail()" class="btn btn-success">
-                        <i class="fas fa-sync"></i> Update
+                    <button @click="updateCanvassDetail()" class="btn btn-success" :disabled="isUpdating">
+                        <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
                     </button>
                 </div>
 
@@ -89,14 +89,10 @@
                             <thead>
                                 <tr>
                                     <th class="bg-secondary text-white">No.</th>
-                                    <th class="bg-secondary text-white">
-                                        Description <span class="text-danger"> * </span>
-                                    </th>
+                                    <th class="bg-secondary text-white">Description</th>
                                     <th class="bg-secondary text-white">Brand</th>
                                     <th class="bg-secondary text-white">Unit</th>
-                                    <th class="bg-secondary text-white">
-                                        Quantity <span class="text-danger"> * </span>
-                                    </th>
+                                    <th class="bg-secondary text-white">Quantity </th>
                                     <th class="bg-secondary text-white text-center">
                                         <i class="fas fa-cog"></i>
                                     </th>
@@ -212,12 +208,12 @@
         </button>
 
         <!-- Modal -->
-        <div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="addItemModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">{{ isCanvassItemModalAdd ? 'Add' : 'Edit' }} Item</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button @click="onClickCloseModal()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
@@ -252,14 +248,14 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button ref="closeItemModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <button @click="onClickCloseModal()" ref="closeItemModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         <i class="fas fa-close"></i> Close
                     </button>
-                    <button v-if="isCanvassItemModalAdd" @click="createCanvassItem()" type="button" class="btn btn-primary">
-                        <i class="fas fa-plus-circle"></i> Add Item
+                    <button v-if="isCanvassItemModalAdd" @click="createCanvassItem()" :disabled="isAddingItem" class="btn btn-primary">
+                        <i class="fas fa-plus-circle"></i> {{ isAddingItem ? 'Adding Item...' : 'Add Item' }}
                     </button>
-                    <button v-else @click="updateCanvassItem()" type="button" class="btn btn-success">
-                        <i class="fas fa-edit"></i> Edit Item
+                    <button v-else @click="updateCanvassItem()"  :disabled="isEditingItem" class="btn btn-success">
+                        <i class="fas fa-edit"></i> {{ isEditingItem ? 'Editing Item...' : 'Edit Item' }}
                     </button>
                 </div>
                 </div>
@@ -280,7 +276,7 @@
     import type { CanvassItem, CreateCanvassItemInput, UpdateCanvassItemInput } from '~/composables/warehouse/canvass/canvass-item.types';
     import { useToast } from "vue-toastification";
     import { formatToValidHtmlDate } from '~/utils/helpers'
-import { MOBILE_WIDTH } from '~/utils/config';
+    import { MOBILE_WIDTH } from '~/utils/config';
 
     definePageMeta({
         layout: "layout-admin"
@@ -296,18 +292,24 @@ import { MOBILE_WIDTH } from '~/utils/config';
         quantity: false
     }
 
+    // flags
+    const isMobile = ref(false)
+    const isCanvassItemModalAdd = ref(false)
+    const isCanvassDetailForm = ref(true)
+    const isUpdating = ref(false)
+    const isAddingItem = ref(false)
+    const isEditingItem = ref(false)
+
+
     const toast = useToast();
     const route = useRoute()
-    const isMobile = ref(false)
     const closeItemModal = ref<HTMLButtonElement>()
     const canvassItemModalBtn = ref<HTMLButtonElement>()
-    const isCanvassItemModalAdd = ref(false)
 
     const employees = ref<Employee[]>([])
     const brands = ref<Brand[]>([])
     const units = ref<Unit[]>([])
 
-    const isCanvassDetailForm = ref(true)
     const _canvassItemInitial: CanvassItem = {
         id: '',
         canvass_id: '',
@@ -378,7 +380,9 @@ import { MOBILE_WIDTH } from '~/utils/config';
             requested_by: canvass.value.requested_by
         }
 
+        isUpdating.value = true
         const response = await canvassApi.update(canvass.value.id, data)
+        isUpdating.value = false
 
         if(response.success && response.data) {
             Swal.fire({
@@ -430,7 +434,9 @@ import { MOBILE_WIDTH } from '~/utils/config';
             quantity: canvassItem.value.quantity
         }
 
+        isAddingItem.value = true
         const response = await canvassItemApi.create(data)
+        isAddingItem.value = false
 
         if(response.success && response.data) {
             toast.success(response.msg)
@@ -463,7 +469,9 @@ import { MOBILE_WIDTH } from '~/utils/config';
             quantity: canvassItem.value.quantity
         }
 
+        isEditingItem.value = true
         const response = await canvassItemApi.update(canvassItem.value.id, data)
+        isEditingItem.value = false
 
         if(response.success && response.data) {
             toast.success(response.msg)
@@ -499,30 +507,33 @@ import { MOBILE_WIDTH } from '~/utils/config';
             cancelButtonColor: "#6c757d",
             confirmButtonText: "Yes, delete it!",
             reverseButtons: true,
-            }).then( async(result) => {
-            if (result.isConfirmed) {
+            showLoaderOnConfirm: true,
+            preConfirm: async(remove) => {
                 
-                const response = await canvassItemApi.remove(item.id)
+                if(remove) {
+                    const response = await canvassItemApi.remove(item.id)
 
-                if(response.success) {
-                    
-                    toast.success('Item removed!')
+                    if(response.success) {
+                        
+                        toast.success('Item removed!')
 
-                    canvass.value.canvass_items.splice(indx, 1)
+                        canvass.value.canvass_items.splice(indx, 1)
 
-                }else {
+                    }else {
 
-                    Swal.fire({
-                        title: 'Error!',
-                        text: response.msg,
-                        icon: 'error',
-                        position: 'top',
-                    })
+                        Swal.fire({
+                            title: 'Error!',
+                            text: response.msg,
+                            icon: 'error',
+                            position: 'top',
+                        })
 
+                    }
                 }
 
-            }
-        });
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        })
 
     }
 
@@ -542,6 +553,11 @@ import { MOBILE_WIDTH } from '~/utils/config';
         isCanvassItemModalAdd.value = true
         canvassItemModalBtn.value?.click()
 
+    }
+
+    function onClickCloseModal() {
+        canvassItem.value = {..._canvassItemInitial}
+        canvassItemErrors.value = {..._canvassItemErrorsInitial}
     }
 
 </script>
