@@ -74,3 +74,8 @@ export interface Unit {
     id: string 
     name: string 
 }
+
+export interface Classification {
+    id: string 
+    name: string 
+}

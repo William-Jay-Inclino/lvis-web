@@ -1,5 +1,5 @@
 import { APPROVER_SUPERVISOR_LABEL } from "~/utils/config";
-import type { Canvass, Employee } from "../canvass/canvass.types";
+import type { Canvass, Classification, Employee } from "../canvass/canvass.types";
 import type { CreateRvInput, FindAllResponse, MutationResponse, RV, RvApproverSettings } from "./rv.types";
 import { sendRequest } from "~/utils/api"
 
@@ -171,6 +171,9 @@ export async function findOne(id: string): Promise<RV | undefined> {
                 work_order_date
                 notes
                 status
+                classification{
+                    name
+                }
                 rv_approvers{
                     approver {
                         firstname
@@ -263,7 +266,8 @@ export async function findAll(payload: {page: number, pageSize: number, date_req
 export async function fetchFormDataInCreate(): Promise<{
     canvasses: Canvass[],
     employees: Employee[],
-    approvers: RvApproverSettings[]
+    approvers: RvApproverSettings[],
+    classifications: Classification[],
 }> {
 
     const query = `
@@ -307,6 +311,10 @@ export async function fetchFormDataInCreate(): Promise<{
                 }
                 label
                 order
+            },
+            classifications{
+                id
+                name
             }
         }
     `;
@@ -318,6 +326,7 @@ export async function fetchFormDataInCreate(): Promise<{
         let canvasses = []
         let employees = []
         let approvers = []
+        let classifications = []
 
         if(!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
@@ -337,10 +346,15 @@ export async function fetchFormDataInCreate(): Promise<{
             approvers = data.rvApproverSettings
         }
 
+        if(data.classifications) {
+            classifications = data.classifications
+        }
+
         return {
             canvasses,
             employees,
-            approvers
+            approvers,
+            classifications
         }
 
     } catch (error) {
@@ -349,6 +363,7 @@ export async function fetchFormDataInCreate(): Promise<{
             canvasses: [],
             employees: [],
             approvers: [],
+            classifications: [],
         }
     }
     
@@ -356,6 +371,23 @@ export async function fetchFormDataInCreate(): Promise<{
 }
 
 export async function create(input: CreateRvInput): Promise<MutationResponse> {
+
+    let work_order_no = null
+    let work_order_date = null
+    let classification_id = null
+
+    if(input.work_order_no) {
+        work_order_no = `"${input.work_order_no}"`
+    }
+
+    if(input.work_order_date) {
+        work_order_date = `"${input.work_order_date}"`
+    }
+
+    if(input.classification) {
+        classification_id = `"${input.classification.id}"`
+    }
+
 
     // set the supervisor as the 1st approver
     input.approvers.push({
@@ -389,8 +421,9 @@ export async function create(input: CreateRvInput): Promise<MutationResponse> {
                     canvass_id: "${input.canvass?.id}"
                     supervisor_id: "${input.supervisor?.id}"
                     date_requested: "${input.date_requested}"
-                    work_order_no: "${input.work_order_no}"
-                    work_order_date: "${input.work_order_date}"
+                    work_order_no: ${work_order_no}
+                    work_order_date: ${work_order_date}
+                    classification_id: ${classification_id}
                     notes: "${input.notes}"
                     approvers: [${approvers}]
                 }

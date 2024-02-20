@@ -17,6 +17,11 @@ export function convertMiddleNameToInitial(middleName: string) {
 }
 
 export function formatDate(d: any) {
+
+    if(!d) {
+        return ""
+    }
+
     let date = d;
     if (!isNaN(d)) {
         date = Number(d) < 10000000000 ? Number(d) * 1000 : Number(d);

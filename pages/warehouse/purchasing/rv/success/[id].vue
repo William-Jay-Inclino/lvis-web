@@ -46,6 +46,10 @@
                                         <td> {{ getFullname(item.supervisor.firstname, item.supervisor.middlename, item.supervisor.lastname) }} </td>
                                     </tr>
                                     <tr>
+                                        <td class="text-muted">Classification</td>
+                                        <td> {{ item.classification?.name }} </td>
+                                    </tr>
+                                    <tr>
                                         <td class="text-muted">Work Order No.</td>
                                         <td> {{ item.work_order_no }} </td>
                                     </tr>

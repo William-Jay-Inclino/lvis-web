@@ -66,6 +66,15 @@
 
                         <div class="mb-3">
                             <label class="form-label">
+                                Classification
+                            </label>
+                            <client-only>
+                                <v-select :options="classifications" label="name" v-model="rvData.classification"></v-select>
+                            </client-only>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
                                 Work Order No.
                             </label>
                             <input type="text" class="form-control" v-model="rvData.work_order_no">
@@ -117,7 +126,7 @@
     import { getFullname } from '~/utils/helpers'
     import { useToast } from "vue-toastification";
     import * as rvApi from '~/composables/warehouse/rv/rv.api'
-    import type { Canvass, Employee } from '~/composables/warehouse/canvass/canvass.types';
+    import type { Canvass, Classification, Employee } from '~/composables/warehouse/canvass/canvass.types';
     import type { CreateRvInput } from '~/composables/warehouse/rv/rv.types';
 
     const isMobile = ref(false)
@@ -138,6 +147,7 @@
     const rvData = ref<CreateRvInput>({
         canvass: null,
         supervisor: null,
+        classification: null,
         date_requested: today,
         work_order_no: '',
         work_order_date: null,
@@ -147,6 +157,7 @@
 
     const canvasses = ref<Canvass[]>([])
     const employees = ref<Employee[]>([])
+    const classifications = ref<Classification[]>([])
 
     onMounted( async() => {
 
@@ -164,6 +175,7 @@
         })
 
         rvData.value.approvers = response.approvers
+        classifications.value = response.classifications
 
     })
 

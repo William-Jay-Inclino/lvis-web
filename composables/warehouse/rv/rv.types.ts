@@ -1,4 +1,4 @@
-import type { Canvass, Employee } from "../canvass/canvass.types";
+import type { Canvass, Classification, Employee } from "../canvass/canvass.types";
 
 export interface RV {
   
@@ -9,6 +9,7 @@ export interface RV {
   canvass: Canvass;
 
   classification_id: string | null;
+  classification: Classification | null;
 
   supervisor_id: string;
 
@@ -73,9 +74,11 @@ export interface CreateRvInput {
   date_requested: string;
   work_order_no: string;
   work_order_date: string | null;
+  classification: Classification | null;
   notes: string;
   approvers: RvApproverSettings[];
 }
+
 
 export interface RvApproverSettings {
   approver_id: string,
