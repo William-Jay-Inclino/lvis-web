@@ -146,7 +146,7 @@
                                     <td class="text-muted align-middle">
                                         {{ getFullname(item.approver!.firstname, item.approver!.middlename, item.approver!.lastname) }}
                                     </td>
-                                    <td class="text-muted text-center">
+                                    <td class="text-muted text-center align-middle">
                                         <div :class="{[`badge bg-${approvalStatus[item.status].color}`]: true}"> 
                                             {{ approvalStatus[item.status].label }} 
                                         </div>
@@ -155,9 +155,9 @@
                                         </div>
                                     </td>
                                     <td class="text-muted align-middle">
-                                        {{ item.notes }}
+                                        <textarea class="form-control" rows="3" v-model="item.notes" readonly></textarea>
                                     </td>
-                                    <td class="text-center">
+                                    <td class="text-center align-middle">
                                         <button class="btn btn-sm btn-light w-50">
                                             <i class="fas fa-trash text-danger"></i>
                                         </button>
@@ -208,7 +208,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Change Order</h5>
+                    <h5 class="modal-title text-warning" id="exampleModalLabel">Change Order</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -244,7 +244,7 @@
                                             <span> {{ element.label }} </span>
                                         </div>
                                         <div class="col">
-                                            <span class="text-secondary fst-italic">
+                                            <span class="text-muted fst-italic">
                                                 {{ element.approver.fullname }} 
                                             </span>
                                         </div>
@@ -261,7 +261,7 @@
                         <i class="fas fa-close"></i> Close
                     </button>
                     <button @click="updateApproverOrder" type="button" class="btn btn-primary" :disabled="isUpdatingApproverOrder">
-                        <i class="fas fa-Save"></i> {{ isUpdatingApproverOrder ? 'Saving...' : 'Save' }}
+                        <i class="fas fa-save"></i> {{ isUpdatingApproverOrder ? 'Saving...' : 'Save' }}
                     </button>
                 </div>
                 </div>
@@ -274,7 +274,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">
+                    <h5 class="modal-title text-warning" id="exampleModalLabel">
                         {{ isRvApproverModalAdd ? 'Add' : 'Edit' }} Approver
                     </h5>
                     <button @click="onCloseAddApproverModal" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -611,7 +611,7 @@
         border: 1px solid #ccc;
         border-radius: 4px;
         padding: 8px;
-        margin-bottom: 8px;
+        margin-bottom: 20px;
         background-color: #f9f9f9;
         box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.05); /* Increased elevation and shadow */
     }
