@@ -36,10 +36,8 @@ export interface RV {
 export interface RVApprover {
   id: string 
   approver_id: string 
-  approver: Employee 
-  approver_proxy_id: string 
-  approver_proxy: Employee 
-  date_approval: string 
+  approver: Employee | null
+  date_approval: string | null
   notes: string 
   status: APPROVAL_STATUS,
   label: string
@@ -67,9 +65,15 @@ export interface MutationResponse {
   data?: RV
 }
 
+export interface RvApproverMutationResponse {
+  success: boolean 
+  msg: string 
+  data?: RVApprover
+}
+
 export interface UpdateApproverOrderResponse {
   success: boolean;
-  msg?: string;
+  msg: string;
   approvers: RVApprover[];
 }
 
@@ -100,5 +104,12 @@ export interface RvApproverSettings {
   approver_proxy_id?: string | null
   approver_proxy?: Employee | null
   label: string
+  order: number
+}
+
+export interface CreateRvApproverInput {
+  rv_id: string
+  approver: Employee | null  
+  label: string 
   order: number
 }

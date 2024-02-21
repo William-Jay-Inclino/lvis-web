@@ -144,7 +144,7 @@
                                         {{ item.label }}
                                     </td>
                                     <td class="text-muted align-middle">
-                                        {{ getFullname(item.approver.firstname, item.approver.middlename, item.approver.lastname) }}
+                                        {{ getFullname(item.approver!.firstname, item.approver!.middlename, item.approver!.lastname) }}
                                     </td>
                                     <td class="text-muted text-center">
                                         <div :class="{[`badge bg-${approvalStatus[item.status].color}`]: true}"> 
@@ -171,10 +171,10 @@
                                 <tr>
                                     <td colspan="7">
                                         <div class="text-center">
-                                            <button class="btn btn-primary btn-sm me-2">
+                                            <button @click="onClickAddApprover" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#addApproverModal">
                                                 <i class="fas fa-plus-circle"></i> Add Approver
                                             </button>
-                                            <button @click="onClickChangeApprover" class="btn btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#changeApproverOrder">
+                                            <button @click="onClickChangeApprover" class="btn btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#changeApproverOrderModal">
                                                 <i class="fas fa-sort"></i> Change Order
                                             </button>
                                         </div>
@@ -203,8 +203,8 @@
 
         </div>
 
-        <!-- Modal -->
-        <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="changeApproverOrder" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <!-- Change approver order modal-->
+        <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="changeApproverOrderModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                 <div class="modal-header">
@@ -268,6 +268,61 @@
             </div>
         </div>
 
+
+        <!-- Add approver modal-->
+        <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="addApproverModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">
+                        {{ isRvApproverModalAdd ? 'Add' : 'Edit' }} Approver
+                    </h5>
+                    <button @click="onCloseAddApproverModal" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Approver <span class="text-danger">*</span>
+                        </label>
+                        <client-only>
+                            <v-select :options="employees" label="fullname" v-model="addApproverData.approver"></v-select>
+                        </client-only>
+                        <small class="text-danger fst-italic" v-show="addApproverErrors.approver">
+                            This field is required
+                        </small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Label <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" v-model="addApproverData.label">
+                        <small class="text-danger fst-italic" v-show="addApproverErrors.label">
+                            This field is required
+                        </small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Order
+                        </label>
+                        <input type="number" class="form-control" :value="addApproverData.order" disabled>
+                    </div>
+                        
+                </div>
+                <div class="modal-footer">
+                    <button @click="onCloseAddApproverModal" ref="closeAddApproverModal" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-close"></i> Close
+                    </button>
+                    <button @click="addApprover" class="btn btn-primary" :disabled="isAddingRvApprover">
+                        <i class="fas fa-user-plus"></i> {{ isAddingRvApprover ? 'Adding...' : 'Add' }}
+                    </button>
+                </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
 </template>
@@ -285,7 +340,7 @@
     import { useToast } from "vue-toastification";
     import * as rvApi from '~/composables/warehouse/rv/rv.api'
     import type { Classification, Employee } from '~/composables/warehouse/canvass/canvass.types';
-    import type { RV, RVApprover, UpdateRvInput } from '~/composables/warehouse/rv/rv.types';
+    import { APPROVAL_STATUS, type CreateRvApproverInput, type RV, type RVApprover, type UpdateRvInput } from '~/composables/warehouse/rv/rv.types';
     import { MOBILE_WIDTH } from '~/utils/config';
     import { approvalStatus } from '~/utils/constants';
 
@@ -305,6 +360,9 @@
     const isRVDetailForm = ref(true)
     const isUpdating = ref(false)
     const isUpdatingApproverOrder = ref(false)
+    const isRvApproverModalAdd = ref(false)
+    const isAddingRvApprover = ref(false)
+    const isEditingRvApprover = ref(false)
 
     const toast = useToast();
     const today = moment().format('YYYY-MM-DD')
@@ -312,17 +370,26 @@
     const _rvDataErrorsInitial = {
         supervisor: false,
     }
+    const _addApproverInitial: CreateRvApproverInput = {
+        rv_id: '',
+        approver: null,
+        label: '',
+        order: 0
+    }
+    const _addApproverErrorsInitial = {
+        approver: false,
+        label: false
+    }
 
     const closeChangeOrderModal = ref<HTMLButtonElement>()
-
+    const closeAddApproverModal = ref<HTMLButtonElement>()
     const rvDataErrors = ref({..._rvDataErrorsInitial})
-
     const rvData = ref<RV>({} as RV)
-
     const employees = ref<Employee[]>([])
     const classifications = ref<Classification[]>([])
-
     const approvers = ref<RVApprover[]>([])
+    const addApproverData = ref<CreateRvApproverInput>({..._addApproverInitial})
+    const addApproverErrors = ref({..._addApproverErrorsInitial})
 
     onMounted( async() => {
 
@@ -364,7 +431,7 @@
 
         data.rv_approvers.map(i => {
             i.date_approval = formatDate(i.date_approval)
-            i.approver['fullname'] = getFullname(i.approver.firstname, i.approver.middlename, i.approver.lastname)
+            i.approver!['fullname'] = getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname)
             return i
         })
 
@@ -383,7 +450,7 @@
         console.log('updating...')
 
         isUpdating.value = true
-        const response = await rvApi.update(rvData.value.id, rvData.value)
+        const response = await rvApi.updateRV(rvData.value.id, rvData.value)
         isUpdating.value = false
 
         if(response.success && response.data) {
@@ -432,15 +499,8 @@
         isUpdatingApproverOrder.value = false
 
         if(response.success && response.approvers) {
-            Swal.fire({
-                title: 'Success!',
-                text: response.msg,
-                icon: 'success',
-                position: 'top',
-            })
-
+            toast.success(response.msg)
             rvData.value.rv_approvers = response.approvers
-
             closeChangeOrderModal.value?.click()
 
         }else {
@@ -452,6 +512,31 @@
             })
         }
         
+    }
+
+    async function addApprover() {
+
+        if(!isValidAddApprover()){
+            return 
+        }
+
+        isAddingRvApprover.value = true
+        const response = await rvApi.createRvApprover(addApproverData.value)
+        isAddingRvApprover.value = false
+
+        if(response.success && response.data) {
+            toast.success(response.msg)
+            rvData.value.rv_approvers.push(response.data)
+            closeAddApproverModal.value?.click()
+        }else {
+            Swal.fire({
+                title: 'Error!',
+                text: response.msg,
+                icon: 'error',
+                position: 'top',
+            })
+        }
+
     }
 
     function isValid(): boolean {
@@ -472,6 +557,28 @@
 
     }
 
+    function isValidAddApprover(): boolean {
+
+        addApproverErrors.value = {..._addApproverErrorsInitial}
+
+        if(!addApproverData.value.approver) {
+            addApproverErrors.value.approver = true
+        }
+
+        if(addApproverData.value.label.trim() === '') {
+            addApproverErrors.value.label = true
+        }
+
+        const hasError = Object.values(addApproverErrors.value).includes(true);
+
+        if(hasError) {
+            return false
+        }
+
+        return true
+
+    }
+
     function onClickChangeApprover() {
         approvers.value = [...rvData.value.rv_approvers]
     }
@@ -482,6 +589,17 @@
 
     function onCloseChangeOrderModal() {
         approvers.value = []
+    }
+
+    function onCloseAddApproverModal() {
+        addApproverData.value = {..._addApproverInitial}
+        addApproverErrors.value = {..._addApproverErrorsInitial}
+    }
+
+    function onClickAddApprover() {
+        isRvApproverModalAdd.value = true
+        addApproverData.value.order = rvData.value.rv_approvers.length + 1
+        addApproverData.value.rv_id = rvData.value.id
     }
 
 </script>

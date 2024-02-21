@@ -1,6 +1,6 @@
 import { APPROVER_SUPERVISOR_LABEL } from "~/utils/config";
 import type { Canvass, Classification, Employee } from "../canvass/canvass.types";
-import type { CreateRvInput, FindAllResponse, MutationResponse, RV, RvApproverSettings, UpdateApproverOrderResponse, UpdateRvInput } from "./rv.types";
+import type { CreateRvApproverInput, CreateRvInput, FindAllResponse, MutationResponse, RV, RvApproverMutationResponse, RvApproverSettings, UpdateApproverOrderResponse, UpdateRvInput } from "./rv.types";
 import { sendRequest } from "~/utils/api"
 
 export async function fetchDataInSearchFilters(): Promise<{
@@ -485,7 +485,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
     }
 }
 
-export async function create(input: CreateRvInput): Promise<MutationResponse> {
+export async function createRV(input: CreateRvInput): Promise<MutationResponse> {
 
     let work_order_no = null
     let work_order_date = null
@@ -571,7 +571,7 @@ export async function create(input: CreateRvInput): Promise<MutationResponse> {
     }
 }
 
-export async function update(id: string, input: UpdateRvInput): Promise<MutationResponse> {
+export async function updateRV(id: string, input: UpdateRvInput): Promise<MutationResponse> {
 
     let work_order_no = null
     let work_order_date = null
@@ -714,6 +714,64 @@ export async function updateApproverOrder(inputs: {id: string, order: number}[])
             success: false,
             msg: 'Failed to update RV Approver Order. Please contact system administrator',
             approvers: []
+        };
+    }
+}
+
+export async function createRvApprover(input: CreateRvApproverInput): Promise<RvApproverMutationResponse> {
+
+    const mutation = `
+        mutation {
+            createRvApprover(
+                input: {
+                    rv_id: "${input.rv_id}"
+                    approver_id: "${input.approver?.id}"
+                    label: "${input.label}"
+                    order: ${input.order}
+                }
+            ) {
+                id
+                rv_id
+                approver {
+                    id
+                    firstname
+                    middlename
+                    lastname
+                }
+                approver_proxy {
+                    id
+                    firstname
+                    middlename
+                    lastname
+                }
+                date_approval 
+                notes
+                status
+                label
+                order
+            }
+        }`;
+
+    try {
+        const response = await sendRequest(mutation);
+        console.log('response', response);
+
+        if(response.data && response.data.data && response.data.data.createRvApprover) {
+            return {
+                success: true,
+                msg: 'RV Approver created successfully!',
+                data: response.data.data.createRvApprover 
+            };
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+    } catch (error) {
+        console.error(error);
+        
+        return {
+            success: false,
+            msg: 'Failed to create RV Approver. Please contact system administrator'
         };
     }
 }
