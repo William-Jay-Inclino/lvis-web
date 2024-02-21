@@ -21,6 +21,7 @@ export default defineNuxtConfig({
     plugins: [
         { src: '~/plugins/vue-toastification.ts', mode: 'client' },
         { src: '~/plugins/vue-select.ts', mode: 'client' },
+        { src: '~/plugins/vuedraggable.ts', mode: 'client' },
     ],
     css: [
         '~/assets/css/main.css'

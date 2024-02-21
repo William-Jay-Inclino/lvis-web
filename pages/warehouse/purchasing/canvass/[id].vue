@@ -9,7 +9,7 @@
                 <ul class="nav nav-tabs justify-content-center">
                     <li class="nav-item" @click="isCanvassDetailForm = true">
                         <a class="nav-link" :class="{'active': isCanvassDetailForm}" href="#">
-                            <i class="fas fa-info-circle"></i> Canvass Detail
+                            <i class="fas fa-info-circle"></i> Canvass Info
                         </a>
                     </li>
                     <li class="nav-item" @click="isCanvassDetailForm = false">

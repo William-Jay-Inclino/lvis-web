@@ -8,7 +8,7 @@
                 <ul class="nav nav-tabs justify-content-center">
                     <li class="nav-item" @click="isRVDetailForm = true">
                         <a class="nav-link" :class="{'active': isRVDetailForm}" href="#">
-                            <i class="fas fa-info-circle"></i> RV Detail
+                            <i class="fas fa-info-circle"></i> RV Info
                         </a>
                     </li>
                     <li class="nav-item" @click="isRVDetailForm = false">
@@ -158,7 +158,7 @@
                                         {{ item.notes }}
                                     </td>
                                     <td class="text-muted text-center">
-                                        <button class="btn btn-sm btn-light w-33">
+                                        <button class="btn btn-sm btn-light w-33" data-bs-toggle="modal" data-bs-target="#changeApproverOrder">
                                             <i class="fas fa-sort text-muted"></i>
                                         </button>
                                         <button class="btn btn-sm btn-light w-33">
@@ -200,6 +200,56 @@
 
         </div>
 
+        <!-- Modal -->
+        <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="changeApproverOrder" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Change Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <small class="text-muted fst-italic">
+                        Drag items to reorder
+                    </small>
+
+                    <div class="pt-4">
+                        <draggable
+                            v-model="myArray"
+                            item-key="id"
+                            tag="div"
+                            :component-data="{
+                                tag: 'ul',
+                                type: 'transition-group',
+                                name: !drag ? 'flip-list' : null
+                            }"
+                            v-bind="dragOptions"
+                            @start="drag = true"
+                            @end="drag = false"
+                        >
+                            <template #item="{ element }">
+                                <div class="draggable-item">
+                                    <span>{{ element.name }}</span>
+                                </div>
+                            </template>
+                        </draggable>
+                    </div>
+                        
+                        
+                </div>
+                <div class="modal-footer">
+                    <button ref="closeItemModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-close"></i> Close
+                    </button>
+                    <button type="button" class="btn btn-primary">
+                        <i class="fas fa-Save"></i> Save
+                    </button>
+                </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
 </template>
@@ -220,6 +270,38 @@
     import type { RV, UpdateRvInput } from '~/composables/warehouse/rv/rv.types';
     import { MOBILE_WIDTH } from '~/utils/config';
     import { approvalStatus } from '~/utils/constants';
+
+    const myArray = ref([
+        {
+            id: '1',
+            name: 'name1'
+        },
+        {
+            id: '2',
+            name: 'name2'
+        },
+        {
+            id: '3',
+            name: 'name3'
+        },
+        {
+            id: '4',
+            name: 'name4'
+        },
+        {
+            id: '5',
+            name: 'name5'
+        }
+    ])
+
+    const drag = ref(false)
+
+    const dragOptions = {
+    animation: 200,
+    group: "description",
+    disabled: false,
+    ghostClass: "ghost"
+    };
 
     const route = useRoute()
     const router = useRouter();
@@ -344,3 +426,40 @@
 
 </script>
 
+
+<style scoped>
+    .draggable-item {
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 8px;
+        margin-bottom: 8px;
+        background-color: #f9f9f9;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.05); /* Increased elevation and shadow */
+    }
+
+
+    .flip-list-move {
+        transition: transform 0.5s;
+    }
+
+    .no-move {
+        transition: transform 0s;
+    }
+
+    .ghost {
+        opacity: 0.5;
+        background: #c8ebfb;
+    }
+
+    .list-group {
+        min-height: 20px;
+    }
+
+    .list-group-item {
+        cursor: move;
+    }
+
+    .list-group-item i {
+        cursor: pointer;
+    }
+</style>
