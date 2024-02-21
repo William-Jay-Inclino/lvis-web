@@ -102,13 +102,13 @@
                     <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rv">
                         <i class="fas fa-chevron-left"></i> Back
                     </nuxt-link>
-                    <button @click="update()" type="button" class="btn btn-danger">
+                    <button type="button" class="btn btn-danger">
                         <i class="fas fa-cancel"></i> Cancel
                     </button>
-                    <button @click="update()" type="button" class="btn btn-primary">
+                    <button type="button" class="btn btn-primary">
                         <i class="fas fa-print"></i> Print
                     </button>
-                    <button @click="update()" type="button" class="btn btn-success" :disabled="isUpdating">
+                    <button @click="updateRvDetail()" type="button" class="btn btn-success" :disabled="isUpdating">
                         <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
                     </button>
                 </div>
@@ -125,7 +125,7 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th class="bg-secondary text-white">#</th>
+                                    <th class="bg-secondary text-white">Order</th>
                                     <th class="bg-secondary text-white">Label</th>
                                     <th class="bg-secondary text-white">Approver</th>
                                     <th class="bg-secondary text-white text-center">Status</th>
@@ -157,14 +157,11 @@
                                     <td class="text-muted align-middle">
                                         {{ item.notes }}
                                     </td>
-                                    <td class="text-muted text-center">
-                                        <button class="btn btn-sm btn-light w-33" data-bs-toggle="modal" data-bs-target="#changeApproverOrder">
-                                            <i class="fas fa-sort text-muted"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-light w-33">
+                                    <td class="text-center">
+                                        <button class="btn btn-sm btn-light w-50">
                                             <i class="fas fa-trash text-danger"></i>
                                         </button>
-                                        <button class="btn btn-sm btn-light w-33">
+                                        <button class="btn btn-sm btn-light w-50">
                                             <i class="fas fa-edit text-primary"></i>
                                         </button>
                                     </td>
@@ -172,12 +169,18 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="7" class="text-center">
-                                        <button type="button" class="btn btn-primary btn-sm">
-                                            <i class="fas fa-plus-circle"></i> Add Approver
-                                        </button>
+                                    <td colspan="7">
+                                        <div class="text-center">
+                                            <button class="btn btn-primary btn-sm me-2">
+                                                <i class="fas fa-plus-circle"></i> Add Approver
+                                            </button>
+                                            <button @click="onClickChangeApprover" class="btn btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#changeApproverOrder">
+                                                <i class="fas fa-sort"></i> Change Order
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
+
                             </tfoot>
                         </table>
                     </div>
@@ -188,10 +191,10 @@
                     <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rv">
                         <i class="fas fa-chevron-left"></i> Back
                     </nuxt-link>
-                    <button @click="update()" type="button" class="btn btn-danger">
+                    <button type="button" class="btn btn-danger">
                         <i class="fas fa-cancel"></i> Cancel
                     </button>
-                    <button @click="update()" type="button" class="btn btn-primary">
+                    <button type="button" class="btn btn-primary">
                         <i class="fas fa-print"></i> Print
                     </button>
                 </div>
@@ -216,7 +219,7 @@
 
                     <div class="pt-4">
                         <draggable
-                            v-model="myArray"
+                            v-model="approvers"
                             item-key="id"
                             tag="div"
                             :component-data="{
@@ -229,8 +232,23 @@
                             @end="drag = false"
                         >
                             <template #item="{ element }">
-                                <div class="draggable-item">
-                                    <span>{{ element.name }}</span>
+                                <div class="draggable-item position-relative">
+
+                                    <span class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-primary">
+                                        <!-- add counter here -->
+                                        {{ getCounter(element) }}
+                                    </span>
+
+                                    <div class="row">
+                                        <div class="col">                                            
+                                            <span> {{ element.label }} </span>
+                                        </div>
+                                        <div class="col">
+                                            <span class="text-secondary fst-italic">
+                                                {{ element.approver.fullname }} 
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
                             </template>
                         </draggable>
@@ -239,11 +257,11 @@
                         
                 </div>
                 <div class="modal-footer">
-                    <button ref="closeItemModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <button @click="onCloseChangeOrderModal" ref="closeChangeOrderModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         <i class="fas fa-close"></i> Close
                     </button>
-                    <button type="button" class="btn btn-primary">
-                        <i class="fas fa-Save"></i> Save
+                    <button @click="updateApproverOrder" type="button" class="btn btn-primary" :disabled="isUpdatingApproverOrder">
+                        <i class="fas fa-Save"></i> {{ isUpdatingApproverOrder ? 'Saving...' : 'Save' }}
                     </button>
                 </div>
                 </div>
@@ -267,40 +285,17 @@
     import { useToast } from "vue-toastification";
     import * as rvApi from '~/composables/warehouse/rv/rv.api'
     import type { Classification, Employee } from '~/composables/warehouse/canvass/canvass.types';
-    import type { RV, UpdateRvInput } from '~/composables/warehouse/rv/rv.types';
+    import type { RV, RVApprover, UpdateRvInput } from '~/composables/warehouse/rv/rv.types';
     import { MOBILE_WIDTH } from '~/utils/config';
     import { approvalStatus } from '~/utils/constants';
-
-    const myArray = ref([
-        {
-            id: '1',
-            name: 'name1'
-        },
-        {
-            id: '2',
-            name: 'name2'
-        },
-        {
-            id: '3',
-            name: 'name3'
-        },
-        {
-            id: '4',
-            name: 'name4'
-        },
-        {
-            id: '5',
-            name: 'name5'
-        }
-    ])
 
     const drag = ref(false)
 
     const dragOptions = {
-    animation: 200,
-    group: "description",
-    disabled: false,
-    ghostClass: "ghost"
+        animation: 200,
+        group: "description",
+        disabled: false,
+        ghostClass: "ghost"
     };
 
     const route = useRoute()
@@ -309,6 +304,7 @@
     const isMobile = ref(false)
     const isRVDetailForm = ref(true)
     const isUpdating = ref(false)
+    const isUpdatingApproverOrder = ref(false)
 
     const toast = useToast();
     const today = moment().format('YYYY-MM-DD')
@@ -317,12 +313,16 @@
         supervisor: false,
     }
 
+    const closeChangeOrderModal = ref<HTMLButtonElement>()
+
     const rvDataErrors = ref({..._rvDataErrorsInitial})
 
     const rvData = ref<RV>({} as RV)
 
     const employees = ref<Employee[]>([])
     const classifications = ref<Classification[]>([])
+
+    const approvers = ref<RVApprover[]>([])
 
     onMounted( async() => {
 
@@ -345,6 +345,10 @@
 
     })
 
+    function getCounter(element: RVApprover) {
+        return approvers.value.indexOf(element) + 1;
+    }
+
     function setRvData(data: RV) {
         data.date_requested = formatToValidHtmlDate(data.date_requested)
             
@@ -360,6 +364,7 @@
 
         data.rv_approvers.map(i => {
             i.date_approval = formatDate(i.date_approval)
+            i.approver['fullname'] = getFullname(i.approver.firstname, i.approver.middlename, i.approver.lastname)
             return i
         })
 
@@ -367,7 +372,7 @@
 
     }
 
-    async function update() {
+    async function updateRvDetail() {
 
         console.log('update')
 
@@ -402,6 +407,53 @@
 
     }
 
+    async function updateApproverOrder() {
+
+        // Create a shallow copy of the array
+        const _approvers = approvers.value.map(approver => ({ ...approver }))
+
+        let ctr = 1
+        for(let approver of _approvers) {
+            approver.order = ctr 
+            ctr++
+        }
+
+        const data = _approvers.map(i => {
+            return {
+                id: i.id,
+                order: i.order
+            }
+        })
+
+        console.log('data', data)
+
+        isUpdatingApproverOrder.value = true
+        const response = await rvApi.updateApproverOrder(data)
+        isUpdatingApproverOrder.value = false
+
+        if(response.success && response.approvers) {
+            Swal.fire({
+                title: 'Success!',
+                text: response.msg,
+                icon: 'success',
+                position: 'top',
+            })
+
+            rvData.value.rv_approvers = response.approvers
+
+            closeChangeOrderModal.value?.click()
+
+        }else {
+            Swal.fire({
+                title: 'Error!',
+                text: response.msg,
+                icon: 'error',
+                position: 'top',
+            })
+        }
+        
+    }
+
     function isValid(): boolean {
 
         rvDataErrors.value = {..._rvDataErrorsInitial}
@@ -420,8 +472,16 @@
 
     }
 
+    function onClickChangeApprover() {
+        approvers.value = [...rvData.value.rv_approvers]
+    }
+
     function checkMobile() {
         isMobile.value = window.innerWidth < MOBILE_WIDTH
+    }
+
+    function onCloseChangeOrderModal() {
+        approvers.value = []
     }
 
 </script>
@@ -429,6 +489,7 @@
 
 <style scoped>
     .draggable-item {
+        cursor: pointer;
         border: 1px solid #ccc;
         border-radius: 4px;
         padding: 8px;
@@ -437,6 +498,9 @@
         box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.05); /* Increased elevation and shadow */
     }
 
+    .draggable-item:hover {
+        background-color: #f0f0f0; 
+    }
 
     .flip-list-move {
         transition: transform 0.5s;

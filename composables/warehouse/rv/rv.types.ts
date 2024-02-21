@@ -67,6 +67,12 @@ export interface MutationResponse {
   data?: RV
 }
 
+export interface UpdateApproverOrderResponse {
+  success: boolean;
+  msg?: string;
+  approvers: RVApprover[];
+}
+
 
 export interface CreateRvInput {
   canvass: Canvass | null;
