@@ -78,17 +78,23 @@
                                             <th class="bg-secondary text-white">RC Number</th>
                                             <th class="bg-secondary text-white">Requisitioner</th>
                                             <th class="bg-secondary text-white">Date</th>
+                                            <th class="bg-secondary text-white text-center">Status</th>
                                             <th class="text-center bg-secondary text-white">
                                                 <i class="fas fa-info-circle"></i>
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="i in items">
+                                        <tr v-for="i in filteredItems">
                                             <td class="text-muted"> {{ i.rv_number }} </td>
                                             <td class="text-muted"> {{ i.canvass.rc_number }} </td>
                                             <td class="text-muted"> {{ getFullname(i.canvass.requested_by!.firstname, i.canvass.requested_by!.middlename, i.canvass.requested_by!.lastname) }} </td>
                                             <td class="text-muted"> {{ formatDate(i.date_requested) }} </td>
+                                            <td class="text-center">
+                                                <div :class="{[`badge bg-${i.status.color}`]: true}"> 
+                                                    {{ i.status.label }} 
+                                                </div>
+                                            </td>
                                             <td class="text-center">
                                                 <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light text-primary">
                                                     <i class="fas fa-edit"></i>
@@ -102,7 +108,7 @@
 
                         <div v-else>
 
-                            <div v-for="i in items" class="table-responsive">
+                            <div v-for="i in filteredItems" class="table-responsive">
 
                                 <table class="table table-hover table-bordered">
 
@@ -172,11 +178,13 @@
 
 <script setup lang="ts">
     import type { Canvass, Employee } from '~/composables/warehouse/canvass/canvass.types';
-    import type { RV } from '~/composables/warehouse/rv/rv.types';
+    import { APPROVAL_STATUS, type RV } from '~/composables/warehouse/rv/rv.types';
     import * as rvApi from '~/composables/warehouse/rv/rv.api'
     import moment from 'moment'
     import { getFullname, formatDate } from '~/utils/helpers'
     import { MOBILE_WIDTH, PAGINATION_SIZE } from '~/utils/config'
+    import type { RVApprover } from '~/composables/warehouse/rv/rv-approver.types';
+    import { approvalStatus } from '~/utils/constants';
 
 
     definePageMeta({
@@ -212,7 +220,7 @@
     // ----------------
 
     
-    // table data
+    // container for search result
     const items = ref<RV[]>([])
 
 
@@ -231,6 +239,18 @@
         })
 
     })
+
+
+    // table data
+    const filteredItems = computed( () => {
+
+        return items.value.map( (i) => {
+            i.status = getStatus(i)
+            return i
+        })
+
+    })
+
 
 
     function onClickEdit(id: string) {
@@ -304,6 +324,31 @@
 
     function checkMobile() {
         isMobile.value = window.innerWidth < MOBILE_WIDTH
+    }
+
+    function getStatus(rv: RV) {
+        
+        const approvers = rv.rv_approvers
+        
+        if(rv.is_cancelled) {
+
+            return approvalStatus[APPROVAL_STATUS.CANCELLED]
+
+        }
+
+        const hasDisapproved = approvers.find(i => i.status === APPROVAL_STATUS.DISAPPROVED)
+
+        if(hasDisapproved) {
+            return approvalStatus[APPROVAL_STATUS.DISAPPROVED]
+        }
+
+        const hasPending = approvers.find(i => i.status === APPROVAL_STATUS.PENDING)
+
+        if(hasPending) {
+            return approvalStatus[APPROVAL_STATUS.PENDING]
+        }
+
+        return approvalStatus[APPROVAL_STATUS.APPROVED]
     }
 
 </script>

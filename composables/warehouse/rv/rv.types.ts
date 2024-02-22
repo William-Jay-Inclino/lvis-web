@@ -17,6 +17,15 @@ export interface RV {
   notes: string;
   rv_approvers: RVApprover[]
   is_cancelled: boolean
+
+  // set programmatically
+
+  status: {
+    value: APPROVAL_STATUS
+    label: string 
+    color: string 
+  }
+
 }
 
 

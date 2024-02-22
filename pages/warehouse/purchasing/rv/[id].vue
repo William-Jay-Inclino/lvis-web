@@ -774,6 +774,9 @@
         if(response.success) {
             toast.success(response.msg)
             rvData.value.is_cancelled = true 
+
+            
+
         }else {
             Swal.fire({
                 title: 'Error!',

@@ -91,6 +91,10 @@ export async function findByRcNumber(rcNumber: string): Promise<RV | undefined> 
                     }
                 }
                 date_requested
+                is_cancelled
+                rv_approvers{
+                    status
+                }
             }
         }
     `;
@@ -127,6 +131,10 @@ export async function findByRvNumber(rvNumber: string): Promise<RV | undefined> 
                     }
                 }
                 date_requested
+                is_cancelled
+                rv_approvers{
+                    status
+                }
             }
         }
     `;
@@ -247,6 +255,10 @@ export async function findAll(payload: {page: number, pageSize: number, date_req
                         }
                     }
                     date_requested
+                    is_cancelled
+                    rv_approvers{
+                        status
+                    }
                 }
                 totalItems
                 currentPage
