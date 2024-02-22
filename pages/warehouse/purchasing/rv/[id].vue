@@ -69,7 +69,7 @@
                         Imd. Sup. <span class="text-danger">*</span>
                     </label>
                     <client-only>
-                        <v-select :options="employees" label="fullname" v-model="rvData.supervisor"></v-select>
+                        <v-select :options="employees" label="fullname" v-model="rvData.supervisor" :clearable="false"></v-select>
                     </client-only>
                     <small class="text-danger fst-italic" v-if="rvDataErrors.supervisor"> This field is required </small>
                     <small class="text-muted fst-italic">

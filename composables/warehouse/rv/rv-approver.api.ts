@@ -169,6 +169,8 @@ export async function update(input: UpdateApproverInput): Promise<RvApproverMuta
 
     if(input.notes) {
         notes = `"${input.notes}"`
+    }else{
+        notes = `""`
     }
 
     if(input.date_approval) {
