@@ -90,7 +90,6 @@
                                             <th class="bg-secondary text-white"> Order </th>
                                             <th class="bg-secondary text-white"> Label </th>
                                             <th class="bg-secondary text-white"> Approver </th>
-                                            <th class="bg-secondary text-white"> Approver Proxy </th>
                                             <th class="bg-secondary text-white"> Status </th>
                                         </tr>
                                     </thead>
@@ -98,13 +97,7 @@
                                         <tr v-for="i, count in item.rv_approvers">
                                             <td> {{ i.order }} </td>
                                             <td> {{ i.label }} </td>
-                                            <td> {{ getFullname(i.approver.firstname, i.approver.middlename, i.approver.lastname) }} </td>
-                                            <td>
-                                                <span v-if="i.approver_proxy">
-                                                    {{ getFullname(i.approver_proxy.firstname, i.approver_proxy.middlename, i.approver_proxy.lastname) }}
-                                                </span>
-                                                <span v-else> N/A </span>
-                                            </td>
+                                            <td> {{ getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname) }} </td>
                                             <td>
                                                 <span :class="{[`badge bg-${approvalStatus[i.status].color}`]: true}"> 
                                                     {{ approvalStatus[i.status].label }} 
@@ -138,16 +131,7 @@
                                         </tr>
                                         <tr>
                                             <td class="text-muted"> Approver </td>
-                                            <td> {{ getFullname(i.approver.firstname, i.approver.middlename, i.approver.lastname) }} </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-muted"> Approver Proxy </td>
-                                            <td>
-                                                <span v-if="i.approver_proxy">
-                                                    {{ getFullname(i.approver_proxy.firstname, i.approver_proxy.middlename, i.approver_proxy.lastname) }}
-                                                </span>
-                                                <span v-else> N/A </span>
-                                            </td>
+                                            <td> {{ getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname) }} </td>
                                         </tr>
                                         <tr>
                                             <td class="text-muted"> Status </td>

@@ -1,7 +1,9 @@
 import { APPROVER_SUPERVISOR_LABEL } from "~/utils/config";
 import type { Canvass, Classification, Employee } from "../canvass/canvass.types";
-import type { CreateRvApproverInput, CreateRvInput, FindAllResponse, MutationResponse, RV, RvApproverMutationResponse, RvApproverSettings, UpdateApproverOrderResponse, UpdateRvInput } from "./rv.types";
+import type { CreateRvInput, FindAllResponse, MutationResponse, RV, UpdateRvInput } from "./rv.types";
 import { sendRequest } from "~/utils/api"
+import type { RvApproverSettings } from "./rv-approver.types";
+import type { AuthUser } from '~/composables/common.types'
 
 export async function fetchDataInSearchFilters(): Promise<{
     canvasses: Canvass[],
@@ -170,7 +172,7 @@ export async function findOne(id: string): Promise<RV | undefined> {
                 work_order_no
                 work_order_date
                 notes
-                status
+                is_cancelled
                 classification{
                     name
                 }
@@ -404,7 +406,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 work_order_no
                 work_order_date
                 notes
-                status
+                is_cancelled
                 rv_approvers {
                     id
                     approver {
@@ -485,7 +487,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
     }
 }
 
-export async function createRV(input: CreateRvInput): Promise<MutationResponse> {
+export async function create(input: CreateRvInput): Promise<MutationResponse> {
 
     let work_order_no = null
     let work_order_date = null
@@ -571,7 +573,7 @@ export async function createRV(input: CreateRvInput): Promise<MutationResponse> 
     }
 }
 
-export async function updateRV(id: string, input: UpdateRvInput): Promise<MutationResponse> {
+export async function update(id: string, input: UpdateRvInput): Promise<MutationResponse> {
 
     let work_order_no = null
     let work_order_date = null
@@ -649,118 +651,38 @@ export async function updateRV(id: string, input: UpdateRvInput): Promise<Mutati
     }
 }
 
-export async function updateApproverOrder(inputs: {id: string, order: number}[]): Promise<UpdateApproverOrderResponse> {
-    const inputsString = inputs.map(({ id, order }) => `{ id: "${id}", order: ${order} }`).join('\n');
-    const mutation = `
-        mutation {
-            updateManyRVApproverOrders(
-                inputs: [
-                    ${inputsString}
-                ]
-            ) {
-                success
-                approvers {
-                    id
-                    rv_id
-                    approver {
-                        id
-                        firstname
-                        middlename
-                        lastname
-                    }
-                    approver_proxy {
-                        id
-                        firstname
-                        middlename
-                        lastname
-                    }
-                    date_approval 
-                    notes
-                    status
-                    label
-                    order
-                }
-            }
-        }
-    `;
 
-    try {
-        const response = await sendRequest(mutation);
-        console.log('response', response);
+export async function cancel(id: string): Promise<MutationResponse> {
 
-        if (response.data && response.data.data && response.data.data.updateManyRVApproverOrders) {
+    const authUserJson = localStorage.getItem('authUser')
 
-            if(response.data.data.updateManyRVApproverOrders.success) {
-                return {
-                    success: true,
-                    msg: 'RV Approver Order updated successfully!',
-                    approvers: response.data.data.updateManyRVApproverOrders.approvers
-                };
-            }else{
-                return {
-                    success: false,
-                    msg: 'Failed to update RV Approver Order. Please contact system administrator',
-                    approvers: []
-                }
-            }
-
-        }
-
-        throw new Error(JSON.stringify(response.data.errors));
-    } catch (error) {
-        console.error(error);
-
-        return {
-            success: false,
-            msg: 'Failed to update RV Approver Order. Please contact system administrator',
-            approvers: []
-        };
+    if(!authUserJson) {
+        throw console.error('authUser in localstorage not found');
     }
-}
 
-export async function createRvApprover(input: CreateRvApproverInput): Promise<RvApproverMutationResponse> {
+    const authUser = JSON.parse(authUserJson) as AuthUser
 
     const mutation = `
         mutation {
-            createRvApprover(
+            updateRv(
+                id: "${id}",
                 input: {
-                    rv_id: "${input.rv_id}"
-                    approver_id: "${input.approver?.id}"
-                    label: "${input.label}"
-                    order: ${input.order}
+                    canceller_id: "${authUser.user.id}"
                 }
             ) {
                 id
-                rv_id
-                approver {
-                    id
-                    firstname
-                    middlename
-                    lastname
-                }
-                approver_proxy {
-                    id
-                    firstname
-                    middlename
-                    lastname
-                }
-                date_approval 
-                notes
-                status
-                label
-                order
+                is_cancelled
             }
-        }`;
+    }`;
 
     try {
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.createRvApprover) {
+        if(response.data && response.data.data && response.data.data.updateRv) {
             return {
                 success: true,
-                msg: 'RV Approver created successfully!',
-                data: response.data.data.createRvApprover 
+                msg: 'RV cancelled!' 
             };
         }
 
@@ -771,7 +693,7 @@ export async function createRvApprover(input: CreateRvApproverInput): Promise<Rv
         
         return {
             success: false,
-            msg: 'Failed to create RV Approver. Please contact system administrator'
+            msg: 'Failed to cancel RV. Please contact system administrator'
         };
     }
 }

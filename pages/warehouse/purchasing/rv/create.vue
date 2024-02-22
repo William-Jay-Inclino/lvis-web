@@ -210,7 +210,7 @@
         console.log('saving...')
 
         isSaving.value = true
-        const response = await rvApi.createRV(rvData.value)
+        const response = await rvApi.create(rvData.value)
         isSaving.value = false
 
         if(response.success && response.data) {

@@ -35,6 +35,8 @@ export function formatDate(d: any) {
 
 export function formatToValidHtmlDate(d: any): string {
 
+    console.log('d', d)
+
     let date = d;
     if (!isNaN(d)) {
         date = Number(d) < 10000000000 ? Number(d) * 1000 : Number(d);
@@ -42,4 +44,19 @@ export function formatToValidHtmlDate(d: any): string {
 
     return moment(date).format('YYYY-MM-DD')
 
+}
+
+
+
+export function isValidDate(dateString: string | null): boolean {
+
+    if(!dateString) {
+        return false
+    }
+
+    // Parse the date string
+    let date = new Date(dateString);
+
+    // Check if the parsed date is a valid date
+    return !isNaN(date.getTime());
 }

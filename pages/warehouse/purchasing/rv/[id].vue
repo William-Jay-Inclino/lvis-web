@@ -3,7 +3,7 @@
         <h2 class="text-warning">Update RV</h2>
         <hr>
 
-        <div class="row">
+        <div class="row pt-3">
             <div class="col">
                 <ul class="nav nav-tabs justify-content-center">
                     <li class="nav-item" @click="isRVDetailForm = true">
@@ -22,6 +22,15 @@
 
         <div v-show="isRVDetailForm" class="row justify-content-center pt-5">
             <div class="col-lg-6">
+
+
+                <div class="mb-3 d-flex align-items-center">
+                    <label class="form-label me-2 mb-0">Status:</label>
+                    <div :class="{[`badge bg-${rvStatus.color}`]: true}"> 
+                        {{ rvStatus.label }} 
+                    </div>
+                </div>
+
                 <div class="mb-3">
                     <label class="form-label">
                         Date
@@ -102,7 +111,7 @@
                     <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rv">
                         <i class="fas fa-chevron-left"></i> Back
                     </nuxt-link>
-                    <button type="button" class="btn btn-danger">
+                    <button @click="onCancelRv" class="btn btn-danger">
                         <i class="fas fa-cancel"></i> Cancel
                     </button>
                     <button type="button" class="btn btn-primary">
@@ -136,7 +145,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="item in rvData.rv_approvers">
+                                <tr v-for="item, i in rvData.rv_approvers">
                                     <td class="text-muted align-middle">
                                         {{ item.order }}
                                     </td>
@@ -151,17 +160,17 @@
                                             {{ approvalStatus[item.status].label }} 
                                         </div>
                                         <div class="fst-italic" v-if="item.date_approval">
-                                            <small> {{ item.date_approval }} </small>
+                                            <small> {{ formatDate(item.date_approval) }} </small>
                                         </div>
                                     </td>
                                     <td class="text-muted align-middle">
-                                        <textarea class="form-control" rows="3" v-model="item.notes" readonly></textarea>
+                                        <textarea class="form-control" rows="3" v-model="item.notes" disabled></textarea>
                                     </td>
                                     <td class="text-center align-middle">
-                                        <button class="btn btn-sm btn-light w-50">
+                                        <button @click="onRemoveApprover(i)" class="btn btn-sm btn-light w-50">
                                             <i class="fas fa-trash text-danger"></i>
                                         </button>
-                                        <button class="btn btn-sm btn-light w-50">
+                                        <button @click="onClickEditApprover(i)" class="btn btn-sm btn-light w-50" data-bs-toggle="modal" data-bs-target="#editApproverModal">
                                             <i class="fas fa-edit text-primary"></i>
                                         </button>
                                     </td>
@@ -191,7 +200,7 @@
                     <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rv">
                         <i class="fas fa-chevron-left"></i> Back
                     </nuxt-link>
-                    <button type="button" class="btn btn-danger">
+                    <button @click="onCancelRv" class="btn btn-danger">
                         <i class="fas fa-cancel"></i> Cancel
                     </button>
                     <button type="button" class="btn btn-primary">
@@ -227,7 +236,7 @@
                                 type: 'transition-group',
                                 name: !drag ? 'flip-list' : null
                             }"
-                            v-bind="dragOptions"
+                            v-bind="_dragOptions"
                             @start="drag = true"
                             @end="drag = false"
                         >
@@ -323,6 +332,77 @@
             </div>
         </div>
 
+
+        <!-- Edit approver modal-->
+        <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="editApproverModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-warning" id="exampleModalLabel">
+                        {{ isRvApproverModalAdd ? 'Add' : 'Edit' }} Approver
+                    </h5>
+                    <button @click="onCloseAddApproverModal" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" v-if="editApproverData.id">
+                    
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Approver <span class="text-danger">*</span>
+                        </label>
+                        <client-only>
+                            <v-select :options="employees" label="fullname" v-model="editApproverData.approver" :clearable="false"></v-select>
+                        </client-only>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Label <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" v-model="editApproverData.label">
+                        <small class="text-danger fst-italic" v-show="editApproverErrors.label">
+                            This field is required
+                        </small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Status <span class="text-danger">*</span>
+                        </label>
+                        <client-only>
+                            <v-select :options="approvalStatusArray" label="label" v-model="editApproverData.status" :clearable="false"></v-select>
+                        </client-only>
+                    </div>
+
+                    <div class="mb-3" v-show="editApproverData.status.id !== APPROVAL_STATUS.PENDING">
+                        <label class="form-label">
+                            Date {{ editApproverData.status.id === APPROVAL_STATUS.APPROVED ? 'Approved' : 'Disapproved' }} <span class="text-danger">*</span>
+                        </label>
+                        <input type="date" class="form-control" v-model="editApproverData.date_approval">
+                        <small class="text-danger fst-italic" v-show="editApproverErrors.date_approval">
+                            Invalid Date
+                        </small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Notes
+                        </label>
+                        <textarea class="form-control" rows="3" v-model="editApproverData.notes"></textarea>
+                    </div>
+                        
+                </div>
+                <div class="modal-footer">
+                    <button @click="onCloseEditApproverModal" ref="closeEditApproverModal" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-close"></i> Close
+                    </button>
+                    <button @click="editApprover" class="btn btn-primary" :disabled="isEditingRvApprover">
+                        <i class="fas fa-edit"></i> {{ isEditingRvApprover ? 'Editing...' : 'Edit' }}
+                    </button>
+                </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
 </template>
@@ -336,26 +416,26 @@
 
     import Swal from 'sweetalert2'
     import moment from 'moment';
-    import { getFullname, formatToValidHtmlDate, formatDate } from '~/utils/helpers'
+    import { getFullname, formatToValidHtmlDate, formatDate, isValidDate } from '~/utils/helpers'
     import { useToast } from "vue-toastification";
     import * as rvApi from '~/composables/warehouse/rv/rv.api'
+    import * as rvApproverApi from '~/composables/warehouse/rv/rv-approver.api'
     import type { Classification, Employee } from '~/composables/warehouse/canvass/canvass.types';
-    import { APPROVAL_STATUS, type CreateRvApproverInput, type RV, type RVApprover, type UpdateRvInput } from '~/composables/warehouse/rv/rv.types';
+    import { APPROVAL_STATUS, type RV } from '~/composables/warehouse/rv/rv.types';
     import { MOBILE_WIDTH } from '~/utils/config';
     import { approvalStatus } from '~/utils/constants';
+    import type { CreateRvApproverInput, RVApprover, UpdateRvApproverInput } from '~/composables/warehouse/rv/rv-approver.types';
 
-    const drag = ref(false)
 
-    const dragOptions = {
-        animation: 200,
-        group: "description",
-        disabled: false,
-        ghostClass: "ghost"
-    };
 
+    // DEPENDENCIES
     const route = useRoute()
     const router = useRouter();
+    const toast = useToast();
 
+
+
+    // FLAGS
     const isMobile = ref(false)
     const isRVDetailForm = ref(true)
     const isUpdating = ref(false)
@@ -363,10 +443,11 @@
     const isRvApproverModalAdd = ref(false)
     const isAddingRvApprover = ref(false)
     const isEditingRvApprover = ref(false)
+    const drag = ref(false)
+    
 
-    const toast = useToast();
-    const today = moment().format('YYYY-MM-DD')
 
+    // CONSTANTS
     const _rvDataErrorsInitial = {
         supervisor: false,
     }
@@ -380,16 +461,47 @@
         approver: false,
         label: false
     }
+    const _editApproverErrorsInitial = {
+        date_approval: false,
+        label: false
+    }
+    const _dragOptions = {
+        animation: 200,
+        group: "description",
+        disabled: false,
+        ghostClass: "ghost"
+    };
 
+
+
+    // HTML
     const closeChangeOrderModal = ref<HTMLButtonElement>()
     const closeAddApproverModal = ref<HTMLButtonElement>()
-    const rvDataErrors = ref({..._rvDataErrorsInitial})
-    const rvData = ref<RV>({} as RV)
+    const closeEditApproverModal = ref<HTMLButtonElement>()
+
+
+
+    // DROPDOWNS
     const employees = ref<Employee[]>([])
     const classifications = ref<Classification[]>([])
     const approvers = ref<RVApprover[]>([])
+
+
+
+    // FORM DATA
+    const rvDataErrors = ref({..._rvDataErrorsInitial})
+    const rvData = ref<RV>({} as RV)
     const addApproverData = ref<CreateRvApproverInput>({..._addApproverInitial})
     const addApproverErrors = ref({..._addApproverErrorsInitial})
+    const editApproverData = ref<UpdateRvApproverInput>({} as UpdateRvApproverInput)
+    const editApproverErrors = ref({..._editApproverErrorsInitial})
+    const approvalStatusArray = ref([
+        { id: APPROVAL_STATUS.PENDING, label: approvalStatus[APPROVAL_STATUS.PENDING].label },
+        { id: APPROVAL_STATUS.APPROVED, label: approvalStatus[APPROVAL_STATUS.APPROVED].label },
+        { id: APPROVAL_STATUS.DISAPPROVED, label: approvalStatus[APPROVAL_STATUS.DISAPPROVED].label }
+    ])
+
+
 
     onMounted( async() => {
 
@@ -412,9 +524,8 @@
 
     })
 
-    function getCounter(element: RVApprover) {
-        return approvers.value.indexOf(element) + 1;
-    }
+
+    // ======================== INIT ========================  
 
     function setRvData(data: RV) {
         data.date_requested = formatToValidHtmlDate(data.date_requested)
@@ -430,7 +541,7 @@
         }
 
         data.rv_approvers.map(i => {
-            i.date_approval = formatDate(i.date_approval)
+            i.date_approval = i.date_approval ? formatToValidHtmlDate(i.date_approval) : null
             i.approver!['fullname'] = getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname)
             return i
         })
@@ -438,6 +549,44 @@
         rvData.value = data
 
     }
+
+
+
+
+
+    // ======================== COMPUTED ========================  
+
+    const rvStatus = computed( () => {
+
+        const approvers = rvData.value.rv_approvers
+        
+        if(rvData.value.is_cancelled) {
+
+            return approvalStatus[APPROVAL_STATUS.CANCELLED]
+
+        }
+
+        const hasDisapproved = approvers.find(i => i.status === APPROVAL_STATUS.DISAPPROVED)
+
+        if(hasDisapproved) {
+            return approvalStatus[APPROVAL_STATUS.DISAPPROVED]
+        }
+
+        const hasPending = approvers.find(i => i.status === APPROVAL_STATUS.PENDING)
+
+        if(hasPending) {
+            return approvalStatus[APPROVAL_STATUS.PENDING]
+        }
+
+        return approvalStatus[APPROVAL_STATUS.APPROVED]
+
+    })
+
+
+
+
+
+    // ======================== API CALLS ========================  
 
     async function updateRvDetail() {
 
@@ -450,7 +599,7 @@
         console.log('updating...')
 
         isUpdating.value = true
-        const response = await rvApi.updateRV(rvData.value.id, rvData.value)
+        const response = await rvApi.update(rvData.value.id, rvData.value)
         isUpdating.value = false
 
         if(response.success && response.data) {
@@ -461,7 +610,11 @@
                 position: 'top',
             })
 
-            rvData.value.rv_approvers = response.data.rv_approvers
+            rvData.value.rv_approvers = response.data.rv_approvers.map(i => {
+                i.date_approval = i.date_approval ? formatToValidHtmlDate(i.date_approval) : null
+                i.approver!['fullname'] = getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname)
+                return i
+            })
 
         } else {
             Swal.fire({
@@ -495,12 +648,18 @@
         console.log('data', data)
 
         isUpdatingApproverOrder.value = true
-        const response = await rvApi.updateApproverOrder(data)
+        const response = await rvApproverApi.updateApproverOrder(data)
         isUpdatingApproverOrder.value = false
 
         if(response.success && response.approvers) {
             toast.success(response.msg)
-            rvData.value.rv_approvers = response.approvers
+
+            rvData.value.rv_approvers = response.approvers.map(i => {
+                i.date_approval = i.date_approval ? formatToValidHtmlDate(i.date_approval) : null
+                i.approver!['fullname'] = getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname)
+                return i
+            })
+
             closeChangeOrderModal.value?.click()
 
         }else {
@@ -521,11 +680,18 @@
         }
 
         isAddingRvApprover.value = true
-        const response = await rvApi.createRvApprover(addApproverData.value)
+        const response = await rvApproverApi.create(addApproverData.value)
         isAddingRvApprover.value = false
 
         if(response.success && response.data) {
             toast.success(response.msg)
+
+            const approver = response.data.approver
+
+            approver!.fullname = getFullname(approver!.firstname, approver!.middlename, approver!.lastname)
+
+            response.data.date_approval = response.data.date_approval ? formatToValidHtmlDate(response.data.date_approval) : null
+
             rvData.value.rv_approvers.push(response.data)
             closeAddApproverModal.value?.click()
         }else {
@@ -539,6 +705,92 @@
 
     }
 
+    async function editApprover() {
+        console.log('editApprover()')
+
+        if(!isValidEditApprover()) {
+            return 
+        }
+
+        if(editApproverData.value.status.id === APPROVAL_STATUS.PENDING) {
+            editApproverData.value.date_approval = null
+        }
+
+        isEditingRvApprover.value = true
+        const response = await rvApproverApi.update(editApproverData.value)
+        isEditingRvApprover.value = false
+
+        if(response.success && response.data) {
+            toast.success(response.msg)
+
+            const prevApproverItemIndx = rvData.value.rv_approvers.findIndex(i => i.id === editApproverData.value.id)
+
+            response.data.date_approval = response.data.date_approval ? formatToValidHtmlDate(response.data.date_approval) : null
+
+            const a = response.data.approver
+
+            response.data.approver!['fullname'] = getFullname(a!.firstname, a!.middlename, a!.lastname)
+
+            rvData.value.rv_approvers[prevApproverItemIndx] = {...response.data}
+
+            closeEditApproverModal.value?.click()
+
+        }else {
+            Swal.fire({
+                title: 'Error!',
+                text: response.msg,
+                icon: 'error',
+                position: 'top',
+            })
+        }
+
+    }
+
+    async function removeApprover(item: RVApprover, indx: number) {
+        const response = await rvApproverApi.remove(item.id)
+
+        if(response.success) {
+            
+            toast.success(`${item.approver?.fullname} removed!`)
+
+            rvData.value.rv_approvers.splice(indx, 1)
+
+        }else {
+
+            Swal.fire({
+                title: 'Error!',
+                text: response.msg,
+                icon: 'error',
+                position: 'top',
+            })
+
+        }
+    }
+
+    async function cancelRv() {
+
+        const response = await rvApi.cancel(rvData.value.id)
+
+        if(response.success) {
+            toast.success(response.msg)
+            rvData.value.is_cancelled = true 
+        }else {
+            Swal.fire({
+                title: 'Error!',
+                text: response.msg,
+                icon: 'error',
+                position: 'top',
+            })
+        }
+
+
+    } 
+
+
+    
+    
+    // ======================== VALIDATIONS ========================  
+    
     function isValid(): boolean {
 
         rvDataErrors.value = {..._rvDataErrorsInitial}
@@ -579,12 +831,40 @@
 
     }
 
-    function onClickChangeApprover() {
-        approvers.value = [...rvData.value.rv_approvers]
+    function isValidEditApprover(): boolean {
+
+        editApproverErrors.value = {..._editApproverErrorsInitial}
+
+        if(editApproverData.value.label.trim() === '') {
+            editApproverErrors.value.label = true
+        }
+
+        if(editApproverData.value.status.id !== APPROVAL_STATUS.PENDING) {
+
+            if(!isValidDate(editApproverData.value.date_approval)) {
+                editApproverErrors.value.date_approval = true
+            }
+
+        }
+
+        const hasError = Object.values(editApproverErrors.value).includes(true);
+
+        if(hasError) {
+            return false
+        }
+
+        return true
+
     }
 
-    function checkMobile() {
-        isMobile.value = window.innerWidth < MOBILE_WIDTH
+
+
+
+
+    // ======================== BUTTONS ========================  
+
+    function onClickChangeApprover() {
+        approvers.value = [...rvData.value.rv_approvers]
     }
 
     function onCloseChangeOrderModal() {
@@ -596,11 +876,101 @@
         addApproverErrors.value = {..._addApproverErrorsInitial}
     }
 
+    function onCloseEditApproverModal() {
+        editApproverData.value = {} as UpdateRvApproverInput
+        editApproverErrors.value = {..._editApproverErrorsInitial}
+    }
+
     function onClickAddApprover() {
         isRvApproverModalAdd.value = true
         addApproverData.value.order = rvData.value.rv_approvers.length + 1
         addApproverData.value.rv_id = rvData.value.id
     }
+
+    function onClickEditApprover(indx: number) {
+        isRvApproverModalAdd.value = false 
+
+        const item = rvData.value.rv_approvers[indx]
+
+        const currentData = {...item}
+
+        editApproverData.value = {
+            id: item.id,
+            approver: item.approver,
+            date_approval: item.date_approval,
+            notes: currentData.notes,
+            status: {
+                id: currentData.status,
+                label: approvalStatus[currentData.status].label
+            },
+            label: currentData.label,
+            order: currentData.order
+        }
+    }
+
+    async function onRemoveApprover(indx: number) {
+
+        const item = rvData.value.rv_approvers[indx]
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: `${item.approver?.fullname} will be removed!`,
+            position: "top",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#e74a3b",
+            cancelButtonColor: "#6c757d",
+            confirmButtonText: "Yes, delete it!",
+            reverseButtons: true,
+            showLoaderOnConfirm: true,
+            preConfirm: async(remove) => {
+                
+                if(remove) {
+                    await removeApprover(item, indx)
+                }
+
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        })
+
+    }
+
+    async function onCancelRv() {
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: `This RV will be cancelled!`,
+            position: "top",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#e74a3b",
+            cancelButtonColor: "#6c757d",
+            confirmButtonText: "Yes, cancel it!",
+            reverseButtons: true,
+            showLoaderOnConfirm: true,
+            preConfirm: async(remove) => {
+                
+                if(remove) {
+                    await cancelRv()
+                }
+
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        })
+
+    }
+
+
+
+    // ======================== UTILS ========================  
+    function checkMobile() {
+        isMobile.value = window.innerWidth < MOBILE_WIDTH
+    }
+
+    function getCounter(element: RVApprover) {
+        return approvers.value.indexOf(element) + 1;
+    }
+
 
 </script>
 
