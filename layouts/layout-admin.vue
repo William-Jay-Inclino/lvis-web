@@ -20,7 +20,7 @@
                                     <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/rv">RV</nuxt-link></li>
                                     <li><a class="dropdown-item" href="#">SPR</a></li>
                                     <li><a class="dropdown-item" href="#">JO</a></li>
-                                    <li><a class="dropdown-item" href="#">MEQS</a></li>
+                                    <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/meqs">MEQS</nuxt-link></li>
                                     <li><a class="dropdown-item" href="#">PO</a></li>
                                     <li><a class="dropdown-item" href="#">RR</a></li>
                                 </ul>

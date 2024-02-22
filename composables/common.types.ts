@@ -5,6 +5,11 @@ export enum USER_STATUS {
     INACTIVE = 2
 }
 
+export enum REQUEST_TYPE {
+    JO = 1,
+    RV = 2,
+    SPR = 3
+}
 
 export interface AuthUser {
     user: {
@@ -20,7 +25,13 @@ export enum APPROVAL_STATUS {
     APPROVED = 2,
     DISAPPROVED = 3,
     CANCELLED = 4,
-  }
+}
+
+export enum VAT_TYPE {
+    NONE = 1,
+    INC = 2,
+    EXC = 3
+}
 
 export interface Approver {
     id: string 
