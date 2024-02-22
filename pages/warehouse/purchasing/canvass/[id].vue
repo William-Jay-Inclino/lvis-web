@@ -268,7 +268,7 @@
 
 
 <script setup lang="ts">
-    import type { Brand, Canvass, Employee, Unit, UpdateCanvassInput } from '~/composables/warehouse/canvass/canvass.types';
+    import type { Brand, Canvass, Unit, UpdateCanvassInput } from '~/composables/warehouse/canvass/canvass.types';
     import * as canvassApi from '~/composables/warehouse/canvass/canvass.api'
     import * as canvassItemApi from '~/composables/warehouse/canvass/canvass-item.api'
     import moment from 'moment';

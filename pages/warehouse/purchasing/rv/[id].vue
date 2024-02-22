@@ -107,94 +107,32 @@
                     <textarea class="form-control" rows="3" v-model="rvData.notes"></textarea>
                 </div>
         
-                <div class="d-flex justify-content-end gap-2 pt-3">
-                    <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rv">
-                        <i class="fas fa-chevron-left"></i> Back
-                    </nuxt-link>
-                    <button @click="onCancelRv" class="btn btn-danger">
-                        <i class="fas fa-cancel"></i> Cancel
-                    </button>
-                    <button type="button" class="btn btn-primary">
-                        <i class="fas fa-print"></i> Print
-                    </button>
-                    <button @click="updateRvDetail()" type="button" class="btn btn-success" :disabled="isUpdating">
-                        <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
-                    </button>
-                </div>
+
             </div>
         </div>
 
         <div v-show="!isRVDetailForm" class="row justify-content-center pt-5">
 
             <div class="col-lg-12 col-md-12 col-sm-12">
+                <WarehouseApprover 
+                    :approvers="rvData.rv_approvers"
+                    :employees="employees"
+                    :isUpdatingApproverOrder="isUpdatingApproverOrder"
+                    :isAddingRvApprover="isAddingRvApprover"
+                    :isEditingRvApprover="isEditingRvApprover"
+                    @changeApproverOrder="changeApproverOrder"
+                    @addApprover="addApprover"
+                    @editApprover="editApprover"
+                    @removeApprover="removeApprover"
+                />
+            </div>
 
-                <div v-if="!isMobile">
-                    
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th class="bg-secondary text-white">Order</th>
-                                    <th class="bg-secondary text-white">Label</th>
-                                    <th class="bg-secondary text-white">Approver</th>
-                                    <th class="bg-secondary text-white text-center">Status</th>
-                                    <th class="bg-secondary text-white">Notes</th>
-                                    <th class="bg-secondary text-white text-center">
-                                        <i class="fas fa-cog"></i>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="item, i in rvData.rv_approvers">
-                                    <td class="text-muted align-middle">
-                                        {{ item.order }}
-                                    </td>
-                                    <td class="text-muted align-middle">
-                                        {{ item.label }}
-                                    </td>
-                                    <td class="text-muted align-middle">
-                                        {{ getFullname(item.approver!.firstname, item.approver!.middlename, item.approver!.lastname) }}
-                                    </td>
-                                    <td class="text-muted text-center align-middle">
-                                        <div :class="{[`badge bg-${approvalStatus[item.status].color}`]: true}"> 
-                                            {{ approvalStatus[item.status].label }} 
-                                        </div>
-                                        <div class="fst-italic" v-if="item.date_approval">
-                                            <small> {{ formatDate(item.date_approval) }} </small>
-                                        </div>
-                                    </td>
-                                    <td class="text-muted align-middle">
-                                        <textarea class="form-control" rows="3" v-model="item.notes" disabled></textarea>
-                                    </td>
-                                    <td class="text-center align-middle">
-                                        <button @click="onRemoveApprover(i)" class="btn btn-sm btn-light w-50">
-                                            <i class="fas fa-trash text-danger"></i>
-                                        </button>
-                                        <button @click="onClickEditApprover(i)" class="btn btn-sm btn-light w-50" data-bs-toggle="modal" data-bs-target="#editApproverModal">
-                                            <i class="fas fa-edit text-primary"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="7">
-                                        <div class="text-center">
-                                            <button @click="onClickAddApprover" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#addApproverModal">
-                                                <i class="fas fa-plus-circle"></i> Add Approver
-                                            </button>
-                                            <button @click="onClickChangeApprover" class="btn btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#changeApproverOrderModal">
-                                                <i class="fas fa-sort"></i> Change Order
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
 
-                            </tfoot>
-                        </table>
-                    </div>
+        </div>
 
-                </div>
+
+        <div class="row justify-content-center">
+            <div :class="{'col-lg-6': isRVDetailForm, 'col-lg-12 col-md-12 col-sm-12': !isRVDetailForm}">
 
                 <div class="d-flex justify-content-end gap-2 pt-3">
                     <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rv">
@@ -206,202 +144,14 @@
                     <button type="button" class="btn btn-primary">
                         <i class="fas fa-print"></i> Print
                     </button>
+                    <button v-if="isRVDetailForm" @click="updateRvDetail()" type="button" class="btn btn-success" :disabled="isUpdating">
+                        <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
+                    </button>
                 </div>
 
             </div>
-
         </div>
 
-        <!-- Change approver order modal-->
-        <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="changeApproverOrderModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-warning" id="exampleModalLabel">Change Order</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-
-                    <small class="text-muted fst-italic">
-                        Drag items to reorder
-                    </small>
-
-                    <div class="pt-4">
-                        <draggable
-                            v-model="approvers"
-                            item-key="id"
-                            tag="div"
-                            :component-data="{
-                                tag: 'ul',
-                                type: 'transition-group',
-                                name: !drag ? 'flip-list' : null
-                            }"
-                            v-bind="_dragOptions"
-                            @start="drag = true"
-                            @end="drag = false"
-                        >
-                            <template #item="{ element }">
-                                <div class="draggable-item position-relative">
-
-                                    <span class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-primary">
-                                        <!-- add counter here -->
-                                        {{ getCounter(element) }}
-                                    </span>
-
-                                    <div class="row">
-                                        <div class="col">                                            
-                                            <span> {{ element.label }} </span>
-                                        </div>
-                                        <div class="col">
-                                            <span class="text-muted fst-italic">
-                                                {{ element.approver.fullname }} 
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </template>
-                        </draggable>
-                    </div>
-                        
-                        
-                </div>
-                <div class="modal-footer">
-                    <button @click="onCloseChangeOrderModal" ref="closeChangeOrderModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-close"></i> Close
-                    </button>
-                    <button @click="updateApproverOrder" type="button" class="btn btn-primary" :disabled="isUpdatingApproverOrder">
-                        <i class="fas fa-save"></i> {{ isUpdatingApproverOrder ? 'Saving...' : 'Save' }}
-                    </button>
-                </div>
-                </div>
-            </div>
-        </div>
-
-
-        <!-- Add approver modal-->
-        <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="addApproverModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-warning" id="exampleModalLabel">
-                        {{ isRvApproverModalAdd ? 'Add' : 'Edit' }} Approver
-                    </h5>
-                    <button @click="onCloseAddApproverModal" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Approver <span class="text-danger">*</span>
-                        </label>
-                        <client-only>
-                            <v-select :options="employees" label="fullname" v-model="addApproverData.approver"></v-select>
-                        </client-only>
-                        <small class="text-danger fst-italic" v-show="addApproverErrors.approver">
-                            This field is required
-                        </small>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Label <span class="text-danger">*</span>
-                        </label>
-                        <input type="text" class="form-control" v-model="addApproverData.label">
-                        <small class="text-danger fst-italic" v-show="addApproverErrors.label">
-                            This field is required
-                        </small>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Order
-                        </label>
-                        <input type="number" class="form-control" :value="addApproverData.order" disabled>
-                    </div>
-                        
-                </div>
-                <div class="modal-footer">
-                    <button @click="onCloseAddApproverModal" ref="closeAddApproverModal" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-close"></i> Close
-                    </button>
-                    <button @click="addApprover" class="btn btn-primary" :disabled="isAddingRvApprover">
-                        <i class="fas fa-user-plus"></i> {{ isAddingRvApprover ? 'Adding...' : 'Add' }}
-                    </button>
-                </div>
-                </div>
-            </div>
-        </div>
-
-
-        <!-- Edit approver modal-->
-        <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="editApproverModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-warning" id="exampleModalLabel">
-                        {{ isRvApproverModalAdd ? 'Add' : 'Edit' }} Approver
-                    </h5>
-                    <button @click="onCloseAddApproverModal" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" v-if="editApproverData.id">
-                    
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Approver <span class="text-danger">*</span>
-                        </label>
-                        <client-only>
-                            <v-select :options="employees" label="fullname" v-model="editApproverData.approver" :clearable="false"></v-select>
-                        </client-only>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Label <span class="text-danger">*</span>
-                        </label>
-                        <input type="text" class="form-control" v-model="editApproverData.label">
-                        <small class="text-danger fst-italic" v-show="editApproverErrors.label">
-                            This field is required
-                        </small>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Status <span class="text-danger">*</span>
-                        </label>
-                        <client-only>
-                            <v-select :options="approvalStatusArray" label="label" v-model="editApproverData.status" :clearable="false"></v-select>
-                        </client-only>
-                    </div>
-
-                    <div class="mb-3" v-show="editApproverData.status.id !== APPROVAL_STATUS.PENDING">
-                        <label class="form-label">
-                            Date {{ editApproverData.status.id === APPROVAL_STATUS.APPROVED ? 'Approved' : 'Disapproved' }} <span class="text-danger">*</span>
-                        </label>
-                        <input type="date" class="form-control" v-model="editApproverData.date_approval">
-                        <small class="text-danger fst-italic" v-show="editApproverErrors.date_approval">
-                            Invalid Date
-                        </small>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Notes
-                        </label>
-                        <textarea class="form-control" rows="3" v-model="editApproverData.notes"></textarea>
-                    </div>
-                        
-                </div>
-                <div class="modal-footer">
-                    <button @click="onCloseEditApproverModal" ref="closeEditApproverModal" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-close"></i> Close
-                    </button>
-                    <button @click="editApprover" class="btn btn-primary" :disabled="isEditingRvApprover">
-                        <i class="fas fa-edit"></i> {{ isEditingRvApprover ? 'Editing...' : 'Edit' }}
-                    </button>
-                </div>
-                </div>
-            </div>
-        </div>
 
     </div>
 
@@ -415,17 +165,15 @@
     })
 
     import Swal from 'sweetalert2'
-    import moment from 'moment';
-    import { getFullname, formatToValidHtmlDate, formatDate, isValidDate } from '~/utils/helpers'
+    import { getFullname, formatToValidHtmlDate} from '~/utils/helpers'
     import { useToast } from "vue-toastification";
     import * as rvApi from '~/composables/warehouse/rv/rv.api'
     import * as rvApproverApi from '~/composables/warehouse/rv/rv-approver.api'
-    import type { Classification, Employee } from '~/composables/warehouse/canvass/canvass.types';
-    import { APPROVAL_STATUS, type RV } from '~/composables/warehouse/rv/rv.types';
+    import type { Classification } from '~/composables/warehouse/canvass/canvass.types';
+    import { type RV } from '~/composables/warehouse/rv/rv.types';
     import { MOBILE_WIDTH } from '~/utils/config';
     import { approvalStatus } from '~/utils/constants';
-    import type { CreateRvApproverInput, RVApprover, UpdateRvApproverInput } from '~/composables/warehouse/rv/rv-approver.types';
-
+    import type { CreateApproverInput, UpdateApproverInput } from '~/composables/warehouse/rv/rv-approver.types';
 
 
     // DEPENDENCIES
@@ -433,73 +181,30 @@
     const router = useRouter();
     const toast = useToast();
 
-
-
     // FLAGS
     const isMobile = ref(false)
     const isRVDetailForm = ref(true)
     const isUpdating = ref(false)
     const isUpdatingApproverOrder = ref(false)
-    const isRvApproverModalAdd = ref(false)
     const isAddingRvApprover = ref(false)
     const isEditingRvApprover = ref(false)
-    const drag = ref(false)
+
     
-
-
     // CONSTANTS
     const _rvDataErrorsInitial = {
         supervisor: false,
     }
-    const _addApproverInitial: CreateRvApproverInput = {
-        rv_id: '',
-        approver: null,
-        label: '',
-        order: 0
-    }
-    const _addApproverErrorsInitial = {
-        approver: false,
-        label: false
-    }
-    const _editApproverErrorsInitial = {
-        date_approval: false,
-        label: false
-    }
-    const _dragOptions = {
-        animation: 200,
-        group: "description",
-        disabled: false,
-        ghostClass: "ghost"
-    };
-
-
-
-    // HTML
-    const closeChangeOrderModal = ref<HTMLButtonElement>()
-    const closeAddApproverModal = ref<HTMLButtonElement>()
-    const closeEditApproverModal = ref<HTMLButtonElement>()
 
 
 
     // DROPDOWNS
     const employees = ref<Employee[]>([])
     const classifications = ref<Classification[]>([])
-    const approvers = ref<RVApprover[]>([])
-
-
+    
 
     // FORM DATA
     const rvDataErrors = ref({..._rvDataErrorsInitial})
     const rvData = ref<RV>({} as RV)
-    const addApproverData = ref<CreateRvApproverInput>({..._addApproverInitial})
-    const addApproverErrors = ref({..._addApproverErrorsInitial})
-    const editApproverData = ref<UpdateRvApproverInput>({} as UpdateRvApproverInput)
-    const editApproverErrors = ref({..._editApproverErrorsInitial})
-    const approvalStatusArray = ref([
-        { id: APPROVAL_STATUS.PENDING, label: approvalStatus[APPROVAL_STATUS.PENDING].label },
-        { id: APPROVAL_STATUS.APPROVED, label: approvalStatus[APPROVAL_STATUS.APPROVED].label },
-        { id: APPROVAL_STATUS.DISAPPROVED, label: approvalStatus[APPROVAL_STATUS.DISAPPROVED].label }
-    ])
 
 
 
@@ -582,10 +287,6 @@
 
     })
 
-
-
-
-
     // ======================== API CALLS ========================  
 
     async function updateRvDetail() {
@@ -627,146 +328,6 @@
 
     }
 
-    async function updateApproverOrder() {
-
-        // Create a shallow copy of the array
-        const _approvers = approvers.value.map(approver => ({ ...approver }))
-
-        let ctr = 1
-        for(let approver of _approvers) {
-            approver.order = ctr 
-            ctr++
-        }
-
-        const data = _approvers.map(i => {
-            return {
-                id: i.id,
-                order: i.order
-            }
-        })
-
-        console.log('data', data)
-
-        isUpdatingApproverOrder.value = true
-        const response = await rvApproverApi.updateApproverOrder(data)
-        isUpdatingApproverOrder.value = false
-
-        if(response.success && response.approvers) {
-            toast.success(response.msg)
-
-            rvData.value.rv_approvers = response.approvers.map(i => {
-                i.date_approval = i.date_approval ? formatToValidHtmlDate(i.date_approval) : null
-                i.approver!['fullname'] = getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname)
-                return i
-            })
-
-            closeChangeOrderModal.value?.click()
-
-        }else {
-            Swal.fire({
-                title: 'Error!',
-                text: response.msg,
-                icon: 'error',
-                position: 'top',
-            })
-        }
-        
-    }
-
-    async function addApprover() {
-
-        if(!isValidAddApprover()){
-            return 
-        }
-
-        isAddingRvApprover.value = true
-        const response = await rvApproverApi.create(addApproverData.value)
-        isAddingRvApprover.value = false
-
-        if(response.success && response.data) {
-            toast.success(response.msg)
-
-            const approver = response.data.approver
-
-            approver!.fullname = getFullname(approver!.firstname, approver!.middlename, approver!.lastname)
-
-            response.data.date_approval = response.data.date_approval ? formatToValidHtmlDate(response.data.date_approval) : null
-
-            rvData.value.rv_approvers.push(response.data)
-            closeAddApproverModal.value?.click()
-        }else {
-            Swal.fire({
-                title: 'Error!',
-                text: response.msg,
-                icon: 'error',
-                position: 'top',
-            })
-        }
-
-    }
-
-    async function editApprover() {
-        console.log('editApprover()')
-
-        if(!isValidEditApprover()) {
-            return 
-        }
-
-        if(editApproverData.value.status.id === APPROVAL_STATUS.PENDING) {
-            editApproverData.value.date_approval = null
-        }
-
-        isEditingRvApprover.value = true
-        const response = await rvApproverApi.update(editApproverData.value)
-        isEditingRvApprover.value = false
-
-        if(response.success && response.data) {
-            toast.success(response.msg)
-
-            const prevApproverItemIndx = rvData.value.rv_approvers.findIndex(i => i.id === editApproverData.value.id)
-
-            response.data.date_approval = response.data.date_approval ? formatToValidHtmlDate(response.data.date_approval) : null
-
-            const a = response.data.approver
-
-            response.data.approver!['fullname'] = getFullname(a!.firstname, a!.middlename, a!.lastname)
-
-            rvData.value.rv_approvers[prevApproverItemIndx] = {...response.data}
-
-            closeEditApproverModal.value?.click()
-
-        }else {
-            Swal.fire({
-                title: 'Error!',
-                text: response.msg,
-                icon: 'error',
-                position: 'top',
-            })
-        }
-
-    }
-
-    async function removeApprover(item: RVApprover, indx: number) {
-        const response = await rvApproverApi.remove(item.id)
-
-        if(response.success) {
-            
-            toast.success(`${item.approver?.fullname} removed!`)
-
-            rvData.value.rv_approvers.splice(indx, 1)
-
-        }else {
-
-            Swal.fire({
-                title: 'Error!',
-                text: response.msg,
-                icon: 'error',
-                position: 'top',
-            })
-
-        }
-    }
-
     async function cancelRv() {
 
         const response = await rvApi.cancel(rvData.value.id)
@@ -789,8 +350,154 @@
 
     } 
 
+    async function changeApproverOrder(
+        data: {id: string, order: number}[],
+        modalCloseBtn: HTMLButtonElement
+    ) {
 
+        console.log('data', data)
+        console.log('modalCloseBtn', modalCloseBtn)
+
+        isUpdatingApproverOrder.value = true
+        const response = await rvApproverApi.updateApproverOrder(data)
+        isUpdatingApproverOrder.value = false
+
+        if(response.success && response.approvers) {
+            toast.success(response.msg)
+
+            rvData.value.rv_approvers = response.approvers.map(i => {
+                i.date_approval = i.date_approval ? formatToValidHtmlDate(i.date_approval) : null
+                i.approver!['fullname'] = getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname)
+                return i
+            })
+            modalCloseBtn.click()
+
+        }else {
+            Swal.fire({
+                title: 'Error!',
+                text: response.msg,
+                icon: 'error',
+                position: 'top',
+            })
+        }
+
+    }
     
+    async function addApprover(
+        data: CreateApproverInput,
+        modalCloseBtn: HTMLButtonElement
+    ) {
+        
+        console.log('data', data)
+
+        isAddingRvApprover.value = true
+        const response = await rvApproverApi.create(rvData.value.id, data)
+        isAddingRvApprover.value = false
+
+        if(response.success && response.data) {
+            toast.success(response.msg)
+
+            const approver = response.data.approver
+
+            approver!.fullname = getFullname(approver!.firstname, approver!.middlename, approver!.lastname)
+
+            response.data.date_approval = response.data.date_approval ? formatToValidHtmlDate(response.data.date_approval) : null
+
+            rvData.value.rv_approvers.push(response.data)
+            modalCloseBtn.click()
+        }else {
+            Swal.fire({
+                title: 'Error!',
+                text: response.msg,
+                icon: 'error',
+                position: 'top',
+            })
+        }
+    }
+    
+    async function editApprover(
+        data: UpdateApproverInput,
+        modalCloseBtn: HTMLButtonElement
+    ) {
+        isEditingRvApprover.value = true
+        const response = await rvApproverApi.update(data)
+        isEditingRvApprover.value = false
+
+        if(response.success && response.data) {
+            toast.success(response.msg)
+
+            const prevApproverItemIndx = rvData.value.rv_approvers.findIndex(i => i.id === data.id)
+
+            response.data.date_approval = response.data.date_approval ? formatToValidHtmlDate(response.data.date_approval) : null
+
+            const a = response.data.approver
+
+            response.data.approver!['fullname'] = getFullname(a!.firstname, a!.middlename, a!.lastname)
+
+            rvData.value.rv_approvers[prevApproverItemIndx] = {...response.data}
+
+            modalCloseBtn.click()
+
+        }else {
+            Swal.fire({
+                title: 'Error!',
+                text: response.msg,
+                icon: 'error',
+                position: 'top',
+            })
+        }
+    }
+
+    async function removeApprover(id: string) {
+
+        const indx = rvData.value.rv_approvers.findIndex(i => i.id === id)
+
+        const item = rvData.value.rv_approvers[indx]
+
+        if(!item){
+            console.error('approver not found with id of: ' + id)
+            return 
+        }
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: `${item.approver?.fullname} will be removed!`,
+            position: "top",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#e74a3b",
+            cancelButtonColor: "#6c757d",
+            confirmButtonText: "Yes, delete it!",
+            reverseButtons: true,
+            showLoaderOnConfirm: true,
+            preConfirm: async(remove) => {
+                
+                if(remove) {
+                    const response = await rvApproverApi.remove(item.id)
+
+                    if(response.success) {
+                        
+                        toast.success(`${item.approver?.fullname} removed!`)
+
+                        rvData.value.rv_approvers.splice(indx, 1)
+
+                    }else {
+
+                        Swal.fire({
+                            title: 'Error!',
+                            text: response.msg,
+                            icon: 'error',
+                            position: 'top',
+                        })
+
+                    }
+                }
+
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        })
+
+    }
     
     // ======================== VALIDATIONS ========================  
     
@@ -812,131 +519,12 @@
 
     }
 
-    function isValidAddApprover(): boolean {
-
-        addApproverErrors.value = {..._addApproverErrorsInitial}
-
-        if(!addApproverData.value.approver) {
-            addApproverErrors.value.approver = true
-        }
-
-        if(addApproverData.value.label.trim() === '') {
-            addApproverErrors.value.label = true
-        }
-
-        const hasError = Object.values(addApproverErrors.value).includes(true);
-
-        if(hasError) {
-            return false
-        }
-
-        return true
-
-    }
-
-    function isValidEditApprover(): boolean {
-
-        editApproverErrors.value = {..._editApproverErrorsInitial}
-
-        if(editApproverData.value.label.trim() === '') {
-            editApproverErrors.value.label = true
-        }
-
-        if(editApproverData.value.status.id !== APPROVAL_STATUS.PENDING) {
-
-            if(!isValidDate(editApproverData.value.date_approval)) {
-                editApproverErrors.value.date_approval = true
-            }
-
-        }
-
-        const hasError = Object.values(editApproverErrors.value).includes(true);
-
-        if(hasError) {
-            return false
-        }
-
-        return true
-
-    }
-
-
 
 
 
     // ======================== BUTTONS ========================  
 
-    function onClickChangeApprover() {
-        approvers.value = [...rvData.value.rv_approvers]
-    }
 
-    function onCloseChangeOrderModal() {
-        approvers.value = []
-    }
-
-    function onCloseAddApproverModal() {
-        addApproverData.value = {..._addApproverInitial}
-        addApproverErrors.value = {..._addApproverErrorsInitial}
-    }
-
-    function onCloseEditApproverModal() {
-        editApproverData.value = {} as UpdateRvApproverInput
-        editApproverErrors.value = {..._editApproverErrorsInitial}
-    }
-
-    function onClickAddApprover() {
-        isRvApproverModalAdd.value = true
-        addApproverData.value.order = rvData.value.rv_approvers.length + 1
-        addApproverData.value.rv_id = rvData.value.id
-    }
-
-    function onClickEditApprover(indx: number) {
-        isRvApproverModalAdd.value = false 
-
-        const item = rvData.value.rv_approvers[indx]
-
-        const currentData = {...item}
-
-        editApproverData.value = {
-            id: item.id,
-            approver: item.approver,
-            date_approval: item.date_approval,
-            notes: currentData.notes,
-            status: {
-                id: currentData.status,
-                label: approvalStatus[currentData.status].label
-            },
-            label: currentData.label,
-            order: currentData.order
-        }
-    }
-
-    async function onRemoveApprover(indx: number) {
-
-        const item = rvData.value.rv_approvers[indx]
-
-        Swal.fire({
-            title: "Are you sure?",
-            text: `${item.approver?.fullname} will be removed!`,
-            position: "top",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#e74a3b",
-            cancelButtonColor: "#6c757d",
-            confirmButtonText: "Yes, delete it!",
-            reverseButtons: true,
-            showLoaderOnConfirm: true,
-            preConfirm: async(remove) => {
-                
-                if(remove) {
-                    await removeApprover(item, indx)
-                }
-
-            },
-            allowOutsideClick: () => !Swal.isLoading()
-        })
-
-    }
 
     async function onCancelRv() {
 
@@ -970,51 +558,9 @@
         isMobile.value = window.innerWidth < MOBILE_WIDTH
     }
 
-    function getCounter(element: RVApprover) {
-        return approvers.value.indexOf(element) + 1;
-    }
+
 
 
 </script>
 
 
-<style scoped>
-    .draggable-item {
-        cursor: pointer;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        padding: 8px;
-        margin-bottom: 20px;
-        background-color: #f9f9f9;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.05); /* Increased elevation and shadow */
-    }
-
-    .draggable-item:hover {
-        background-color: #f0f0f0; 
-    }
-
-    .flip-list-move {
-        transition: transform 0.5s;
-    }
-
-    .no-move {
-        transition: transform 0s;
-    }
-
-    .ghost {
-        opacity: 0.5;
-        background: #c8ebfb;
-    }
-
-    .list-group {
-        min-height: 20px;
-    }
-
-    .list-group-item {
-        cursor: move;
-    }
-
-    .list-group-item i {
-        cursor: pointer;
-    }
-</style>

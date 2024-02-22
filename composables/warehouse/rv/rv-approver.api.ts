@@ -1,4 +1,4 @@
-import type { CreateRvApproverInput, RvApproverMutationResponse, UpdateApproverOrderResponse, UpdateRvApproverInput } from "./rv-approver.types";
+import type { CreateApproverInput, RvApproverMutationResponse, UpdateApproverOrderResponse, UpdateApproverInput } from "./rv-approver.types";
 
 export async function updateApproverOrder(inputs: {id: string, order: number}[]): Promise<UpdateApproverOrderResponse> {
     const inputsString = inputs.map(({ id, order }) => `{ id: "${id}", order: ${order} }`).join('\n');
@@ -69,13 +69,13 @@ export async function updateApproverOrder(inputs: {id: string, order: number}[])
     }
 }
 
-export async function create(input: CreateRvApproverInput): Promise<RvApproverMutationResponse> {
+export async function create(rvId: string, input: CreateApproverInput): Promise<RvApproverMutationResponse> {
 
     const mutation = `
         mutation {
             createRvApprover(
                 input: {
-                    rv_id: "${input.rv_id}"
+                    rv_id: "${rvId}"
                     approver_id: "${input.approver?.id}"
                     label: "${input.label}"
                     order: ${input.order}
@@ -162,7 +162,7 @@ export async function remove(id: string): Promise<{success: boolean, msg: string
     }
 }
 
-export async function update(input: UpdateRvApproverInput): Promise<RvApproverMutationResponse> {
+export async function update(input: UpdateApproverInput): Promise<RvApproverMutationResponse> {
 
     let notes = null 
     let date_approval = null
@@ -183,7 +183,7 @@ export async function update(input: UpdateRvApproverInput): Promise<RvApproverMu
                     approver_id: "${input.approver?.id}"
                     label: "${input.label}"
                     order: ${input.order}
-                    date_approval: ${input.date_approval}
+                    date_approval: ${date_approval}
                     notes: ${notes}
                     status: ${input.status.id}
                 }

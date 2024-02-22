@@ -1,12 +1,6 @@
+import type { Employee } from "~/composables/common.types";
 import type { CanvassItem } from "./canvass-item.types"
 
-export interface Employee {
-    id: string
-    firstname: string
-    middlename: string
-    lastname: string
-    fullname?: string 
-}
 
 export interface Canvass {
     id: string;

@@ -257,7 +257,7 @@
     import * as api from '~/composables/warehouse/canvass/canvass.api'
     import type { Unit } from '~/composables/warehouse/unit/unit.types';
     import Swal from 'sweetalert2'
-    import type { Brand, CreateCanvassInput, CreateCanvassItemSubInput, Employee } from '~/composables/warehouse/canvass/canvass.types';
+    import type { Brand, CreateCanvassInput, CreateCanvassItemSubInput } from '~/composables/warehouse/canvass/canvass.types';
     import moment from 'moment';
     import { getFullname } from '~/utils/helpers'
     import { useToast } from "vue-toastification";

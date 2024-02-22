@@ -1,5 +1,3 @@
-import { APPROVAL_STATUS } from "~/composables/warehouse/rv/rv.types";
-
 
 export const approvalStatus = {
     [APPROVAL_STATUS.PENDING]: {

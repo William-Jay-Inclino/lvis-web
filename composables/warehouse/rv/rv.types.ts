@@ -1,4 +1,5 @@
-import type { Canvass, Classification, Employee } from "../canvass/canvass.types";
+import type { APPROVAL_STATUS } from "~/composables/common.types";
+import type { Canvass, Classification } from "../canvass/canvass.types";
 import type { RVApprover, RvApproverSettings } from "./rv-approver.types";
 
 export interface RV {
@@ -29,13 +30,6 @@ export interface RV {
 
 }
 
-
-export enum APPROVAL_STATUS {
-  PENDING = 1,
-  APPROVED = 2,
-  DISAPPROVED = 3,
-  CANCELLED = 4,
-}
 
 export interface FindAllResponse {
   data: RV[]

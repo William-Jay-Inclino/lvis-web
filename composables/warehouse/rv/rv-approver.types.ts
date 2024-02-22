@@ -1,5 +1,4 @@
-import type { Employee } from "../canvass/canvass.types"
-import type { APPROVAL_STATUS } from "./rv.types"
+import { APPROVAL_STATUS } from "#imports" 
 
 export interface RvApproverSettings {
     approver_id: string,
@@ -10,14 +9,13 @@ export interface RvApproverSettings {
     order: number
   }
   
-  export interface CreateRvApproverInput {
-    rv_id: string
-    approver: Employee | null  
+  export interface CreateApproverInput {
+    approver: Employee
     label: string 
     order: number
   }
 
-  export interface UpdateRvApproverInput {
+  export interface UpdateApproverInput {
     id: string
     approver: Employee | null 
     date_approval: string | null 

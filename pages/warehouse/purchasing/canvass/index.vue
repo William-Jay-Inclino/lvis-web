@@ -162,7 +162,7 @@
     })
 
     import * as api from '~/composables/warehouse/canvass/canvass.api'
-    import type { Canvass, Employee } from '~/composables/warehouse/canvass/canvass.types';
+    import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
     import { getFullname, formatDate } from '~/utils/helpers'
     import moment from 'moment'
     import { MOBILE_WIDTH, PAGINATION_SIZE } from '~/utils/config'

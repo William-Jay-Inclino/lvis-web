@@ -177,8 +177,8 @@
 
 
 <script setup lang="ts">
-    import type { Canvass, Employee } from '~/composables/warehouse/canvass/canvass.types';
-    import { APPROVAL_STATUS, type RV } from '~/composables/warehouse/rv/rv.types';
+    import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
+    import { type RV } from '~/composables/warehouse/rv/rv.types';
     import * as rvApi from '~/composables/warehouse/rv/rv.api'
     import moment from 'moment'
     import { getFullname, formatDate } from '~/utils/helpers'
