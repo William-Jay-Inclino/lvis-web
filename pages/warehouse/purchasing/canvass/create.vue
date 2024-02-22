@@ -21,7 +21,7 @@
 
                         <div class="mb-3">
                             <label class="form-label">
-                                Date Requested <span class="text-danger">*</span>
+                                Date
                             </label>
                             <input type="date" :value="formData.date_requested" class="form-control" disabled>
                         </div>
@@ -33,7 +33,7 @@
                             <client-only>
                                 <v-select :options="employees" label="fullname" v-model="formData.requested_by"></v-select>
                             </client-only>
-                            <small class="text-danger" v-show="formDataErrors.requested_by"> This field is required </small>
+                            <small class="text-danger fst-italic" v-show="formDataErrors.requested_by"> This field is required </small>
                         </div>
 
                         <div class="mb-3">
@@ -41,7 +41,7 @@
                                 Purpose <span class="text-danger">*</span>
                             </label>
                             <textarea v-model="formData.purpose" class="form-control" rows="3"></textarea>
-                            <small class="text-danger" v-show="formDataErrors.purpose"> This field is required </small>
+                            <small class="text-danger fst-italic" v-show="formDataErrors.purpose"> This field is required </small>
                         </div>
 
                         <div class="mb-3">
@@ -50,8 +50,12 @@
                         </div>
                 
                         <div class="d-flex justify-content-end gap-2">
-                            <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">Cancel</nuxt-link>
-                            <button @click="onClickNextStep1()" type="button" class="btn btn-primary">Next</button>
+                            <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">
+                                <i class="fas fa-chevron-left"></i> Back
+                            </nuxt-link>
+                            <button @click="onClickNextStep1()" type="button" class="btn btn-primary">
+                                <i class="fas fa-chevron-right"></i> Next
+                            </button>
                         </div>
 
                     </div>
@@ -102,7 +106,7 @@
                                                 <tr>
                                                     <td colspan="6" class="text-center">
                                                         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addItemModal">
-                                                            Add Item
+                                                            <i class="fas fa-plus-circle"></i> Add Item
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -156,7 +160,7 @@
                                     <div class="row">
                                         <div class="col d-flex justify-content-center">
                                             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addItemModal">
-                                                Add Item
+                                                <i class="fas fa-plus-circle"></i> Add Item
                                             </button>
                                         </div>
                                     </div>
@@ -169,8 +173,12 @@
                         </div>
 
                         <div class="d-flex justify-content-end gap-2 mb-3">
-                            <button @click="currentStep--" type="button" class="btn btn-secondary">Back</button>
-                            <button @click="save()" :disabled="formData.canvass_items.length === 0" type="button" class="btn btn-primary">Save</button>
+                            <button @click="currentStep--" type="button" class="btn btn-secondary">
+                                <i class="fas fa-chevron-left"></i> Back
+                            </button>
+                            <button @click="save()" :disabled="formData.canvass_items.length === 0 || isSaving" type="button" class="btn btn-primary">
+                                <i class="fas fa-save"></i> {{ isSaving ? 'Saving...' : 'Save' }}
+                            </button>
                         </div>
 
                     </div>
@@ -186,7 +194,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Add Item</h5>
+                    <h5 class="modal-title text-warning" id="exampleModalLabel">Add Item</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -195,7 +203,7 @@
                             Description <span class="text-danger">*</span>
                         </label>
                         <textarea v-model="addCanvassItemData.description" class="form-control" rows="3"></textarea>
-                        <small class="text-danger" v-show="addCanvassItemDataErrors.description">
+                        <small class="text-danger fst-italic" v-show="addCanvassItemDataErrors.description">
                             This field is required
                         </small>
                     </div>
@@ -216,14 +224,18 @@
                             Quantity <span class="text-danger">*</span>
                         </label>
                         <input v-model="addCanvassItemData.quantity" type="number" class="form-control">
-                        <small class="text-danger" v-show="addCanvassItemDataErrors.quantity">
+                        <small class="text-danger fst-italic" v-show="addCanvassItemDataErrors.quantity">
                             This field is required and quantity must be greater than 0
                         </small>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button ref="closeItemModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button @click="addCanvassItem()" type="button" class="btn btn-primary">Add Item</button>
+                    <button ref="closeItemModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-close"></i> Close
+                    </button>
+                    <button @click="addCanvassItem()" type="button" class="btn btn-primary">
+                        <i class="fas fa-plus-circle"></i> Add Item
+                    </button>
                 </div>
                 </div>
             </div>
@@ -245,13 +257,16 @@
     import * as api from '~/composables/warehouse/canvass/canvass.api'
     import type { Unit } from '~/composables/warehouse/unit/unit.types';
     import Swal from 'sweetalert2'
-    import type { Brand, CreateCanvassInput, CreateCanvassItemSubInput, Employee } from '~/composables/warehouse/canvass/canvass.types';
+    import type { Brand, CreateCanvassInput, CreateCanvassItemSubInput } from '~/composables/warehouse/canvass/canvass.types';
     import moment from 'moment';
-    import { getFullname } from '~/composables/helpers'
+    import { getFullname } from '~/utils/helpers'
     import { useToast } from "vue-toastification";
+    import { MOBILE_WIDTH } from '~/utils/config';
 
+    // flags
     const isMobile = ref(false)
-    const mobileWidth = 768
+    const isSaving = ref(false)
+
     const router = useRouter();
     const toast = useToast();
     const currentStep = ref(1)
@@ -292,7 +307,7 @@
 
     onMounted( async() => {
 
-        isMobile.value = window.innerWidth < mobileWidth
+        isMobile.value = window.innerWidth < MOBILE_WIDTH
 
         window.addEventListener('resize', checkMobile);
 
@@ -384,7 +399,11 @@
 
     async function save() {
 
+        isSaving.value = true
+
         const response = await api.create(formData.value)
+
+        isSaving.value = false
 
         if(response.success && response.data) {
             router.push(`/warehouse/purchasing/canvass/success/${response.data.id}`);
@@ -400,7 +419,7 @@
     }
 
     function checkMobile() {
-        isMobile.value = window.innerWidth < mobileWidth
+        isMobile.value = window.innerWidth < MOBILE_WIDTH
     }
 
 </script>

@@ -1,12 +1,6 @@
+import type { Employee } from "~/composables/common.types";
 import type { CanvassItem } from "./canvass-item.types"
 
-export interface Employee {
-    id: string
-    firstname: string
-    middlename: string
-    lastname: string
-    fullname?: string 
-}
 
 export interface Canvass {
     id: string;
@@ -23,21 +17,10 @@ export interface Canvass {
   
     requested_by: Employee | null;
   
-    // canvass_items: CanvassItem[];
-  
     is_referenced: boolean;
-  
-    // jo?: JO
-  
-    // rv?: RV
-  
-    // spr?: SPR
+    disabled: boolean
 
     canvass_items: CanvassItem[]
-  
-    created_at: Date;
-  
-    updated_at: Date;
 }
 
 export interface CreateCanvassInput {
@@ -82,6 +65,11 @@ export interface Brand {
 }
 
 export interface Unit {
+    id: string 
+    name: string 
+}
+
+export interface Classification {
     id: string 
     name: string 
 }

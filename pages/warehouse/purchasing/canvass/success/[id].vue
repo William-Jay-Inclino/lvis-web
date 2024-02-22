@@ -65,11 +65,11 @@
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
-                                            <th class="text-muted"> No. </th>
-                                            <th class="text-muted"> Description </th>
-                                            <th class="text-muted"> Brand </th>
-                                            <th class="text-muted"> Unit </th>
-                                            <th class="text-muted"> Quantity </th>
+                                            <th class="bg-secondary text-white"> No. </th>
+                                            <th class="bg-secondary text-white"> Description </th>
+                                            <th class="bg-secondary text-white"> Brand </th>
+                                            <th class="bg-secondary text-white"> Unit </th>
+                                            <th class="bg-secondary text-white"> Quantity </th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -127,12 +127,18 @@
                     </div>
                 </div>
 
-                <div class="row mb-3">
+                <div class="row mb-3 pt-3">
                     <div class="col">
                         <div class="d-flex justify-content-end gap-2">
-                            <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">Go to list</nuxt-link>
-                            <nuxt-link class="btn btn-success" :to="`/warehouse/purchasing/canvass/${item.id}`">Update</nuxt-link>
-                            <nuxt-link class="btn btn-primary" to="/warehouse/purchasing/canvass/create">Add New</nuxt-link>
+                            <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">
+                                <i class="fas fa-search"></i> Search
+                            </nuxt-link>
+                            <nuxt-link class="btn btn-success" :to="`/warehouse/purchasing/canvass/${item.id}`">
+                                <i class="fas fa-sync"></i> Update
+                            </nuxt-link>
+                            <nuxt-link class="btn btn-primary" to="/warehouse/purchasing/canvass/create">
+                                <i class="fas fa-plus"></i> Add New
+                            </nuxt-link>
                         </div>
                     </div>
                 </div>
@@ -152,16 +158,16 @@
     })
 
     import * as api from '~/composables/warehouse/canvass/canvass.api'
-    import type { CreateCanvassInput, Canvass } from '~/composables/warehouse/canvass/canvass.types';
+    import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
+    import { MOBILE_WIDTH } from '~/utils/config';
 
     const route = useRoute()
     const item = ref<Canvass | undefined>()
     const isMobile = ref(false)
-    const mobileWidth = 768
 
     onMounted( async() => {
 
-        isMobile.value = window.innerWidth < mobileWidth
+        isMobile.value = window.innerWidth < MOBILE_WIDTH
 
         window.addEventListener('resize', checkMobile);
 
@@ -170,7 +176,7 @@
     })
 
     function checkMobile() {
-        isMobile.value = window.innerWidth < mobileWidth
+        isMobile.value = window.innerWidth < MOBILE_WIDTH
     }
 
 

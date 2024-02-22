@@ -4,7 +4,7 @@
         <h2 class="text-warning">Update Unit</h2>
         <hr>
         
-        <form @submit.prevent="update()" class="row justify-content-center pt-5">
+        <form @submit.prevent="update()" class="row justify-content-center pt-3">
 
             <div class="col-lg-6">
                 <div class="mb-3">
@@ -13,9 +13,15 @@
                 </div>
         
                 <div class="d-flex justify-content-end gap-2">
-                    <nuxt-link class="btn btn-secondary" to="/warehouse/data-management/unit">Back</nuxt-link>
-                    <button type="button" @click="remove()" class="btn btn-danger">Delete</button>
-                    <button type="submit" class="btn btn-success">Update</button>
+                    <nuxt-link class="btn btn-secondary" to="/warehouse/data-management/unit">
+                        <i class="fas fa-chevron-left"></i> Back
+                    </nuxt-link>
+                    <button type="button" @click="remove()" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-sync"></i> Update
+                    </button>
                 </div>
             </div>
         </form>

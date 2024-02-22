@@ -1,21 +1,8 @@
 import axios, { type AxiosResponse } from 'axios';
 import { GRAPHQL_API_URL } from './config';
+import type { AuthUser } from '~/composables/common.types';
 
 console.log('GRAPHQL_API_URL', GRAPHQL_API_URL)
-
-enum USER_STATUS {
-    ACTIVE = 1,
-    INACTIVE = 2
-}
-
-interface AuthUser {
-    user: {
-        id: string
-        username: string 
-        status: USER_STATUS
-    }
-    access_token: string
-}
 
 export const sendRequest = async (queryOrMutation: string, variables?: Record<string, any>): Promise<AxiosResponse> => {
     console.log('sendRequest()', queryOrMutation);

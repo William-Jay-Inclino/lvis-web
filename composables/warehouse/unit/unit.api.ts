@@ -1,4 +1,4 @@
-import { sendRequest } from "~/composables/api"; 
+import { sendRequest } from "~/utils/api"
 import type { Unit, CreateUnitInput, MutationResponse, FindAllResponse } from "./unit.types";
 
 
