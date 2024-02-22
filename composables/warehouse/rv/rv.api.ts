@@ -419,6 +419,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 work_order_date
                 notes
                 is_cancelled
+                is_deleted
                 rv_approvers {
                     id
                     approver {

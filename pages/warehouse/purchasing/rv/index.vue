@@ -96,7 +96,7 @@
                                                 </div>
                                             </td>
                                             <td class="text-center">
-                                                <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light text-primary">
+                                                <button v-if="i.status.value !== APPROVAL_STATUS.CANCELLED" @click="onClickEdit(i.id)" class="btn btn-sm btn-light text-primary">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
                                             </td>

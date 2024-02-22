@@ -17,6 +17,7 @@ export interface RV {
   notes: string;
   rv_approvers: RVApprover[]
   is_cancelled: boolean
+  is_deleted: boolean
 
   // set programmatically
 

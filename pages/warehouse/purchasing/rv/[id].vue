@@ -1,5 +1,5 @@
 <template>
-    <div v-if="rvData && rvData.canvass" class="mb-3">
+    <div v-if="rvData && rvData.canvass && !rvData.is_deleted && !rvData.is_cancelled" class="mb-3">
         <h2 class="text-warning">Update RV</h2>
         <hr>
 
@@ -775,7 +775,7 @@
             toast.success(response.msg)
             rvData.value.is_cancelled = true 
 
-            
+            router.push('/warehouse/purchasing/rv')
 
         }else {
             Swal.fire({
