@@ -263,16 +263,20 @@
     import { useToast } from "vue-toastification";
     import { MOBILE_WIDTH } from '~/utils/config';
 
-    // flags
+
+    // CONSTANTS
+    const router = useRouter();
+    const today = moment().format('YYYY-MM-DD')
+    const toast = useToast();
+
+    // FLAGS
     const isMobile = ref(false)
     const isSaving = ref(false)
 
-    const router = useRouter();
-    const toast = useToast();
-    const currentStep = ref(1)
-    const today = moment().format('YYYY-MM-DD')
+    // HTML ELEMENTS
     const closeItemModal = ref<HTMLButtonElement>()
 
+    // INITIAL DATA
     const _formDataErrorsInitial = {
         requested_by: false,
         purpose: false,
@@ -290,6 +294,10 @@
         quantity: 0
     }
 
+
+    const currentStep = ref(1)
+
+    // CANVASS FORM DATA
     const formData = ref<CreateCanvassInput>({
         date_requested: today,
         purpose: '',
@@ -297,13 +305,20 @@
         requested_by: null,
         canvass_items: []
     })
-
     const formDataErrors = ref({..._formDataErrorsInitial})
+
+    // CANVASS ITEM DATA
     const addCanvassItemData = ref<CreateCanvassItemSubInput>({..._addCanvassItemDataInitial})
     const addCanvassItemDataErrors = ref({..._addCanvassItemDataErrorsInitial})
+
+    // DROPDOWNS
     const employees = ref<Employee[]>([])
     const brands = ref<Brand[]>([])
     const units = ref<Unit[]>([])
+
+
+
+    // ======================== LIFECYCLE HOOKS ======================== 
 
     onMounted( async() => {
 
@@ -321,6 +336,31 @@
         units.value = response.units
 
     })
+
+
+
+    // ======================== FUNCTIONS ======================== 
+
+    async function save() {
+
+        isSaving.value = true
+
+        const response = await api.create(formData.value)
+
+        isSaving.value = false
+
+        if(response.success && response.data) {
+            router.push(`/warehouse/purchasing/canvass/success/${response.data.id}`);
+        }else {
+            Swal.fire({
+                title: 'Error!',
+                text: response.msg,
+                icon: 'error',
+                position: 'top',
+            })
+        }
+
+    }
 
     async function onClickNextStep1() {
 
@@ -342,6 +382,10 @@
 
         currentStep.value += 1 
     }
+
+
+
+    // ======================== CANVASSS ITEM FUNCTIONS ======================== 
 
     async function addCanvassItem() {
 
@@ -397,30 +441,16 @@
 
     }
 
-    async function save() {
 
-        isSaving.value = true
 
-        const response = await api.create(formData.value)
-
-        isSaving.value = false
-
-        if(response.success && response.data) {
-            router.push(`/warehouse/purchasing/canvass/success/${response.data.id}`);
-        }else {
-            Swal.fire({
-                title: 'Error!',
-                text: response.msg,
-                icon: 'error',
-                position: 'top',
-            })
-        }
-
-    }
+    // ======================== UTILS ======================== 
 
     function checkMobile() {
         isMobile.value = window.innerWidth < MOBILE_WIDTH
     }
+
+
+
 
 </script>
 

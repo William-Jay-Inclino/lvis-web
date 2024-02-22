@@ -124,29 +124,26 @@
     import Swal from 'sweetalert2'
     import moment from 'moment';
     import { getFullname } from '~/utils/helpers'
-    import { useToast } from "vue-toastification";
     import * as rvApi from '~/composables/warehouse/rv/rv.api'
     import type { Canvass, Classification } from '~/composables/warehouse/canvass/canvass.types';
     import type { CreateRvInput } from '~/composables/warehouse/rv/rv.types';
     import { MOBILE_WIDTH } from '~/utils/config';
 
-    // flags
+    // CONSTANTS
+    const router = useRouter();
+    const today = moment().format('YYYY-MM-DD')
+
+    // FLAGS
     const isMobile = ref(false)
     const isSaving = ref(false)
 
-    const router = useRouter();
-    const toast = useToast();
-    const today = moment().format('YYYY-MM-DD')
-
+    // INITIAL DATA
     const _rvDataErrorsInitial = {
         canvass: false,
         supervisor: false,
     }
 
-    const rvDataErrors = ref({..._rvDataErrorsInitial})
-
-    let currentCanvass: Canvass | null = null
-
+    // FORM DATA
     const rvData = ref<CreateRvInput>({
         canvass: null,
         supervisor: null,
@@ -157,11 +154,20 @@
         notes: '',
         approvers: []
     })
+    const rvDataErrors = ref({..._rvDataErrorsInitial})
 
+    // Immutable state for rc number field
+    let currentCanvass: Canvass | null = null
+
+
+    // DROPDOWNS
     const canvasses = ref<Canvass[]>([])
     const employees = ref<Employee[]>([])
     const classifications = ref<Classification[]>([])
 
+
+
+    // ======================== LIFECYCLE HOOKS ========================  
     onMounted( async() => {
 
         isMobile.value = window.innerWidth < MOBILE_WIDTH
@@ -182,6 +188,10 @@
 
     })
 
+
+
+    // ======================== COMPUTED ========================  
+
     const canvassId = computed( () => {
         if(rvData.value.canvass) {
             return rvData.value.canvass.id
@@ -189,6 +199,9 @@
         return null
     })
 
+
+
+    // ======================== WATCHERS ========================  
     // set currentCanvass to null if rc number field is deselected
     watch(canvassId, (val) => {
 
@@ -198,6 +211,10 @@
         }
 
     })
+
+
+
+    // ======================== FUNCTIONS ========================  
 
     async function save() {
 
@@ -226,6 +243,24 @@
 
     }
 
+    // check if canvass is_referenced. If true then rollback to previous canvass else set new current canvass
+    function onRcNumberSelected(payload: Canvass) {
+        console.log('onRcNumberSelected()', payload)
+        if(payload.is_referenced) {
+            if(currentCanvass) {
+                rvData.value.canvass = currentCanvass
+            }else{
+                rvData.value.canvass = null
+            }
+        }else{
+            currentCanvass = payload
+        }
+    }
+
+
+
+    // ======================== UTILS ========================  
+
     function isValid(): boolean {
 
         rvDataErrors.value = {..._rvDataErrorsInitial}
@@ -252,19 +287,8 @@
         isMobile.value = window.innerWidth < MOBILE_WIDTH
     }
 
-    // check if canvass is_referenced. If true then rollback to previous canvass else set new current canvass
-    function onRcNumberSelected(payload: Canvass) {
-        console.log('onRcNumberSelected()', payload)
-        if(payload.is_referenced) {
-            if(currentCanvass) {
-                rvData.value.canvass = currentCanvass
-            }else{
-                rvData.value.canvass = null
-            }
-        }else{
-            currentCanvass = payload
-        }
-    }
+
+
 
 </script>
 

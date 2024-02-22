@@ -183,7 +183,6 @@
     import moment from 'moment'
     import { getFullname, formatDate } from '~/utils/helpers'
     import { MOBILE_WIDTH, PAGINATION_SIZE } from '~/utils/config'
-    import type { RVApprover } from '~/composables/warehouse/rv/rv-approver.types';
     import { approvalStatus } from '~/utils/constants';
 
 
@@ -224,6 +223,9 @@
     const items = ref<RV[]>([])
 
 
+
+    // ======================== LIFECYCLE HOOKS ======================== 
+
     onMounted( async() => {
         isMobile.value = window.innerWidth < MOBILE_WIDTH
 
@@ -241,6 +243,7 @@
     })
 
 
+    // ======================== COMPUTED ======================== 
     // table data
     const filteredItems = computed( () => {
 
@@ -252,6 +255,8 @@
     })
 
 
+
+    // ======================== FUNCTIONS ======================== 
 
     function onClickEdit(id: string) {
         router.push('/warehouse/purchasing/rv/' + id)
@@ -322,9 +327,7 @@
 
     }
 
-    function checkMobile() {
-        isMobile.value = window.innerWidth < MOBILE_WIDTH
-    }
+
 
     function getStatus(rv: RV) {
         
@@ -350,6 +353,17 @@
 
         return approvalStatus[APPROVAL_STATUS.APPROVED]
     }
+
+
+
+    // ======================== UTILS ======================== 
+
+    function checkMobile() {
+        isMobile.value = window.innerWidth < MOBILE_WIDTH
+    }
+
+
+
 
 </script>
 

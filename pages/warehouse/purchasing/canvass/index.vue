@@ -176,6 +176,7 @@
     const isSearching = ref(false)
     const isPaginating = ref(false)
     
+    // pagination
     const _paginationInitial = {
         currentPage: 0,
         totalPages: 0,
@@ -193,9 +194,11 @@
     // ----------------
 
 
-    // table data
+    // container for search result
     const items = ref<Canvass[]>([])
      
+
+    // ======================== LIFECYCLE HOOKS ======================== 
 
     onMounted( async() => {
         isMobile.value = window.innerWidth < MOBILE_WIDTH
@@ -212,6 +215,9 @@
 
     })
 
+
+
+    // ======================== FUNCTIONS ======================== 
 
     function onClickEdit(id: string) {
         router.push('/warehouse/purchasing/canvass/' + id)
@@ -275,9 +281,16 @@
         pagination.value.totalPages = totalPages  
     }
 
+
+
+    // ======================== UTILS ======================== 
+
     function checkMobile() {
         isMobile.value = window.innerWidth < MOBILE_WIDTH
     }
+
+
+    
 
 </script>
 

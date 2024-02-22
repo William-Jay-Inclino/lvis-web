@@ -282,6 +282,24 @@
         layout: "layout-admin"
     })
 
+    // CONSTANTS
+    const toast = useToast();
+    const route = useRoute()
+
+    // HTML ELEMENTS
+    const closeItemModal = ref<HTMLButtonElement>()
+    const canvassItemModalBtn = ref<HTMLButtonElement>()
+
+    // FLAGS
+    const isMobile = ref(false)
+    const isCanvassItemModalAdd = ref(false)
+    const isCanvassDetailForm = ref(true)
+    const isUpdating = ref(false)
+    const isAddingItem = ref(false)
+    const isEditingItem = ref(false)
+
+
+    // INITIAL DATA
     const _canvassErrorsInitial = {
         requisitioner: false,
         purpose: false
@@ -292,24 +310,6 @@
         quantity: false
     }
 
-    // flags
-    const isMobile = ref(false)
-    const isCanvassItemModalAdd = ref(false)
-    const isCanvassDetailForm = ref(true)
-    const isUpdating = ref(false)
-    const isAddingItem = ref(false)
-    const isEditingItem = ref(false)
-
-
-    const toast = useToast();
-    const route = useRoute()
-    const closeItemModal = ref<HTMLButtonElement>()
-    const canvassItemModalBtn = ref<HTMLButtonElement>()
-
-    const employees = ref<Employee[]>([])
-    const brands = ref<Brand[]>([])
-    const units = ref<Unit[]>([])
-
     const _canvassItemInitial: CanvassItem = {
         id: '',
         canvass_id: '',
@@ -319,13 +319,24 @@
         quantity: 0
     }
 
-    const canvass = ref<Canvass>({} as Canvass)
-    const canvassItem = ref<CanvassItem>({..._canvassItemInitial})
 
+    // DROPDOWNS
+    const employees = ref<Employee[]>([])
+    const brands = ref<Brand[]>([])
+    const units = ref<Unit[]>([])
+
+
+    // CANVASS FORM DATA
+    const canvass = ref<Canvass>({} as Canvass)
     const canvassErrors = ref({..._canvassErrorsInitial})
+
+    // CANVASS ITEM FORM DATA
+    const canvassItem = ref<CanvassItem>({..._canvassItemInitial})
     const canvassItemErrors = ref({..._canvassItemErrorsInitial})
 
 
+
+    // ======================== LIFECYCLE HOOKS ======================== 
 
     onMounted( async() => {
 
@@ -352,9 +363,11 @@
 
     })
 
-    function checkMobile() {
-        isMobile.value = window.innerWidth < MOBILE_WIDTH
-    }
+
+
+    // ======================== FUNCTIONS ======================== 
+
+
 
     async function updateCanvassDetail() {
 
@@ -402,25 +415,11 @@
 
     }
 
-    function isValidCanvassItem(): boolean {
-        canvassItemErrors.value = {..._canvassItemErrorsInitial}
 
-        if(canvassItem.value.description.trim() === '') {
-            canvassItemErrors.value.description = true 
-        }
 
-        if(canvassItem.value.quantity <= 0) {
-            canvassItemErrors.value.quantity = true 
-        }
+    // ======================== CANVASS ITEM FUNCTIONS ======================== 
 
-        const hasError = Object.values(canvassItemErrors.value).includes(true);
 
-        if(hasError) {
-            return false 
-        }
-
-        return true
-    }
 
     async function createCanvassItem() {
 
@@ -537,6 +536,26 @@
 
     }
 
+    function isValidCanvassItem(): boolean {
+        canvassItemErrors.value = {..._canvassItemErrorsInitial}
+
+        if(canvassItem.value.description.trim() === '') {
+            canvassItemErrors.value.description = true 
+        }
+
+        if(canvassItem.value.quantity <= 0) {
+            canvassItemErrors.value.quantity = true 
+        }
+
+        const hasError = Object.values(canvassItemErrors.value).includes(true);
+
+        if(hasError) {
+            return false 
+        }
+
+        return true
+    }
+
     function onClickEditCanvassItem(indx: number) {
 
         const item = canvass.value.canvass_items[indx]
@@ -559,5 +578,16 @@
         canvassItem.value = {..._canvassItemInitial}
         canvassItemErrors.value = {..._canvassItemErrorsInitial}
     }
+
+
+
+    // ======================== UTILS ======================== 
+
+    function checkMobile() {
+        isMobile.value = window.innerWidth < MOBILE_WIDTH
+    }
+
+
+
 
 </script>

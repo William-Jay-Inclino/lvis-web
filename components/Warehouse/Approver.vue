@@ -40,7 +40,7 @@
                                 <textarea :value="item.notes" class="form-control" rows="3" disabled></textarea>
                             </td>
                             <td class="text-center align-middle">
-                                <button @click="onRemoveApprover(item.id)" class="btn btn-sm btn-light w-50">
+                                <button @click="removeApprover(item.id)" class="btn btn-sm btn-light w-50">
                                     <i class="fas fa-trash text-danger"></i>
                                 </button>
                                 <button @click="onClickEditApprover(i)" class="btn btn-sm btn-light w-50" data-bs-toggle="modal" data-bs-target="#editApproverModal">
@@ -111,7 +111,7 @@
                                 </tr>
                                 <tr class="text-center">
                                     <td colspan="2">
-                                        <button @click="onRemoveApprover(item.id)" class="btn btn-sm btn-light w-50">
+                                        <button @click="removeApprover(item.id)" class="btn btn-sm btn-light w-50">
                                             <i class="fas fa-trash text-danger"></i>
                                         </button>
         
@@ -342,7 +342,7 @@
 
 
 <script setup lang="ts">
-    import { defineProps, defineEmits } from 'vue';
+
 
     const emits = defineEmits(['changeApproverOrder', 'addApprover', 'editApprover', 'removeApprover']);
     
@@ -369,16 +369,25 @@
         }
     });
 
+    // CONSTANTS 
+    const _dragOptions = {
+        animation: 200,
+        group: "description",
+        disabled: false,
+        ghostClass: "ghost"
+    };
+    
+    // FLAGS
     const isMobile = ref(false)
     const isRvApproverModalAdd = ref(false)
     const drag = ref(false)
 
-
-    // HTML
+    // HTML ELEMENTS
     const closeChangeOrderModal = ref<HTMLButtonElement>()
     const closeAddApproverModal = ref<HTMLButtonElement>()
     const closeEditApproverModal = ref<HTMLButtonElement>()
 
+    // INITIAL DATA
     const _addApproverInitial: CreateApproverInput = {
         approver: null,
         label: '',
@@ -393,17 +402,14 @@
         label: false
     }
 
+    // CHANGE APPROVER ORDER STATE
     const changeOrderApprovers = ref<Approver[]>([])
 
-    const _dragOptions = {
-        animation: 200,
-        group: "description",
-        disabled: false,
-        ghostClass: "ghost"
-    };
-
+    // ADD APPROVER STATE
     const addApproverData = ref<CreateApproverInput>({..._addApproverInitial})
     const addApproverErrors = ref({..._addApproverErrorsInitial})
+
+    // EDIT APPROVER STATE
     const editApproverData = ref<UpdateApproverInput>({} as UpdateApproverInput)
     const editApproverErrors = ref({..._editApproverErrorsInitial})
     const approvalStatusArray = ref([
@@ -413,6 +419,8 @@
     ])
 
 
+    // ======================== LIFECYCLE HOOKS ========================  
+
     onMounted( async() => {
 
         isMobile.value = window.innerWidth < MOBILE_WIDTH
@@ -421,6 +429,64 @@
 
     })
 
+
+
+    // ======================== FUNCTIONS ========================  
+
+
+    function onClickAddApprover() {
+        isRvApproverModalAdd.value = true
+        addApproverData.value.order = props.approvers.length + 1
+    }
+
+    function onClickEditApprover(indx: number) {
+        isRvApproverModalAdd.value = false 
+
+        const item = props.approvers[indx]
+
+        const currentData = {...item}
+
+        editApproverData.value = {
+            id: item.id,
+            approver: item.approver,
+            date_approval: item.date_approval,
+            notes: currentData.notes,
+            status: {
+                id: currentData.status,
+                label: approvalStatus[currentData.status].label
+            },
+            label: currentData.label,
+            order: currentData.order
+        }
+    }
+
+    function onClickChangeApprover() {
+        changeOrderApprovers.value = [...props.approvers]
+    }
+
+    function onCloseChangeOrderModal() {
+        changeOrderApprovers.value = []
+    }
+
+    function onCloseAddApproverModal() {
+        addApproverData.value = {..._addApproverInitial}
+        addApproverErrors.value = {..._addApproverErrorsInitial}
+    }
+
+    function onCloseEditApproverModal() {
+        editApproverData.value = {} as UpdateApproverInput
+        editApproverErrors.value = {..._editApproverErrorsInitial}
+    }
+
+
+
+    // ======================== EMIT TO PARENT ========================  
+
+    async function removeApprover(id: string) {
+
+        emits('removeApprover', id)
+
+    }
 
     async function updateApproverOrder() {
 
@@ -471,6 +537,18 @@
 
     }
 
+
+
+    // ======================== UTILS ========================  
+
+    function getCounter(element: Approver) {
+        return props.approvers.indexOf(element) + 1;
+    }
+
+    function checkMobile() {
+        isMobile.value = window.innerWidth < MOBILE_WIDTH
+    }
+
     function isValidAddApprover(): boolean {
 
         addApproverErrors.value = {..._addApproverErrorsInitial}
@@ -519,63 +597,7 @@
 
     }
 
-    function onClickChangeApprover() {
-        changeOrderApprovers.value = [...props.approvers]
-    }
 
-    function onCloseChangeOrderModal() {
-        changeOrderApprovers.value = []
-    }
-
-    function onCloseAddApproverModal() {
-        addApproverData.value = {..._addApproverInitial}
-        addApproverErrors.value = {..._addApproverErrorsInitial}
-    }
-
-    function onCloseEditApproverModal() {
-        editApproverData.value = {} as UpdateApproverInput
-        editApproverErrors.value = {..._editApproverErrorsInitial}
-    }
-
-    function onClickAddApprover() {
-        isRvApproverModalAdd.value = true
-        addApproverData.value.order = props.approvers.length + 1
-    }
-
-    function onClickEditApprover(indx: number) {
-        isRvApproverModalAdd.value = false 
-
-        const item = props.approvers[indx]
-
-        const currentData = {...item}
-
-        editApproverData.value = {
-            id: item.id,
-            approver: item.approver,
-            date_approval: item.date_approval,
-            notes: currentData.notes,
-            status: {
-                id: currentData.status,
-                label: approvalStatus[currentData.status].label
-            },
-            label: currentData.label,
-            order: currentData.order
-        }
-    }
-
-    async function onRemoveApprover(id: string) {
-
-        emits('removeApprover', id)
-
-    }
-
-    function getCounter(element: Approver) {
-        return props.approvers.indexOf(element) + 1;
-    }
-
-    function checkMobile() {
-        isMobile.value = window.innerWidth < MOBILE_WIDTH
-    }
 
 </script>
 

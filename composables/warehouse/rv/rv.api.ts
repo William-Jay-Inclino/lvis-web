@@ -1,5 +1,5 @@
 import { APPROVER_SUPERVISOR_LABEL } from "~/utils/config";
-import type { Canvass, Classification, Employee } from "../canvass/canvass.types";
+import type { Canvass, Classification } from "../canvass/canvass.types";
 import type { CreateRvInput, FindAllResponse, MutationResponse, RV, UpdateRvInput } from "./rv.types";
 import { sendRequest } from "~/utils/api"
 import type { RvApproverSettings } from "./rv-approver.types";
