@@ -11,13 +11,6 @@
 
                         <div class="mb-3">
                             <label class="form-label">
-                                Date
-                            </label>
-                            <input type="date" class="form-control" :value="rvData.date_requested" disabled>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">
                                 RC Number <span class="text-danger">*</span>
                             </label>
                             <client-only>
@@ -51,6 +44,14 @@
                                 Purpose
                             </label>
                             <textarea v-if="rvData.canvass" :value="rvData.canvass.purpose" class="form-control" rows="3" disabled> </textarea>
+                            <textarea v-else class="form-control" rows="3" disabled> </textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Requisitioner Notes
+                            </label>
+                            <textarea v-if="rvData.canvass" :value="rvData.canvass.notes" class="form-control" rows="3" disabled> </textarea>
                             <textarea v-else class="form-control" rows="3" disabled> </textarea>
                         </div>
 

@@ -1,5 +1,5 @@
 import type { RV } from "../rv/rv.types";
-import type { FindAllResponse, MEQS } from "./meqs.types";
+import type { FindAllResponse, MEQS, Supplier } from "./meqs.types";
 
 
 export async function fetchDataInSearchFilters(): Promise<{
@@ -73,8 +73,6 @@ export async function fetchDataInSearchFilters(): Promise<{
         }
     }
 }
-
-
 
 export async function findByMeqsNumber(meqsNumber: string): Promise<MEQS | undefined> {
     const query = `
@@ -176,7 +174,6 @@ export async function findByReferenceNumber(payload: {
     }
 }
 
-
 export async function findAll(payload: {page: number, pageSize: number, date_requested: string | null, requested_by_id: string | null}): Promise<FindAllResponse> {
     
     const { page, pageSize, date_requested, requested_by_id } = payload;
@@ -235,4 +232,92 @@ export async function findAll(payload: {page: number, pageSize: number, date_req
         console.error(error);
         throw error
     }
+}
+
+export async function fetchFormDataInCreate(): Promise<{
+    rvs: RV[],
+    suppliers: Supplier[]
+}> {
+
+    const query = `
+        query {
+            rvs(page: 1, pageSize: 10) {
+                data{
+                    id
+                    rv_number
+                    canvass {
+                        rc_number
+                        requested_by {
+                            id
+                            firstname
+                            middlename
+                            lastname
+                        }
+                        purpose
+                        notes
+                    }
+                    rv_approvers {
+                        id
+                        approver {
+                            id
+                            firstname
+                            middlename
+                            lastname
+                        }
+                        approver_proxy {
+                            id
+                            firstname
+                            middlename
+                            lastname
+                        }
+                        date_approval 
+                        notes
+                        status
+                        label
+                        order
+                    }
+                }
+            },
+            suppliers{
+                id 
+                name
+            }
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        let rvs = []
+        let suppliers = []
+
+        if(!response.data || !response.data.data) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+
+        const data = response.data.data
+
+        if(data.rvs && data.rvs.data) {
+            rvs = response.data.data.rvs.data
+        }
+
+        if(data.suppliers) {
+            suppliers = data.suppliers
+        }
+
+        return {
+            rvs,
+            suppliers
+        }
+
+    } catch (error) {
+        console.error(error);
+        return {
+            rvs: [],
+            suppliers: []
+        }
+    }
+    
+
 }

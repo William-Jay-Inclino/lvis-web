@@ -7,7 +7,7 @@
             <div class="col">
                 <span class="text-secondary">
                     Step {{ currentStep }} of 2: 
-                    <span v-if="currentStep === 1"> Fill up canvass details </span>
+                    <span v-if="currentStep === 1"> Fill up canvass info </span>
                     <span v-if="currentStep === 2"> Add canvass items </span>
                 </span>
             </div>
@@ -18,13 +18,6 @@
                 <div class="row justify-content-center pt-5">
         
                     <div v-show="currentStep === 1" class="col-lg-6">
-
-                        <div class="mb-3">
-                            <label class="form-label">
-                                Date
-                            </label>
-                            <input type="date" :value="formData.date_requested" class="form-control" disabled>
-                        </div>
 
                         <div class="mb-3">
                             <label class="form-label">
@@ -72,17 +65,13 @@
             
                                             <thead>
                                                 <tr>
-                                                    <th class="text-muted">No.</th>
-                                                    <th class="text-muted">
-                                                        Description <span class="text-danger"> * </span>
-                                                    </th>
-                                                    <th class="text-muted">Brand</th>
-                                                    <th class="text-muted">Unit</th>
-                                                    <th class="text-muted">
-                                                        Quantity <span class="text-danger"> * </span>
-                                                    </th>
-                                                    <th class="text-muted text-center">
-                                                        Remove
+                                                    <th class="bg-secondary text-white">No.</th>
+                                                    <th class="bg-secondary text-white">Description</th>
+                                                    <th class="bg-secondary text-white">Brand</th>
+                                                    <th class="bg-secondary text-white">Unit</th>
+                                                    <th class="bg-secondary text-white">Quantity </th>
+                                                    <th class="bg-secondary text-white text-center">
+                                                        <i class="fas fa-cog"></i>
                                                     </th>
                                                 </tr>
                                             </thead>
@@ -190,7 +179,7 @@
 
 
         <!-- Modal -->
-        <div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
             <div class="modal-dialog">
                 <div class="modal-content">
                 <div class="modal-header">

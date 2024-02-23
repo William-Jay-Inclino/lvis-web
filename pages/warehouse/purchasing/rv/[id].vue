@@ -63,6 +63,12 @@
                     </label>
                     <textarea :value="rvData.canvass.purpose" class="form-control" rows="3" disabled> </textarea>
                 </div>
+                <div class="mb-3">
+                    <label class="form-label">
+                        Requisitioner Notes
+                    </label>
+                    <textarea :value="rvData.canvass.notes" class="form-control" rows="3" disabled> </textarea>
+                </div>
 
                 <div class="mb-3">
                     <label class="form-label">

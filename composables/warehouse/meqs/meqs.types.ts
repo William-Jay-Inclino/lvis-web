@@ -1,6 +1,7 @@
-import type { REQUEST_TYPE, APPROVAL_STATUS, VAT_TYPE } from "~/composables/common.types";
+import type { REQUEST_TYPE, APPROVAL_STATUS, VAT_TYPE, Approver } from "~/composables/common.types";
 import type { RV } from "../rv/rv.types";
 import type { CanvassItem } from "../canvass/canvass-item.types";
+import type { Canvass } from "../canvass/canvass.types";
 
 
 export interface MEQS {
@@ -25,8 +26,6 @@ export interface MEQS {
     }
 }
 
-
-
 export interface MeqsSupplier {
   id: string;
   meqs: MEQS;
@@ -37,15 +36,12 @@ export interface MeqsSupplier {
   attachments: MeqsSupplierAttachment[];
 }
 
-
 export interface Supplier {
     id: string;
     name: string;
     contact: string;
     is_deleted: boolean;
 }
-
-
 
 export interface MeqsSupplierItem {
     id: string;
@@ -57,19 +53,50 @@ export interface MeqsSupplierItem {
     vat_type: VAT_TYPE;
 }
 
-
-
 export interface MeqsSupplierAttachment {
     id: string;
     meqs_supplier_id: string;
     src: string;
 }
 
+export interface FindAllResponse {
+  data: MEQS[]
+  totalItems: number
+  currentPage: number
+  totalPages: number
+}
+
+export interface CreateMeqsInput {
+  jo: null;
+  rv: RV | null;
+  spr: null;
+  notes: string;
+  request_type: REQUEST_TYPE | null;
+  meqs_date: string;
+  approvers: Approver[];
+  meqs_suppliers: CreateMeqsSupplierSubInput[];
+}
 
 
-  export interface FindAllResponse {
-    data: MEQS[]
-    totalItems: number
-    currentPage: number
-    totalPages: number
-  }
+export interface CreateMeqsSupplierSubInput {
+  supplier: Supplier;
+  payment_terms: string;
+  meqs_supplier_items: CreateMeqsSupplierItemSubInput[]; 
+  attachments: CreateMeqsSupplierAttachmentSubInput[]; 
+}
+
+
+
+export interface CreateMeqsSupplierItemSubInput {
+  canvass: Canvass;
+  price: number;
+  notes: string;
+  is_awarded: boolean;
+  vat_type: VAT_TYPE;
+
+}
+
+export interface CreateMeqsSupplierAttachmentSubInput {
+  src: string;
+  filename: string
+}

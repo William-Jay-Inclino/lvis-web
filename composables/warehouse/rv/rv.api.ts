@@ -297,6 +297,7 @@ export async function fetchFormDataInCreate(): Promise<{
                         lastname
                     }
                     purpose
+                    notes
                     is_referenced
                 }
             },
@@ -403,6 +404,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                         lastname
                     }
                     purpose
+                    notes
                 }
                 classification {
                     id
