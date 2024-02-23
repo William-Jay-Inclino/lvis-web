@@ -10,11 +10,19 @@ export interface MEQS {
     request_type: REQUEST_TYPE;
     meqs_date: string;
     notes: string;
-    status: APPROVAL_STATUS;
     meqs_approvers: Approver[];
     meqs_suppliers: MeqsSupplier[];
     is_deleted: boolean;
     is_cancelled: boolean;
+
+
+    // set programmatically
+
+    status: {
+        value: APPROVAL_STATUS
+        label: string 
+        color: string 
+    }
 }
 
 
@@ -55,4 +63,13 @@ export interface MeqsSupplierAttachment {
     id: string;
     meqs_supplier_id: string;
     src: string;
+}
+
+
+
+  export interface FindAllResponse {
+    data: MEQS[]
+    totalItems: number
+    currentPage: number
+    totalPages: number
   }

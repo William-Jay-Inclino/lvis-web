@@ -127,7 +127,15 @@
                                         </tr>
                                         <tr>
                                             <td class="text-muted"> Date </td>
-                                            <td> {{ moment(i.date_requested).format('YYYY-MM-DD') }} </td>
+                                            <td> {{ formatDate(i.date_requested) }} </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-muted"> Status </td>
+                                            <td>
+                                                <div :class="{[`badge bg-${i.status.color}`]: true}"> 
+                                                    {{ i.status.label }} 
+                                                </div>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td colspan="2" class="text-center">
@@ -258,9 +266,7 @@
 
     // ======================== FUNCTIONS ======================== 
 
-    function onClickEdit(id: string) {
-        router.push('/warehouse/purchasing/rv/' + id)
-    }
+
 
     async function changePage(page: number) {
 
@@ -329,6 +335,12 @@
 
 
 
+    // ======================== UTILS ======================== 
+
+    function checkMobile() {
+        isMobile.value = window.innerWidth < MOBILE_WIDTH
+    }
+
     function getStatus(rv: RV) {
         
         const approvers = rv.rv_approvers
@@ -354,14 +366,9 @@
         return approvalStatus[APPROVAL_STATUS.APPROVED]
     }
 
-
-
-    // ======================== UTILS ======================== 
-
-    function checkMobile() {
-        isMobile.value = window.innerWidth < MOBILE_WIDTH
+    function onClickEdit(id: string) {
+        router.push('/warehouse/purchasing/rv/' + id)
     }
-
 
 
 

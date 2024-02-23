@@ -50,6 +50,152 @@
             </div>
         </div>
 
+        <div class="d-flex justify-content-end gap-2">
+            <button @click="search()" class="btn btn-primary" :disabled="isSearching">
+                <i class="fas fa-search"></i> {{ isSearching ? 'Searching...' : 'Search' }}
+            </button>
+            <nuxt-link class="btn btn-primary float-end" to="/warehouse/purchasing/meqs/create">
+                <i class="fas fa-plus"></i> Create MEQS
+            </nuxt-link>
+        </div>
+
+        <div class="h6wrapper mb-3 mt-3" v-show="!isInitialLoad && !isSearching && !isPaginating">
+            <hr class="result">
+                <h6 class="text-warning"><i>Search results...</i></h6>
+            <hr class="result">
+        </div>
+
+        <div class="row justify-content-center pt-3">
+
+            <div class="text-center text-muted fst-italic" v-show="isSearching || isPaginating">
+                Please wait...
+            </div>
+
+            <div class="text-center text-muted fst-italic" v-show="items.length === 0 && (!isInitialLoad && !isSearching)">
+                No results found
+            </div>
+
+
+            <div v-show="items.length > 0" class="col-lg">
+
+                <div class="row">
+                    <div class="col">
+
+
+                        <div v-if="!isMobile">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="bg-secondary text-white">MEQS Number</th>
+                                            <th class="bg-secondary text-white">Reference</th>
+                                            <th class="bg-secondary text-white">Requisitioner</th>
+                                            <th class="bg-secondary text-white">Date</th>
+                                            <th class="bg-secondary text-white text-center">Status</th>
+                                            <th class="text-center bg-secondary text-white">
+                                                <i class="fas fa-info-circle"></i>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="i in filteredItems">
+                                            <td class="text-muted"> {{ i.meqs_number }} </td>
+                                            <td class="text-muted" v-if="i.rv"> RV#{{ i.rv.rv_number }} </td>
+                                            <td class="text-muted" v-if="i.rv"> 
+                                                {{ getFullname(i.rv.canvass.requested_by!.firstname, i.rv.canvass.requested_by!.middlename, i.rv.canvass.requested_by!.lastname) }} 
+                                            </td>
+                                            <td class="text-muted"> {{ formatDate(i.meqs_date) }} </td>
+                                            <td class="text-center">
+                                                <div :class="{[`badge bg-${i.status.color}`]: true}"> 
+                                                    {{ i.status.label }} 
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <button v-if="i.status.value !== APPROVAL_STATUS.CANCELLED" @click="onClickEdit(i.id)" class="btn btn-sm btn-light text-primary">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div v-else>
+
+                            <div v-for="i in filteredItems" class="table-responsive">
+
+                                <table class="table table-hover table-bordered">
+
+                                    <tbody>
+                                        <tr>
+                                            <td width="50%" class="bg-secondary text-white"> MEQS Number </td>
+                                            <td class="bg-secondary text-white"> {{ i.meqs_number }} </td>
+                                        </tr>
+                                        <tr v-if="i.rv">
+                                            <td class="text-muted"> RV Number </td>
+                                            <td> {{ i.rv.rv_number }} </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-muted"> Requisitioner </td>
+                                            <td v-if="i.rv">
+                                                 {{ getFullname(i.rv.canvass.requested_by!.firstname, i.rv.canvass.requested_by!.middlename, i.rv.canvass.requested_by!.lastname) }} 
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-muted"> Date </td>
+                                            <td> {{ formatDate(i.meqs_date) }} </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-muted"> Status </td>
+                                            <td>
+                                                <div :class="{[`badge bg-${i.status.color}`]: true}"> 
+                                                    {{ i.status.label }} 
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" class="text-center">
+                                                <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light text-primary w-100">
+                                                    View Details
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+
+                                </table>
+
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <nav>
+                            <ul class="pagination justify-content-center">
+                            <li class="page-item" :class="{ disabled: pagination.currentPage === 1 }">
+                                <a class="page-link" @click="changePage(pagination.currentPage - 1)" href="#">Previous</a>
+                            </li>
+                            <li v-for="page in pagination.totalPages" :key="page" class="page-item" :class="{ active: pagination.currentPage === page }">
+                                <a class="page-link" @click="changePage(page)" href="#">{{ page }}</a>
+                            </li>
+                            <li class="page-item" :class="{ disabled: pagination.currentPage === pagination.totalPages }">
+                                <a class="page-link" @click="changePage(pagination.currentPage + 1)" href="#">Next</a>
+                            </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                
+
+            </div>
+        </div>
+
     </div>
 </template>
 
@@ -65,8 +211,22 @@
             layout: "layout-admin"
     })
 
+    const router = useRouter()
 
+    // flags
     const isMobile = ref(false)
+    const isInitialLoad = ref(true)
+    const isSearching = ref(false)
+    const isPaginating = ref(false)
+
+    // pagination
+    const _paginationInitial = {
+        currentPage: 0,
+        totalPages: 0,
+        totalItems: 0,
+        pageSize: PAGINATION_SIZE,
+    }
+    const pagination = ref({..._paginationInitial})
 
 
     const transactionTypes = ref(['RV', 'SPR', 'JO'])
@@ -90,6 +250,11 @@
     const requested_by = ref<Employee | null>(null)
     // ----------------
 
+
+    // container for search result
+    const items = ref<MEQS[]>([])
+
+
     onMounted( async() => {
         isMobile.value = window.innerWidth < MOBILE_WIDTH
 
@@ -107,6 +272,91 @@
     })
 
 
+    // ======================== COMPUTED ======================== 
+    // table data
+    const filteredItems = computed( () => {
+
+        return items.value.map( (i) => {
+            i.status = getStatus(i)
+            return i
+        })
+
+    })
+
+    async function search() {
+
+        isInitialLoad.value = false
+        isSearching.value = true
+
+        items.value = []
+
+        // find by MEQS NUMBER
+        if(meqs.value) {
+            const response = await meqsApi.findByMeqsNumber(meqs.value.meqs_number)
+            isSearching.value = false
+            if(response) {
+                items.value.push(response)
+                return
+            }
+            return
+        }
+
+        // find by RV NUMBER
+        if(rv.value || spr.value || jo.value) {
+
+            let response 
+
+            if(rv.value) {
+                response = await meqsApi.findByReferenceNumber({ rv_number: rv.value.rv_number })
+            } else if(spr.value) {
+                // todo
+            } else {
+                // todo
+            }
+
+            isSearching.value = false
+            if(response) {
+                items.value.push(response)
+                return
+            }
+            return
+        }
+
+
+        // find by DATE REQUESTED and/or REQUISITIONER
+        const { data, currentPage, totalItems, totalPages } = await meqsApi.findAll({
+            page: 1,
+            pageSize: pagination.value.pageSize,
+            date_requested: date_requested.value,
+            requested_by_id: requested_by.value ? requested_by.value.id : null
+            
+        })
+        isSearching.value = false
+        items.value = data
+        pagination.value.totalItems = totalItems
+        pagination.value.currentPage = currentPage
+        pagination.value.totalPages = totalPages
+
+    }
+
+    async function changePage(page: number) {
+
+        isPaginating.value = true
+
+        const { data, currentPage, totalItems, totalPages } = await meqsApi.findAll({
+            page,
+            pageSize: pagination.value.pageSize,
+            date_requested: null,
+            requested_by_id: null
+            
+        })
+        isPaginating.value = false
+
+        items.value = data
+        pagination.value.totalItems = totalItems
+        pagination.value.currentPage = currentPage
+        pagination.value.totalPages = totalPages
+    }
 
     // ======================== UTILS ======================== 
 
@@ -114,5 +364,62 @@
         isMobile.value = window.innerWidth < MOBILE_WIDTH
     }
 
+    function getStatus(meqs: MEQS) {
+        
+        const approvers = meqs.meqs_approvers
+        
+        if(meqs.is_cancelled) {
+
+            return approvalStatus[APPROVAL_STATUS.CANCELLED]
+
+        }
+
+        const hasDisapproved = approvers.find(i => i.status === APPROVAL_STATUS.DISAPPROVED)
+
+        if(hasDisapproved) {
+            return approvalStatus[APPROVAL_STATUS.DISAPPROVED]
+        }
+
+        const hasPending = approvers.find(i => i.status === APPROVAL_STATUS.PENDING)
+
+        if(hasPending) {
+            return approvalStatus[APPROVAL_STATUS.PENDING]
+        }
+
+        return approvalStatus[APPROVAL_STATUS.APPROVED]
+    }
+
+    function onClickEdit(id: string) {
+        router.push('/warehouse/purchasing/meqs/' + id)
+    }
+
 
 </script>
+
+
+
+
+
+
+
+
+
+<style scoped>
+
+    hr.result {
+        flex: 1;
+        margin: 0 10px;
+        border: none;
+        border-top: 1px solid #333;
+        }
+
+    h6 {
+        margin: 0;
+    }
+
+    .h6wrapper {
+        display: flex;
+        align-items: center;
+    }
+
+</style>
