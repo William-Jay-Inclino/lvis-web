@@ -34,7 +34,7 @@
             <tfoot>
                 <tr>
                     <td colspan="4" class="text-center">
-                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
+                        <button @click="onClickAdd()" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
                             <i class="fas fa-plus-circle"></i> Add Supplier
                         </button>
                     </td>
@@ -244,6 +244,8 @@ function isValid(): boolean {
 
 function removeSupplier(indx: number) {
 
+    emits('removeSupplier', indx)
+
 }
 
 function onClickEdit(indx: number) {
@@ -279,20 +281,6 @@ function handleFileProcessing(_files: any[]) {
     console.log('_files', _files)
 
     formData.value.attachments = _files
-
-    // console.log('formData.value.attachments', formData.value.attachments)
-
-    // for (let item of _files) {
-
-    //     const isExist = formData.value.attachments.find(i => i.filename === item.filename)
-
-    //     if(isExist){
-    //         console.log('exist')
-    //         continue 
-    //     }
-    //     console.log('attachment added')
-    //     formData.value.attachments.push(item)
-    // }
 
 }
 

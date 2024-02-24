@@ -60,10 +60,10 @@
                         </div>
 
                         <div class="d-flex justify-content-end gap-2">
-                            <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">
+                            <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/meqs">
                                 <i class="fas fa-chevron-left"></i> Back
                             </nuxt-link>
-                            <button @click="onClickNextStep1()" type="button" class="btn btn-primary" :disabled="!hasReference">
+                            <button @click="goToStep2()" type="button" class="btn btn-primary" :disabled="!hasReference">
                                 <i class="fas fa-chevron-right"></i> Next
                             </button>
                         </div>
@@ -79,8 +79,18 @@
                                   :canvass_items="canvassItems" 
                                   @add-supplier="addSupplier"
                                   @edit-supplier="editSupplier"
+                                  @remove-supplier="removeSupplier"
                                 />
                             </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <button @click="goToStep1()" type="button" class="btn btn-secondary" :disabled="!hasReference">
+                                <i class="fas fa-chevron-left"></i> Back
+                            </button>
+                            <button @click="goToStep2()" type="button" class="btn btn-primary" :disabled="!hasReference">
+                                <i class="fas fa-chevron-right"></i> Next
+                            </button>
                         </div>
 
                     </div>
@@ -99,11 +109,13 @@ import type { CreateMeqsInput, CreateMeqsSupplierSubInput, Supplier } from '~/co
 import type { RV } from '~/composables/warehouse/rv/rv.types';
 import * as meqsApi from '~/composables/warehouse/meqs/meqs.api'
 import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
+import { useToast } from "vue-toastification";
 
 definePageMeta({
     layout: "layout-admin"
 })
 
+const toast = useToast();
 const isMobile = ref(false)
 const today = moment().format('YYYY-MM-DD')
 const currentStep = ref(1)
@@ -204,19 +216,29 @@ function addSupplier(data: CreateMeqsSupplierSubInput) {
     console.log('addSupplier()', data)
     
     meqsData.value.meqs_suppliers.push({...data})
+
+    toast.success('Supplier Added!')
 }
 
 function editSupplier(data: CreateMeqsSupplierSubInput, indx: number) {
     console.log('editSupplier()', data)
 
     meqsData.value.meqs_suppliers[indx] = {...data}
+
+    toast.success('Supplier Edited!')
+}
+
+function removeSupplier(indx: number) {
+    meqsData.value.meqs_suppliers.splice(indx, 1)
+
+    toast.success('Supplier Removed!')
 }
 
 function checkMobile() {
     isMobile.value = window.innerWidth < MOBILE_WIDTH
 }
 
-function onClickNextStep1() {
-    currentStep.value++
-}
+
+const goToStep2 = () => currentStep.value++
+const goToStep1 = () => currentStep.value--
 </script>
