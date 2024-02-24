@@ -255,6 +255,20 @@ export async function fetchFormDataInCreate(): Promise<{
                         }
                         purpose
                         notes
+                        canvass_items{
+                            id
+                            canvass_id
+                            description
+                            brand{
+                                id
+                                name
+                            }
+                            unit{
+                                id
+                                name
+                            }
+                            quantity
+                        }
                     }
                     rv_approvers {
                         id

@@ -79,16 +79,16 @@ export interface CreateMeqsInput {
 
 
 export interface CreateMeqsSupplierSubInput {
-  supplier: Supplier;
+  supplier: Supplier | null;
   payment_terms: string;
   meqs_supplier_items: CreateMeqsSupplierItemSubInput[]; 
-  attachments: CreateMeqsSupplierAttachmentSubInput[]; 
+  attachments: any[]; 
 }
 
 
 
 export interface CreateMeqsSupplierItemSubInput {
-  canvass: Canvass;
+  canvass_item: CanvassItem;
   price: number;
   notes: string;
   is_awarded: boolean;
@@ -97,6 +97,5 @@ export interface CreateMeqsSupplierItemSubInput {
 }
 
 export interface CreateMeqsSupplierAttachmentSubInput {
-  src: string;
-  filename: string
+  file: File;
 }

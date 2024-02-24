@@ -73,7 +73,13 @@
 
                         <div class="row">
                             <div class="col">
-                                <WarehouseSupplier :suppliers="suppliers" :meqs_suppliers="meqsData.meqs_suppliers"/>
+                                <WarehouseSupplier
+                                  :suppliers="suppliers"
+                                  :meqs_suppliers="meqsData.meqs_suppliers"
+                                  :canvass_items="canvassItems" 
+                                  @add-supplier="addSupplier"
+                                  @edit-supplier="editSupplier"
+                                />
                             </div>
                         </div>
 
@@ -89,9 +95,10 @@
 
 <script setup lang="ts">
 import moment from 'moment';
-import type { CreateMeqsInput, Supplier } from '~/composables/warehouse/meqs/meqs.types';
+import type { CreateMeqsInput, CreateMeqsSupplierSubInput, Supplier } from '~/composables/warehouse/meqs/meqs.types';
 import type { RV } from '~/composables/warehouse/rv/rv.types';
 import * as meqsApi from '~/composables/warehouse/meqs/meqs.api'
+import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
 
 definePageMeta({
     layout: "layout-admin"
@@ -179,6 +186,31 @@ const requisitioner = computed( () => {
 
     return getFullname(employee!.firstname, employee!.middlename, employee!.lastname)
 })
+
+const canvassItems = computed( (): CanvassItem[] => {
+
+    if(referenceIsRv.value) {
+
+        return meqsData.value.rv!.canvass.canvass_items
+
+    }
+
+    return []
+
+})
+
+
+function addSupplier(data: CreateMeqsSupplierSubInput) {
+    console.log('addSupplier()', data)
+    
+    meqsData.value.meqs_suppliers.push({...data})
+}
+
+function editSupplier(data: CreateMeqsSupplierSubInput, indx: number) {
+    console.log('editSupplier()', data)
+
+    meqsData.value.meqs_suppliers[indx] = {...data}
+}
 
 function checkMobile() {
     isMobile.value = window.innerWidth < MOBILE_WIDTH

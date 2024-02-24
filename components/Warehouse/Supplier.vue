@@ -14,20 +14,18 @@
             </thead>
             <tbody>
                 <tr v-for="item, i in meqs_suppliers">
-                    <td class="text-muted"> {{ item.supplier.name }} </td>
-                    <td class="text-muted"> {{ item.payment_terms }} </td>
-                    <td class="text-muted">
-                        <ul class="list-group list-group-flush">
-                            <li v-for="attachment in item.attachments" class="list-group-item">
-                                {{ attachment.filename }}
-                            </li>
+                    <td class="text-muted align-middle"> {{ item.supplier?.name }} </td>
+                    <td class="text-muted align-middle"> {{ item.payment_terms }} </td>
+                    <td class="text-muted align-middle">
+                        <ul>
+                            <li v-for="attachment in item.attachments"> {{ attachment.filename }} </li>
                         </ul>
                     </td>
-                    <td>
+                    <td class="align-middle">
                         <button @click="removeSupplier(i)" class="btn btn-sm btn-light w-50">
                             <i class="fas fa-trash text-danger"></i>
                         </button>
-                        <button @click="editSupplier(i)" class="btn btn-sm btn-light w-50">
+                        <button @click="onClickEdit(i)" class="btn btn-sm btn-light w-50" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
                             <i class="fas fa-edit text-primary"></i>
                         </button>
                     </td>
@@ -50,50 +48,53 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title text-warning" id="exampleModalLabel">Add Supplier</h5>
+                    <h5 class="modal-title text-warning" id="exampleModalLabel">{{ formIsAdd ? 'Add' : 'Edit' }} Supplier</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label"> Supplier </label> <span class="text-danger">*</span>
                         <client-only>
-                            <v-select :options="suppliers" v-model="supplier" label="name"></v-select>
+                            <v-select :options="suppliers" v-model="formData.supplier" label="name"></v-select>
                         </client-only>
+                        <small class="text-danger fst-italic" v-if="formDataErrors.supplier">This field is required</small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
                             Payment Terms <span class="text-danger">*</span>
                         </label>
-                        <input type="text" class="form-control">
+                        <input type="text" class="form-control" v-model="formData.payment_terms">
+                        <small class="text-danger fst-italic" v-if="formDataErrors.paymentTerms">This field is required</small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
-                            Attachments <span class="text-danger">*</span>
+                            Attachments <i class="text-muted">(max: 3)</i> <span class="text-danger">*</span>
                         </label>
                         <client-only>
                             <file-pond
                                 name="test"
+                                :files="formData.attachments"
                                 ref="filepond"
                                 label-idle="Drop files here..."
-                                v-bind:allow-multiple="true"
+                                :allow-multiple="true"
                                 accepted-file-types="image/jpeg, image/png"
+                                :max-files="3"
                                 @updatefiles="handleFileProcessing"
+                                @removefile="handleFileRemove"
                             />
                         </client-only>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Attachments <span class="text-danger">*</span>
-                        </label>
-                        <input class="form-control" type="file" id="formFile" @change="handleFile">
+                        <small class="text-danger fst-italic" v-if="formDataErrors.attachments">This field is required</small>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button ref="closeItemModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <button @click="onCloseModal()" ref="closeSupplierModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         <i class="fas fa-close"></i> Close
                     </button>
-                    <button @click="addSupplier()" type="button" class="btn btn-primary">
+                    <button v-if="formIsAdd" @click="addSupplier()" type="button" class="btn btn-primary">
                         <i class="fas fa-plus-circle"></i> Add Supplier
+                    </button>
+                    <button v-else @click="editSupplier()" type="button" class="btn btn-primary">
+                        <i class="fas fa-plus-circle"></i> Edit Supplier
                     </button>
                 </div>
                 </div>
@@ -107,13 +108,14 @@
 
 
 <script setup lang="ts">
-import type { CreateMeqsSupplierSubInput, Supplier } from '~/composables/warehouse/meqs/meqs.types';
+import type { CreateMeqsSupplierItemSubInput, CreateMeqsSupplierSubInput, Supplier } from '~/composables/warehouse/meqs/meqs.types';
 import vueFilePond from "vue-filepond"
 import "filepond/dist/filepond.min.css";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css";
 
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
+import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
 
 const FilePond = vueFilePond(
   FilePondPluginFileValidateType,
@@ -132,49 +134,171 @@ const props = defineProps({
     suppliers: {
         type: Array as () => Supplier[],
         default: () => [],
+    },
+    canvass_items: {
+        type: Array as () => CanvassItem[],
+        default: () => [],
     }
 });
 
 
-const supplier = ref<Supplier | null>(null)
-const files  = ref<File[]>([])
-const file  = ref<File>()
+const formIsAdd = ref(true)
+const editingIndx = ref(0)
+
+const closeSupplierModal = ref<HTMLButtonElement>()
+
+const _formDataErrorsInitial = {
+    supplier: false,
+    paymentTerms: false,
+    attachments: false
+}
+
+const _formDataInitial: CreateMeqsSupplierSubInput = {
+    supplier: null,
+    payment_terms: '',
+    attachments: [],
+    meqs_supplier_items: []
+}
+
+const formData = ref({..._formDataInitial})
+const formDataErrors = ref({..._formDataErrorsInitial})
 const filepond = ref()
+
+const meqs_supplier_items = computed( (): CreateMeqsSupplierItemSubInput[] => {
+
+    const clonedCanvassItems = props.canvass_items.map(i => ({ ...i }))
+
+    const items: CreateMeqsSupplierItemSubInput[] = []
+
+    for(let item of clonedCanvassItems) {
+        items.push({
+            canvass_item: item,
+            price: 0.00,
+            notes: '',
+            is_awarded: false,
+            vat_type: VAT_TYPE.NONE
+
+        })
+    }
+
+    return items
+
+})
+
 
 function addSupplier() {
 
+    if(!isValid()){
+        return
+    }
+    
+    formData.value.meqs_supplier_items = meqs_supplier_items.value.map(i => ({ ...i }))
+
+    console.log('formData', formData.value)
+
+    emits("addSupplier", formData.value)
+
+    closeSupplierModal.value?.click()
+
+
 }
 
-function editSupplier(indx: number) {
+function editSupplier() {
 
+    if(!isValid()) {
+        return 
+    }
+
+    console.log('formData', formData.value)
+
+    emits("editSupplier", formData.value, editingIndx.value)
+
+    closeSupplierModal.value?.click()
+
+}
+
+function isValid(): boolean {
+
+    formDataErrors.value = {..._formDataErrorsInitial}
+
+    if(!formData.value.supplier) {
+        formDataErrors.value.supplier = true
+    }
+
+    if(formData.value.payment_terms.trim() === '') {
+        formDataErrors.value.paymentTerms = true 
+    }
+
+    if(formData.value.attachments.length === 0) {
+        formDataErrors.value.attachments = true
+    }
+
+    const hasError = Object.values(formDataErrors.value).includes(true);
+
+    if(hasError) {
+        return false
+    }
+
+    return true
 }
 
 function removeSupplier(indx: number) {
 
 }
 
+function onClickEdit(indx: number) {
+
+    formIsAdd.value = false
+    editingIndx.value = indx
+
+    const item = props.meqs_suppliers[indx]
+
+    formData.value = {
+        supplier: item.supplier,
+        payment_terms: item.payment_terms,
+        attachments: item.attachments,
+        meqs_supplier_items: item.meqs_supplier_items
+    }
+
+    console.log('formData.value', formData.value)
+
+}
+
+function onClickAdd() {
+    formIsAdd.value = true
+}
+
 function onCloseModal() {
+    formData.value = {..._formDataInitial}
+    formDataErrors.value = {..._formDataErrorsInitial}
+    formData.value.attachments = []
+}
+
+function handleFileProcessing(_files: any[]) {
+
+    console.log('_files', _files)
+
+    formData.value.attachments = _files
+
+    // console.log('formData.value.attachments', formData.value.attachments)
+
+    // for (let item of _files) {
+
+    //     const isExist = formData.value.attachments.find(i => i.filename === item.filename)
+
+    //     if(isExist){
+    //         console.log('exist')
+    //         continue 
+    //     }
+    //     console.log('attachment added')
+    //     formData.value.attachments.push(item)
+    // }
 
 }
 
-function handleFileProcessing(_files: File[]) {
-    console.log("FilePond succesfully processed file ", files);
-    
-    for(let file of _files) {
-        // @ts-ignore
-        console.log('file', file.file)
-
-    }
-
+function handleFileRemove(_files: any[]) {
+    console.log('handleFileRemove', _files)
 }
 
-function handleFile(e: Event) {
-    console.log('handleFile', e)
-
-    const target = e.target as HTMLInputElement;
-    if (target.files && target.files.length > 0) {
-        console.log('target.files[0]', target.files[0])
-    }
-}
 
 </script>
