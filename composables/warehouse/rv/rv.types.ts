@@ -19,14 +19,15 @@ export interface RV {
   rv_approvers: RVApprover[]
   is_cancelled: boolean
   is_deleted: boolean
+  status: APPROVAL_STATUS
 
   // set programmatically
 
-  status: {
-    value: APPROVAL_STATUS
-    label: string 
-    color: string 
-  }
+  // statusObject: {
+  //   value: APPROVAL_STATUS
+  //   label: string 
+  //   color: string 
+  // }
 
 }
 

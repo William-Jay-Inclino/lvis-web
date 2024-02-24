@@ -85,18 +85,18 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="i in filteredItems">
+                                        <tr v-for="i in items">
                                             <td class="text-muted"> {{ i.rv_number }} </td>
                                             <td class="text-muted"> {{ i.canvass.rc_number }} </td>
                                             <td class="text-muted"> {{ getFullname(i.canvass.requested_by!.firstname, i.canvass.requested_by!.middlename, i.canvass.requested_by!.lastname) }} </td>
                                             <td class="text-muted"> {{ formatDate(i.date_requested) }} </td>
                                             <td class="text-center">
-                                                <div :class="{[`badge bg-${i.status.color}`]: true}"> 
-                                                    {{ i.status.label }} 
+                                                <div :class="{[`badge bg-${approvalStatus[i.status].color}`]: true}"> 
+                                                    {{ approvalStatus[i.status].label }} 
                                                 </div>
                                             </td>
                                             <td class="text-center">
-                                                <button v-if="i.status.value !== APPROVAL_STATUS.CANCELLED" @click="onClickEdit(i.id)" class="btn btn-sm btn-light text-primary">
+                                                <button v-if="i.status !== APPROVAL_STATUS.CANCELLED" @click="onClickEdit(i.id)" class="btn btn-sm btn-light text-primary">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
                                             </td>
@@ -108,7 +108,7 @@
 
                         <div v-else>
 
-                            <div v-for="i in filteredItems" class="table-responsive">
+                            <div v-for="i in items" class="table-responsive">
 
                                 <table class="table table-hover table-bordered">
 
@@ -132,8 +132,8 @@
                                         <tr>
                                             <td class="text-muted"> Status </td>
                                             <td>
-                                                <div :class="{[`badge bg-${i.status.color}`]: true}"> 
-                                                    {{ i.status.label }} 
+                                                <div :class="{[`badge bg-${approvalStatus[i.status].color}`]: true}"> 
+                                                    {{ approvalStatus[i.status].label }} 
                                                 </div>
                                             </td>
                                         </tr>
@@ -227,7 +227,7 @@
     // ----------------
 
     
-    // container for search result
+    // table data
     const items = ref<RV[]>([])
 
 
@@ -252,15 +252,6 @@
 
 
     // ======================== COMPUTED ======================== 
-    // table data
-    const filteredItems = computed( () => {
-
-        return items.value.map( (i) => {
-            i.status = getStatus(i)
-            return i
-        })
-
-    })
 
 
 

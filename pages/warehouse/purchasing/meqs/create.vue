@@ -30,7 +30,13 @@
                                 </div>
                                 <div class="col-8">
                                     <client-only>
-                                        <v-select :options="rvs" label="rv_number" v-model="meqsData.rv" v-show="transactionType === 'RV'"></v-select>
+                                        <!-- <v-select :options="rvs" label="rv_number" v-model="meqsData.rv" v-show="transactionType === 'RV'"></v-select> -->
+                                        <v-select @option:selected="onRvNumberSelected" :options="rvs" label="rv_number" v-model="meqsData.rv">
+                                            <template v-slot:option="option">
+                                                <span v-if="option.status !== APPROVAL_STATUS.APPROVED" class="text-danger">{{ option.rv_number }}</span>
+                                                <span v-else>{{ option.rv_number }}</span>
+                                            </template>
+                                        </v-select>
                                         <v-select :options="jos" label="spr_number" v-model="meqsData.spr" v-show="transactionType === 'SPR'"></v-select>
                                         <v-select :options="sprs" label="jo_number" v-model="meqsData.jo" v-show="transactionType === 'JO'"></v-select>
                                     </client-only>
@@ -109,7 +115,7 @@
                             </div>
                         </div>
 
-                        <div class="d-flex justify-content-end gap-2">
+                        <div class="d-flex justify-content-end gap-2 mt-3">
                             <button @click="goToStep2()" type="button" class="btn btn-secondary" :disabled="!hasReference">
                                 <i class="fas fa-chevron-left"></i> Back
                             </button>
@@ -158,6 +164,9 @@ const currentStep = ref(1)
 const transactionType = ref<'RV' | 'SPR' | 'JO'>('RV')
 
 
+// Immutable state for rc number field
+let currentRv: RV | null = null
+
 // FORM DATA
 const meqsData = ref<CreateMeqsInput>({
     jo: null,
@@ -184,6 +193,7 @@ onMounted( async() => {
 
 
 })
+
 
 
 
@@ -246,6 +256,55 @@ const canvassItems = computed( (): CanvassItem[] => {
     return []
 
 })
+const rvId = computed( () => {
+    if(meqsData.value.rv) {
+        return meqsData.value.rv.id
+    }
+    return null
+})
+
+
+
+
+// ======================== WATCHERS ========================  
+// set currentCanvass to null if rc number field is deselected
+watch(rvId, (val) => {
+
+    if(!val) {
+        console.log('rv number deselected')
+        currentRv = null
+    }
+
+})
+
+
+
+// ======================== FUNCTIONS ======================== 
+
+// check if rv is approved. If true then rollback to previous rv else set new current rv
+function onRvNumberSelected(payload: RV) {
+    console.log('onRvNumberSelected()', payload)
+
+    if(payload.status === APPROVAL_STATUS.APPROVED) {
+        currentRv = payload
+    }else {
+        if(currentRv) {
+            meqsData.value.rv = currentRv
+        }else{
+            meqsData.value.rv = null
+        }
+    }
+
+    // if(payload.status !== APPROVAL_STATUS.PENDING) {
+    //     if(currentRv) {
+    //         meqsData.value.rv = currentRv
+    //     }else{
+    //         meqsData.value.rv = null
+    //     }
+    // }else{
+    //     currentRv = payload
+    // }
+}
 
 
 
@@ -274,6 +333,8 @@ function removeSupplier(indx: number) {
 }
 
 
+
+// ======================== CHILD FUNCTIONS: AWARD ======================== 
 
 function updatePrice(meqsSupplier: CreateMeqsSupplierSubInput, canvass_item_id: string, price: number) {
     

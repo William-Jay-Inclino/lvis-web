@@ -2,9 +2,19 @@
 
     <div class="table-responsive">
 
-        <small class="text-secondary fst-italic"> Click the star icon to award the supplier </small>
+        <div class="row">
+            <div class="col">
+                <small class="text-secondary fst-italic">1. Click the star icon to award the supplier </small>
+            </div>
+        </div>
 
-        <table class="table table-hover table-sm">
+        <div class="row">
+            <div class="col">
+                <small class="text-secondary fst-italic">2. If the supplier has no item, just leave it blank </small>
+            </div>
+        </div>
+
+        <table class="table table-hover table-sm mt-3">
 
             <thead>
                 <tr>

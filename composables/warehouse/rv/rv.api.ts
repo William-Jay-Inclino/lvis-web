@@ -81,6 +81,7 @@ export async function findByRcNumber(rcNumber: string): Promise<RV | undefined> 
             rv(rc_number: "${rcNumber}") {
                 id
                 rv_number
+                status
                 canvass{
                     rc_number
                     requested_by {
@@ -92,9 +93,6 @@ export async function findByRcNumber(rcNumber: string): Promise<RV | undefined> 
                 }
                 date_requested
                 is_cancelled
-                rv_approvers{
-                    status
-                }
             }
         }
     `;
@@ -121,6 +119,7 @@ export async function findByRvNumber(rvNumber: string): Promise<RV | undefined> 
             rv(rv_number: "${rvNumber}") {
                 id
                 rv_number
+                status
                 canvass{
                     rc_number
                     requested_by {
@@ -132,9 +131,6 @@ export async function findByRvNumber(rvNumber: string): Promise<RV | undefined> 
                 }
                 date_requested
                 is_cancelled
-                rv_approvers{
-                    status
-                }
             }
         }
     `;
@@ -161,6 +157,7 @@ export async function findOne(id: string): Promise<RV | undefined> {
             rv(id: "${id}") {
                 id
                 rv_number
+                status
                 canvass {
                     id
                     rc_number
@@ -245,6 +242,7 @@ export async function findAll(payload: {page: number, pageSize: number, date_req
                 data {
                     id
                     rv_number
+                    status
                     canvass{
                         rc_number
                         requested_by {
@@ -256,9 +254,6 @@ export async function findAll(payload: {page: number, pageSize: number, date_req
                     }
                     date_requested
                     is_cancelled
-                    rv_approvers{
-                        status
-                    }
                 }
                 totalItems
                 currentPage
@@ -395,6 +390,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
             rv(id: "${id}") {
                 id
                 rv_number
+                status
                 canvass {
                     rc_number
                     requested_by {

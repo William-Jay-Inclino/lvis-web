@@ -17,8 +17,8 @@
                     <td class="text-muted align-middle"> {{ item.supplier?.name }} </td>
                     <td class="text-muted align-middle"> {{ item.payment_terms }} </td>
                     <td class="text-muted align-middle">
-                        <ul>
-                            <li v-for="attachment in item.attachments"> {{ attachment.filename }} </li>
+                        <ul class="list-group">
+                            <li class="list-group-item" v-for="attachment in item.attachments"> {{ attachment.filename }} </li>
                         </ul>
                     </td>
                     <td class="align-middle">
@@ -55,7 +55,7 @@
                     <div class="mb-3">
                         <label class="form-label"> Supplier </label> <span class="text-danger">*</span>
                         <client-only>
-                            <v-select :options="suppliers" v-model="formData.supplier" label="name"></v-select>
+                            <v-select :options="availableSuppliers" v-model="formData.supplier" label="name"></v-select>
                         </client-only>
                         <small class="text-danger fst-italic" v-if="formDataErrors.supplier">This field is required</small>
                     </div>
@@ -182,6 +182,14 @@ const meqs_supplier_items = computed( (): CreateMeqsSupplierItemSubInput[] => {
     }
 
     return items
+
+})
+
+const availableSuppliers = computed( () => {
+
+    const uniqueSuppliers = props.suppliers.filter(supplier1 => !props.meqs_suppliers.some(supplier2 => supplier1.id === supplier2.supplier?.id));
+
+    return uniqueSuppliers
 
 })
 
