@@ -229,9 +229,9 @@ function isValid(): boolean {
         formDataErrors.value.paymentTerms = true 
     }
 
-    if(formData.value.attachments.length === 0) {
-        formDataErrors.value.attachments = true
-    }
+    // if(formData.value.attachments.length === 0) {
+    //     formDataErrors.value.attachments = true
+    // }
 
     const hasError = Object.values(formDataErrors.value).includes(true);
 

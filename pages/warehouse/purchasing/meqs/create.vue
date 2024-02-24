@@ -10,6 +10,7 @@
                     Step {{ currentStep }} of 4: 
                     <span v-if="currentStep === 1"> Get Reference </span>
                     <span v-if="currentStep === 2"> Add Suppliers </span>
+                    <span v-if="currentStep === 3"> Add Price & Award Supplier </span>
                 </span>
             </div>
         </div>
@@ -63,17 +64,17 @@
                             <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/meqs">
                                 <i class="fas fa-chevron-left"></i> Back
                             </nuxt-link>
-                            <button @click="goToStep2()" type="button" class="btn btn-primary" :disabled="!hasReference">
+                            <button @click="goToStep2()" type="button" class="btn btn-primary" :disabled="!canProceedStep2">
                                 <i class="fas fa-chevron-right"></i> Next
                             </button>
                         </div>
                     </div>
 
-                    <div v-show="currentStep === 2" class="col-lg-10 col-md-10 col-sm-12">
+                    <div v-show="currentStep === 2" class="col-lg-10 col-md-11 col-sm-12">
 
                         <div class="row">
                             <div class="col">
-                                <WarehouseSupplier
+                                <WarehouseMeqsSupplier
                                   :suppliers="suppliers"
                                   :meqs_suppliers="meqsData.meqs_suppliers"
                                   :canvass_items="canvassItems" 
@@ -88,7 +89,31 @@
                             <button @click="goToStep1()" type="button" class="btn btn-secondary" :disabled="!hasReference">
                                 <i class="fas fa-chevron-left"></i> Back
                             </button>
-                            <button @click="goToStep2()" type="button" class="btn btn-primary" :disabled="!hasReference">
+                            <button @click="goToStep3()" type="button" class="btn btn-primary" :disabled="!canProceedStep3">
+                                <i class="fas fa-chevron-right"></i> Next
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <div v-show="currentStep === 3" class="col-12">
+
+                        <div class="row">
+                            <div class="col">
+                                <WarehouseMeqsAward 
+                                    :meqs_suppliers="meqsData.meqs_suppliers"
+                                    :canvass_items="canvassItems"
+                                    @update-price="updatePrice"
+                                    @award-supplier-item="awardSupplierItem"
+                                />
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <button @click="goToStep2()" type="button" class="btn btn-secondary" :disabled="!hasReference">
+                                <i class="fas fa-chevron-left"></i> Back
+                            </button>
+                            <button type="button" class="btn btn-primary" :disabled="!canProceedStep3">
                                 <i class="fas fa-chevron-right"></i> Next
                             </button>
                         </div>
@@ -115,17 +140,25 @@ definePageMeta({
     layout: "layout-admin"
 })
 
+// DEPENDENCIES
 const toast = useToast();
+
+// CONSTANTS
 const isMobile = ref(false)
 const today = moment().format('YYYY-MM-DD')
-const currentStep = ref(1)
 const transactionTypes = ref(['RV', 'SPR', 'JO'])
-const transactionType = ref<'RV' | 'SPR' | 'JO'>('RV')
+
+// ARRAYS
 const rvs = ref<RV[]>([])
 const jos = ref([])
 const sprs = ref([])
 const suppliers = ref<Supplier[]>([])
 
+const currentStep = ref(1)
+const transactionType = ref<'RV' | 'SPR' | 'JO'>('RV')
+
+
+// FORM DATA
 const meqsData = ref<CreateMeqsInput>({
     jo: null,
     rv: null,
@@ -154,11 +187,15 @@ onMounted( async() => {
 
 
 
+// ======================== COMPUTED ======================== 
 
 const referenceIsRv = computed( (): boolean => !!meqsData.value.rv) 
 const referenceIsJo = computed( (): boolean => !!meqsData.value.rv) 
 const referenceIsSpr = computed( (): boolean => !!meqsData.value.rv) 
 const hasReference = computed( (): boolean => !!referenceIsRv.value || !!referenceIsJo.value || !!referenceIsSpr.value )
+const canProceedStep2 = computed( (): boolean => !!hasReference.value)
+const canProceedStep3 = computed( (): boolean => meqsData.value.meqs_suppliers.length > 0)
+
 const purpose = computed( () => {
 
     if(!hasReference.value) {
@@ -198,7 +235,6 @@ const requisitioner = computed( () => {
 
     return getFullname(employee!.firstname, employee!.middlename, employee!.lastname)
 })
-
 const canvassItems = computed( (): CanvassItem[] => {
 
     if(referenceIsRv.value) {
@@ -211,6 +247,9 @@ const canvassItems = computed( (): CanvassItem[] => {
 
 })
 
+
+
+// ======================== CHILD FUNCTIONS: SUPPLIER ======================== 
 
 function addSupplier(data: CreateMeqsSupplierSubInput) {
     console.log('addSupplier()', data)
@@ -234,11 +273,55 @@ function removeSupplier(indx: number) {
     toast.success('Supplier Removed!')
 }
 
-function checkMobile() {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
+
+
+function updatePrice(meqsSupplier: CreateMeqsSupplierSubInput, canvass_item_id: string, price: number) {
+    
+    const item = meqsSupplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
+
+    if(!item) return
+
+    item.price = price
+
+}
+
+function awardSupplierItem(meqsSupplier: CreateMeqsSupplierSubInput, canvass_item_id: string) {
+
+    // in order to toggle. Should only award 1 supplier in each canvass item
+    removeAwardForAllSuppliersWith(canvass_item_id)
+
+    const item = meqsSupplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
+
+    if(!item) return
+    
+    // set the award
+    item.is_awarded = true
+
 }
 
 
-const goToStep2 = () => currentStep.value++
-const goToStep1 = () => currentStep.value--
+function removeAwardForAllSuppliersWith(canvass_item_id: string) {
+
+    for(let meqsSupplier of meqsData.value.meqs_suppliers) {
+
+        const item = meqsSupplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
+
+        if(item) {
+            item.is_awarded = false
+        }
+
+    }
+
+}
+
+
+
+
+// ======================== UTILS ======================== 
+
+const checkMobile = () => isMobile.value = window.innerWidth < MOBILE_WIDTH
+const goToStep1 = () => currentStep.value = 1
+const goToStep2 = () => currentStep.value = 2
+const goToStep3 = () => currentStep.value = 3
+
 </script>
