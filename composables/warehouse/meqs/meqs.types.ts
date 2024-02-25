@@ -96,9 +96,15 @@ export interface CreateMeqsSupplierItemSubInput {
 
   // these fields are used in forms
   invalidPrice?: boolean 
-
+  meqsSupplier?: CreateMeqsSupplierSubInput
 }
 
 export interface CreateMeqsSupplierAttachmentSubInput {
   file: File;
+}
+
+export interface CanvassItemWithSuppliers {
+  canvassItem: CanvassItem;
+  lowestPriceItem: CreateMeqsSupplierItemSubInput
+  awardedItem: CreateMeqsSupplierItemSubInput
 }

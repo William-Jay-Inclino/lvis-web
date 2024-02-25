@@ -37,3 +37,17 @@ export const VAT = {
         label: 'EXC'
     }
 }
+
+
+export const NOTE_OPTIONS = [
+    'Design',
+    'Features',
+    'Performance',
+    'Brand',
+    'Durability',
+    'Reliability',
+    'Convenience',
+    'Comfort',
+    'Tradition',
+    'Proven and Tested'
+]

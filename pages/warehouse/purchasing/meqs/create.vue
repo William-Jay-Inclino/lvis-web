@@ -8,9 +8,10 @@
             <div class="col">
                 <span class="text-secondary">
                     Step {{ currentStep }} of 4: 
-                    <span v-if="currentStep === 1"> Get Reference </span>
-                    <span v-if="currentStep === 2"> Add Suppliers </span>
-                    <span v-if="currentStep === 3"> Add Price & Award Supplier </span>
+                    <span v-show="currentStep === 1"> Get Reference </span>
+                    <span v-show="currentStep === 2"> Add Suppliers </span>
+                    <span v-show="currentStep === 3"> Add Price & Award Supplier </span>
+                    <span v-show="currentStep === 4"> Add Notes </span>
                 </span>
             </div>
         </div>
@@ -151,6 +152,29 @@
                             </button>
                             <button @click="goToStep4()" type="button" class="btn btn-primary">
                                 <i class="fas fa-chevron-right"></i> Next
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <div v-if="currentStep === 4" class="col-lg-6">
+
+                        <div class="row">
+                            <div class="col">
+                                <WarehouseMeqsNotes 
+                                    :meqs_suppliers="meqsData.meqs_suppliers"
+                                    :canvass_items="canvassItems"
+                                    @update-notes="updateNotes"
+                                />
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-3">
+                            <button @click="goToStep3()" type="button" class="btn btn-secondary">
+                                <i class="fas fa-chevron-left"></i> Back
+                            </button>
+                            <button @click="saveMeqs()" type="button" class="btn btn-primary">
+                                <i class="fas fa-chevron-right"></i> Save
                             </button>
                         </div>
 
@@ -331,14 +355,6 @@ function onRvNumberSelected(payload: RV) {
 }
 
 function isValidStep3(meqsSuppliers: CreateMeqsSupplierSubInput[], canvassItems: CanvassItem[]): boolean {
-
-    // validate for invalid price
-
-    // const hasInvalidPrice = meqsSuppliers.find(i => i.meqs_supplier_items.find(j => !!j.invalidPrice))
-
-    // if(hasInvalidPrice) {
-    //     return false 
-    // }
     
     let hasInvalidPrice = false 
 
@@ -407,6 +423,11 @@ function removeSupplier(indx: number) {
     toast.success('Supplier Removed!')
 }
 
+function saveMeqs() {
+    console.log('saveMeqs', meqsData.value)
+}
+
+
 
 
 // ======================== CHILD FUNCTIONS: AWARD ======================== 
@@ -455,7 +476,6 @@ function awardSupplierItem(meqsSupplier: CreateMeqsSupplierSubInput, canvass_ite
 
 }
 
-
 function removeAwardForAllSuppliersWith(canvass_item_id: string) {
 
     for(let meqsSupplier of meqsData.value.meqs_suppliers) {
@@ -471,6 +491,23 @@ function removeAwardForAllSuppliersWith(canvass_item_id: string) {
 }
 
 
+
+
+// ======================== CHILD FUNCTIONS: NOTES ======================== 
+
+function updateNotes(canvass_item_id: string, notes: string) {
+
+    for(let supplier of meqsData.value.meqs_suppliers) {
+
+        const canvassItem = supplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
+
+        if(canvassItem) {
+            canvassItem.notes = notes
+        }
+
+    }
+
+}
 
 
 // ======================== UTILS ======================== 

@@ -314,4 +314,4 @@
         align-items: center;
     }
 
-</style>
+</style>~/composables/config
