@@ -10,7 +10,7 @@
 
         <div class="row">
             <div class="col">
-                <small class="text-secondary fst-italic">2. If the supplier has no item, just leave it blank </small>
+                <small class="text-secondary fst-italic">2. If the supplier has no item, set the value to -1 </small>
             </div>
         </div>
 
@@ -28,9 +28,9 @@
             </thead>
 
             <tbody>
-                <tr v-for="item, i in canvass_items">
-                    <td class="text-muted align-middle"> {{ i + 1 }} </td>
-                    <td class="text-muted align-middle nowrap"> {{ item.description }} </td>
+                <tr v-for="item, i in canvass_items" :class="{'table-danger': !item.hasAwardedSupplier && !isInitial}">
+                    <td class="text-muted align-middle bg-danger-text-white"> {{ i + 1 }} </td>
+                    <td class="text-muted align-middle nowrap">{{ item.description }}</td>
                     <td>
                         <select class="form-select form-select-sm select-responsive" aria-label="Default select example">
                             <option :value="vat.id" v-for="vat in vatArray">
@@ -43,9 +43,13 @@
                             <input
                               type="number"
                               @input="updatePrice($event, meqsSupplier, item.id)"
-                              class="form-control me-2"
-                              style="width: 100px"
-                              placeholder="0.00">
+                              class="form-control me-2 border border-2"
+                              :class="{
+                                'border-danger': !isInitial && isPriceInvalid(meqsSupplier, item.id),
+                                'border-success': !isInitial && !isPriceInvalid(meqsSupplier, item.id)
+                                }
+                              "
+                              style="width: 100px">
                             <i
                               class="fas fa-star clickable-icon fs-5"
                               @click="emits('awardSupplierItem', meqsSupplier, item.id)"
@@ -78,6 +82,10 @@ const props = defineProps({
     canvass_items: {
         type: Array as () => CanvassItem[],
         default: () => [],
+    },
+    isInitial: {
+        type: Boolean,
+        default: () => true
     }
 });
 
@@ -111,11 +119,27 @@ function updatePrice(event: Event, meqsSupplier: CreateMeqsSupplierSubInput, can
 
 function isAwarded(meqsSupplier: CreateMeqsSupplierSubInput, canvass_item_id: string) {
 
+    console.log('isAwarded')
+
     const item = meqsSupplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
 
     if(!item) return
+
+    console.log('item', item)
     
     return item.is_awarded
+
+}
+
+function isPriceInvalid(meqsSupplier: CreateMeqsSupplierSubInput, canvass_item_id: string) {
+    const item = meqsSupplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
+
+    if(!item) return
+
+    if(item.invalidPrice) {
+        return true 
+    }
+    return false
 
 }
 

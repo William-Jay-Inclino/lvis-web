@@ -176,8 +176,8 @@ const meqs_supplier_items = computed( (): CreateMeqsSupplierItemSubInput[] => {
             price: 0.00,
             notes: '',
             is_awarded: false,
-            vat_type: VAT_TYPE.NONE
-
+            vat_type: VAT_TYPE.NONE,
+            invalidPrice: true // default is 2 since default price is 0.00
         })
     }
 

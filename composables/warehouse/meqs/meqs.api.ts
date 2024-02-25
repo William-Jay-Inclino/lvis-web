@@ -246,6 +246,7 @@ export async function fetchFormDataInCreate(): Promise<{
                     id
                     rv_number
                     status
+                    is_referenced
                     canvass {
                         rc_number
                         requested_by {

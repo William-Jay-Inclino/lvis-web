@@ -94,6 +94,9 @@ export interface CreateMeqsSupplierItemSubInput {
   is_awarded: boolean;
   vat_type: VAT_TYPE;
 
+  // these fields are used in forms
+  invalidPrice?: boolean 
+
 }
 
 export interface CreateMeqsSupplierAttachmentSubInput {

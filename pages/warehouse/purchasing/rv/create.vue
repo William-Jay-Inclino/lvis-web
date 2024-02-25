@@ -16,8 +16,24 @@
                             <client-only>
                                 <v-select @option:selected="onRcNumberSelected" :options="canvasses" label="rc_number" v-model="rvData.canvass">
                                     <template v-slot:option="option">
-                                        <span v-if="option.is_referenced" class="text-danger">{{ option.rc_number }}</span>
-                                        <span v-else>{{ option.rc_number }}</span>
+                                        <div v-if="option.is_referenced" class="row">
+                                            <div class="col">
+                                                <span class="text-danger">{{ option.rc_number }}</span>
+                                            </div>
+                                            <div class="col text-end">
+                                                <small class="text-muted fst-italic">
+                                                    Referenced
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div v-else class="row">
+                                            <div class="col">
+                                                <span>{{ option.rc_number }}</span>
+                                            </div>
+                                            <div class="col text-end">
+                                                <small class="text-success fst-italic"> Available </small>
+                                            </div>
+                                        </div>
                                     </template>
                                 </v-select>
                             </client-only>

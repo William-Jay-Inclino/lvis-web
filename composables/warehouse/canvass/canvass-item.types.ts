@@ -9,6 +9,9 @@ export interface CanvassItem {
     brand: Brand | null  
     unit: Unit | null 
     quantity: number  
+
+    // these fields are used in forms
+    hasAwardedSupplier?: boolean
 }
 
 

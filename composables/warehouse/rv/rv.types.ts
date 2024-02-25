@@ -18,6 +18,7 @@ export interface RV {
   notes: string;
   rv_approvers: RVApprover[]
   is_cancelled: boolean
+  is_referenced: boolean
   is_deleted: boolean
   status: APPROVAL_STATUS
 

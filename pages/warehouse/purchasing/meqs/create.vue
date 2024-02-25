@@ -33,8 +33,37 @@
                                         <!-- <v-select :options="rvs" label="rv_number" v-model="meqsData.rv" v-show="transactionType === 'RV'"></v-select> -->
                                         <v-select @option:selected="onRvNumberSelected" :options="rvs" label="rv_number" v-model="meqsData.rv">
                                             <template v-slot:option="option">
-                                                <span v-if="option.status !== APPROVAL_STATUS.APPROVED" class="text-danger">{{ option.rv_number }}</span>
-                                                <span v-else>{{ option.rv_number }}</span>
+                                                <div v-if="option.status !== APPROVAL_STATUS.APPROVED" class="row">
+                                                    <div class="col">
+                                                        <span class="text-danger">{{ option.rv_number }}</span>
+                                                    </div>
+                                                    <div class="col text-end">
+                                                        <small class="text-muted fst-italic">
+                                                            {{
+                                                                // @ts-ignore
+                                                                approvalStatus[option.status].label
+                                                            }}
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                                <div v-else-if="option.is_referenced" class="row">
+                                                    <div class="col">
+                                                        <span class="text-danger">{{ option.rv_number }}</span>
+                                                    </div>
+                                                    <div class="col text-end">
+                                                        <small class="text-muted fst-italic">
+                                                            Referenced
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                                <div v-else class="row">
+                                                    <div class="col">
+                                                        <span>{{ option.rv_number }}</span>
+                                                    </div>
+                                                    <div class="col text-end">
+                                                        <small class="text-success fst-italic"> Available </small>
+                                                    </div>
+                                                </div>
                                             </template>
                                         </v-select>
                                         <v-select :options="jos" label="spr_number" v-model="meqsData.spr" v-show="transactionType === 'SPR'"></v-select>
@@ -107,6 +136,7 @@
                         <div class="row">
                             <div class="col">
                                 <WarehouseMeqsAward 
+                                    :is-initial="isInitialStep3"
                                     :meqs_suppliers="meqsData.meqs_suppliers"
                                     :canvass_items="canvassItems"
                                     @update-price="updatePrice"
@@ -119,7 +149,7 @@
                             <button @click="goToStep2()" type="button" class="btn btn-secondary" :disabled="!hasReference">
                                 <i class="fas fa-chevron-left"></i> Back
                             </button>
-                            <button type="button" class="btn btn-primary" :disabled="!canProceedStep3">
+                            <button @click="goToStep4()" type="button" class="btn btn-primary">
                                 <i class="fas fa-chevron-right"></i> Next
                             </button>
                         </div>
@@ -141,6 +171,7 @@ import type { RV } from '~/composables/warehouse/rv/rv.types';
 import * as meqsApi from '~/composables/warehouse/meqs/meqs.api'
 import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
 import { useToast } from "vue-toastification";
+import Swal from 'sweetalert2'
 
 definePageMeta({
     layout: "layout-admin"
@@ -153,6 +184,9 @@ const toast = useToast();
 const isMobile = ref(false)
 const today = moment().format('YYYY-MM-DD')
 const transactionTypes = ref(['RV', 'SPR', 'JO'])
+
+// FLAGS 
+const isInitialStep3 = ref(true)
 
 // ARRAYS
 const rvs = ref<RV[]>([])
@@ -285,7 +319,7 @@ watch(rvId, (val) => {
 function onRvNumberSelected(payload: RV) {
     console.log('onRvNumberSelected()', payload)
 
-    if(payload.status === APPROVAL_STATUS.APPROVED) {
+    if(payload.status === APPROVAL_STATUS.APPROVED && !payload.is_referenced) {
         currentRv = payload
     }else {
         if(currentRv) {
@@ -294,18 +328,59 @@ function onRvNumberSelected(payload: RV) {
             meqsData.value.rv = null
         }
     }
-
-    // if(payload.status !== APPROVAL_STATUS.PENDING) {
-    //     if(currentRv) {
-    //         meqsData.value.rv = currentRv
-    //     }else{
-    //         meqsData.value.rv = null
-    //     }
-    // }else{
-    //     currentRv = payload
-    // }
 }
 
+function isValidStep3(meqsSuppliers: CreateMeqsSupplierSubInput[], canvassItems: CanvassItem[]): boolean {
+
+    // validate for invalid price
+
+    // const hasInvalidPrice = meqsSuppliers.find(i => i.meqs_supplier_items.find(j => !!j.invalidPrice))
+
+    // if(hasInvalidPrice) {
+    //     return false 
+    // }
+    
+    let hasInvalidPrice = false 
+
+    for(let supplier of meqsSuppliers) {
+
+        for(let item of supplier.meqs_supplier_items) {
+
+            if(isInvalidPrice(item.price)) {
+                item['invalidPrice'] = true 
+                hasInvalidPrice = true 
+            }else {
+                item['invalidPrice'] = false 
+            }
+
+        }
+
+    }
+
+    // validate if item has no awarded supplier 
+    
+    let hasErrorCanvassItem = false 
+
+    for(let item of canvassItems) {
+
+        const hasAwardedSupplier = meqsSuppliers.find(i => i.meqs_supplier_items.find(j => j.canvass_item.id === item.id && j.is_awarded))
+        if(hasAwardedSupplier) {
+            item['hasAwardedSupplier'] = true 
+        }else {
+            item['hasAwardedSupplier'] = false
+            hasErrorCanvassItem = true 
+        }
+
+
+    }
+
+    if(hasErrorCanvassItem || hasInvalidPrice) {
+        return false 
+    }
+
+    return true
+
+}
 
 
 // ======================== CHILD FUNCTIONS: SUPPLIER ======================== 
@@ -337,6 +412,8 @@ function removeSupplier(indx: number) {
 // ======================== CHILD FUNCTIONS: AWARD ======================== 
 
 function updatePrice(meqsSupplier: CreateMeqsSupplierSubInput, canvass_item_id: string, price: number) {
+
+    console.log('updatePrice', price)
     
     const item = meqsSupplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
 
@@ -344,19 +421,37 @@ function updatePrice(meqsSupplier: CreateMeqsSupplierSubInput, canvass_item_id: 
 
     item.price = price
 
+    if(isInvalidPrice(item.price)) {
+        item['invalidPrice'] = true
+    } else {
+        item['invalidPrice'] = false
+    }
+
 }
 
 function awardSupplierItem(meqsSupplier: CreateMeqsSupplierSubInput, canvass_item_id: string) {
 
-    // in order to toggle. Should only award 1 supplier in each canvass item
-    removeAwardForAllSuppliersWith(canvass_item_id)
+    console.log('awardSupplierItem')
 
     const item = meqsSupplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
 
     if(!item) return
-    
-    // set the award
-    item.is_awarded = true
+
+    if(isInvalidPrice(item.price)) {
+        toast.error('Supplier cannot be awarded if their price is invalid')
+        return 
+    } else if(item.price === -1) {
+        toast.error('Supplier cannot be awarded if item is unavailable')
+        return 
+    } else {
+        // in order to toggle. Should only award 1 supplier in each canvass item
+        removeAwardForAllSuppliersWith(canvass_item_id)
+        
+        console.log('executed')
+        // set the award
+        item.is_awarded = true
+    }
+
 
 }
 
@@ -384,5 +479,37 @@ const checkMobile = () => isMobile.value = window.innerWidth < MOBILE_WIDTH
 const goToStep1 = () => currentStep.value = 1
 const goToStep2 = () => currentStep.value = 2
 const goToStep3 = () => currentStep.value = 3
+
+const goToStep4 = () => {
+
+    console.log('goToStep4')
+
+    isInitialStep3.value = false
+
+    const isValid = isValidStep3(meqsData.value.meqs_suppliers, canvassItems.value)
+    
+    if(!isValid) {
+    
+        Swal.fire({
+            title: 'The form contains errors',
+            text: 'Each item must have an associated awarded supplier, and a price is mandatory. If a supplier does not offer a specific item, please set the price to -1',
+            icon: 'error',
+            position: 'top',
+        })
+
+        return 
+    
+    }
+    currentStep.value = 4
+
+}
+
+const isInvalidPrice = (price: number): boolean => {
+    if(price < -1 || price === 0) {
+        return true 
+    } else {
+        return false
+    }
+}
 
 </script>
