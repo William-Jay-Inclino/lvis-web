@@ -5,6 +5,7 @@
             <thead>
                 <tr>
                     <th class="bg-secondary text-white"> Supplier </th>
+                    <th class="bg-secondary text-white"> Vat </th>
                     <th class="bg-secondary text-white"> Payment Terms </th>
                     <th class="bg-secondary text-white"> Attachments </th>
                     <th class="bg-secondary text-white text-center">
@@ -15,6 +16,7 @@
             <tbody>
                 <tr v-for="item, i in meqs_suppliers">
                     <td class="text-muted align-middle"> {{ item.supplier?.name }} </td>
+                    <td class="text-muted align-middle"> {{ VAT[item.vat!.value].label }} </td>
                     <td class="text-muted align-middle"> {{ item.payment_terms }} </td>
                     <td class="text-muted align-middle">
                         <ul class="list-group">
@@ -58,6 +60,13 @@
                             <v-select :options="availableSuppliers" v-model="formData.supplier" label="name"></v-select>
                         </client-only>
                         <small class="text-danger fst-italic" v-if="formDataErrors.supplier">This field is required</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"> Vat </label> <span class="text-danger">*</span>
+                        <client-only>
+                            <v-select :options="vatArray" v-model="formData.vat" label="label"></v-select>
+                        </client-only>
+                        <small class="text-danger fst-italic" v-if="formDataErrors.vat">This field is required</small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
@@ -157,6 +166,22 @@ const props = defineProps({
 });
 
 
+const vatArray = ref([
+    {
+        value: VAT_TYPE.NONE,
+        label: VAT[VAT_TYPE.NONE].label
+    },
+    {
+        value: VAT_TYPE.INC,
+        label: VAT[VAT_TYPE.INC].label
+    },
+    {
+        value: VAT_TYPE.EXC,
+        label: VAT[VAT_TYPE.EXC].label
+    }
+])
+
+
 const formIsAdd = ref(true)
 const editingIndx = ref(0)
 
@@ -165,14 +190,16 @@ const closeSupplierModal = ref<HTMLButtonElement>()
 const _formDataErrorsInitial = {
     supplier: false,
     paymentTerms: false,
-    attachments: false
+    attachments: false,
+    vat: false
 }
 
 const _formDataInitial: CreateMeqsSupplierSubInput = {
     supplier: null,
     payment_terms: '',
     attachments: [],
-    meqs_supplier_items: []
+    meqs_supplier_items: [],
+    vat: null
 }
 
 const formData = ref({..._formDataInitial})
@@ -191,7 +218,6 @@ const meqs_supplier_items = computed( (): CreateMeqsSupplierItemSubInput[] => {
             price: 0.00,
             notes: '',
             is_awarded: false,
-            vat_type: VAT_TYPE.NONE,
             invalidPrice: true // default is 2 since default price is 0.00
         })
     }
@@ -257,13 +283,17 @@ function isValid(): boolean {
         formDataErrors.value.supplier = true
     }
 
+    if(!formData.value.vat) {
+        formDataErrors.value.vat = true
+    }
+
     if(formData.value.payment_terms.trim() === '') {
         formDataErrors.value.paymentTerms = true 
     }
 
-    // if(formData.value.attachments.length === 0) {
-    //     formDataErrors.value.attachments = true
-    // }
+    if(formData.value.attachments.length === 0) {
+        formDataErrors.value.attachments = true
+    }
 
     const hasError = Object.values(formDataErrors.value).includes(true);
 
@@ -309,7 +339,8 @@ function onClickEdit(indx: number) {
         supplier: item.supplier,
         payment_terms: item.payment_terms,
         attachments: item.attachments,
-        meqs_supplier_items: item.meqs_supplier_items
+        meqs_supplier_items: item.meqs_supplier_items,
+        vat: item.vat
     }
 
     console.log('formData.value', formData.value)

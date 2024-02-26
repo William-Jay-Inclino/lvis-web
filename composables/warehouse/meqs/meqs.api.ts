@@ -242,8 +242,33 @@ export async function findOne(id: string): Promise<MEQS | undefined> {
                 id
                 meqs_number
                 rv{
+                    id
                     rv_number
-                    is_referenced
+                    canvass {
+                        requested_by {
+                            id
+                            firstname
+                            middlename
+                            lastname
+                        }
+                        purpose
+                        notes
+                        canvass_items{
+                            id
+                            canvass_id
+                            description
+                            brand{
+                                id
+                                name
+                            }
+                            unit{
+                                id
+                                name
+                            }
+                            quantity
+                        }
+
+                    }
                 }
                 meqs_date
                 status
@@ -266,21 +291,22 @@ export async function findOne(id: string): Promise<MEQS | undefined> {
                         name
                     }
                     payment_terms 
-                    is_referenced
+                    vat_type
                     meqs_supplier_items{
                         canvass_item{
-                        description
-                        brand{
-                            name
-                        }
-                        unit{
-                            name
-                        }
+                            id
+                            description
+                            brand{
+                                name
+                            }
+                            unit{
+                                name
+                            }
+                            quantity
                         }
                         price
                         notes
                         is_awarded
-                        vat_type
                     }
                     attachments{
                         src
@@ -492,7 +518,6 @@ export async function create(input: CreateMeqsInput): Promise<MutationResponse> 
               price: ${item.price}
               notes: "${item.notes}"
               is_awarded: ${item.is_awarded}
-              vat_type: ${item.vat_type}
             }`;
         }).join(', ');
 
@@ -507,6 +532,7 @@ export async function create(input: CreateMeqsInput): Promise<MutationResponse> 
         {
           supplier_id: "${meqSupplier.supplier?.id}"
           payment_terms: "${meqSupplier.payment_terms}"
+          vat_type: ${meqSupplier.vat?.value}
           meqs_supplier_items: [${meqs_supplier_items}]
           attachments: [${attachments}]
         }`;

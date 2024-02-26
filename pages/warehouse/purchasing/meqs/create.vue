@@ -172,7 +172,8 @@
         <button v-show="false" ref="requiredNotesBtn" data-bs-toggle="modal" data-bs-target="#requiredNotesModal"></button>
 
         <WarehouseMeqsRequiredNotes 
-            :items-needing-justification="itemsNeedingJustification" 
+            :items-needing-justification="itemsNeedingJustification"
+            :is-saving-meqs="isSavingMeqs" 
             @update-notes="updateNotes"
             @save="saveMeqs"
         />

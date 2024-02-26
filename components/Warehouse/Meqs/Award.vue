@@ -20,7 +20,6 @@
                 <tr>
                     <th class="bg-secondary text-white"> No. </th>
                     <th class="bg-secondary text-white"> Item </th>
-                    <th class="bg-secondary text-white"> Vat </th>
                     <th class="bg-dark text-white text-center" v-for="meqsSupplier in meqs_suppliers">
                         {{ `${meqsSupplier.supplier?.name} (${meqsSupplier.payment_terms})` }}
                     </th>
@@ -30,15 +29,8 @@
 
             <tbody>
                 <tr v-for="item, i in canvass_items" :class="{'table-danger': !item.hasAwardedSupplier && !isInitial}">
-                    <td class="text-muted align-middle bg-danger-text-white"> {{ i + 1 }} </td>
+                    <td class="text-muted align-middle"> {{ i + 1 }} </td>
                     <td class="text-muted align-middle nowrap">{{ item.description }}</td>
-                    <td>
-                        <select class="form-select form-select-sm select-responsive" aria-label="Default select example">
-                            <option :value="vat.id" v-for="vat in vatArray">
-                                {{ vat.label }}
-                            </option>
-                        </select>
-                    </td>
                     <td v-for="meqsSupplier in meqs_suppliers">
                         <div class="d-flex justify-content-center align-items-center">
                             <input
@@ -120,21 +112,6 @@ const props = defineProps({
         default: () => true
     }
 });
-
-const vatArray = ref([
-    {
-        id: VAT_TYPE.NONE,
-        label: VAT[VAT_TYPE.NONE].label
-    },
-    {
-        id: VAT_TYPE.INC,
-        label: VAT[VAT_TYPE.INC].label
-    },
-    {
-        id: VAT_TYPE.EXC,
-        label: VAT[VAT_TYPE.EXC].label
-    }
-])
 
 interface AttachNoteData {
     canvass_item_id: string,

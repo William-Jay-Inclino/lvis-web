@@ -31,6 +31,7 @@ export interface MeqsSupplier {
   supplier: Supplier;
   payment_terms: string;
   is_referenced: boolean;
+  vat_type: VAT_TYPE,
   meqs_supplier_items: MeqsSupplierItem[];
   attachments: MeqsSupplierAttachment[];
 }
@@ -80,6 +81,10 @@ export interface CreateMeqsSupplierSubInput {
   payment_terms: string;
   meqs_supplier_items: CreateMeqsSupplierItemSubInput[]; 
   attachments: any[]; 
+  vat: {
+    value: VAT_TYPE,
+    label: string
+  } | null;
 }
 
 export interface CreateMeqsSupplierItemSubInput {
@@ -87,7 +92,6 @@ export interface CreateMeqsSupplierItemSubInput {
   price: number;
   notes: string;
   is_awarded: boolean;
-  vat_type: VAT_TYPE;
 
   // these fields are used in forms
   invalidPrice?: boolean 
