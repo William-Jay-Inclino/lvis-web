@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { RV } from "../rv/rv.types";
-import type { FindAllResponse, MEQS, MeqsApproverSettings, Supplier } from "./meqs.types";
+import type { CreateMeqsInput, FindAllResponse, MEQS, MeqsApproverSettings, MutationResponse, Supplier } from "./meqs.types";
 
 
 export async function fetchDataInSearchFilters(): Promise<{
@@ -235,6 +235,77 @@ export async function findAll(payload: {page: number, pageSize: number, date_req
     }
 }
 
+export async function findOne(id: string): Promise<MEQS | undefined> {
+    const query = `
+        query {
+            meq(id: "${id}") {
+                id
+                meqs_number
+                rv{
+                    rv_number
+                    is_referenced
+                }
+                meqs_date
+                status
+                canceller_id
+                meqs_approvers{
+                    approver_id
+                    approver{
+                        firstname
+                        lastname
+                    }
+                    label
+                    order
+                    status
+                    notes
+                }
+                meqs_suppliers{
+                    id
+                    supplier_id
+                    supplier{
+                        name
+                    }
+                    payment_terms 
+                    is_referenced
+                    meqs_supplier_items{
+                        canvass_item{
+                        description
+                        brand{
+                            name
+                        }
+                        unit{
+                            name
+                        }
+                        }
+                        price
+                        notes
+                        is_awarded
+                        vat_type
+                    }
+                    attachments{
+                        src
+                    }
+                }
+            }
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        if(response.data && response.data.data && response.data.data.meq) {
+            return response.data.data.meq;
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+    } catch (error) {
+        console.error(error);
+        return undefined
+    }
+}
+
 export async function fetchFormDataInCreate(): Promise<{
     rvs: RV[],
     suppliers: Supplier[],
@@ -345,7 +416,6 @@ export async function fetchFormDataInCreate(): Promise<{
 
 }
 
-
 export async function uploadAttachments(attachments: any[], apiUrl: string): Promise<string[] | null> {
 
     console.log('uploadAttachments', attachments)
@@ -381,5 +451,103 @@ export async function uploadAttachments(attachments: any[], apiUrl: string): Pro
         console.error('Error uploading images:', error);
         return null
     }
+
+}
+
+export async function create(input: CreateMeqsInput): Promise<MutationResponse> {
+
+    let jo_id = null
+    let rv_id = null
+    let spr_id = null
+
+    if(input.rv){
+        rv_id = `"${input.rv.id}"`
+    } else if(input.jo) {
+        // todo
+    } else {
+        // todo
+    }
+
+    const approvers = input.approvers.map(item => {
+
+        return `
+        {
+          approver_id: "${item.approver?.id}"
+          label: "${item.label}"
+          order: ${item.order}
+        }`;
+    }).join(', ');
+
+    const meqs_suppliers = input.meqs_suppliers.map(meqSupplier => {
+
+        const meqs_supplier_items = meqSupplier.meqs_supplier_items.map(item => {
+
+            if(!item.notes) {
+                item.notes = ''
+            }
+
+            return `
+            {
+              canvass_item_id: "${item.canvass_item.id}"
+              price: ${item.price}
+              notes: "${item.notes}"
+              is_awarded: ${item.is_awarded}
+              vat_type: ${item.vat_type}
+            }`;
+        }).join(', ');
+
+        const attachments = meqSupplier.attachments.map(attachment => {
+            return `
+            {
+              src: "${attachment}"
+            }`;
+        })
+
+        return `
+        {
+          supplier_id: "${meqSupplier.supplier?.id}"
+          payment_terms: "${meqSupplier.payment_terms}"
+          meqs_supplier_items: [${meqs_supplier_items}]
+          attachments: [${attachments}]
+        }`;
+    }).join(', ');
+
+    const mutation = `
+        mutation {
+            createMeqs(
+                input: {
+                    rv_id: ${rv_id}
+                    notes: "${input.notes}"
+                    meqs_date: "${input.meqs_date}"
+                    approvers: [${approvers}]
+                    meqs_suppliers: [${meqs_suppliers}]
+                }
+            ) {
+                id
+            }
+        }`;
+
+        try {
+            const response = await sendRequest(mutation);
+            console.log('response', response);
+    
+            if(response.data && response.data.data && response.data.data.createMeqs) {
+                return {
+                    success: true,
+                    msg: 'MEQS created successfully!',
+                    data: response.data.data.createMeqs 
+                };
+            }
+    
+            throw new Error(JSON.stringify(response.data.errors));
+    
+        } catch (error) {
+            console.error(error);
+            
+            return {
+                success: false,
+                msg: 'Failed to create MEQS. Please contact system administrator'
+            };
+        }
 
 }

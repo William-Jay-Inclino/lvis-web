@@ -121,6 +121,7 @@
 
 
 <script setup lang="ts">
+import Swal from 'sweetalert2'
 import type { CreateMeqsSupplierItemSubInput, CreateMeqsSupplierSubInput, Supplier } from '~/composables/warehouse/meqs/meqs.types';
 import vueFilePond from "vue-filepond"
 import "filepond/dist/filepond.min.css";
@@ -275,7 +276,25 @@ function isValid(): boolean {
 
 function removeSupplier(indx: number) {
 
-    emits('removeSupplier', indx)
+    const item = props.meqs_suppliers[indx]
+
+    if(!item) return 
+
+    Swal.fire({
+        title: "Confirm Deletion",
+        text: `Are you sure you want to remove ${item.supplier?.name} and its associated items? This action cannot be undone.`,
+        position: "top",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#e74a3b",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Yes, delete it!",
+        reverseButtons: true,
+    }).then((result) => {
+        if (result.isConfirmed) {
+            emits('removeSupplier', indx)
+        }
+    });
 
 }
 

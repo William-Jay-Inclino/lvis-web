@@ -1,4 +1,4 @@
-import type { REQUEST_TYPE, APPROVAL_STATUS, VAT_TYPE, Approver } from "~/composables/common.types";
+import type { APPROVAL_STATUS, VAT_TYPE, Approver } from "~/composables/common.types";
 import type { RV } from "../rv/rv.types";
 import type { CanvassItem } from "../canvass/canvass-item.types";
 import type { Canvass } from "../canvass/canvass.types";
@@ -8,7 +8,6 @@ export interface MEQS {
     id: string;
     rv: RV | null;
     meqs_number: string;
-    request_type: REQUEST_TYPE;
     meqs_date: string;
     notes: string;
     meqs_approvers: Approver[];
@@ -71,7 +70,6 @@ export interface CreateMeqsInput {
   rv: RV | null;
   spr: null;
   notes: string;
-  request_type: REQUEST_TYPE | null;
   meqs_date: string;
   approvers: MeqsApproverSettings[];
   meqs_suppliers: CreateMeqsSupplierSubInput[];
@@ -113,4 +111,10 @@ export interface MeqsApproverSettings {
   approver_proxy?: Employee | null
   label: string
   order: number
+}
+
+export interface MutationResponse {
+  success: boolean 
+  msg: string 
+  data?: MEQS
 }

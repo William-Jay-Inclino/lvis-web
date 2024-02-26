@@ -198,6 +198,7 @@ definePageMeta({
 // DEPENDENCIES
 const toast = useToast();
 const config = useRuntimeConfig()
+const router = useRouter();
 
 // CONSTANTS
 const today = moment().format('YYYY-MM-DD')
@@ -230,7 +231,6 @@ const meqsData = ref<CreateMeqsInput>({
     rv: null,
     spr: null,
     notes: '',
-    request_type: null,
     meqs_date: today,
     approvers: [],
     meqs_suppliers: []
@@ -406,11 +406,28 @@ async function saveMeqs(closeRequiredNotesBtn?: HTMLButtonElement) {
         console.log('attachments uploaded', attachmentSources)
         if(attachmentSources) {
             supplier.attachments = attachmentSources
+        }else{
+            supplier.attachments = []
         }
 
     }
 
     console.log('meqsData.value', meqsData.value)
+
+    isSavingMeqs.value = true
+    const response = await meqsApi.create(meqsData.value)
+    isSavingMeqs.value = false
+
+    if(response.success && response.data) {
+        router.push(`/warehouse/purchasing/meqs/success/${response.data.id}`);
+    }else {
+        Swal.fire({
+            title: 'Error!',
+            text: response.msg,
+            icon: 'error',
+            position: 'top',
+        })
+    }
 
 }
 

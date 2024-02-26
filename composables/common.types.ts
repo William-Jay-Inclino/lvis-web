@@ -5,12 +5,6 @@ export enum USER_STATUS {
     INACTIVE = 2
 }
 
-export enum REQUEST_TYPE {
-    JO = 1,
-    RV = 2,
-    SPR = 3
-}
-
 export interface AuthUser {
     user: {
         id: string
