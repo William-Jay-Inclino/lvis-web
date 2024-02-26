@@ -158,8 +158,8 @@
                             <button @click="goToStep2()" type="button" class="btn btn-secondary" :disabled="!hasReference">
                                 <i class="fas fa-chevron-left"></i> Back
                             </button>
-                            <button @click="onSaveMeqs()" type="button" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Save MEQS
+                            <button @click="onSaveMeqs()" type="button" class="btn btn-primary" :disabled="isSavingMeqs">
+                                <i class="fas fa-save"></i> {{ isSavingMeqs ? 'Saving MEQS...' : 'Save MEQS' }}
                             </button>
                         </div>
 
@@ -171,7 +171,7 @@
 
         <button v-show="false" ref="requiredNotesBtn" data-bs-toggle="modal" data-bs-target="#requiredNotesModal"></button>
 
-        <WarehouseMeqsNotes 
+        <WarehouseMeqsRequiredNotes 
             :items-needing-justification="itemsNeedingJustification" 
             @update-notes="updateNotes"
             @save="saveMeqs"
@@ -205,6 +205,7 @@ const requiredNotesBtn = ref<HTMLButtonElement>()
 
 // FLAGS 
 const isInitialStep3 = ref(true)
+const isSavingMeqs = ref(false)
 
 // ARRAYS
 const rvs = ref<RV[]>([])
@@ -451,8 +452,9 @@ function onSaveMeqs() {
 
 function saveMeqs(closeRequiredNotesBtn?: HTMLButtonElement) {
 
-    console.log('saving MEQS...', closeRequiredNotesBtn)
+    console.log('saving MEQS...')
 
+    // if saving meqs is from Notes component, needs to close the modal
     if(closeRequiredNotesBtn) {
         closeRequiredNotesBtn.click()
     }
@@ -515,9 +517,11 @@ function getSupplierItemsByCanvassId(canvassId: string, suppliers: CreateMeqsSup
 
 function getLowestPriceItem(items: CreateMeqsSupplierItemSubInput[]): CreateMeqsSupplierItemSubInput {
 
+    const getInitialItemIndx = items.findIndex(i => i.price !== -1)
+
     const lowestPriceItem = items.reduce((lowest, item) => {
-        return item.price < lowest.price ? item : lowest;
-    }, items[0]);
+        return (item.price < lowest.price && item.price !== -1) ? item : lowest;
+    }, items[getInitialItemIndx]);
 
     return lowestPriceItem
 
@@ -620,51 +624,12 @@ function updateNotes(canvass_item_id: string, note: string) {
 }
 
 
-// function updateNotes(canvass_item_id: string, notes: string) {
-
-//     for(let supplier of meqsData.value.meqs_suppliers) {
-
-//         const canvassItem = supplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
-
-//         if(canvassItem) {
-//             canvassItem.notes = notes
-//         }
-
-//     }
-
-// }
-
-
 // ======================== UTILS ======================== 
 
 const checkMobile = () => isMobile.value = window.innerWidth < MOBILE_WIDTH
 const goToStep1 = () => currentStep.value = 1
 const goToStep2 = () => currentStep.value = 2
 const goToStep3 = () => currentStep.value = 3
-
-// const goToStep4 = () => {
-
-//     console.log('goToStep4')
-
-//     isInitialStep3.value = false
-
-//     const isValid = isValidStep3(meqsData.value.meqs_suppliers, canvassItems.value)
-    
-//     if(!isValid) {
-    
-//         Swal.fire({
-//             title: 'The form contains errors',
-//             text: 'Each item must have an associated awarded supplier, and a price is mandatory. If a supplier does not offer a specific item, please set the price to -1',
-//             icon: 'error',
-//             position: 'top',
-//         })
-
-//         return 
-    
-//     }
-//     currentStep.value = 4
-
-// }
 
 const isInvalidPrice = (price: number): boolean => {
     if(price < -1 || price === 0) {

@@ -52,8 +52,8 @@
                     <button ref="closeRequiredNotesBtn" class="btn btn-secondary" data-bs-dismiss="modal">
                         <i class="fas fa-close"></i> Close
                     </button>
-                    <button @click="save" class="btn btn-primary" :disabled="!canSave">
-                        <i class="fas fa-save"></i> Save
+                    <button @click="save" class="btn btn-primary" :disabled="!canSave || isSavingMeqs">
+                        <i class="fas fa-save"></i> {{ isSavingMeqs ? 'Saving...' : 'Save' }}
                     </button>
                 </div>
                 </div>
@@ -78,6 +78,10 @@ const props = defineProps({
         type: Array as () => CanvassItemWithSuppliers[],
         default: () => [],
     },
+    isSavingMeqs: {
+        type: Boolean,
+        default: false
+    }
 });
 
 const closeRequiredNotesBtn = ref<HTMLButtonElement>()
