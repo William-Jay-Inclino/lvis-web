@@ -7,11 +7,10 @@
         <div class="row pt-3">
             <div class="col">
                 <span class="text-secondary">
-                    Step {{ currentStep }} of 4: 
-                    <span v-show="currentStep === 1"> Get Reference </span>
+                    Step {{ currentStep }} of 3: 
+                    <span v-show="currentStep === 1"> Add MEQS info </span>
                     <span v-show="currentStep === 2"> Add Suppliers </span>
                     <span v-show="currentStep === 3"> Add Price & Award Supplier </span>
-                    <span v-show="currentStep === 4"> Add Notes </span>
                 </span>
             </div>
         </div>
@@ -96,6 +95,14 @@
                             <textarea :value="requisitionerNotes" class="form-control" rows="3" disabled></textarea>
                         </div>
 
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Notes
+                            </label>
+                            <textarea v-model="meqsData.notes" class="form-control" rows="3"></textarea>
+                            <small class="text-muted fst-italic">This note will be use during print out</small>
+                        </div>
+
                         <div class="d-flex justify-content-end gap-2">
                             <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/meqs">
                                 <i class="fas fa-chevron-left"></i> Back
@@ -142,6 +149,7 @@
                                     :canvass_items="canvassItems"
                                     @update-price="updatePrice"
                                     @award-supplier-item="awardSupplierItem"
+                                    @attach-note="attachNote"
                                 />
                             </div>
                         </div>
@@ -150,31 +158,8 @@
                             <button @click="goToStep2()" type="button" class="btn btn-secondary" :disabled="!hasReference">
                                 <i class="fas fa-chevron-left"></i> Back
                             </button>
-                            <button @click="goToStep4()" type="button" class="btn btn-primary">
-                                <i class="fas fa-chevron-right"></i> Next
-                            </button>
-                        </div>
-
-                    </div>
-
-                    <div v-if="currentStep === 4" class="col-lg-6">
-
-                        <div class="row">
-                            <div class="col">
-                                <WarehouseMeqsNotes 
-                                    :meqs_suppliers="meqsData.meqs_suppliers"
-                                    :canvass_items="canvassItems"
-                                    @update-notes="updateNotes"
-                                />
-                            </div>
-                        </div>
-
-                        <div class="d-flex justify-content-end gap-2 mt-3">
-                            <button @click="goToStep3()" type="button" class="btn btn-secondary">
-                                <i class="fas fa-chevron-left"></i> Back
-                            </button>
-                            <button @click="saveMeqs()" type="button" class="btn btn-primary">
-                                <i class="fas fa-chevron-right"></i> Save
+                            <button @click="onSaveMeqs()" type="button" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save MEQS
                             </button>
                         </div>
 
@@ -184,13 +169,21 @@
             </div>
         </div>
 
+        <button v-show="false" ref="requiredNotesBtn" data-bs-toggle="modal" data-bs-target="#requiredNotesModal"></button>
+
+        <WarehouseMeqsNotes 
+            :items-needing-justification="itemsNeedingJustification" 
+            @update-notes="updateNotes"
+            @save="saveMeqs"
+        />
+
     </div>
 </template>
 
 
 <script setup lang="ts">
 import moment from 'moment';
-import type { CreateMeqsInput, CreateMeqsSupplierSubInput, Supplier } from '~/composables/warehouse/meqs/meqs.types';
+import type { CanvassItemWithSuppliers, CreateMeqsInput, CreateMeqsSupplierItemSubInput, CreateMeqsSupplierSubInput, Supplier } from '~/composables/warehouse/meqs/meqs.types';
 import type { RV } from '~/composables/warehouse/rv/rv.types';
 import * as meqsApi from '~/composables/warehouse/meqs/meqs.api'
 import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
@@ -208,6 +201,7 @@ const toast = useToast();
 const isMobile = ref(false)
 const today = moment().format('YYYY-MM-DD')
 const transactionTypes = ref(['RV', 'SPR', 'JO'])
+const requiredNotesBtn = ref<HTMLButtonElement>()
 
 // FLAGS 
 const isInitialStep3 = ref(true)
@@ -221,6 +215,7 @@ const suppliers = ref<Supplier[]>([])
 const currentStep = ref(1)
 const transactionType = ref<'RV' | 'SPR' | 'JO'>('RV')
 
+const itemsNeedingJustification = ref<CanvassItemWithSuppliers[]>([])
 
 // Immutable state for rc number field
 let currentRv: RV | null = null
@@ -423,12 +418,110 @@ function removeSupplier(indx: number) {
     toast.success('Supplier Removed!')
 }
 
-function saveMeqs() {
-    console.log('saveMeqs', meqsData.value)
+function onSaveMeqs() {
+
+    isInitialStep3.value = false
+
+    const isValid = isValidStep3(meqsData.value.meqs_suppliers, canvassItems.value)
+    
+    if(!isValid) {
+    
+        Swal.fire({
+            title: 'The form contains errors',
+            text: 'Each item must have an associated awarded supplier, and a price is mandatory. If a supplier does not offer a specific item, please set the price to -1',
+            icon: 'error',
+            position: 'top',
+        })
+
+        return 
+    
+    }
+
+    const items = getItemsNeedingJustification(canvassItems.value, meqsData.value.meqs_suppliers)
+
+    if(items.length > 0) {
+        itemsNeedingJustification.value = items
+        requiredNotesBtn.value?.click()
+        return
+    }
+
+    saveMeqs()
+
 }
 
+function saveMeqs(closeRequiredNotesBtn?: HTMLButtonElement) {
 
+    console.log('saving MEQS...', closeRequiredNotesBtn)
 
+    if(closeRequiredNotesBtn) {
+        closeRequiredNotesBtn.click()
+    }
+
+}
+
+function getItemsNeedingJustification(canvassItems: CanvassItem[], meqsSuppliers: CreateMeqsSupplierSubInput[]): CanvassItemWithSuppliers[] {
+    const items: CanvassItemWithSuppliers[] = []
+
+    for(let canvassItem of canvassItems) {
+        
+        const itemsByCanvassId = getSupplierItemsByCanvassId(canvassItem.id, meqsSuppliers)
+
+        const lowestPriceItem = getLowestPriceItem(itemsByCanvassId)
+        const awardedItem = itemsByCanvassId.find(i => i.is_awarded)
+
+        console.log('lowestPriceItem', lowestPriceItem)
+        console.log('awardedItem', awardedItem)
+
+        if(!awardedItem) {
+            console.error('No awardedItem')
+            continue
+        }
+
+        const isAwardedNotLowest = lowestPriceItem.meqsSupplier?.supplier?.id !== awardedItem.meqsSupplier?.supplier?.id 
+        const hasEmptyNotes = awardedItem.notes.trim() === ''
+
+        if(isAwardedNotLowest && hasEmptyNotes) {
+
+            items.push({
+                canvassItem,
+                lowestPriceItem,
+                awardedItem
+            })
+
+        }
+
+    }
+
+    return items
+}
+
+function getSupplierItemsByCanvassId(canvassId: string, suppliers: CreateMeqsSupplierSubInput[]): CreateMeqsSupplierItemSubInput[] {
+
+    const itemsByCanvassId: CreateMeqsSupplierItemSubInput[] = []
+
+    for(let supplier of suppliers) {
+
+        const canvassItem = supplier.meqs_supplier_items.find(i => i.canvass_item.id === canvassId)
+        if(canvassItem) {
+            canvassItem.meqsSupplier = supplier 
+            itemsByCanvassId.push(canvassItem)
+        }
+
+    }
+
+    return itemsByCanvassId
+
+}
+
+function getLowestPriceItem(items: CreateMeqsSupplierItemSubInput[]): CreateMeqsSupplierItemSubInput {
+
+    const lowestPriceItem = items.reduce((lowest, item) => {
+        return item.price < lowest.price ? item : lowest;
+    }, items[0]);
+
+    return lowestPriceItem
+
+}
 
 // ======================== CHILD FUNCTIONS: AWARD ======================== 
 
@@ -490,24 +583,56 @@ function removeAwardForAllSuppliersWith(canvass_item_id: string) {
 
 }
 
+function attachNote(canvass_item_id: string, note: string) {
+
+    for(let supplier of meqsData.value.meqs_suppliers) {
+
+        const item = supplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
+
+        if(item) {
+            item.notes = note
+        }
+
+    }
+
+    toast.success('Note attached!')
+
+}
 
 
 
 // ======================== CHILD FUNCTIONS: NOTES ======================== 
 
-function updateNotes(canvass_item_id: string, notes: string) {
+
+function updateNotes(canvass_item_id: string, note: string) {
+
+    console.log('updateNotes', canvass_item_id, note)
 
     for(let supplier of meqsData.value.meqs_suppliers) {
 
-        const canvassItem = supplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
+        const item = supplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
 
-        if(canvassItem) {
-            canvassItem.notes = notes
+        if(item) {
+            item.notes = note
         }
-
     }
 
 }
+
+
+// function updateNotes(canvass_item_id: string, notes: string) {
+
+//     for(let supplier of meqsData.value.meqs_suppliers) {
+
+//         const canvassItem = supplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
+
+//         if(canvassItem) {
+//             canvassItem.notes = notes
+//         }
+
+//     }
+
+// }
 
 
 // ======================== UTILS ======================== 
@@ -517,29 +642,29 @@ const goToStep1 = () => currentStep.value = 1
 const goToStep2 = () => currentStep.value = 2
 const goToStep3 = () => currentStep.value = 3
 
-const goToStep4 = () => {
+// const goToStep4 = () => {
 
-    console.log('goToStep4')
+//     console.log('goToStep4')
 
-    isInitialStep3.value = false
+//     isInitialStep3.value = false
 
-    const isValid = isValidStep3(meqsData.value.meqs_suppliers, canvassItems.value)
+//     const isValid = isValidStep3(meqsData.value.meqs_suppliers, canvassItems.value)
     
-    if(!isValid) {
+//     if(!isValid) {
     
-        Swal.fire({
-            title: 'The form contains errors',
-            text: 'Each item must have an associated awarded supplier, and a price is mandatory. If a supplier does not offer a specific item, please set the price to -1',
-            icon: 'error',
-            position: 'top',
-        })
+//         Swal.fire({
+//             title: 'The form contains errors',
+//             text: 'Each item must have an associated awarded supplier, and a price is mandatory. If a supplier does not offer a specific item, please set the price to -1',
+//             icon: 'error',
+//             position: 'top',
+//         })
 
-        return 
+//         return 
     
-    }
-    currentStep.value = 4
+//     }
+//     currentStep.value = 4
 
-}
+// }
 
 const isInvalidPrice = (price: number): boolean => {
     if(price < -1 || price === 0) {

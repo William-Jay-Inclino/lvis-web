@@ -24,6 +24,7 @@
                     <th class="bg-dark text-white text-center" v-for="meqsSupplier in meqs_suppliers">
                         {{ `${meqsSupplier.supplier?.name} (${meqsSupplier.payment_terms})` }}
                     </th>
+                    <th class="bg-dark text-white text-center"></th>
                 </tr>
             </thead>
 
@@ -56,10 +57,41 @@
                               :class="{'text-warning': isAwarded(meqsSupplier, item.id)}"></i>
                         </div>
                     </td>
+                    <td class="align-middle">
+                        <button @click="onClickAttachNote(item.id)" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#attachNoteModal">
+                            <i class="fas fa-book"></i>
+                            Note
+                        </button>
+                    </td>
                 </tr>
             </tbody>
 
         </table>
+
+        <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="attachNoteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-warning" id="exampleModalLabel">
+                        Attach Note
+                    </h5>
+                    <button @click="onCloseAttachModal" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <textarea rows="3" class="form-control" v-model="attachNoteData.note"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button @click="onCloseAttachModal" ref="closeattachNoteModal" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-close"></i> Close
+                    </button>
+                    <button @click="attachNote" class="btn btn-primary">
+                        <i class="fas fa-paperclip"></i> Attach
+                    </button>
+                </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
 </template>
@@ -72,7 +104,7 @@ import type { CreateMeqsSupplierSubInput } from '~/composables/warehouse/meqs/me
 import { VAT } from '~/utils/constants';
 
 
-const emits = defineEmits(['updatePrice', 'awardSupplierItem']);
+const emits = defineEmits(['updatePrice', 'awardSupplierItem', 'attachNote']);
     
 const props = defineProps({
     meqs_suppliers: {
@@ -104,12 +136,21 @@ const vatArray = ref([
     }
 ])
 
+interface AttachNoteData {
+    canvass_item_id: string,
+    note: string
+}
+
+const _attachNoteDataInitial = {
+    canvass_item_id: '',
+    note: ''
+}
+
+const attachNoteData = ref<AttachNoteData>({..._attachNoteDataInitial})
+const closeattachNoteModal = ref<HTMLButtonElement>()
+
 
 function updatePrice(event: Event, meqsSupplier: CreateMeqsSupplierSubInput, canvass_item_id: string) {
-
-    console.log('updatePrice')
-    console.log('meqsSupplier', meqsSupplier)
-    console.log('canvass_item_id', canvass_item_id)
 
     // @ts-ignore
     const price = Number(event.target.value)
@@ -119,14 +160,10 @@ function updatePrice(event: Event, meqsSupplier: CreateMeqsSupplierSubInput, can
 
 function isAwarded(meqsSupplier: CreateMeqsSupplierSubInput, canvass_item_id: string) {
 
-    console.log('isAwarded')
-
     const item = meqsSupplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
 
     if(!item) return
 
-    console.log('item', item)
-    
     return item.is_awarded
 
 }
@@ -141,6 +178,37 @@ function isPriceInvalid(meqsSupplier: CreateMeqsSupplierSubInput, canvass_item_i
     }
     return false
 
+}
+
+function attachNote() {
+    console.log('attachNote', attachNoteData)
+
+    emits('attachNote', attachNoteData.value.canvass_item_id, attachNoteData.value.note)
+    closeattachNoteModal.value?.click()
+}
+
+function onClickAttachNote(canvassItemId: string) {
+    attachNoteData.value.canvass_item_id = canvassItemId
+    
+    let note = ''
+    for(let supplier of props.meqs_suppliers) {
+
+        const item = supplier.meqs_supplier_items.find(i => i.canvass_item.id === canvassItemId)
+
+        if(item) {
+            note = item.notes
+            break
+        }
+
+    }
+
+    attachNoteData.value.note = note
+
+}
+
+
+function onCloseAttachModal() {
+    attachNoteData.value = { ..._attachNoteDataInitial }
 }
 
 </script>
