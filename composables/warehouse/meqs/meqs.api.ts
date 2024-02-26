@@ -1,5 +1,6 @@
+import axios from "axios";
 import type { RV } from "../rv/rv.types";
-import type { FindAllResponse, MEQS, Supplier } from "./meqs.types";
+import type { FindAllResponse, MEQS, MeqsApproverSettings, Supplier } from "./meqs.types";
 
 
 export async function fetchDataInSearchFilters(): Promise<{
@@ -236,7 +237,8 @@ export async function findAll(payload: {page: number, pageSize: number, date_req
 
 export async function fetchFormDataInCreate(): Promise<{
     rvs: RV[],
-    suppliers: Supplier[]
+    suppliers: Supplier[],
+    approvers: MeqsApproverSettings[]
 }> {
 
     const query = `
@@ -272,32 +274,30 @@ export async function fetchFormDataInCreate(): Promise<{
                             quantity
                         }
                     }
-                    rv_approvers {
-                        id
-                        approver {
-                            id
-                            firstname
-                            middlename
-                            lastname
-                        }
-                        approver_proxy {
-                            id
-                            firstname
-                            middlename
-                            lastname
-                        }
-                        date_approval 
-                        notes
-                        status
-                        label
-                        order
-                    }
                 }
             },
             suppliers{
                 id 
                 name
-            }
+            },
+            meqsApproverSettings{
+                approver_id
+                approver{
+                  id
+                  firstname
+                  middlename
+                  lastname
+                }
+                approver_proxy_id
+                approver_proxy{
+                  id
+                  firstname
+                  middlename
+                  lastname
+                }
+                label
+                order
+            },
         }
     `;
 
@@ -307,6 +307,7 @@ export async function fetchFormDataInCreate(): Promise<{
 
         let rvs = []
         let suppliers = []
+        let approvers = []
 
         if(!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
@@ -322,18 +323,63 @@ export async function fetchFormDataInCreate(): Promise<{
             suppliers = data.suppliers
         }
 
+        if(data.meqsApproverSettings) {
+            approvers = data.meqsApproverSettings
+        }
+
         return {
             rvs,
-            suppliers
+            suppliers,
+            approvers
         }
 
     } catch (error) {
         console.error(error);
         return {
             rvs: [],
-            suppliers: []
+            suppliers: [],
+            approvers: []
         }
     }
     
+
+}
+
+
+export async function uploadAttachments(attachments: any[], apiUrl: string): Promise<string[] | null> {
+
+    console.log('uploadAttachments', attachments)
+
+    const images = attachments.map(i => i.file)
+
+    console.log('images', images)
+
+    const formData = new FormData();
+
+    for(let img of images) {
+        formData.append('files', img)
+    }
+
+    const fileUploadApi = apiUrl + '/api/v1/file-upload/warehouse/meqs/multiple'
+
+    try {
+        const response = await axios.post(fileUploadApi, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          });
+      
+          console.log('response', response.data);
+
+          if(response.data && response.data.success && response.data.data) {
+            return response.data.data as string[]
+          }
+
+          return null
+
+    } catch (error) {
+        console.error('Error uploading images:', error);
+        return null
+    }
 
 }

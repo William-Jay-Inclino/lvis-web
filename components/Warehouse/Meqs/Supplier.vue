@@ -68,8 +68,9 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
-                            Attachments <i class="text-muted">(max: 3)</i> <span class="text-danger">*</span>
+                            Attachments <i class="text-muted"></i> <span class="text-danger">*</span>
                         </label>
+                        <small class="text-muted fst-italic">(Max files: 3 & Max size per file: 5mb)</small>
                         <client-only>
                             <file-pond
                                 name="test"
@@ -81,16 +82,28 @@
                                 :max-files="3"
                                 @updatefiles="handleFileProcessing"
                                 @removefile="handleFileRemove"
+                                fileSizeBase="1000"
                             />
                         </client-only>
                         <small class="text-danger fst-italic" v-if="formDataErrors.attachments">This field is required</small>
                     </div>
+
+                    <div v-for="file of unallowedFiles" class="mb-1">
+                        <small class="text-muted fst-italic" v-html="
+                            `The file <b class='text-danger'>${file.name}</b> 
+                            (<b class='text-danger'>${(file.size / (1024 * 1024)).toFixed(2)} MB</b>) 
+                            exceeds the maximum allowed size of <b class=text-danger>${MAX_FILE_SIZE / (1024 * 1024)} MB</b>`
+                        ">
+                        </small>
+
+                    </div>
+
                 </div>
                 <div class="modal-footer">
                     <button @click="onCloseModal()" ref="closeSupplierModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         <i class="fas fa-close"></i> Close
                     </button>
-                    <button v-if="formIsAdd" @click="addSupplier()" type="button" class="btn btn-primary">
+                    <button v-if="formIsAdd" @click="addSupplier()" type="button" class="btn btn-primary" :disabled="!canAddSupplier">
                         <i class="fas fa-plus-circle"></i> Add Supplier
                     </button>
                     <button v-else @click="editSupplier()" type="button" class="btn btn-primary">
@@ -116,6 +129,7 @@ import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
 import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
+import { MAX_FILE_SIZE } from '~/utils/config';
 
 const FilePond = vueFilePond(
   FilePondPluginFileValidateType,
@@ -192,6 +206,15 @@ const availableSuppliers = computed( () => {
     return uniqueSuppliers
 
 })
+
+const unallowedFiles = computed((): File[] => {
+    const _attachments = formData.value.attachments;
+    return _attachments
+        .map(attachment => attachment.file)
+        .filter(file => file.size > MAX_FILE_SIZE)
+});
+
+const canAddSupplier = computed( () => unallowedFiles.value.length === 0)
 
 
 function addSupplier() {

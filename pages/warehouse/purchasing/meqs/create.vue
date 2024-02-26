@@ -182,6 +182,7 @@
 
 
 <script setup lang="ts">
+
 import moment from 'moment';
 import type { CanvassItemWithSuppliers, CreateMeqsInput, CreateMeqsSupplierItemSubInput, CreateMeqsSupplierSubInput, Supplier } from '~/composables/warehouse/meqs/meqs.types';
 import type { RV } from '~/composables/warehouse/rv/rv.types';
@@ -196,14 +197,16 @@ definePageMeta({
 
 // DEPENDENCIES
 const toast = useToast();
+const config = useRuntimeConfig()
 
 // CONSTANTS
-const isMobile = ref(false)
 const today = moment().format('YYYY-MM-DD')
 const transactionTypes = ref(['RV', 'SPR', 'JO'])
 const requiredNotesBtn = ref<HTMLButtonElement>()
+const API_URL = config.public.apiUrl
 
 // FLAGS 
+const isMobile = ref(false)
 const isInitialStep3 = ref(true)
 const isSavingMeqs = ref(false)
 
@@ -244,7 +247,7 @@ onMounted( async() => {
 
     rvs.value = response.rvs
     suppliers.value = response.suppliers
-
+    meqsData.value.approvers = response.approvers
 
 })
 
@@ -350,83 +353,14 @@ function onRvNumberSelected(payload: RV) {
     }
 }
 
-function isValidStep3(meqsSuppliers: CreateMeqsSupplierSubInput[], canvassItems: CanvassItem[]): boolean {
-    
-    let hasInvalidPrice = false 
-
-    for(let supplier of meqsSuppliers) {
-
-        for(let item of supplier.meqs_supplier_items) {
-
-            if(isInvalidPrice(item.price)) {
-                item['invalidPrice'] = true 
-                hasInvalidPrice = true 
-            }else {
-                item['invalidPrice'] = false 
-            }
-
-        }
-
-    }
-
-    // validate if item has no awarded supplier 
-    
-    let hasErrorCanvassItem = false 
-
-    for(let item of canvassItems) {
-
-        const hasAwardedSupplier = meqsSuppliers.find(i => i.meqs_supplier_items.find(j => j.canvass_item.id === item.id && j.is_awarded))
-        if(hasAwardedSupplier) {
-            item['hasAwardedSupplier'] = true 
-        }else {
-            item['hasAwardedSupplier'] = false
-            hasErrorCanvassItem = true 
-        }
-
-
-    }
-
-    if(hasErrorCanvassItem || hasInvalidPrice) {
-        return false 
-    }
-
-    return true
-
-}
-
-
-// ======================== CHILD FUNCTIONS: SUPPLIER ======================== 
-
-function addSupplier(data: CreateMeqsSupplierSubInput) {
-    console.log('addSupplier()', data)
-    
-    meqsData.value.meqs_suppliers.push({...data})
-
-    toast.success('Supplier Added!')
-}
-
-function editSupplier(data: CreateMeqsSupplierSubInput, indx: number) {
-    console.log('editSupplier()', data)
-
-    meqsData.value.meqs_suppliers[indx] = {...data}
-
-    toast.success('Supplier Edited!')
-}
-
-function removeSupplier(indx: number) {
-    meqsData.value.meqs_suppliers.splice(indx, 1)
-
-    toast.success('Supplier Removed!')
-}
-
 function onSaveMeqs() {
 
     isInitialStep3.value = false
 
     const isValid = isValidStep3(meqsData.value.meqs_suppliers, canvassItems.value)
-    
+
     if(!isValid) {
-    
+
         Swal.fire({
             title: 'The form contains errors',
             text: 'Each item must have an associated awarded supplier, and a price is mandatory. If a supplier does not offer a specific item, please set the price to -1',
@@ -435,7 +369,7 @@ function onSaveMeqs() {
         })
 
         return 
-    
+
     }
 
     const items = getItemsNeedingJustification(canvassItems.value, meqsData.value.meqs_suppliers)
@@ -450,14 +384,33 @@ function onSaveMeqs() {
 
 }
 
-function saveMeqs(closeRequiredNotesBtn?: HTMLButtonElement) {
-
+async function saveMeqs(closeRequiredNotesBtn?: HTMLButtonElement) {
     console.log('saving MEQS...')
 
     // if saving meqs is from Notes component, needs to close the modal
     if(closeRequiredNotesBtn) {
         closeRequiredNotesBtn.click()
     }
+
+    console.log('meqsData.value', meqsData.value)
+
+    // upload attachments and update supplier.attachments of the uploaded response which is an array of sources (kung asa naka store ang images sa backend)
+    for(let supplier of meqsData.value.meqs_suppliers) {
+
+        if(supplier.attachments.length === 0) {
+            continue
+        }
+
+        console.log(`uploading attachments of ${supplier.supplier?.name}...`)
+        const attachmentSources = await meqsApi.uploadAttachments(supplier.attachments, API_URL)
+        console.log('attachments uploaded', attachmentSources)
+        if(attachmentSources) {
+            supplier.attachments = attachmentSources
+        }
+
+    }
+
+    console.log('meqsData.value', meqsData.value)
 
 }
 
@@ -470,9 +423,6 @@ function getItemsNeedingJustification(canvassItems: CanvassItem[], meqsSuppliers
 
         const lowestPriceItem = getLowestPriceItem(itemsByCanvassId)
         const awardedItem = itemsByCanvassId.find(i => i.is_awarded)
-
-        console.log('lowestPriceItem', lowestPriceItem)
-        console.log('awardedItem', awardedItem)
 
         if(!awardedItem) {
             console.error('No awardedItem')
@@ -526,6 +476,35 @@ function getLowestPriceItem(items: CreateMeqsSupplierItemSubInput[]): CreateMeqs
     return lowestPriceItem
 
 }
+
+
+
+// ======================== CHILD FUNCTIONS: SUPPLIER ======================== 
+
+function addSupplier(data: CreateMeqsSupplierSubInput) {
+    console.log('addSupplier()', data)
+    
+    meqsData.value.meqs_suppliers.push({...data})
+
+    toast.success('Supplier Added!')
+}
+
+function editSupplier(data: CreateMeqsSupplierSubInput, indx: number) {
+    console.log('editSupplier()', data)
+
+    meqsData.value.meqs_suppliers[indx] = {...data}
+
+    toast.success('Supplier Edited!')
+}
+
+function removeSupplier(indx: number) {
+    meqsData.value.meqs_suppliers.splice(indx, 1)
+
+    toast.success('Supplier Removed!')
+}
+
+
+
 
 // ======================== CHILD FUNCTIONS: AWARD ======================== 
 
@@ -637,6 +616,50 @@ const isInvalidPrice = (price: number): boolean => {
     } else {
         return false
     }
+}
+
+function isValidStep3(meqsSuppliers: CreateMeqsSupplierSubInput[], canvassItems: CanvassItem[]): boolean {
+    
+    let hasInvalidPrice = false 
+
+    for(let supplier of meqsSuppliers) {
+
+        for(let item of supplier.meqs_supplier_items) {
+
+            if(isInvalidPrice(item.price)) {
+                item['invalidPrice'] = true 
+                hasInvalidPrice = true 
+            }else {
+                item['invalidPrice'] = false 
+            }
+
+        }
+
+    }
+
+    // validate if item has no awarded supplier 
+    
+    let hasErrorCanvassItem = false 
+
+    for(let item of canvassItems) {
+
+        const hasAwardedSupplier = meqsSuppliers.find(i => i.meqs_supplier_items.find(j => j.canvass_item.id === item.id && j.is_awarded))
+        if(hasAwardedSupplier) {
+            item['hasAwardedSupplier'] = true 
+        }else {
+            item['hasAwardedSupplier'] = false
+            hasErrorCanvassItem = true 
+        }
+
+
+    }
+
+    if(hasErrorCanvassItem || hasInvalidPrice) {
+        return false 
+    }
+
+    return true
+
 }
 
 </script>

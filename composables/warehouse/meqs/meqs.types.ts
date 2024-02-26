@@ -73,10 +73,9 @@ export interface CreateMeqsInput {
   notes: string;
   request_type: REQUEST_TYPE | null;
   meqs_date: string;
-  approvers: Approver[];
+  approvers: MeqsApproverSettings[];
   meqs_suppliers: CreateMeqsSupplierSubInput[];
 }
-
 
 export interface CreateMeqsSupplierSubInput {
   supplier: Supplier | null;
@@ -84,8 +83,6 @@ export interface CreateMeqsSupplierSubInput {
   meqs_supplier_items: CreateMeqsSupplierItemSubInput[]; 
   attachments: any[]; 
 }
-
-
 
 export interface CreateMeqsSupplierItemSubInput {
   canvass_item: CanvassItem;
@@ -107,4 +104,13 @@ export interface CanvassItemWithSuppliers {
   canvassItem: CanvassItem;
   lowestPriceItem: CreateMeqsSupplierItemSubInput
   awardedItem: CreateMeqsSupplierItemSubInput
+}
+
+export interface MeqsApproverSettings {
+  approver_id: string,
+  approver: Employee | null
+  approver_proxy_id?: string | null
+  approver_proxy?: Employee | null
+  label: string
+  order: number
 }
