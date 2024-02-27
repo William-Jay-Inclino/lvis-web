@@ -186,12 +186,13 @@
 <script setup lang="ts">
 
 import moment from 'moment';
-import type { CanvassItemWithSuppliers, CreateMeqsInput, CreateMeqsSupplierItemSubInput, CreateMeqsSupplierSubInput, Supplier } from '~/composables/warehouse/meqs/meqs.types';
+import type { CanvassItemWithSuppliers, CreateMeqsInput, CreateMeqsSupplierItemSubInput, CreateMeqsSupplierSubInput } from '~/composables/warehouse/meqs/meqs.types';
 import type { RV } from '~/composables/warehouse/rv/rv.types';
 import * as meqsApi from '~/composables/warehouse/meqs/meqs.api'
 import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
 import { useToast } from "vue-toastification";
 import Swal from 'sweetalert2'
+import type { Supplier } from '~/composables/warehouse/meqs/meqs-supplier';
 
 definePageMeta({
     layout: "layout-admin"

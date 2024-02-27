@@ -1,7 +1,7 @@
 import type { APPROVAL_STATUS, VAT_TYPE, Approver } from "~/composables/common.types";
 import type { RV } from "../rv/rv.types";
 import type { CanvassItem } from "../canvass/canvass-item.types";
-import type { Canvass } from "../canvass/canvass.types";
+import type { MeqsSupplier, Supplier } from "./meqs-supplier";
 
 
 export interface MEQS {
@@ -23,40 +23,6 @@ export interface MEQS {
         label: string 
         color: string 
     }
-}
-
-export interface MeqsSupplier {
-  id: string;
-  meqs: MEQS;
-  supplier: Supplier;
-  payment_terms: string;
-  is_referenced: boolean;
-  vat_type: VAT_TYPE,
-  meqs_supplier_items: MeqsSupplierItem[];
-  attachments: MeqsSupplierAttachment[];
-}
-
-export interface Supplier {
-    id: string;
-    name: string;
-    contact: string;
-    is_deleted: boolean;
-}
-
-export interface MeqsSupplierItem {
-    id: string;
-    meqs_supplier: MeqsSupplier;
-    canvass_item: CanvassItem;
-    price: number;
-    notes?: string | null;
-    is_awarded: boolean;
-    vat_type: VAT_TYPE;
-}
-
-export interface MeqsSupplierAttachment {
-    id: string;
-    meqs_supplier_id: string;
-    src: string;
 }
 
 export interface FindAllResponse {

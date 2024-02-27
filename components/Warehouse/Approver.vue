@@ -257,8 +257,8 @@
                     <button @click="onCloseAddApproverModal" ref="closeAddApproverModal" class="btn btn-secondary" data-bs-dismiss="modal">
                         <i class="fas fa-close"></i> Close
                     </button>
-                    <button @click="addApprover" class="btn btn-primary" :disabled="isAddingRvApprover">
-                        <i class="fas fa-user-plus"></i> {{ isAddingRvApprover ? 'Adding...' : 'Add' }}
+                    <button @click="addApprover" class="btn btn-primary" :disabled="isAddingApprover">
+                        <i class="fas fa-user-plus"></i> {{ isAddingApprover ? 'Adding...' : 'Add' }}
                     </button>
                 </div>
                 </div>
@@ -328,8 +328,8 @@
                     <button @click="onCloseEditApproverModal" ref="closeEditApproverModal" class="btn btn-secondary" data-bs-dismiss="modal">
                         <i class="fas fa-close"></i> Close
                     </button>
-                    <button @click="editApprover" class="btn btn-primary" :disabled="isEditingRvApprover">
-                        <i class="fas fa-edit"></i> {{ isEditingRvApprover ? 'Editing...' : 'Edit' }}
+                    <button @click="editApprover" class="btn btn-primary" :disabled="isEditingApprover">
+                        <i class="fas fa-edit"></i> {{ isEditingApprover ? 'Editing...' : 'Edit' }}
                     </button>
                 </div>
                 </div>
@@ -359,11 +359,11 @@
             type: Boolean,
             default: false
         },
-        isAddingRvApprover: {
+        isAddingApprover: {
             type: Boolean,
             default: false
         },
-        isEditingRvApprover: {
+        isEditingApprover: {
             type: Boolean,
             default: false
         }
@@ -379,7 +379,7 @@
     
     // FLAGS
     const isMobile = ref(false)
-    const isRvApproverModalAdd = ref(false)
+    const isApproverModalAdd = ref(false)
     const drag = ref(false)
 
     // HTML ELEMENTS
@@ -435,12 +435,12 @@
 
 
     function onClickAddApprover() {
-        isRvApproverModalAdd.value = true
+        isApproverModalAdd.value = true
         addApproverData.value.order = props.approvers.length + 1
     }
 
     function onClickEditApprover(indx: number) {
-        isRvApproverModalAdd.value = false 
+        isApproverModalAdd.value = false 
 
         const item = props.approvers[indx]
 

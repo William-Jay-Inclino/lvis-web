@@ -154,6 +154,8 @@
                     </div>
                 </div>
 
+                <hr>
+
                 <div class="row mb-3 pt-3">
                     <div class="col">
                         <div class="d-flex justify-content-between">

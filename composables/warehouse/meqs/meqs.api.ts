@@ -1,6 +1,7 @@
 import axios from "axios";
 import type { RV } from "../rv/rv.types";
-import type { CreateMeqsInput, FindAllResponse, MEQS, MeqsApproverSettings, MutationResponse, Supplier } from "./meqs.types";
+import type { CreateMeqsInput, FindAllResponse, MEQS, MeqsApproverSettings, MutationResponse } from "./meqs.types";
+import type { Supplier } from "./meqs-supplier";
 
 
 export async function fetchDataInSearchFilters(): Promise<{
@@ -437,6 +438,75 @@ export async function fetchFormDataInCreate(): Promise<{
             suppliers: [],
             approvers: []
         }
+    }
+    
+
+}
+
+export async function fetchFormDataInUpdate(id: string): Promise<{meqs: MEQS} | undefined> {
+
+    const query = `
+        query {
+            meq(id: "${id}") {
+                id 
+                meqs_number 
+                meqs_date
+                is_cancelled
+                notes
+                rv {
+                    id
+                    rv_number 
+                    canvass {
+                        rc_number
+                        requested_by {
+                            id
+                            firstname
+                            middlename
+                            lastname
+                        }
+                        purpose
+                        notes
+                    }
+                }
+                meqs_approvers {
+                    id
+                    approver {
+                        id
+                        firstname
+                        middlename
+                        lastname
+                    }
+                    date_approval 
+                    notes
+                    status
+                    label
+                    order
+                }
+            },
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        if(!response.data || !response.data.data) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+
+        const data = response.data.data
+
+        if(!data.meq) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+
+        return {
+            meqs: data.meq
+        }
+
+    } catch (error) {
+        console.error(error);
+        return undefined
     }
     
 

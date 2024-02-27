@@ -124,8 +124,8 @@
                     :approvers="rvData.rv_approvers"
                     :employees="employees"
                     :isUpdatingApproverOrder="isUpdatingApproverOrder"
-                    :isAddingRvApprover="isAddingRvApprover"
-                    :isEditingRvApprover="isEditingRvApprover"
+                    :isAddingApprover="isAddingRvApprover"
+                    :isEditingApprover="isEditingRvApprover"
                     @changeApproverOrder="changeApproverOrder"
                     @addApprover="addApprover"
                     @editApprover="editApprover"
@@ -137,8 +137,8 @@
         </div>
 
 
-        <div class="row justify-content-center">
-            <div :class="{'col-lg-6': isRVDetailForm, 'col-lg-12 col-md-12 col-sm-12': !isRVDetailForm}">
+        <div class="row justify-content-center pt-3">
+            <div :class="{'col-lg-6': isRVDetailForm, 'col-12': !isRVDetailForm}">
 
                 <div class="d-flex justify-content-between pt-3">
                     <div>
@@ -563,4 +563,3 @@
 </script>
 
 
-~/composables/config
