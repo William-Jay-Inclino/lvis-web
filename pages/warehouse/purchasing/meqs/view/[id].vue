@@ -165,10 +165,10 @@
                                 <tr>
                                     <th class="bg-secondary text-white"> No </th>
                                     <th class="bg-secondary text-white"> Item </th>
-                                    <th class="bg-dark text-white text-center" v-for="meqsSupplier in item.meqs_suppliers">
+                                    <th class="bg-secondary text-white text-center" v-for="meqsSupplier in item.meqs_suppliers">
                                         {{ `${meqsSupplier.supplier?.name}` }}
                                     </th>
-                                    <th class="bg-dark text-white text-center">Remarks</th>
+                                    <th class="bg-secondary text-white text-center">Remarks</th>
                                 </tr>
                             </thead>
                             <tbody>

@@ -20,10 +20,10 @@
                 <tr>
                     <th class="bg-secondary text-white"> No. </th>
                     <th class="bg-secondary text-white"> Item </th>
-                    <th class="bg-dark text-white text-center" v-for="meqsSupplier in meqs_suppliers">
+                    <th class="bg-secondary text-white text-center" v-for="meqsSupplier in meqs_suppliers">
                         {{ `${meqsSupplier.supplier?.name} (${meqsSupplier.payment_terms})` }}
                     </th>
-                    <th class="bg-dark text-white text-center"></th>
+                    <th class="bg-secondary text-white text-center"></th>
                 </tr>
             </thead>
 
