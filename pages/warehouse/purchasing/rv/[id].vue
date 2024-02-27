@@ -140,19 +140,23 @@
         <div class="row justify-content-center">
             <div :class="{'col-lg-6': isRVDetailForm, 'col-lg-12 col-md-12 col-sm-12': !isRVDetailForm}">
 
-                <div class="d-flex justify-content-end gap-2 pt-3">
-                    <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rv">
-                        <i class="fas fa-chevron-left"></i> Back
-                    </nuxt-link>
-                    <button @click="onCancelRv" class="btn btn-danger">
-                        <i class="fas fa-cancel"></i> Cancel
-                    </button>
-                    <button type="button" class="btn btn-primary">
-                        <i class="fas fa-print"></i> Print
-                    </button>
-                    <button v-if="isRVDetailForm" @click="updateRvInfo()" type="button" class="btn btn-success" :disabled="isUpdating">
-                        <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
-                    </button>
+                <div class="d-flex justify-content-between pt-3">
+                    <div>
+                        <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rv">
+                            <i class="fas fa-chevron-left"></i> Back to Search
+                        </nuxt-link>
+                    </div>
+                    <div>
+                        <button @click="onCancelRv" class="btn btn-danger me-2">
+                            <i class="fas fa-cancel"></i> Cancel
+                        </button>
+                        <button type="button" class="btn btn-primary me-2">
+                            <i class="fas fa-print"></i> Print
+                        </button>
+                        <button v-if="isRVDetailForm" @click="updateRvInfo()" type="button" class="btn btn-success" :disabled="isUpdating">
+                            <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
+                        </button>
+                    </div>
                 </div>
 
             </div>

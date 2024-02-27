@@ -38,7 +38,7 @@
             </nuxt-link>
         </div>
 
-        <div class="h6wrapper mb-3 mt-3" v-show="!isInitialLoad && !isSearching && !isPaginating">
+        <div class="h5wrapper mb-3 mt-3" v-show="!isInitialLoad && !isSearching && !isPaginating">
             <hr class="result">
                 <h6 class="text-warning"><i>Search results...</i></h6>
             <hr class="result">
@@ -69,18 +69,21 @@
                                             <th class="bg-secondary text-white">Requisitioner</th>
                                             <th class="bg-secondary text-white">Date</th>
                                             <th class="text-center bg-secondary text-white">
-                                                <i class="fas fa-info-circle"></i>
+                                                <i class="fas fa-cogs"></i>
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr v-for="i in items">
-                                            <td class="text-muted"> {{ i.rc_number }} </td>
-                                            <td class="text-muted"> {{ getFullname(i.requested_by!.firstname, i.requested_by!.middlename, i.requested_by!.lastname) }} </td>
-                                            <td class="text-muted"> {{ formatDate(i.date_requested) }} </td>
-                                            <td class="text-center">
-                                                <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light text-primary">
-                                                    <i class="fas fa-edit"></i>
+                                            <td class="text-muted align-middle"> {{ i.rc_number }} </td>
+                                            <td class="text-muted align-middle"> {{ getFullname(i.requested_by!.firstname, i.requested_by!.middlename, i.requested_by!.lastname) }} </td>
+                                            <td class="text-muted align-middle"> {{ formatDate(i.date_requested) }} </td>
+                                            <td class="text-muted text-center align-middle">
+                                                <nuxt-link class="btn btn-light w-50" :to="'/warehouse/purchasing/canvass/view/' + i.id">
+                                                    <i class="fas fa-info-circle text-info"></i>
+                                                </nuxt-link>
+                                                <button @click="onClickEdit(i.id)" class="btn btn-light w-50">
+                                                    <i class="fas fa-edit text-primary"></i>
                                                 </button>
                                             </td>
                                         </tr>
@@ -294,24 +297,3 @@
 
 </script>
 
-
-
-<style scoped>
-
-    hr.result {
-        flex: 1;
-        margin: 0 10px;
-        border: none;
-        border-top: 1px solid #333;
-        }
-
-    h6 {
-        margin: 0;
-    }
-
-    .h6wrapper {
-        display: flex;
-        align-items: center;
-    }
-
-</style>~/composables/config

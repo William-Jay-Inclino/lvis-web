@@ -1,19 +1,17 @@
 <template>
 
-    <div v-if="item" class="row justify-content-center mb-5">
+    <div v-if="item" class="row justify-content-center mb-3">
 
         <div class="col-lg-10">
 
-            <div class="alert alert-success" role="alert">
-                MEQS created successfully! 
-            </div>
-
-            <div class="row pt-3">
+            <div class="row">
                 <div class="col">
-                    <div class="h6wrapper mb-3">
-                        <hr>
-                            <h6 class="text-warning"><i>MEQS Details</i></h6>
-                        <hr>
+                    <div class="h5wrapper mb-3">
+                        <hr class="result">
+                            <h5 class="text-warning fst-italic">
+                                <i class="fas fa-info-circle"></i> MEQS Info
+                            </h5>
+                        <hr class="result">
                     </div>
 
                     <div class="table-responsive">
@@ -60,10 +58,12 @@
             <div class="row pt-3">
                 <div class="col">
 
-                    <div class="h6wrapper mb-3">
-                        <hr>
-                            <h6 class="text-warning"><i>Approvers</i></h6>
-                        <hr>
+                    <div class="h5wrapper mb-3">
+                        <hr class="result">
+                            <h5 class="text-warning fst-italic">
+                                <i class="fas fa-users"></i> Approvers
+                            </h5>
+                        <hr class="result">
                     </div>
 
                     <div class="table-responsive">
@@ -97,13 +97,18 @@
             <div class="row pt-3">
                 <div class="col">
 
-                    <div class="h6wrapper mb-3">
-                        <hr>
-                            <h6 class="text-warning"><i>Suppliers</i></h6>
-                        <hr>
+                    <div class="h5wrapper mb-3">
+                        <hr class="result">
+                            <h5 class="text-warning fst-italic">
+                                <i class="fas fa-truck"></i> Suppliers
+                            </h5>
+                        <hr class="result">
                     </div>
 
-                    <small class="text-muted fst-italic">Click the attachment to view it in a larger size</small>
+                    <div class="alert alert-info" role="alert">
+                        <small class="text-muted fst-italic">Click the attachment to view it in a larger size</small>
+                    </div>
+                    
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <thead>
@@ -139,13 +144,21 @@
             <div class="row pt-3">
                 <div class="col">
 
-                    <div class="h6wrapper mb-3">
-                        <hr>
-                            <h6 class="text-warning"><i>Items</i></h6>
-                        <hr>
+                    <div class="h5wrapper mb-3">
+                        <hr class="result">
+                            <h5 class="text-warning fst-italic">
+                                <i class="fas fa-shopping-cart"></i> Items
+                            </h5>
+                        <hr class="result">
                     </div>
-
-                    <small class="text-muted fst-italic">The awarded supplier is indicated by a yellow star</small>
+                    <div class="alert alert-info" role="alert">
+                        <div>
+                            <small class="text-muted fst-italic">- The awarded supplier is indicated by a yellow star</small>
+                        </div>
+                        <div>
+                            <small class="text-muted fst-italic">- A price of -1 indicates that the item is unavailable from a specific supplier</small>
+                        </div>
+                    </div>
                     <div class="table-responsive">
                         <table class="table table-bordered table-sm">
                             <thead>
@@ -181,6 +194,26 @@
                         </table>
                     </div>
 
+                </div>
+            </div>
+
+            <div class="row mb-3 pt-3">
+                <div class="col">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/meqs">
+                                <i class="fas fa-chevron-left"></i> Back to Search
+                            </nuxt-link>
+                        </div>
+                        <div>
+                            <nuxt-link class="btn btn-success me-2" :to="`/warehouse/purchasing/meqs/${item.id}`">
+                                <i class="fas fa-sync"></i> Update
+                            </nuxt-link>
+                            <nuxt-link class="btn btn-primary" to="/warehouse/purchasing/meqs/create">
+                                <i class="fas fa-plus"></i> Add New
+                            </nuxt-link>
+                        </div>
+                    </div>
                 </div>
             </div>
 

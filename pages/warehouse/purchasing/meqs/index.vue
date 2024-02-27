@@ -99,20 +99,23 @@
                                     </thead>
                                     <tbody>
                                         <tr v-for="i in filteredItems">
-                                            <td class="text-muted"> {{ i.meqs_number }} </td>
-                                            <td class="text-muted" v-if="i.rv"> RV#{{ i.rv.rv_number }} </td>
-                                            <td class="text-muted" v-if="i.rv"> 
+                                            <td class="text-muted align-middle"> {{ i.meqs_number }} </td>
+                                            <td class="text-muted align-middle" v-if="i.rv"> RV#{{ i.rv.rv_number }} </td>
+                                            <td class="text-muted align-middle" v-if="i.rv"> 
                                                 {{ getFullname(i.rv.canvass.requested_by!.firstname, i.rv.canvass.requested_by!.middlename, i.rv.canvass.requested_by!.lastname) }} 
                                             </td>
-                                            <td class="text-muted"> {{ formatDate(i.meqs_date) }} </td>
-                                            <td class="text-center">
+                                            <td class="text-muted align-middle"> {{ formatDate(i.meqs_date) }} </td>
+                                            <td class="text-center align-middle">
                                                 <div :class="{[`badge bg-${i.status.color}`]: true}"> 
                                                     {{ i.status.label }} 
                                                 </div>
                                             </td>
-                                            <td class="text-center">
-                                                <button v-if="i.status.value !== APPROVAL_STATUS.CANCELLED" @click="onClickEdit(i.id)" class="btn btn-sm btn-light text-primary">
-                                                    <i class="fas fa-edit"></i>
+                                            <td class="text-muted text-center align-middle">
+                                                <nuxt-link class="btn btn-light w-50" :to="'/warehouse/purchasing/meqs/view/' + i.id">
+                                                    <i class="fas fa-info-circle text-info"></i>
+                                                </nuxt-link>
+                                                <button v-if="i.status.value !== APPROVAL_STATUS.CANCELLED" @click="onClickEdit(i.id)" class="btn btn-light w-50">
+                                                    <i class="fas fa-edit text-primary"></i>
                                                 </button>
                                             </td>
                                         </tr>

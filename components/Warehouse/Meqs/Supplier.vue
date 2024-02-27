@@ -35,7 +35,7 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="4" class="text-center">
+                    <td colspan="5" class="text-center">
                         <button @click="onClickAdd()" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
                             <i class="fas fa-plus-circle"></i> Add Supplier
                         </button>

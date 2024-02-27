@@ -69,6 +69,7 @@
                                         <v-select :options="jos" label="spr_number" v-model="meqsData.spr" v-show="transactionType === 'SPR'"></v-select>
                                         <v-select :options="sprs" label="jo_number" v-model="meqsData.jo" v-show="transactionType === 'JO'"></v-select>
                                     </client-only>
+                                    <nuxt-link v-if="meqsData.rv" class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/rv/view/' + meqsData.rv.id" target="_blank">View info</nuxt-link>
                                 </div>
                             </div>
                         </div>
@@ -103,9 +104,9 @@
                             <small class="text-muted fst-italic">This note will be use during print out</small>
                         </div>
 
-                        <div class="d-flex justify-content-end gap-2">
+                        <div class="d-flex justify-content-between">
                             <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/meqs">
-                                <i class="fas fa-chevron-left"></i> Back
+                                <i class="fas fa-chevron-left"></i> Back to Search
                             </nuxt-link>
                             <button @click="goToStep2()" type="button" class="btn btn-primary" :disabled="!canProceedStep2">
                                 <i class="fas fa-chevron-right"></i> Next
@@ -128,7 +129,7 @@
                             </div>
                         </div>
 
-                        <div class="d-flex justify-content-end gap-2">
+                        <div class="d-flex justify-content-between">
                             <button @click="goToStep1()" type="button" class="btn btn-secondary" :disabled="!hasReference">
                                 <i class="fas fa-chevron-left"></i> Back
                             </button>
@@ -154,7 +155,7 @@
                             </div>
                         </div>
 
-                        <div class="d-flex justify-content-end gap-2 mt-3">
+                        <div class="d-flex justify-content-between mt-3">
                             <button @click="goToStep2()" type="button" class="btn btn-secondary" :disabled="!hasReference">
                                 <i class="fas fa-chevron-left"></i> Back
                             </button>
@@ -420,7 +421,15 @@ async function saveMeqs(closeRequiredNotesBtn?: HTMLButtonElement) {
     isSavingMeqs.value = false
 
     if(response.success && response.data) {
-        router.push(`/warehouse/purchasing/meqs/success/${response.data.id}`);
+
+        Swal.fire({
+            title: 'Success!',
+            text: response.msg,
+            icon: 'success',
+            position: 'top',
+        })
+
+        router.push(`/warehouse/purchasing/meqs/view/${response.data.id}`);
     }else {
         Swal.fire({
             title: 'Error!',

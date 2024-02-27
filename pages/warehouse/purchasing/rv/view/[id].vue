@@ -5,16 +5,15 @@
         <div class="col-lg-9">
 
             <div v-if="item">
-                <div class="alert alert-success" role="alert">
-                    RV created successfully! 
-                </div>
                 
                 <div class="row pt-3">
                     <div class="col">
-                        <div class="h6wrapper mb-3">
-                            <hr>
-                                <h6 class="text-warning"><i>RV Details</i></h6>
-                            <hr>
+                        <div class="h5wrapper mb-3">
+                            <hr class="result">
+                                <h5 class="text-warning fst-italic">
+                                    <i class="fas fa-info-circle"></i> RV Info
+                                </h5>
+                            <hr class="result">
                         </div>
                         <div class="table-responsive">
                             <table class="table table-bordered">
@@ -26,7 +25,7 @@
                                     <tr>
                                         <td class="text-muted">RC Number</td>
                                         <td>
-                                            <nuxt-link :to="'/warehouse/purchasing/canvass/' + item.canvass.id" target="_blank">{{ item.canvass.rc_number }}</nuxt-link>
+                                            <nuxt-link :to="'/warehouse/purchasing/canvass/view/' + item.canvass.id" target="_blank">{{ item.canvass.rc_number }}</nuxt-link>
                                         </td>
                                     </tr>
                                     <tr>
@@ -77,10 +76,12 @@
 
                         <div v-if="!isMobile">
                             
-                            <div class="h6wrapper mb-3">
-                                <hr>
-                                    <h6 class="text-warning"><i>Approvers</i></h6>
-                                <hr>
+                            <div class="h5wrapper mb-3">
+                                <hr class="result">
+                                    <h5 class="text-warning fst-italic">
+                                        <i class="fas fa-users"></i> Approvers
+                                    </h5>
+                                <hr class="result">
                             </div>
 
                             <div class="table-responsive">
@@ -111,10 +112,12 @@
 
                         <div v-else>
 
-                            <div class="h6wrapper mb-3">
-                                <hr>
-                                    <h6 class="text-warning"><i>Approvers</i></h6>
-                                <hr>
+                            <div class="h5wrapper mb-3">
+                                <hr class="result">
+                                    <h5 class="text-warning fst-italic">
+                                        <i class="fas fa-users"></i> Approvers
+                                    </h5>
+                                <hr class="result">
                             </div>
 
                             <div v-for="i, count in item.rv_approvers" class="table-responsive">
@@ -153,12 +156,14 @@
 
                 <div class="row mb-3 pt-3">
                     <div class="col">
-                        <div class="d-flex justify-content-end gap-2">
-                            <div class="d-flex justify-content-end gap-2">
+                        <div class="d-flex justify-content-between">
+                            <div>
                                 <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rv">
-                                    <i class="fas fa-search"></i> Search
+                                    <i class="fas fa-chevron-left"></i> Back to Search
                                 </nuxt-link>
-                                <nuxt-link class="btn btn-success" :to="`/warehouse/purchasing/rv/${item.id}`">
+                            </div>
+                            <div>
+                                <nuxt-link class="btn btn-success me-2" :to="`/warehouse/purchasing/rv/${item.id}`">
                                     <i class="fas fa-sync"></i> Update
                                 </nuxt-link>
                                 <nuxt-link class="btn btn-primary" to="/warehouse/purchasing/rv/create">
@@ -208,23 +213,3 @@
 
 
 </script>
-
-
-<style scoped>
-    hr {
-        flex: 1;
-        margin: 0 10px;
-        border: none;
-        border-top: 1px solid #333;
-        }
-
-    h6 {
-        margin: 0;
-    }
-
-    .h6wrapper {
-        display: flex;
-        align-items: center;
-    }
-
-</style>~/composables/config

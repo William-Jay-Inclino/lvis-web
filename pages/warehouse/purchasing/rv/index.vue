@@ -80,24 +80,27 @@
                                             <th class="bg-secondary text-white">Date</th>
                                             <th class="bg-secondary text-white text-center">Status</th>
                                             <th class="text-center bg-secondary text-white">
-                                                <i class="fas fa-info-circle"></i>
+                                                <i class="fas fa-cogs"></i>
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr v-for="i in items">
-                                            <td class="text-muted"> {{ i.rv_number }} </td>
-                                            <td class="text-muted"> {{ i.canvass.rc_number }} </td>
-                                            <td class="text-muted"> {{ getFullname(i.canvass.requested_by!.firstname, i.canvass.requested_by!.middlename, i.canvass.requested_by!.lastname) }} </td>
-                                            <td class="text-muted"> {{ formatDate(i.date_requested) }} </td>
-                                            <td class="text-center">
+                                            <td class="text-muted align-middle"> {{ i.rv_number }} </td>
+                                            <td class="text-muted align-middle"> {{ i.canvass.rc_number }} </td>
+                                            <td class="text-muted align-middle"> {{ getFullname(i.canvass.requested_by!.firstname, i.canvass.requested_by!.middlename, i.canvass.requested_by!.lastname) }} </td>
+                                            <td class="text-muted align-middle"> {{ formatDate(i.date_requested) }} </td>
+                                            <td class="text-center align-middle">
                                                 <div :class="{[`badge bg-${approvalStatus[i.status].color}`]: true}"> 
                                                     {{ approvalStatus[i.status].label }} 
                                                 </div>
                                             </td>
-                                            <td class="text-center">
-                                                <button v-if="i.status !== APPROVAL_STATUS.CANCELLED" @click="onClickEdit(i.id)" class="btn btn-sm btn-light text-primary">
-                                                    <i class="fas fa-edit"></i>
+                                            <td class="text-muted text-center align-middle">
+                                                <nuxt-link class="btn btn-light w-50" :to="'/warehouse/purchasing/rv/view/' + i.id">
+                                                    <i class="fas fa-info-circle text-info"></i>
+                                                </nuxt-link>
+                                                <button v-if="i.status !== APPROVAL_STATUS.CANCELLED" @click="onClickEdit(i.id)" class="btn btn-light w-50">
+                                                    <i class="fas fa-edit text-primary"></i>
                                                 </button>
                                             </td>
                                         </tr>

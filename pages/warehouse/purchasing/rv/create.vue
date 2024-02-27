@@ -37,7 +37,7 @@
                                     </template>
                                 </v-select>
                             </client-only>
-                            <nuxt-link v-if="rvData.canvass" class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/canvass/' + rvData.canvass.id" target="_blank">View info</nuxt-link>
+                            <nuxt-link v-if="rvData.canvass" class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/canvass/view/' + rvData.canvass.id" target="_blank">View info</nuxt-link>
                             <small class="text-danger fst-italic" v-if="rvDataErrors.canvass"> This field is required </small>
                         </div>
 
@@ -111,9 +111,9 @@
                             <textarea class="form-control" rows="3" v-model="rvData.notes"></textarea>
                         </div>
                 
-                        <div class="d-flex justify-content-end gap-2">
+                        <div class="d-flex justify-content-between">
                             <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rv">
-                                <i class="fas fa-chevron-left"></i> Back
+                                <i class="fas fa-chevron-left"></i> Back to Search
                             </nuxt-link>
                             <button @click="save()" type="button" class="btn btn-primary" :disabled="isSaving">
                                 <i class="fas fa-save"></i> {{ isSaving ? 'Saving...' : 'Save' }}
@@ -248,7 +248,15 @@
         isSaving.value = false
 
         if(response.success && response.data) {
-            router.push(`/warehouse/purchasing/rv/success/${response.data.id}`);
+
+            Swal.fire({
+                title: 'Success!',
+                text: response.msg,
+                icon: 'success',
+                position: 'top',
+            })
+
+            router.push(`/warehouse/purchasing/rv/view/${response.data.id}`);
         }else {
             Swal.fire({
                 title: 'Error!',
