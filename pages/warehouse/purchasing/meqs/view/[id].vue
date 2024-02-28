@@ -168,7 +168,7 @@
                                 <tr>
                                     <th class="bg-secondary text-white"> No </th>
                                     <th class="bg-secondary text-white"> Item </th>
-                                    <th class="bg-secondary text-white"> Unit </th>
+                                    <th class="bg-secondary text-white"> Unit Price </th>
                                     <th class="bg-secondary text-white"> Qty </th>
                                     <th class="bg-secondary text-white text-center" v-for="meqsSupplier in item.meqs_suppliers">
                                         {{ `${meqsSupplier.supplier?.name}` }}
@@ -185,7 +185,7 @@
                                     <td class="text-muted text-center" v-for="meqsSupplier in item.meqs_suppliers">
                                         <template v-for="supplierItem in meqsSupplier.meqs_supplier_items">
                                             <span v-if="supplierItem.canvass_item.id === canvassItem.id">
-                                                {{ supplierItem.price === -1 ? 'N/A' : supplierItem.price.toFixed(2) }}
+                                                {{ supplierItem.price === -1 ? 'N/A' : formatToPhpCurrency(supplierItem.price) }}
                                                 <i class="fas fa-star fs-5" :class="{'text-warning': supplierItem.is_awarded}"></i>
                                             </span>
                                         </template>
@@ -261,6 +261,7 @@
     })
 
     import { MOBILE_WIDTH, UPLOADS_PATH } from '~/utils/config';
+    import { formatToPhpCurrency } from '~/utils/helpers';
     import * as meqsApi from '~/composables/warehouse/meqs/meqs.api'
     import type { MEQS } from '~/composables/warehouse/meqs/meqs.types';
 

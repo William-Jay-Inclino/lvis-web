@@ -1,5 +1,6 @@
 import type { APPROVAL_STATUS } from "~/composables/common.types";
 import type { MeqsSupplier } from "../meqs/meqs-supplier";
+import type { PoApproverSettings } from "./po-approver.types";
 
 export interface PO {
   id: string;
@@ -15,8 +16,8 @@ export interface PO {
 
 
 export interface CreatePoInput {
-    meqs_supplier_id: string;
-    approvers: CreatePoApproverSubInput[];
+    meqs_supplier: MeqsSupplier| null
+    approvers: PoApproverSettings[];
     notes: string
 }
 

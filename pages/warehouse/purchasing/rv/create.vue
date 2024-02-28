@@ -173,7 +173,6 @@
     })
     const rvDataErrors = ref({..._rvDataErrorsInitial})
 
-    // Immutable state for rc number field
     let currentCanvass: Canvass | null = null
 
 

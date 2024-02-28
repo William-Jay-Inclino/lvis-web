@@ -46,8 +46,6 @@ export function formatToValidHtmlDate(d: any): string {
 
 }
 
-
-
 export function isValidDate(dateString: string | null): boolean {
 
     if(!dateString) {
@@ -59,4 +57,8 @@ export function isValidDate(dateString: string | null): boolean {
 
     // Check if the parsed date is a valid date
     return !isNaN(date.getTime());
+}
+
+export function formatToPhpCurrency(number: number) {
+    return "₱" + number.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
