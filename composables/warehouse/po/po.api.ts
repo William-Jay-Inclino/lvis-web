@@ -273,8 +273,8 @@ export async function fetchFormDataInCreate(): Promise<{
             meqs = data.meqs.data
         }
 
-        if(data.PoApproverSettings) {
-            approvers = data.PoApproverSettings
+        if(data.poApproverSettings) {
+            approvers = data.poApproverSettings
         }
 
         return {
@@ -379,6 +379,26 @@ export async function findOne(id: string): Promise<PO | undefined> {
                         id
                         name 
                         vat_type
+                    }
+                    meqs {
+                        id
+                        meqs_number
+                        rv {
+                            id
+                            rv_number
+                            canvass {
+                                id
+                                rc_number
+                                purpose 
+                                notes
+                                requested_by {
+                                    id
+                                    firstname
+                                    middlename
+                                    lastname
+                                }
+                            }
+                        }
                     }
                     meqs_supplier_items {
                         id 

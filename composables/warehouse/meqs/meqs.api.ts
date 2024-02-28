@@ -249,6 +249,8 @@ export async function findOne(id: string): Promise<MEQS | undefined> {
                     id
                     rv_number
                     canvass {
+                        id
+                        rc_number
                         requested_by {
                             id
                             firstname
@@ -313,6 +315,12 @@ export async function findOne(id: string): Promise<MEQS | undefined> {
                     }
                     attachments{
                         src
+                    }
+                }
+                meqs_suppliers {
+                    po {
+                        id
+                        po_number
                     }
                 }
             }

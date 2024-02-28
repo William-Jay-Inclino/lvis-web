@@ -10,6 +10,9 @@ export interface PO {
   status: APPROVAL_STATUS;
   canceller_id: string;
   meqs_supplier: MeqsSupplier
+  notes: string
+  po_approvers: Approver[];
+  is_deleted: boolean
 }
 
 export interface CreatePoInput {

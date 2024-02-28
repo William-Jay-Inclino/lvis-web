@@ -1,6 +1,7 @@
 import type { APPROVAL_STATUS } from "~/composables/common.types";
 import type { Canvass, Classification } from "../canvass/canvass.types";
 import type { RVApprover, RvApproverSettings } from "./rv-approver.types";
+import type { MEQS } from "../meqs/meqs.types";
 
 export interface RV {
   id: string;
@@ -21,6 +22,8 @@ export interface RV {
   is_referenced: boolean
   is_deleted: boolean
   status: APPROVAL_STATUS
+
+  meqs?: MEQS
 
 }
 

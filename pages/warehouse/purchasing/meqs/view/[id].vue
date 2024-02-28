@@ -26,13 +26,32 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="text-muted">MEQS Number</td>
-                                    <td> {{ item?.meqs_number }} </td>
+                                    <td class="text-muted">RC Number</td>
+                                    <td>
+                                        <nuxt-link :to="'/warehouse/purchasing/canvass/view/' + referenceData?.canvass.id">{{ referenceData?.canvass.rc_number }}</nuxt-link>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td class="text-muted"> {{ referenceLabel }} Number</td>
                                     <td>
-                                        <nuxt-link v-if="item?.rv" :to="'/warehouse/purchasing/rv/view/' + item.rv.id" target="_blank">{{ item.rv.rv_number }}</nuxt-link>
+                                        <nuxt-link v-if="item?.rv" :to="'/warehouse/purchasing/rv/view/' + item.rv.id">{{ item.rv.rv_number }}</nuxt-link>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">MEQS Number</td>
+                                    <td> {{ item?.meqs_number }} </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">PO Number/s</td>
+                                    <td>
+                                        <div v-if="hasPO">
+                                            <div v-for="meqsSupplier in item.meqs_suppliers">
+                                                <nuxt-link v-if="meqsSupplier.po" :to="'/warehouse/purchasing/po/view/' + meqsSupplier.po.id">{{ meqsSupplier.po.po_number }}</nuxt-link>
+                                            </div>
+                                        </div>
+                                        <div v-else>
+                                            N/A
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
@@ -40,10 +59,10 @@
                                     <td> {{ formatDate(item?.meqs_date) }} </td>
                                 </tr>
                                 <tr>
-                                    <td class="text-muted">MEQS Notes</td>
+                                    <td class="text-muted">Notes</td>
                                     <td> {{ item?.notes }} </td>
                                 </tr>
-                                <tr>
+                                <!-- <tr>
                                     <td class="text-muted">Requisitioner</td>
                                     <td> {{ getFullname(referenceData!.canvass.requested_by!.firstname, referenceData!.canvass.requested_by!.middlename, referenceData!.canvass.requested_by!.lastname) }} </td>
                                 </tr>
@@ -54,7 +73,7 @@
                                 <tr>
                                     <td class="text-muted">Requisitioner Notes</td>
                                     <td> {{ referenceData!.canvass.notes }} </td>
-                                </tr>
+                                </tr> -->
                             </tbody>
                         </table>
                     </div>
@@ -369,6 +388,26 @@
         }
 
     }
+
+    const hasPO = computed( () => {
+
+        if(!item.value) return false 
+
+        if(item.value.meqs_suppliers) {
+
+            const po = item.value.meqs_suppliers.find(i => !!i.po)
+
+            if(po) {
+                return true 
+            }
+
+            return false 
+
+        }else {
+            return false
+        }
+
+    })
 
 
 </script>

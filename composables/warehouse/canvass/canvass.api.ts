@@ -110,6 +110,20 @@ export async function findOne(id: string): Promise<Canvass | undefined> {
                     }
                     quantity
                 }
+                rv{
+                    id
+                    rv_number
+                    meqs {
+                        id
+                        meqs_number
+                        meqs_suppliers {
+                            po {
+                                id
+                                po_number
+                            }
+                        }
+                    }
+                }
             }
         }
     `;

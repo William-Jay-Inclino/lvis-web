@@ -197,6 +197,16 @@ export async function findOne(id: string): Promise<RV | undefined> {
                     label
                     order
                 }
+                meqs {
+                    id
+                    meqs_number
+                    meqs_suppliers {
+                        po {
+                            id
+                            po_number
+                        }
+                    }
+                }
             }
         }
     `;

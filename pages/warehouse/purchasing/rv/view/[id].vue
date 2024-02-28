@@ -27,27 +27,51 @@
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td class="text-muted">RC Number</td>
+                                        <td>
+                                            <nuxt-link :to="'/warehouse/purchasing/canvass/view/' + item.canvass.id">{{ item.canvass.rc_number }}</nuxt-link>
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <td class="text-muted">RV Number</td>
                                         <td> {{ item.rv_number }} </td>
                                     </tr>
                                     <tr>
-                                        <td class="text-muted">RC Number</td>
+                                        <td class="text-muted">MEQS Number</td>
                                         <td>
-                                            <nuxt-link :to="'/warehouse/purchasing/canvass/view/' + item.canvass.id" target="_blank">{{ item.canvass.rc_number }}</nuxt-link>
+                                            <div v-if="item.meqs">
+                                                <nuxt-link :to="'/warehouse/purchasing/meqs/view/' + item.meqs.id">{{ item.meqs.meqs_number }}</nuxt-link>
+                                            </div>
+                                            <div v-else>
+                                                N/A
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted">PO Number/s</td>
+                                        <td>
+                                            <div v-if="hasPO">
+                                                <div v-for="meqsSupplier in item.meqs!.meqs_suppliers">
+                                                    <nuxt-link v-if="meqsSupplier.po" :to="'/warehouse/purchasing/po/view/' + meqsSupplier.po.id">{{ meqsSupplier.po.po_number }}</nuxt-link>
+                                                </div>
+                                            </div>
+                                            <div v-else>
+                                                N/A
+                                            </div>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="text-muted">Date</td>
                                         <td> {{ formatDate(item.date_requested) }} </td>
                                     </tr>
-                                    <tr>
+                                    <!-- <tr>
                                         <td class="text-muted">Requisitioner</td>
                                         <td> {{ getFullname(item.canvass.requested_by!.firstname, item.canvass.requested_by!.middlename, item.canvass.requested_by!.lastname) }} </td>
                                     </tr>
                                     <tr>
                                         <td class="text-muted">Purpose</td>
                                         <td> {{ item.canvass.purpose }} </td>
-                                    </tr>
+                                    </tr> -->
                                     <tr>
                                         <td class="text-muted">Imd. Sup.</td>
                                         <td> {{ getFullname(item.supervisor.firstname, item.supervisor.middlename, item.supervisor.lastname) }} </td>
@@ -218,31 +242,25 @@
     })
 
 
-    // const rvStatus = computed( () => {
+    const hasPO = computed( () => {
 
-    //     const approvers = item.value!.rv_approvers
+        if(!item.value) return false 
 
-    //     if(item.value!.is_cancelled) {
+        if(item.value.meqs && item.value.meqs.meqs_suppliers) {
 
-    //         return approvalStatus[APPROVAL_STATUS.CANCELLED]
+            const po = item.value.meqs.meqs_suppliers.find(i => !!i.po)
 
-    //     }
+            if(po) {
+                return true 
+            }
 
-    //     const hasDisapproved = approvers.find(i => i.status === APPROVAL_STATUS.DISAPPROVED)
+            return false 
 
-    //     if(hasDisapproved) {
-    //         return approvalStatus[APPROVAL_STATUS.DISAPPROVED]
-    //     }
+        }else {
+            return false
+        }
 
-    //     const hasPending = approvers.find(i => i.status === APPROVAL_STATUS.PENDING)
-
-    //     if(hasPending) {
-    //         return approvalStatus[APPROVAL_STATUS.PENDING]
-    //     }
-
-    //     return approvalStatus[APPROVAL_STATUS.APPROVED]
-
-    // })
+    })
 
 
     function checkMobile() {
