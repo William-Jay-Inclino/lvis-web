@@ -50,6 +50,14 @@
                                 <td> {{ formatDate(item.po_date) }} </td>
                             </tr>
                             <tr>
+                                <td class="text-muted">Supplier</td>
+                                <td> {{ item.meqs_supplier.supplier.name }} </td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Vat</td>
+                                <td> {{ VAT[item.meqs_supplier.supplier.vat_type].label }} </td>
+                            </tr>
+                            <tr>
                                 <td class="text-muted">Notes</td>
                                 <td> {{ item.notes }} </td>
                             </tr>
