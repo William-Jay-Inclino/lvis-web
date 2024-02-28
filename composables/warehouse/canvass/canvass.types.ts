@@ -24,7 +24,6 @@ export interface Canvass {
 }
 
 export interface CreateCanvassInput {
-    date_requested: string 
     purpose: string 
     notes: string 
     requested_by: Employee | null 

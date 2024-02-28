@@ -82,6 +82,7 @@ export async function findByMeqsNumber(meqsNumber: string): Promise<MEQS | undef
             meq(meqs_number: "${meqsNumber}") {
                 id
                 meqs_number
+                status
                 rv {
                     rv_number
                     canvass {
@@ -140,6 +141,7 @@ export async function findByReferenceNumber(payload: {
             meq(${searchField}: "${rv_number ?? jo_number ?? spr_number}") {
                 id
                 meqs_number
+                status
                 rv {
                     rv_number
                     canvass {
@@ -202,6 +204,7 @@ export async function findAll(payload: {page: number, pageSize: number, date_req
                 data {
                     id
                     meqs_number
+                    status
                     rv {
                         rv_number
                         canvass {
@@ -633,7 +636,6 @@ export async function create(input: CreateMeqsInput): Promise<MutationResponse> 
                 input: {
                     rv_id: ${rv_id}
                     notes: "${input.notes}"
-                    meqs_date: "${input.meqs_date}"
                     approvers: [${approvers}]
                     meqs_suppliers: [${meqs_suppliers}]
                 }

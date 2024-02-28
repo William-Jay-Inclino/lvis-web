@@ -14,15 +14,7 @@ export interface MEQS {
     meqs_suppliers: MeqsSupplier[];
     is_deleted: boolean;
     is_cancelled: boolean;
-
-
-    // set programmatically
-
-    status: {
-        value: APPROVAL_STATUS
-        label: string 
-        color: string 
-    }
+    status: APPROVAL_STATUS
 }
 
 export interface FindAllResponse {
@@ -37,7 +29,6 @@ export interface CreateMeqsInput {
   rv: RV | null;
   spr: null;
   notes: string;
-  meqs_date: string;
   approvers: MeqsApproverSettings[];
   meqs_suppliers: CreateMeqsSupplierSubInput[];
 }

@@ -20,8 +20,8 @@
                                 <tr>
                                     <td class="text-muted">Status</td>
                                     <td>
-                                        <div :class="{[`badge bg-${meqsStatus.color}`]: true}"> 
-                                            {{ meqsStatus.label }} 
+                                        <div :class="{[`badge bg-${approvalStatus[item.status].color}`]: true}"> 
+                                            {{ approvalStatus[item.status].label }} 
                                         </div>
                                     </td>
                                 </tr>

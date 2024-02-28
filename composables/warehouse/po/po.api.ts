@@ -1,8 +1,127 @@
 import type { MEQS } from "../meqs/meqs.types";
 import type { PoApproverSettings } from "./po-approver.types";
-import type { PO } from "./po.types";
+import type { CreatePoInput, FindAllResponse, MutationResponse, PO } from "./po.types";
 
+export async function findByRefNumber(payload: { po_number?: string, meqs_number?: string }): Promise<PO | undefined> {
 
+    let referenceField = 'po_number'
+    let referenceValue = null
+
+    if(payload.meqs_number) {
+        referenceField = 'meqs_number'
+        referenceValue = payload.meqs_number
+    }else {
+        referenceValue = payload.po_number
+    }
+
+    const query = `
+        query {
+            po(${referenceField}: "${referenceValue}") {
+                id
+                po_number
+                status
+                po_date
+                meqs_supplier {
+                    meqs {
+                        meqs_number
+                        rv {
+                            rv_number
+                            canvass {
+                                rc_number 
+                                requested_by {
+                                    id 
+                                    firstname
+                                    middlename
+                                    lastname
+                                }
+                            }
+                        }
+                    }
+                }
+                canceller_id
+            }
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        if(response.data && response.data.data && response.data.data.po) {
+            return response.data.data.po;
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+    } catch (error) {
+        console.error(error);
+        return undefined
+    }
+}
+
+export async function findAll(payload: {page: number, pageSize: number, date_requested: string | null, requested_by_id: string | null}): Promise<FindAllResponse> {
+    
+    const { page, pageSize, date_requested, requested_by_id } = payload;
+
+    let date_requested2 = null
+    let requested_by_id2 = null
+
+    if(date_requested) {
+        date_requested2 = `"${date_requested}"`
+    } 
+
+    if(requested_by_id) {
+        requested_by_id2 = `"${requested_by_id}"`
+    }
+
+    const query = `
+        query {
+            pos(
+                page: ${page},
+                pageSize: ${pageSize},
+                date_requested: ${date_requested2},
+                requested_by_id: ${requested_by_id2},
+            ) {
+                data {
+                    id
+                    po_number
+                    status
+                    po_date
+                    meqs_supplier {
+                        meqs {
+                            meqs_number
+                            rv {
+                                rv_number
+                                canvass {
+                                    rc_number 
+                                    requested_by {
+                                        id 
+                                        firstname
+                                        middlename
+                                        lastname
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    canceller_id
+                }
+                totalItems
+                currentPage
+                totalPages
+            }
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+        return response.data.data.pos;
+    } catch (error) {
+        console.error(error);
+        throw error
+    }
+}
 
 export async function fetchDataInSearchFilters(): Promise<{
     pos: PO[],
@@ -73,8 +192,6 @@ export async function fetchDataInSearchFilters(): Promise<{
         }
     }
 }
-
-
 
 export async function fetchFormDataInCreate(): Promise<{
     meqs: MEQS[],
@@ -174,4 +291,131 @@ export async function fetchFormDataInCreate(): Promise<{
     }
     
 
+}
+
+export async function create(input: CreatePoInput): Promise<MutationResponse> {
+
+    const approvers = input.approvers.map(item => {
+        return `
+        {
+          approver_id: "${item.approver?.id}"
+          label: "${item.label}"
+          order: ${item.order}
+        }`;
+    }).join(', ');
+
+    const mutation = `
+        mutation {
+            createPo(
+                input: {
+                    meqs_supplier_id: "${input.meqs_supplier?.id}"
+                    notes: "${input.notes}"
+                    approvers: [${approvers}]
+                }
+            ) {
+                id
+            }
+        }`;
+
+    try {
+        const response = await sendRequest(mutation);
+        console.log('response', response);
+
+        if(response.data && response.data.data && response.data.data.createPo) {
+            return {
+                success: true,
+                msg: 'PO created successfully!',
+                data: response.data.data.createPo 
+            };
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+    } catch (error) {
+        console.error(error);
+        
+        return {
+            success: false,
+            msg: 'Failed to create PO. Please contact system administrator'
+        };
+    }
+}
+
+export async function findOne(id: string): Promise<PO | undefined> {
+    const query = `
+        query {
+            po(id: "${id}") {
+                id
+                po_number
+                status
+                po_date
+                notes
+                is_deleted
+                canceller{
+                    id
+                    firstname
+                    middlename
+                    lastname
+                }
+                po_approvers{
+                    approver {
+                        firstname
+                        middlename
+                        lastname
+                    }
+                    approver_proxy {
+                        firstname
+                        middlename
+                        lastname
+                    }
+                    status
+                    label
+                    order
+                }
+                meqs_supplier {
+                    id
+                    payment_terms
+                    supplier{
+                        id
+                        name 
+                        vat_type
+                    }
+                    meqs_supplier_items {
+                        id 
+                        price 
+                        notes 
+                        is_awarded
+                        canvass_item {
+                            id 
+                            description
+                            brand {
+                                id 
+                                name
+                            }
+                            unit {
+                                id 
+                                name 
+                            }
+                            quantity
+                        }
+                    }
+                }
+            }
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        if(response.data && response.data.data && response.data.data.po) {
+            return response.data.data.po;
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+    } catch (error) {
+        console.error(error);
+        return undefined
+    }
 }

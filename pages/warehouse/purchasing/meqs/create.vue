@@ -185,7 +185,6 @@
 
 <script setup lang="ts">
 
-import moment from 'moment';
 import type { CanvassItemWithSuppliers, CreateMeqsInput, CreateMeqsSupplierItemSubInput, CreateMeqsSupplierSubInput } from '~/composables/warehouse/meqs/meqs.types';
 import type { RV } from '~/composables/warehouse/rv/rv.types';
 import * as meqsApi from '~/composables/warehouse/meqs/meqs.api'
@@ -204,7 +203,6 @@ const config = useRuntimeConfig()
 const router = useRouter();
 
 // CONSTANTS
-const today = moment().format('YYYY-MM-DD')
 const transactionTypes = ref(['RV', 'SPR', 'JO'])
 const requiredNotesBtn = ref<HTMLButtonElement>()
 const API_URL = config.public.apiUrl
@@ -234,7 +232,6 @@ const meqsData = ref<CreateMeqsInput>({
     rv: null,
     spr: null,
     notes: '',
-    meqs_date: today,
     approvers: [],
     meqs_suppliers: []
 })

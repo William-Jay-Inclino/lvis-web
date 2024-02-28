@@ -21,8 +21,8 @@
                                     <tr>
                                         <td class="text-muted">Status</td>
                                         <td>
-                                            <div :class="{[`badge bg-${rvStatus.color}`]: true}"> 
-                                                {{ rvStatus.label }} 
+                                            <div :class="{[`badge bg-${approvalStatus[item.status].color}`]: true}"> 
+                                                {{ approvalStatus[item.status].label }} 
                                             </div>
                                         </td>
                                     </tr>
@@ -218,31 +218,31 @@
     })
 
 
-    const rvStatus = computed( () => {
+    // const rvStatus = computed( () => {
 
-        const approvers = item.value!.rv_approvers
+    //     const approvers = item.value!.rv_approvers
 
-        if(item.value!.is_cancelled) {
+    //     if(item.value!.is_cancelled) {
 
-            return approvalStatus[APPROVAL_STATUS.CANCELLED]
+    //         return approvalStatus[APPROVAL_STATUS.CANCELLED]
 
-        }
+    //     }
 
-        const hasDisapproved = approvers.find(i => i.status === APPROVAL_STATUS.DISAPPROVED)
+    //     const hasDisapproved = approvers.find(i => i.status === APPROVAL_STATUS.DISAPPROVED)
 
-        if(hasDisapproved) {
-            return approvalStatus[APPROVAL_STATUS.DISAPPROVED]
-        }
+    //     if(hasDisapproved) {
+    //         return approvalStatus[APPROVAL_STATUS.DISAPPROVED]
+    //     }
 
-        const hasPending = approvers.find(i => i.status === APPROVAL_STATUS.PENDING)
+    //     const hasPending = approvers.find(i => i.status === APPROVAL_STATUS.PENDING)
 
-        if(hasPending) {
-            return approvalStatus[APPROVAL_STATUS.PENDING]
-        }
+    //     if(hasPending) {
+    //         return approvalStatus[APPROVAL_STATUS.PENDING]
+    //     }
 
-        return approvalStatus[APPROVAL_STATUS.APPROVED]
+    //     return approvalStatus[APPROVAL_STATUS.APPROVED]
 
-    })
+    // })
 
 
     function checkMobile() {

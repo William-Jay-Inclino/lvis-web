@@ -247,7 +247,6 @@
     import type { Unit } from '~/composables/warehouse/unit/unit.types';
     import Swal from 'sweetalert2'
     import type { Brand, CreateCanvassInput, CreateCanvassItemSubInput } from '~/composables/warehouse/canvass/canvass.types';
-    import moment from 'moment';
     import { getFullname } from '~/utils/helpers'
     import { useToast } from "vue-toastification";
     import { MOBILE_WIDTH } from '~/utils/config';
@@ -255,7 +254,6 @@
 
     // CONSTANTS
     const router = useRouter();
-    const today = moment().format('YYYY-MM-DD')
     const toast = useToast();
 
     // FLAGS
@@ -288,7 +286,6 @@
 
     // CANVASS FORM DATA
     const formData = ref<CreateCanvassInput>({
-        date_requested: today,
         purpose: '',
         notes: '',
         requested_by: null,

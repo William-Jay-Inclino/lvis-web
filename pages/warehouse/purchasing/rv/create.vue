@@ -139,7 +139,6 @@
     })
 
     import Swal from 'sweetalert2'
-    import moment from 'moment';
     import { getFullname } from '~/utils/helpers'
     import * as rvApi from '~/composables/warehouse/rv/rv.api'
     import type { Canvass, Classification } from '~/composables/warehouse/canvass/canvass.types';
@@ -148,7 +147,6 @@
 
     // CONSTANTS
     const router = useRouter();
-    const today = moment().format('YYYY-MM-DD')
 
     // FLAGS
     const isMobile = ref(false)
@@ -165,7 +163,6 @@
         canvass: null,
         supervisor: null,
         classification: null,
-        date_requested: today,
         work_order_no: '',
         work_order_date: null,
         notes: '',

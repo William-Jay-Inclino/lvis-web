@@ -393,7 +393,6 @@ export async function create(input: CreateCanvassInput): Promise<MutationRespons
         mutation {
             createCanvass(
                 input: {
-                    date_requested: "${input.date_requested}"
                     purpose: "${input.purpose}"
                     notes: "${input.notes}"
                     requested_by_id: "${input.requested_by?.id}"

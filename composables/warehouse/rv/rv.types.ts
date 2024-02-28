@@ -22,14 +22,6 @@ export interface RV {
   is_deleted: boolean
   status: APPROVAL_STATUS
 
-  // set programmatically
-
-  // statusObject: {
-  //   value: APPROVAL_STATUS
-  //   label: string 
-  //   color: string 
-  // }
-
 }
 
 
@@ -52,7 +44,6 @@ export interface MutationResponse {
 export interface CreateRvInput {
   canvass: Canvass | null;
   supervisor: Employee | null;
-  date_requested: string;
   work_order_no: string;
   work_order_date: string | null;
   classification: Classification | null;

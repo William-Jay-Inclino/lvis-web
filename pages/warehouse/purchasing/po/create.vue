@@ -137,12 +137,14 @@
     import type { CreatePoInput } from '~/composables/warehouse/po/po.types';
     import * as poApi from '~/composables/warehouse/po/po.api'
     import { formatToPhpCurrency } from '~/utils/helpers'
-import type { MeqsSupplier } from '~/composables/warehouse/meqs/meqs-supplier';
-
+    import type { MeqsSupplier } from '~/composables/warehouse/meqs/meqs-supplier';
+    import Swal from 'sweetalert2'
 
     definePageMeta({
         layout: "layout-admin"
     })
+
+    const router = useRouter();
 
     // FLAGS
     const isMobile = ref(false)
@@ -203,8 +205,33 @@ import type { MeqsSupplier } from '~/composables/warehouse/meqs/meqs-supplier';
     })
 
 
-    function save() {
+    async function save() {
         console.log('save')
+
+        console.log('saving...')
+
+        isSaving.value = true
+        const response = await poApi.create(poData.value)
+        isSaving.value = false
+
+        if(response.success && response.data) {
+
+            Swal.fire({
+                title: 'Success!',
+                text: response.msg,
+                icon: 'success',
+                position: 'top',
+            })
+
+            router.push(`/warehouse/purchasing/po/view/${response.data.id}`);
+        }else {
+            Swal.fire({
+                title: 'Error!',
+                text: response.msg,
+                icon: 'error',
+                position: 'top',
+            })
+        }
     }
 
     function onMeqsNumberSelected(payload: MeqsSupplier) {

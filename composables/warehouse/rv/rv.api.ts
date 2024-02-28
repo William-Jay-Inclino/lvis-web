@@ -549,7 +549,6 @@ export async function create(input: CreateRvInput): Promise<MutationResponse> {
                 input: {
                     canvass_id: "${input.canvass?.id}"
                     supervisor_id: "${input.supervisor?.id}"
-                    date_requested: "${input.date_requested}"
                     work_order_no: ${work_order_no}
                     work_order_date: ${work_order_date}
                     classification_id: ${classification_id}

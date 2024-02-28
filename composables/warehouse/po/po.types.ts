@@ -12,9 +12,6 @@ export interface PO {
   meqs_supplier: MeqsSupplier
 }
 
-
-
-
 export interface CreatePoInput {
     meqs_supplier: MeqsSupplier| null
     approvers: PoApproverSettings[];
@@ -25,11 +22,23 @@ export interface UpdatePoInput {
     notes: string
 }
 
-
 export interface CreatePoApproverSubInput {
     approver_id: string;
     approver_proxy_id?: string | null;
     label: string;
     order: number;
 
+}
+
+export interface MutationResponse {
+    success: boolean 
+    msg: string 
+    data?: PO
+}
+
+export interface FindAllResponse {
+    data: PO[]
+    totalItems: number
+    currentPage: number
+    totalPages: number
 }
