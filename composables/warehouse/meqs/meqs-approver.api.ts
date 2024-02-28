@@ -1,10 +1,10 @@
-import type { CreateApproverInput, RvApproverMutationResponse, UpdateApproverOrderResponse, UpdateApproverInput } from "./rv-approver.types";
+import type { CreateApproverInput, MeqsApproverMutationResponse, UpdateApproverOrderResponse, UpdateApproverInput } from "./meqs-approver.types";
 
 export async function updateApproverOrder(inputs: {id: string, order: number}[]): Promise<UpdateApproverOrderResponse> {
     const inputsString = inputs.map(({ id, order }) => `{ id: "${id}", order: ${order} }`).join('\n');
     const mutation = `
         mutation {
-            updateRVApproverOrder(
+            updateMEQSApproverOrder(
                 inputs: [
                     ${inputsString}
                 ]
@@ -12,14 +12,8 @@ export async function updateApproverOrder(inputs: {id: string, order: number}[])
                 success
                 approvers {
                     id
-                    rv_id
+                    meqs_id
                     approver {
-                        id
-                        firstname
-                        middlename
-                        lastname
-                    }
-                    approver_proxy {
                         id
                         firstname
                         middlename
@@ -39,18 +33,18 @@ export async function updateApproverOrder(inputs: {id: string, order: number}[])
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if (response.data && response.data.data && response.data.data.updateRVApproverOrder) {
+        if (response.data && response.data.data && response.data.data.updateMEQSApproverOrder) {
 
-            if(response.data.data.updateRVApproverOrder.success) {
+            if(response.data.data.updateMEQSApproverOrder.success) {
                 return {
                     success: true,
                     msg: 'Order updated successfully!',
-                    approvers: response.data.data.updateRVApproverOrder.approvers
+                    approvers: response.data.data.updateMEQSApproverOrder.approvers
                 };
             }else{
                 return {
                     success: false,
-                    msg: 'Failed to update RV Approver Order. Please contact system administrator',
+                    msg: 'Failed to update MEQS Approver Order. Please contact system administrator',
                     approvers: []
                 }
             }
@@ -63,33 +57,27 @@ export async function updateApproverOrder(inputs: {id: string, order: number}[])
 
         return {
             success: false,
-            msg: 'Failed to update RV Approver Order. Please contact system administrator',
+            msg: 'Failed to update MEQS Approver Order. Please contact system administrator',
             approvers: []
         };
     }
 }
 
-export async function create(rvId: string, input: CreateApproverInput): Promise<RvApproverMutationResponse> {
+export async function create(meqsId: string, input: CreateApproverInput): Promise<MeqsApproverMutationResponse> {
 
     const mutation = `
         mutation {
-            createRvApprover(
+            createMeqsApprover(
                 input: {
-                    rv_id: "${rvId}"
+                    meqs_id: "${meqsId}"
                     approver_id: "${input.approver?.id}"
                     label: "${input.label}"
                     order: ${input.order}
                 }
             ) {
                 id
-                rv_id
+                meqs_id
                 approver {
-                    id
-                    firstname
-                    middlename
-                    lastname
-                }
-                approver_proxy {
                     id
                     firstname
                     middlename
@@ -107,11 +95,11 @@ export async function create(rvId: string, input: CreateApproverInput): Promise<
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.createRvApprover) {
+        if(response.data && response.data.data && response.data.data.createMeqsApprover) {
             return {
                 success: true,
                 msg: 'Approver added!',
-                data: response.data.data.createRvApprover 
+                data: response.data.data.createMeqsApprover 
             };
         }
 
@@ -122,7 +110,7 @@ export async function create(rvId: string, input: CreateApproverInput): Promise<
         
         return {
             success: false,
-            msg: 'Failed to create RV Approver. Please contact system administrator'
+            msg: 'Failed to create MEQS Approver. Please contact system administrator'
         };
     }
 }
@@ -131,7 +119,7 @@ export async function remove(id: string): Promise<{success: boolean, msg: string
 
     const mutation = `
         mutation {
-            removeRvApprover(
+            removeMeqsApprover(
                 id: "${id}"
             ) {
                 success
@@ -143,10 +131,10 @@ export async function remove(id: string): Promise<{success: boolean, msg: string
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.removeRvApprover) {
+        if(response.data && response.data.data && response.data.data.removeMeqsApprover) {
             return {
-                success: response.data.data.removeRvApprover.success,
-                msg: response.data.data.removeRvApprover.msg
+                success: response.data.data.removeMeqsApprover.success,
+                msg: response.data.data.removeMeqsApprover.msg
             };
         }
 
@@ -157,12 +145,12 @@ export async function remove(id: string): Promise<{success: boolean, msg: string
         
         return {
             success: false,
-            msg: 'Failed to remove RV Approver. Please contact system administrator'
+            msg: 'Failed to remove MEQS Approver. Please contact system administrator'
         };
     }
 }
 
-export async function update(input: UpdateApproverInput): Promise<RvApproverMutationResponse> {
+export async function update(input: UpdateApproverInput): Promise<MeqsApproverMutationResponse> {
 
     let notes = null 
     let date_approval = null
@@ -179,7 +167,7 @@ export async function update(input: UpdateApproverInput): Promise<RvApproverMuta
 
     const mutation = `
         mutation {
-            updateRvApprover(
+            updateMeqsApprover(
                 id: "${input.id}",
                 input: {
                     approver_id: "${input.approver?.id}"
@@ -191,14 +179,8 @@ export async function update(input: UpdateApproverInput): Promise<RvApproverMuta
                 }
             ) {
                 id
-                rv_id
+                meqs_id
                 approver {
-                    id
-                    firstname
-                    middlename
-                    lastname
-                }
-                approver_proxy {
                     id
                     firstname
                     middlename
@@ -216,11 +198,11 @@ export async function update(input: UpdateApproverInput): Promise<RvApproverMuta
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.updateRvApprover) {
+        if(response.data && response.data.data && response.data.data.updateMeqsApprover) {
             return {
                 success: true,
                 msg: 'Approver updated!',
-                data: response.data.data.updateRvApprover 
+                data: response.data.data.updateMeqsApprover 
             };
         }
 
@@ -231,7 +213,7 @@ export async function update(input: UpdateApproverInput): Promise<RvApproverMuta
         
         return {
             success: false,
-            msg: 'Failed to update RV Approver. Please contact system administrator'
+            msg: 'Failed to update MEQS Approver. Please contact system administrator'
         };
     }
 }

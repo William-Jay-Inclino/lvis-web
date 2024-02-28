@@ -2,3 +2,20 @@
 body {
     background-color: #F8F8FF;
 }
+
+
+hr.result {
+    flex: 1;
+    margin: 0 10px;
+    border: none;
+    border-top: 1px solid #333;
+    }
+
+h5 {
+    margin: 0;
+}
+
+.h5wrapper {
+    display: flex;
+    align-items: center;
+}

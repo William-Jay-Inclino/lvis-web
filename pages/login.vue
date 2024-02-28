@@ -26,7 +26,9 @@
     import { ref } from 'vue'
     import axios from 'axios'
     import { AxiosError } from 'axios'
-    import { API_URL } from '~/utils/config'
+
+    const config = useRuntimeConfig()
+    const API_URL = config.public.apiUrl
 
     const router = useRouter();
     const email = ref('');
@@ -92,3 +94,4 @@
         padding: 10px;
     }
 </style>
+~/composables/config

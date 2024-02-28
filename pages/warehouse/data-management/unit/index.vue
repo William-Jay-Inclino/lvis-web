@@ -157,4 +157,4 @@
         pagination.value.totalPages = totalPages  
     }
 
-</script>
+</script>~/composables/config

@@ -11,24 +11,33 @@
 
                         <div class="mb-3">
                             <label class="form-label">
-                                Date
-                            </label>
-                            <input type="date" class="form-control" :value="rvData.date_requested" disabled>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">
                                 RC Number <span class="text-danger">*</span>
                             </label>
                             <client-only>
                                 <v-select @option:selected="onRcNumberSelected" :options="canvasses" label="rc_number" v-model="rvData.canvass">
                                     <template v-slot:option="option">
-                                        <span v-if="option.is_referenced" class="text-danger">{{ option.rc_number }}</span>
-                                        <span v-else>{{ option.rc_number }}</span>
+                                        <div v-if="option.is_referenced" class="row">
+                                            <div class="col">
+                                                <span class="text-danger">{{ option.rc_number }}</span>
+                                            </div>
+                                            <div class="col text-end">
+                                                <small class="text-muted fst-italic">
+                                                    Referenced
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div v-else class="row">
+                                            <div class="col">
+                                                <span>{{ option.rc_number }}</span>
+                                            </div>
+                                            <div class="col text-end">
+                                                <small class="text-success fst-italic"> Available </small>
+                                            </div>
+                                        </div>
                                     </template>
                                 </v-select>
                             </client-only>
-                            <nuxt-link v-if="rvData.canvass" class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/canvass/' + rvData.canvass.id" target="_blank">View info</nuxt-link>
+                            <nuxt-link v-if="rvData.canvass" class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/canvass/view/' + rvData.canvass.id" target="_blank">View info</nuxt-link>
                             <small class="text-danger fst-italic" v-if="rvDataErrors.canvass"> This field is required </small>
                         </div>
 
@@ -51,6 +60,14 @@
                                 Purpose
                             </label>
                             <textarea v-if="rvData.canvass" :value="rvData.canvass.purpose" class="form-control" rows="3" disabled> </textarea>
+                            <textarea v-else class="form-control" rows="3" disabled> </textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Requisitioner Notes
+                            </label>
+                            <textarea v-if="rvData.canvass" :value="rvData.canvass.notes" class="form-control" rows="3" disabled> </textarea>
                             <textarea v-else class="form-control" rows="3" disabled> </textarea>
                         </div>
 
@@ -94,9 +111,9 @@
                             <textarea class="form-control" rows="3" v-model="rvData.notes"></textarea>
                         </div>
                 
-                        <div class="d-flex justify-content-end gap-2">
+                        <div class="d-flex justify-content-between">
                             <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rv">
-                                <i class="fas fa-chevron-left"></i> Back
+                                <i class="fas fa-chevron-left"></i> Back to Search
                             </nuxt-link>
                             <button @click="save()" type="button" class="btn btn-primary" :disabled="isSaving">
                                 <i class="fas fa-save"></i> {{ isSaving ? 'Saving...' : 'Save' }}
@@ -231,7 +248,15 @@
         isSaving.value = false
 
         if(response.success && response.data) {
-            router.push(`/warehouse/purchasing/rv/success/${response.data.id}`);
+
+            Swal.fire({
+                title: 'Success!',
+                text: response.msg,
+                icon: 'success',
+                position: 'top',
+            })
+
+            router.push(`/warehouse/purchasing/rv/view/${response.data.id}`);
         }else {
             Swal.fire({
                 title: 'Error!',
@@ -292,3 +317,4 @@
 
 </script>
 
+~/composables/config

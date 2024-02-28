@@ -7,7 +7,7 @@
             <div class="col">
                 <span class="text-secondary">
                     Step {{ currentStep }} of 2: 
-                    <span v-if="currentStep === 1"> Fill up canvass details </span>
+                    <span v-if="currentStep === 1"> Fill up canvass info </span>
                     <span v-if="currentStep === 2"> Add canvass items </span>
                 </span>
             </div>
@@ -18,13 +18,6 @@
                 <div class="row justify-content-center pt-5">
         
                     <div v-show="currentStep === 1" class="col-lg-6">
-
-                        <div class="mb-3">
-                            <label class="form-label">
-                                Date
-                            </label>
-                            <input type="date" :value="formData.date_requested" class="form-control" disabled>
-                        </div>
 
                         <div class="mb-3">
                             <label class="form-label">
@@ -49,9 +42,9 @@
                             <textarea v-model="formData.notes" class="form-control" rows="3"></textarea>
                         </div>
                 
-                        <div class="d-flex justify-content-end gap-2">
+                        <div class="d-flex justify-content-between">
                             <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">
-                                <i class="fas fa-chevron-left"></i> Back
+                                <i class="fas fa-chevron-left"></i> Back to Search
                             </nuxt-link>
                             <button @click="onClickNextStep1()" type="button" class="btn btn-primary">
                                 <i class="fas fa-chevron-right"></i> Next
@@ -72,17 +65,13 @@
             
                                             <thead>
                                                 <tr>
-                                                    <th class="text-muted">No.</th>
-                                                    <th class="text-muted">
-                                                        Description <span class="text-danger"> * </span>
-                                                    </th>
-                                                    <th class="text-muted">Brand</th>
-                                                    <th class="text-muted">Unit</th>
-                                                    <th class="text-muted">
-                                                        Quantity <span class="text-danger"> * </span>
-                                                    </th>
-                                                    <th class="text-muted text-center">
-                                                        Remove
+                                                    <th class="bg-secondary text-white">No.</th>
+                                                    <th class="bg-secondary text-white">Description</th>
+                                                    <th class="bg-secondary text-white">Brand</th>
+                                                    <th class="bg-secondary text-white">Unit</th>
+                                                    <th class="bg-secondary text-white">Quantity </th>
+                                                    <th class="bg-secondary text-white text-center">
+                                                        <i class="fas fa-cog"></i>
                                                     </th>
                                                 </tr>
                                             </thead>
@@ -172,7 +161,7 @@
                             </div>
                         </div>
 
-                        <div class="d-flex justify-content-end gap-2 mb-3">
+                        <div class="d-flex justify-content-between mb-3">
                             <button @click="currentStep--" type="button" class="btn btn-secondary">
                                 <i class="fas fa-chevron-left"></i> Back
                             </button>
@@ -190,7 +179,7 @@
 
 
         <!-- Modal -->
-        <div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
             <div class="modal-dialog">
                 <div class="modal-content">
                 <div class="modal-header">
@@ -350,7 +339,15 @@
         isSaving.value = false
 
         if(response.success && response.data) {
-            router.push(`/warehouse/purchasing/canvass/success/${response.data.id}`);
+
+            Swal.fire({
+                title: 'Success!',
+                text: response.msg,
+                icon: 'success',
+                position: 'top',
+            })
+
+            router.push(`/warehouse/purchasing/canvass/view/${response.data.id}`);
         }else {
             Swal.fire({
                 title: 'Error!',
@@ -454,3 +451,4 @@
 
 </script>
 
+~/composables/config

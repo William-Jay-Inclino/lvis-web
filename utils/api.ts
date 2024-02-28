@@ -1,10 +1,17 @@
 import axios, { type AxiosResponse } from 'axios';
-import { GRAPHQL_API_URL } from './config';
 import type { AuthUser } from '~/composables/common.types';
 
-console.log('GRAPHQL_API_URL', GRAPHQL_API_URL)
+
+
+
 
 export const sendRequest = async (queryOrMutation: string, variables?: Record<string, any>): Promise<AxiosResponse> => {
+
+    const config = useRuntimeConfig()
+
+    const GRAPHQL_API_URL = config.public.graphqlApiUrl
+    console.log('GRAPHQL_API_URL', GRAPHQL_API_URL)
+
     console.log('sendRequest()', queryOrMutation);
     console.log('=== variables ===', JSON.stringify(variables))
 

@@ -62,16 +62,20 @@
                     <textarea class="form-control" rows="3" v-model="canvass.notes"></textarea>
                 </div>
         
-                <div class="d-flex justify-content-end gap-2 pt-3">
-                    <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">
-                        <i class="fas fa-chevron-left"></i> Back
-                    </nuxt-link>
-                    <button class="btn btn-primary">
-                        <i class="fas fa-print"></i> Print
-                    </button>
-                    <button @click="updateCanvassDetail()" class="btn btn-success" :disabled="isUpdating">
-                        <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
-                    </button>
+                <div class="d-flex justify-content-between pt-3">
+                    <div>
+                        <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">
+                            <i class="fas fa-chevron-left"></i> Back to Search
+                        </nuxt-link>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary me-2">
+                            <i class="fas fa-print"></i> Print
+                        </button>
+                        <button @click="updateCanvassDetail()" class="btn btn-success" :disabled="isUpdating">
+                            <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
+                        </button>
+                    </div>
                 </div>
 
             </div>
@@ -192,9 +196,9 @@
                 </div>
     
     
-                <div class="d-flex justify-content-end gap-2 mb-3 pt-3">
+                <div class="d-flex justify-content-between mb-3 pt-3">
                     <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">
-                        <i class="fas fa-chevron-left"></i> Back
+                        <i class="fas fa-chevron-left"></i> Back to Search
                     </nuxt-link>
                 </div>
             </div>
@@ -590,4 +594,4 @@
 
 
 
-</script>
+</script>~/composables/config

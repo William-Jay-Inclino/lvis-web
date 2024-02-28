@@ -1,10 +1,13 @@
 
+// const config = useRuntimeConfig()
 
-export const API_URL = process.env.API_URL || 'http://localhost:4000'
-export const GRAPHQL_API_URL = process.env.GRAPHQL_API_URL || 'http://localhost:4000/graphql'
+// export const API_URL = config.public.apiUrl
+// export const GRAPHQL_API_URL = config.public.graphqlApiUrl
+// export const CHATGPT_API_KEY = config.public.chatGptApiKey
+
 
 export const PAGINATION_SIZE = 15
-
 export const APPROVER_SUPERVISOR_LABEL = 'Imd. Sup.'
-
 export const MOBILE_WIDTH = 768
+export const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+export const UPLOADS_PATH = 'uploads'

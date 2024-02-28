@@ -1,5 +1,12 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+    runtimeConfig: {
+        public: {
+            apiUrl: process.env.API_URL,
+            graphqlApiUrl: process.env.GRAPHQL_API_URL,
+            chatGptApiKey: process.env.CHATGPT_API_KEY
+        } 
+    },
     devtools: { enabled: false },
     app: {
         head: {
