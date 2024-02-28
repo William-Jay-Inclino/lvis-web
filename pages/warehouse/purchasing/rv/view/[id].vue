@@ -19,6 +19,14 @@
                             <table class="table table-bordered">
                                 <tbody>
                                     <tr>
+                                        <td class="text-muted">Status</td>
+                                        <td>
+                                            <div :class="{[`badge bg-${rvStatus.color}`]: true}"> 
+                                                {{ rvStatus.label }} 
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <td class="text-muted">RV Number</td>
                                         <td> {{ item.rv_number }} </td>
                                     </tr>
@@ -164,7 +172,7 @@
                                     <i class="fas fa-chevron-left"></i> Back to Search
                                 </nuxt-link>
                             </div>
-                            <div>
+                            <div v-if="!item.is_deleted && !item.is_cancelled">
                                 <nuxt-link class="btn btn-success me-2" :to="`/warehouse/purchasing/rv/${item.id}`">
                                     <i class="fas fa-sync"></i> Update
                                 </nuxt-link>
@@ -208,6 +216,34 @@
         item.value = await api.findOne(route.params.id as string)
 
     })
+
+
+    const rvStatus = computed( () => {
+
+        const approvers = item.value!.rv_approvers
+
+        if(item.value!.is_cancelled) {
+
+            return approvalStatus[APPROVAL_STATUS.CANCELLED]
+
+        }
+
+        const hasDisapproved = approvers.find(i => i.status === APPROVAL_STATUS.DISAPPROVED)
+
+        if(hasDisapproved) {
+            return approvalStatus[APPROVAL_STATUS.DISAPPROVED]
+        }
+
+        const hasPending = approvers.find(i => i.status === APPROVAL_STATUS.PENDING)
+
+        if(hasPending) {
+            return approvalStatus[APPROVAL_STATUS.PENDING]
+        }
+
+        return approvalStatus[APPROVAL_STATUS.APPROVED]
+
+    })
+
 
     function checkMobile() {
         isMobile.value = window.innerWidth < MOBILE_WIDTH

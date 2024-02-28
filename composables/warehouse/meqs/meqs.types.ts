@@ -1,4 +1,4 @@
-import type { APPROVAL_STATUS, VAT_TYPE, Approver } from "~/composables/common.types";
+import type { APPROVAL_STATUS, Approver } from "~/composables/common.types";
 import type { RV } from "../rv/rv.types";
 import type { CanvassItem } from "../canvass/canvass-item.types";
 import type { MeqsSupplier, Supplier } from "./meqs-supplier";
@@ -47,10 +47,6 @@ export interface CreateMeqsSupplierSubInput {
   payment_terms: string;
   meqs_supplier_items: CreateMeqsSupplierItemSubInput[]; 
   attachments: any[]; 
-  vat: {
-    value: VAT_TYPE,
-    label: string
-  } | null;
 }
 
 export interface CreateMeqsSupplierItemSubInput {
@@ -87,4 +83,8 @@ export interface MutationResponse {
   success: boolean 
   msg: string 
   data?: MEQS
+}
+
+export interface UpdateMeqsInput {
+  notes: string
 }

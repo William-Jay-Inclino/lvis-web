@@ -78,7 +78,7 @@
                                             <td class="text-muted align-middle"> {{ i.rc_number }} </td>
                                             <td class="text-muted align-middle"> {{ getFullname(i.requested_by!.firstname, i.requested_by!.middlename, i.requested_by!.lastname) }} </td>
                                             <td class="text-muted align-middle"> {{ formatDate(i.date_requested) }} </td>
-                                            <td class="text-muted text-center align-middle">
+                                            <td class="text-muted align-middle">
                                                 <nuxt-link class="btn btn-light w-50" :to="'/warehouse/purchasing/canvass/view/' + i.id">
                                                     <i class="fas fa-info-circle text-info"></i>
                                                 </nuxt-link>

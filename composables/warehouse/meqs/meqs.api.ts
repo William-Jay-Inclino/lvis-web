@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { RV } from "../rv/rv.types";
-import type { CreateMeqsInput, FindAllResponse, MEQS, MeqsApproverSettings, MutationResponse } from "./meqs.types";
+import type { CreateMeqsInput, FindAllResponse, MEQS, MeqsApproverSettings, MutationResponse, UpdateMeqsInput } from "./meqs.types";
 import type { Supplier } from "./meqs-supplier";
 
 
@@ -292,7 +292,6 @@ export async function findOne(id: string): Promise<MEQS | undefined> {
                         name
                     }
                     payment_terms 
-                    vat_type
                     meqs_supplier_items{
                         canvass_item{
                             id
@@ -443,7 +442,10 @@ export async function fetchFormDataInCreate(): Promise<{
 
 }
 
-export async function fetchFormDataInUpdate(id: string): Promise<{meqs: MEQS} | undefined> {
+export async function fetchFormDataInUpdate(id: string): Promise<{
+    employees: Employee[],
+    meqs: MEQS | undefined
+}> {
 
     const query = `
         query {
@@ -483,12 +485,22 @@ export async function fetchFormDataInUpdate(id: string): Promise<{meqs: MEQS} | 
                     order
                 }
             },
+            employees(page: 1, pageSize: 50) {
+                data {
+                    id
+                    firstname
+                    middlename
+                    lastname
+                }
+            },
         }
     `;
 
     try {
         const response = await sendRequest(query);
         console.log('response', response)
+
+        let employees: Employee[] = []
 
         if(!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
@@ -500,13 +512,21 @@ export async function fetchFormDataInUpdate(id: string): Promise<{meqs: MEQS} | 
             throw new Error(JSON.stringify(response.data.errors));
         }
 
+        if(data.employees && data.employees.data) {
+            employees = response.data.data.employees.data
+        }
+
         return {
-            meqs: data.meq
+            meqs: data.meq,
+            employees
         }
 
     } catch (error) {
         console.error(error);
-        return undefined
+        return {
+            meqs: undefined,
+            employees: []
+        }
     }
     
 
@@ -602,7 +622,6 @@ export async function create(input: CreateMeqsInput): Promise<MutationResponse> 
         {
           supplier_id: "${meqSupplier.supplier?.id}"
           payment_terms: "${meqSupplier.payment_terms}"
-          vat_type: ${meqSupplier.vat?.value}
           meqs_supplier_items: [${meqs_supplier_items}]
           attachments: [${attachments}]
         }`;
@@ -646,4 +665,90 @@ export async function create(input: CreateMeqsInput): Promise<MutationResponse> 
             };
         }
 
+}
+
+export async function update(id: string, input: UpdateMeqsInput): Promise<MutationResponse> {
+
+    
+    const mutation = `
+        mutation {
+            updateMeqs(
+                id: "${id}",
+                input: {
+                    notes: "${input.notes}"
+                }
+            ) {
+                id
+            }
+    }`;
+
+    try {
+        const response = await sendRequest(mutation);
+        console.log('response', response);
+
+        if(response.data && response.data.data && response.data.data.updateMeqs) {
+            return {
+                success: true,
+                msg: 'MEQS updated successfully!',
+                data: response.data.data.updateMeqs 
+            };
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+    } catch (error) {
+        console.error(error);
+        
+        return {
+            success: false,
+            msg: 'Failed to update MEQS. Please contact system administrator'
+        };
+    }
+}
+
+
+export async function cancel(id: string): Promise<MutationResponse> {
+
+    const authUserJson = localStorage.getItem('authUser')
+
+    if(!authUserJson) {
+        throw console.error('authUser in localstorage not found');
+    }
+
+    const authUser = JSON.parse(authUserJson) as AuthUser
+
+    const mutation = `
+        mutation {
+            updateMeqs(
+                id: "${id}",
+                input: {
+                    canceller_id: "${authUser.user.id}"
+                }
+            ) {
+                id
+                is_cancelled
+            }
+    }`;
+
+    try {
+        const response = await sendRequest(mutation);
+        console.log('response', response);
+
+        if(response.data && response.data.data && response.data.data.updateMeqs) {
+            return {
+                success: true,
+                msg: 'MEQS cancelled!' 
+            };
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+    } catch (error) {
+        console.error(error);
+        
+        return {
+            success: false,
+            msg: 'Failed to cancel MEQS. Please contact system administrator'
+        };
+    }
 }

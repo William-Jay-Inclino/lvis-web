@@ -39,13 +39,13 @@ export async function updateApproverOrder(inputs: {id: string, order: number}[])
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if (response.data && response.data.data && response.data.data.updateManyRVApproverOrders) {
+        if (response.data && response.data.data && response.data.data.updateRVApproverOrder) {
 
-            if(response.data.data.updateManyRVApproverOrders.success) {
+            if(response.data.data.updateRVApproverOrder.success) {
                 return {
                     success: true,
                     msg: 'Order updated successfully!',
-                    approvers: response.data.data.updateManyRVApproverOrders.approvers
+                    approvers: response.data.data.updateRVApproverOrder.approvers
                 };
             }else{
                 return {

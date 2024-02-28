@@ -10,7 +10,7 @@ export interface MeqsApproverSettings {
   }
   
   export interface CreateApproverInput {
-    approver: Employee
+    approver: Employee | null
     label: string 
     order: number
   }

@@ -9,7 +9,6 @@ export interface MeqsSupplier {
     supplier: Supplier;
     payment_terms: string;
     is_referenced: boolean;
-    vat_type: VAT_TYPE,
     meqs_supplier_items: MeqsSupplierItem[];
     attachments: MeqsSupplierAttachment[];
   }
@@ -18,5 +17,6 @@ export interface Supplier {
       id: string;
       name: string;
       contact: string;
+      vat_type: VAT_TYPE,
       is_deleted: boolean;
 }

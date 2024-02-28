@@ -18,13 +18,21 @@
                         <table class="table table-bordered">
                             <tbody>
                                 <tr>
+                                    <td class="text-muted">Status</td>
+                                    <td>
+                                        <div :class="{[`badge bg-${meqsStatus.color}`]: true}"> 
+                                            {{ meqsStatus.label }} 
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
                                     <td class="text-muted">MEQS Number</td>
                                     <td> {{ item?.meqs_number }} </td>
                                 </tr>
                                 <tr>
                                     <td class="text-muted"> {{ referenceLabel }} Number</td>
                                     <td>
-                                        <nuxt-link v-if="item?.rv" :to="'/warehouse/purchasing/rv/' + item.rv.id" target="_blank">{{ item.rv.rv_number }}</nuxt-link>
+                                        <nuxt-link v-if="item?.rv" :to="'/warehouse/purchasing/rv/view/' + item.rv.id" target="_blank">{{ item.rv.rv_number }}</nuxt-link>
                                     </td>
                                 </tr>
                                 <tr>
@@ -114,7 +122,6 @@
                             <thead>
                                 <tr>
                                     <th class="bg-secondary text-white"> Supplier </th>
-                                    <th class="bg-secondary text-white"> Vat </th>
                                     <th class="bg-secondary text-white"> Payment Terms </th>
                                     <th class="bg-secondary text-white"> Attachments </th>
                                 </tr>
@@ -122,7 +129,6 @@
                             <tbody>
                                 <tr v-for="i, count in item.meqs_suppliers">
                                     <td class="text-muted align-middle"> {{ i.supplier.name }} </td>
-                                    <td class="text-muted align-middle"> {{ VAT[i.vat_type].label }} </td>
                                     <td class="text-muted align-middle"> {{ i.payment_terms }} </td>
                                     <td>
                                         <div class="d-flex flex-wrap">
@@ -153,10 +159,7 @@
                     </div>
                     <div class="alert alert-info" role="alert">
                         <div>
-                            <small class="text-muted fst-italic">- The awarded supplier is indicated by a yellow star</small>
-                        </div>
-                        <div>
-                            <small class="text-muted fst-italic">- A price of -1 indicates that the item is unavailable from a specific supplier</small>
+                            <small class="text-muted fst-italic">The awarded supplier is indicated by a yellow star</small>
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -165,6 +168,8 @@
                                 <tr>
                                     <th class="bg-secondary text-white"> No </th>
                                     <th class="bg-secondary text-white"> Item </th>
+                                    <th class="bg-secondary text-white"> Unit </th>
+                                    <th class="bg-secondary text-white"> Qty </th>
                                     <th class="bg-secondary text-white text-center" v-for="meqsSupplier in item.meqs_suppliers">
                                         {{ `${meqsSupplier.supplier?.name}` }}
                                     </th>
@@ -175,10 +180,12 @@
                                 <tr v-for="canvassItem, i in referenceData?.canvass.canvass_items">
                                     <td class="text-muted"> {{ i + 1 }} </td>
                                     <td class="text-muted"> {{ canvassItem.description }} </td>
+                                    <td class="text-muted"> {{ canvassItem.unit ? canvassItem.unit.name : 'N/A' }} </td>
+                                    <td class="text-muted"> {{ canvassItem.quantity }} </td>
                                     <td class="text-muted text-center" v-for="meqsSupplier in item.meqs_suppliers">
                                         <template v-for="supplierItem in meqsSupplier.meqs_supplier_items">
                                             <span v-if="supplierItem.canvass_item.id === canvassItem.id">
-                                                {{ supplierItem.price.toFixed(2) }}
+                                                {{ supplierItem.price === -1 ? 'N/A' : supplierItem.price.toFixed(2) }}
                                                 <i class="fas fa-star fs-5" :class="{'text-warning': supplierItem.is_awarded}"></i>
                                             </span>
                                         </template>
@@ -275,6 +282,32 @@
         window.addEventListener('resize', checkMobile);
 
         item.value = await meqsApi.findOne(route.params.id as string)
+
+    })
+
+    const meqsStatus = computed( () => {
+
+        const approvers = item.value!.meqs_approvers
+
+        if(item.value!.is_cancelled) {
+
+            return approvalStatus[APPROVAL_STATUS.CANCELLED]
+
+        }
+
+        const hasDisapproved = approvers.find(i => i.status === APPROVAL_STATUS.DISAPPROVED)
+
+        if(hasDisapproved) {
+            return approvalStatus[APPROVAL_STATUS.DISAPPROVED]
+        }
+
+        const hasPending = approvers.find(i => i.status === APPROVAL_STATUS.PENDING)
+
+        if(hasPending) {
+            return approvalStatus[APPROVAL_STATUS.PENDING]
+        }
+
+        return approvalStatus[APPROVAL_STATUS.APPROVED]
 
     })
     

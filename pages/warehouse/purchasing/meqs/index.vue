@@ -110,7 +110,7 @@
                                                     {{ i.status.label }} 
                                                 </div>
                                             </td>
-                                            <td class="text-muted text-center align-middle">
+                                            <td class="text-muted align-middle">
                                                 <nuxt-link class="btn btn-light w-50" :to="'/warehouse/purchasing/meqs/view/' + i.id">
                                                     <i class="fas fa-info-circle text-info"></i>
                                                 </nuxt-link>

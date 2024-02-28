@@ -119,7 +119,7 @@
 
         <div v-show="!isRVDetailForm" class="row justify-content-center pt-5">
 
-            <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="col-12">
                 <WarehouseApprover 
                     :approvers="rvData.rv_approvers"
                     :employees="employees"

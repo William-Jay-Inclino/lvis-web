@@ -20,6 +20,8 @@
                 <tr>
                     <th class="bg-secondary text-white"> No. </th>
                     <th class="bg-secondary text-white"> Item </th>
+                    <th class="bg-secondary text-white"> Unit </th>
+                    <th class="bg-secondary text-white"> Qty </th>
                     <th class="bg-secondary text-white text-center" v-for="meqsSupplier in meqs_suppliers">
                         {{ `${meqsSupplier.supplier?.name} (${meqsSupplier.payment_terms})` }}
                     </th>
@@ -31,6 +33,8 @@
                 <tr v-for="item, i in canvass_items" :class="{'table-danger': !item.hasAwardedSupplier && !isInitial}">
                     <td class="text-muted align-middle"> {{ i + 1 }} </td>
                     <td class="text-muted align-middle nowrap">{{ item.description }}</td>
+                    <td class="text-muted align-middle nowrap">{{ item.unit ? item.unit.name : 'N/A' }}</td>
+                    <td class="text-muted align-middle nowrap">{{ item.quantity }}</td>
                     <td v-for="meqsSupplier in meqs_suppliers">
                         <div class="d-flex justify-content-center align-items-center">
                             <input

@@ -4,7 +4,7 @@ export async function updateApproverOrder(inputs: {id: string, order: number}[])
     const inputsString = inputs.map(({ id, order }) => `{ id: "${id}", order: ${order} }`).join('\n');
     const mutation = `
         mutation {
-            updateManyMEQSApproverOrders(
+            updateMEQSApproverOrder(
                 inputs: [
                     ${inputsString}
                 ]
@@ -33,13 +33,13 @@ export async function updateApproverOrder(inputs: {id: string, order: number}[])
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if (response.data && response.data.data && response.data.data.updateManyMEQSApproverOrders) {
+        if (response.data && response.data.data && response.data.data.updateMEQSApproverOrder) {
 
-            if(response.data.data.updateManyMEQSApproverOrders.success) {
+            if(response.data.data.updateMEQSApproverOrder.success) {
                 return {
                     success: true,
                     msg: 'Order updated successfully!',
-                    approvers: response.data.data.updateManyMEQSApproverOrders.approvers
+                    approvers: response.data.data.updateMEQSApproverOrder.approvers
                 };
             }else{
                 return {

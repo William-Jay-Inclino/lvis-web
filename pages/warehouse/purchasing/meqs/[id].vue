@@ -1,6 +1,6 @@
 <template>
 
-    <div v-if="meqsData && reference">
+    <div v-if="meqsData && reference && !meqsData.is_cancelled && !meqsData.is_deleted">
         <h2 class="text-warning">Update MEQS</h2>
         <hr>
 
@@ -25,6 +25,13 @@
         <div v-show="isMEQSDetailForm" class="row justify-content-center pt-5">
 
             <div class="col-lg-6">
+
+                <div class="mb-3 d-flex align-items-center">
+                    <label class="form-label me-2 mb-0">Status:</label>
+                    <div :class="{[`badge bg-${meqsStatus.color}`]: true}"> 
+                        {{ meqsStatus.label }} 
+                    </div>
+                </div>
 
                 <div class="mb-3">
                     <label class="form-label">Reference</label>
@@ -53,6 +60,25 @@
                     <small class="text-muted fst-italic">This note will be use during print out</small>
                 </div>
 
+            </div>
+
+        </div>
+
+
+        <div v-show="!isMEQSDetailForm" class="row justify-content-center pt-5">
+            
+            <div class="col-12">
+                <WarehouseApprover 
+                    :approvers="meqsData.meqs_approvers"
+                    :employees="employees"
+                    :isUpdatingApproverOrder="isUpdatingApproverOrder"
+                    :isAddingApprover="isAddingApprover"
+                    :isEditingApprover="isEditingApprover"
+                    @changeApproverOrder="changeApproverOrder"
+                    @addApprover="addApprover"
+                    @editApprover="editApprover"
+                    @removeApprover="removeApprover"
+                />
             </div>
 
         </div>
@@ -100,6 +126,7 @@
     import { useToast } from "vue-toastification";
     import type { MEQS } from '~/composables/warehouse/meqs/meqs.types';
     import * as meqsApi from '~/composables/warehouse/meqs/meqs.api'
+    import * as meqsApproverApi from '~/composables/warehouse/meqs/meqs-approver.api'
 
     // DEPENDENCIES
     const route = useRoute()
@@ -116,6 +143,7 @@
 
     const meqsData = ref<MEQS>({} as MEQS)
 
+    const employees = ref<Employee[]>([])
 
     // ======================== LIFECYCLE HOOKS ========================  
 
@@ -130,6 +158,11 @@
         if(response && response.meqs) {
             populateForm(response.meqs)
         }
+
+        employees.value = response.employees.map((i) => {
+            i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
+            return i
+        })
 
     })
 
@@ -183,14 +216,58 @@
     function populateForm(data: MEQS) {
         console.log('populateForm', data)
         meqsData.value = data
+
+        data.meqs_approvers.map(i => {
+            i.date_approval = i.date_approval ? formatToValidHtmlDate(i.date_approval) : null
+            i.approver!['fullname'] = getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname)
+            return i
+        })
     }
 
-    function updateMeqsInfo() {
+    async function updateMeqsInfo() {
         console.log('updateMeqsInfo')
+
+        console.log('updating...')
+
+        isUpdating.value = true
+        const response = await meqsApi.update(meqsData.value.id, meqsData.value)
+        isUpdating.value = false
+
+        if(response.success && response.data) {
+            Swal.fire({
+                title: 'Success!',
+                text: response.msg,
+                icon: 'success',
+                position: 'top',
+            })
+        } else {
+            Swal.fire({
+                title: 'Error!',
+                text: response.msg,
+                icon: 'error',
+                position: 'top',
+            })
+        }
+
     }
 
-    function cancelMeqs() {
-        console.log('cancelMeqs')
+    async function cancelMeqs() {
+        const response = await meqsApi.cancel(meqsData.value.id)
+
+        if(response.success) {
+            toast.success(response.msg)
+            meqsData.value.is_cancelled = true 
+
+            // router.push('/warehouse/purchasing/meqs')
+
+        }else {
+            Swal.fire({
+                title: 'Error!',
+                text: response.msg,
+                icon: 'error',
+                position: 'top',
+            })
+        }
     }
 
 
@@ -202,25 +279,144 @@
         data: CreateApproverInput,
         modalCloseBtn: HTMLButtonElement
     ) {
-        console.log('addApprover')
+        console.log('data', data)
+
+        isAddingApprover.value = true
+        const response = await meqsApproverApi.create(meqsData.value.id, data)
+        isAddingApprover.value = false
+
+        if(response.success && response.data) {
+            toast.success(response.msg)
+
+            const approver = response.data.approver
+
+            approver!.fullname = getFullname(approver!.firstname, approver!.middlename, approver!.lastname)
+
+            response.data.date_approval = response.data.date_approval ? formatToValidHtmlDate(response.data.date_approval) : null
+
+            meqsData.value.meqs_approvers.push(response.data)
+            modalCloseBtn.click()
+        }else {
+            Swal.fire({
+                title: 'Error!',
+                text: response.msg,
+                icon: 'error',
+                position: 'top',
+            })
+        }
     }
 
     async function editApprover(
         data: UpdateApproverInput,
         modalCloseBtn: HTMLButtonElement
     ) {
-        console.log('editApprover')
+        isEditingApprover.value = true
+        const response = await meqsApproverApi.update(data)
+        isEditingApprover.value = false
+
+        if(response.success && response.data) {
+            toast.success(response.msg)
+
+            const prevApproverItemIndx = meqsData.value.meqs_approvers.findIndex(i => i.id === data.id)
+
+            response.data.date_approval = response.data.date_approval ? formatToValidHtmlDate(response.data.date_approval) : null
+
+            const a = response.data.approver
+
+            response.data.approver!['fullname'] = getFullname(a!.firstname, a!.middlename, a!.lastname)
+
+            meqsData.value.meqs_approvers[prevApproverItemIndx] = {...response.data}
+
+            modalCloseBtn.click()
+
+        }else {
+            Swal.fire({
+                title: 'Error!',
+                text: response.msg,
+                icon: 'error',
+                position: 'top',
+            })
+        }
     }
 
     async function removeApprover(id: string) {
-        console.log('removeApprover')
+        const indx = meqsData.value.meqs_approvers.findIndex(i => i.id === id)
+
+        const item = meqsData.value.meqs_approvers[indx]
+
+        if(!item){
+            console.error('approver not found with id of: ' + id)
+            return 
+        }
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: `${item.approver?.fullname} will be removed!`,
+            position: "top",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#e74a3b",
+            cancelButtonColor: "#6c757d",
+            confirmButtonText: "Yes, delete it!",
+            reverseButtons: true,
+            showLoaderOnConfirm: true,
+            preConfirm: async(remove) => {
+                
+                if(remove) {
+                    const response = await meqsApproverApi.remove(item.id)
+
+                    if(response.success) {
+                        
+                        toast.success(`${item.approver?.fullname} removed!`)
+
+                        meqsData.value.meqs_approvers.splice(indx, 1)
+
+                    }else {
+
+                        Swal.fire({
+                            title: 'Error!',
+                            text: response.msg,
+                            icon: 'error',
+                            position: 'top',
+                        })
+
+                    }
+                }
+
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        })
     }
 
     async function changeApproverOrder(
         data: {id: string, order: number}[],
         modalCloseBtn: HTMLButtonElement
     ) {
-        console.log('changeApproverOrder')
+        console.log('data', data)
+        console.log('modalCloseBtn', modalCloseBtn)
+
+        isUpdatingApproverOrder.value = true
+        const response = await meqsApproverApi.updateApproverOrder(data)
+        isUpdatingApproverOrder.value = false
+
+        if(response.success && response.approvers) {
+            toast.success(response.msg)
+
+            meqsData.value.meqs_approvers = response.approvers.map(i => {
+                i.date_approval = i.date_approval ? formatToValidHtmlDate(i.date_approval) : null
+                i.approver!['fullname'] = getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname)
+                return i
+            })
+            modalCloseBtn.click()
+
+        }else {
+            Swal.fire({
+                title: 'Error!',
+                text: response.msg,
+                icon: 'error',
+                position: 'top',
+            })
+        }
     }
 
 
@@ -229,17 +425,30 @@
     // ======================== UTILS ========================  
 
     async function onCancelMeqs() {
+        Swal.fire({
+            title: "Are you sure?",
+            text: `This MEQS will be cancelled!`,
+            position: "top",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#e74a3b",
+            cancelButtonColor: "#6c757d",
+            confirmButtonText: "Yes, cancel it!",
+            reverseButtons: true,
+            showLoaderOnConfirm: true,
+            preConfirm: async(remove) => {
+                
+                if(remove) {
+                    await cancelMeqs()
+                }
 
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        })
     }
 
     function checkMobile() {
         isMobile.value = window.innerWidth < MOBILE_WIDTH
-    }
-
-    function isValidMeqsInfo(): boolean {
-
-        return false 
-
     }
 
 </script>

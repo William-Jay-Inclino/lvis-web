@@ -173,12 +173,12 @@
                             @start="drag = true"
                             @end="drag = false"
                         >
-                            <template #item="{ element }">
+                            <template #item="{ element, index }">
                                 <div class="draggable-item position-relative">
 
                                     <span class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-primary">
                                         <!-- add counter here -->
-                                        {{ getCounter(element) }}
+                                        {{ getCounter(index) }}
                                     </span>
 
                                     <div class="row">
@@ -541,8 +541,8 @@
 
     // ======================== UTILS ========================  
 
-    function getCounter(element: Approver) {
-        return props.approvers.indexOf(element) + 1;
+    function getCounter(index: number) {
+        return index + 1;
     }
 
     function checkMobile() {

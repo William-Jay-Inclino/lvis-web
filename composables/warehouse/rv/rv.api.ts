@@ -158,6 +158,12 @@ export async function findOne(id: string): Promise<RV | undefined> {
                 id
                 rv_number
                 status
+                date_requested 
+                work_order_no
+                work_order_date
+                notes
+                is_cancelled
+                is_deleted
                 canvass {
                     id
                     rc_number
@@ -173,11 +179,6 @@ export async function findOne(id: string): Promise<RV | undefined> {
                     middlename 
                     lastname
                 }
-                date_requested 
-                work_order_no
-                work_order_date
-                notes
-                is_cancelled
                 classification{
                     name
                 }

@@ -39,7 +39,7 @@ export interface Approver {
 }
 
 export interface CreateApproverInput {
-    approver: Employee | null  
+    approver: Employee | null
     label: string 
     order: number
 }
