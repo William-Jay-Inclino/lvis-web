@@ -16,7 +16,7 @@
                             <hr class="result">
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-bordered">
+                            <table class="table table-bordered table-hover">
                                 <tbody>
                                     <tr>
                                         <td class="text-muted">RC Number</td>
@@ -98,7 +98,7 @@
                             </div>
 
                             <div class="table-responsive">
-                                <table class="table table-bordered">
+                                <table class="table table-bordered table-hover">
                                     <thead>
                                         <tr>
                                             <th class="bg-secondary text-white"> No. </th>
@@ -133,7 +133,7 @@
 
                             <div v-for="i, count in item.canvass_items" class="table-responsive">
 
-                                <table class="table table-hovered table-bordered">
+                                <table class="table table-hover table-bordered">
                                     <tbody> 
                                         <tr>
                                             <td class="bg-secondary text-white"> No. </td>

@@ -16,7 +16,7 @@
                             <hr class="result">
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-bordered">
+                            <table class="table table-bordered table-hover">
                                 <tbody>
                                     <tr>
                                         <td class="text-muted">Status</td>
@@ -117,7 +117,7 @@
                             </div>
 
                             <div class="table-responsive">
-                                <table class="table table-bordered">
+                                <table class="table table-bordered table-hover">
                                     <thead>
                                         <tr>
                                             <th class="bg-secondary text-white"> Order </th>
@@ -154,7 +154,7 @@
 
                             <div v-for="i, count in item.rv_approvers" class="table-responsive">
 
-                                <table class="table table-hovered table-bordered">
+                                <table class="table table-hover table-bordered">
                                     <tbody> 
                                         <tr>
                                             <td width="50%" class="bg-secondary text-white"> Order </td>

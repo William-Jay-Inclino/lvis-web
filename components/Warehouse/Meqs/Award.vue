@@ -26,7 +26,7 @@
                     <th class="bg-secondary text-white text-center" v-for="meqsSupplier in meqs_suppliers">
                         {{ `${meqsSupplier.supplier?.name} (${meqsSupplier.payment_terms})` }}
                     </th>
-                    <th class="bg-secondary text-white text-center"></th>
+                    <th class="bg-secondary text-white text-center"> Remark </th>
                 </tr>
             </thead>
 
@@ -76,10 +76,10 @@
                               :class="{'text-warning': isAwarded(meqsSupplier, item.id)}"></i>
                         </div>
                     </td> -->
-                    <td class="align-middle">
+                    <td class="align-middle text-center">
                         <button @click="onClickAttachNote(item.id)" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#attachNoteModal">
+                            Attach
                             <i class="fas fa-book"></i>
-                            Note
                         </button>
                     </td>
                 </tr>
@@ -92,7 +92,7 @@
                 <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title text-warning" id="exampleModalLabel">
-                        Attach Note
+                        Attach Remark
                     </h5>
                     <button @click="onCloseAttachModal" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>

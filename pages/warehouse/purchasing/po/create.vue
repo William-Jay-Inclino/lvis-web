@@ -97,7 +97,9 @@
                                 <th class="bg-secondary text-white">Brand</th>
                                 <th class="bg-secondary text-white">Unit</th>
                                 <th class="bg-secondary text-white">Qty</th>
-                                <th class="bg-secondary text-white">Unit Price</th>
+                                <th class="bg-secondary text-white">VAT</th>
+                                <th class="bg-secondary text-white">Price/Unit</th>
+                                <th class="bg-secondary text-white">Vat/Unit</th>
                                 <th class="bg-secondary text-white">Total</th>
                             </tr>
                         </thead>
@@ -108,13 +110,19 @@
                                 <td class="text-muted"> {{ item.canvass_item.brand ? item.canvass_item.brand.name : 'N/A' }} </td>
                                 <td class="text-muted"> {{ item.canvass_item.unit ? item.canvass_item.unit.name : 'N/A' }} </td>
                                 <td class="text-muted"> {{ item.canvass_item.quantity }} </td>
+                                <td class="text-muted"> {{ VAT[item.vat_type].label }} </td>
                                 <td class="text-muted"> {{ formatToPhpCurrency(item.price) }} </td>
-                                <td class="text-muted"> {{ formatToPhpCurrency(item.price * item.canvass_item.quantity) }} </td>
+                                <td class="text-muted"> {{ formatToPhpCurrency(getVatPerUnit(item.price, item.vat_type)) }} </td>
+                                <td class="text-muted"> 
+                                    {{ 
+                                        formatToPhpCurrency(getTotalPrice(item.price, item.canvass_item.quantity, getVatPerUnit(item.price, item.vat_type))) 
+                                    }} 
+                                </td>
                             </tr>
                         </tbody>
                         <tfoot v-show="supplierItems.length === 0">
                             <tr>
-                                <td colspan="7" class="text-center">
+                                <td colspan="9" class="text-center">
                                     <span class="text-muted fst-italic"> No awarded items </span>
                                 </td>
                             </tr>
@@ -139,6 +147,7 @@
     import { formatToPhpCurrency } from '~/utils/helpers'
     import type { MeqsSupplier } from '~/composables/warehouse/meqs/meqs-supplier';
     import Swal from 'sweetalert2'
+    import { getTotalPrice, getVatPerUnit } from '~/utils/helpers';
 
     definePageMeta({
         layout: "layout-admin"
@@ -254,6 +263,7 @@
 
     function onChangeMeqsNumber() {
         poData.value.meqs_supplier = null
+        currentMeqsSupplier = null
     }
 
 

@@ -61,7 +61,7 @@
                             <div class="mb-3">
                                 <label class="form-label"> Supplier </label> <span class="text-danger">*</span>
                                 <client-only>
-                                    <v-select :options="availableSuppliers" v-model="formData.supplier" label="name"></v-select>
+                                    <v-select @option:selected="onChangeSupplier" :options="availableSuppliers" v-model="formData.supplier" label="name"></v-select>
                                 </client-only>
                             </div>
                             <div class="mb-3">
@@ -466,6 +466,19 @@ function handleFileRemove(_files: any[]) {
     console.log('handleFileRemove', _files)
 }
 
+function onChangeSupplier() {
+    console.log('onChangeSupplier')
+
+    const supplier = formData.value.supplier
+
+    for(let item of formData.value.meqs_supplier_items) {
+        item.vat = {
+            value: supplier!.vat_type,
+            label: VAT[supplier!.vat_type].label
+        }
+    }
+
+}
 
 const isInvalidPrice = (price: number): boolean => {
 

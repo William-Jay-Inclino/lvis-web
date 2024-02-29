@@ -11,3 +11,4 @@ export const APPROVER_SUPERVISOR_LABEL = 'Imd. Sup.'
 export const MOBILE_WIDTH = 768
 export const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 export const UPLOADS_PATH = 'uploads'
+export const VAT_RATE = 0.12

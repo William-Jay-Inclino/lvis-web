@@ -218,6 +218,7 @@ export async function fetchFormDataInCreate(): Promise<{
                             price 
                             notes 
                             is_awarded
+                            vat_type
                             canvass_item {
                                 id 
                                 description
@@ -405,6 +406,7 @@ export async function findOne(id: string): Promise<PO | undefined> {
                         price 
                         notes 
                         is_awarded
+                        vat_type
                         canvass_item {
                             id 
                             description

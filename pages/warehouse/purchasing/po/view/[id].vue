@@ -3,7 +3,7 @@
     <div v-if="item">
 
         <div class="row pt-3 justify-content-center">
-            <div class="col-lg-9">
+            <div class="col-lg-11">
                 <div class="h5wrapper mb-3">
                     <hr class="result">
                         <h5 class="text-warning fst-italic">
@@ -13,7 +13,7 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table table-bordered"> 
+                    <table class="table table-bordered table-hover"> 
                         <tbody>
                             <tr>
                                 <td class="text-muted">Status</td>
@@ -73,7 +73,7 @@
         </div>
 
         <div class="row pt-3 justify-content-center">
-            <div class="col-lg-9">
+            <div class="col-lg-11">
 
                 <div class="h5wrapper mb-3">
                     <hr class="result">
@@ -84,7 +84,7 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table table-bordered">
+                    <table class="table table-hover table-bordered">
                         <thead>
                             <tr>
                                 <th class="bg-secondary text-white"> Order </th>
@@ -113,7 +113,7 @@
         </div>
 
         <div class="row pt-3 justify-content-center">
-            <div class="col-lg-9">
+            <div class="col-lg-11">
 
                 <div class="h5wrapper mb-3">
                     <hr class="result">
@@ -124,7 +124,7 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table table-hover table-sm">
+                    <table class="table table-hover table-sm table-bordered">
                         <thead>
                             <tr>
                                 <th class="bg-secondary text-white">No</th>
@@ -132,7 +132,9 @@
                                 <th class="bg-secondary text-white">Brand</th>
                                 <th class="bg-secondary text-white">Unit</th>
                                 <th class="bg-secondary text-white">Qty</th>
-                                <th class="bg-secondary text-white">Unit Price</th>
+                                <th class="bg-secondary text-white">VAT</th>
+                                <th class="bg-secondary text-white">Price/Unit</th>
+                                <th class="bg-secondary text-white">Vat/Unit</th>
                                 <th class="bg-secondary text-white">Total</th>
                             </tr>
                         </thead>
@@ -143,8 +145,22 @@
                                 <td class="text-muted"> {{ item.canvass_item.brand ? item.canvass_item.brand.name : 'N/A' }} </td>
                                 <td class="text-muted"> {{ item.canvass_item.unit ? item.canvass_item.unit.name : 'N/A' }} </td>
                                 <td class="text-muted"> {{ item.canvass_item.quantity }} </td>
+                                <td class="text-muted"> {{ VAT[item.vat_type].label }} </td>
                                 <td class="text-muted"> {{ formatToPhpCurrency(item.price) }} </td>
-                                <td class="text-muted"> {{ formatToPhpCurrency(item.price * item.canvass_item.quantity) }} </td>
+                                <td class="text-muted"> {{ formatToPhpCurrency(getVatPerUnit(item.price, item.vat_type)) }} </td>
+                                <td class="text-muted"> 
+                                    {{ 
+                                        formatToPhpCurrency(getTotalPrice(item.price, item.canvass_item.quantity, getVatPerUnit(item.price, item.vat_type))) 
+                                    }} 
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="8" class="text-end fw-bold">
+                                    Summary Total 
+                                </td>
+                                <td class="fw-bold">
+                                    {{ formatToPhpCurrency(totalPriceOfAllItems) }}
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -192,6 +208,7 @@
     import type { PO } from '~/composables/warehouse/po/po.types';
     import { MOBILE_WIDTH } from '~/utils/config';
     import { approvalStatus } from '~/utils/constants'
+    import { getTotalPrice, getVatPerUnit } from '~/utils/helpers';
 
     const route = useRoute()
     const item = ref<PO | undefined>()
@@ -241,8 +258,34 @@
 
     const supplierItems = computed( () => {
 
-        return item.value!.meqs_supplier.meqs_supplier_items.filter(i => i.is_awarded)
+        if(!item.value) return [] 
 
+        const items = item.value.meqs_supplier.meqs_supplier_items
+
+        if(items.length === 0) return []
+
+        const awardedItems = items.filter(i => i.is_awarded)
+
+        return awardedItems
+
+
+    })
+
+    const totalPriceOfAllItems = computed( () => {
+
+        if(supplierItems.value.length === 0) return 0
+
+        let totalPrice = 0 
+
+        for(let item of supplierItems.value) {
+
+            const totalPriceOfItem = getTotalPrice(item.price, item.canvass_item.quantity, getVatPerUnit(item.price, item.vat_type))
+
+            totalPrice += totalPriceOfItem
+
+        }
+
+        return totalPrice
 
     })
 

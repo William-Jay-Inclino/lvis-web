@@ -15,7 +15,7 @@
                     </div>
 
                     <div class="table-responsive">
-                        <table class="table table-bordered">
+                        <table class="table table-bordered table-hover">
                             <tbody>
                                 <tr>
                                     <td class="text-muted">Status</td>
@@ -94,7 +94,7 @@
                     </div>
 
                     <div class="table-responsive">
-                        <table class="table table-bordered">
+                        <table class="table table-hover table-bordered">
                             <thead>
                                 <tr>
                                     <th class="bg-secondary text-white"> Order </th>
@@ -137,7 +137,7 @@
                     </div>
                     
                     <div class="table-responsive">
-                        <table class="table table-bordered">
+                        <table class="table table-hover table-bordered ">
                             <thead>
                                 <tr>
                                     <th class="bg-secondary text-white"> Supplier </th>
@@ -182,7 +182,7 @@
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-bordered table-sm">
+                        <table class="table table-hover table-sm table-bordered ">
                             <thead>
                                 <tr>
                                     <th class="bg-secondary text-white"> No </th>
