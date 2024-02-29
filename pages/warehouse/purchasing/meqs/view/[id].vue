@@ -42,7 +42,7 @@
                                     <td> {{ item?.meqs_number }} </td>
                                 </tr>
                                 <tr>
-                                    <td class="text-muted">PO Number/s</td>
+                                    <td class="text-muted align-middle">PO Number/s</td>
                                     <td>
                                         <div v-if="hasPO">
                                             <div v-for="meqsSupplier in item.meqs_suppliers">

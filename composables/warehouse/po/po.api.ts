@@ -204,6 +204,7 @@ export async function fetchFormDataInCreate(): Promise<{
                 data{
                     id
                     meqs_number
+                    status
                     meqs_suppliers {
                         id
                         payment_terms

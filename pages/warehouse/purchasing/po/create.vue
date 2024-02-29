@@ -16,7 +16,31 @@
                                 MEQS Number <span class="text-danger">*</span>
                             </label>
                             <client-only>
-                                <v-select :options="meqs" label="meqs_number" v-model="selectedMeqs" @option:selected="onChangeMeqsNumber"></v-select>
+                                <v-select @option:selected="onMeqsSelected" :options="meqs" label="meqs_number" v-model="selectedMeqs">
+                                    <template v-slot:option="option">
+                                        <div v-if="option.status !== APPROVAL_STATUS.APPROVED" class="row">
+                                            <div class="col">
+                                                <span class="text-danger">{{ option.meqs_number }}</span>
+                                            </div>
+                                            <div class="col text-end">
+                                                <small class="text-muted fst-italic">
+                                                    {{
+                                                        // @ts-ignore
+                                                        approvalStatus[option.status].label
+                                                    }}
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div v-else class="row">
+                                            <div class="col">
+                                                <span>{{ option.meqs_number }}</span>
+                                            </div>
+                                            <div class="col text-end">
+                                                <small class="text-success fst-italic"> Available </small>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </v-select>
                             </client-only>
                             <nuxt-link v-if="selectedMeqs" class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/meqs/view/' + selectedMeqs.id" target="_blank">View info</nuxt-link>
                         </div>
@@ -25,7 +49,7 @@
                             <label class="form-label">
                                 Supplier <span class="text-danger">*</span>
                             </label>
-                            <v-select @option:selected="onMeqsNumberSelected" :options="suppliers" label="label" v-model="poData.meqs_supplier">
+                            <v-select @option:selected="onSupplierSelected" :options="suppliers" label="label" v-model="poData.meqs_supplier">
                                 <template v-slot:option="option">
                                     <div v-if="option.is_referenced" class="row">
                                         <div class="col">
@@ -168,6 +192,7 @@
     const isSaving = ref(false)
 
     let currentMeqsSupplier: MeqsSupplier | null = null
+    let currentMeqs: MEQS | null = null
 
     const selectedMeqs = ref<MEQS | null>(null)
     const meqs = ref<MEQS[]>([])
@@ -270,8 +295,21 @@
         }
     }
 
-    function onMeqsNumberSelected(payload: MeqsSupplier) {
-        console.log('onMeqsNumberSelected()', payload)
+    function onMeqsSelected(payload: MEQS) {
+        console.log('onMeqsSelected()', payload)
+        if(payload.status === APPROVAL_STATUS.APPROVED) {
+            currentMeqs = payload
+        }else {
+            if(currentMeqs) {
+                selectedMeqs.value = currentMeqs
+            }else{
+                selectedMeqs.value = null
+            }
+        }
+    }
+
+    function onSupplierSelected(payload: MeqsSupplier) {
+        console.log('onSupplierSelected()', payload)
         if(payload.is_referenced) {
             if(currentMeqsSupplier) {
                 poData.value.meqs_supplier = currentMeqsSupplier
