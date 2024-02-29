@@ -1,19 +1,19 @@
 <template>
 
-    <div v-if="meqsData && reference && !meqsData.is_cancelled && !meqsData.is_deleted">
-        <h2 class="text-warning">Update MEQS</h2>
+<div v-if="poData && poData.meqs_supplier && !poData.is_cancelled && !poData.is_deleted">
+        <h2 class="text-warning">Update PO</h2>
         <hr>
 
         <div class="row pt-3">
             <div class="col">
                 <ul class="nav nav-tabs justify-content-center">
-                    <li class="nav-item" @click="isMEQSDetailForm = true">
-                        <a class="nav-link" :class="{'active': isMEQSDetailForm}" href="#">
-                            <i class="fas fa-info-circle"></i> MEQS Info
+                    <li class="nav-item" @click="isPODetailForm = true">
+                        <a class="nav-link" :class="{'active': isPODetailForm}" href="#">
+                            <i class="fas fa-info-circle"></i> PO Info
                         </a>
                     </li>
-                    <li class="nav-item" @click="isMEQSDetailForm = false">
-                        <a class="nav-link" :class="{'active': !isMEQSDetailForm}" href="#">
+                    <li class="nav-item" @click="isPODetailForm = false">
+                        <a class="nav-link" :class="{'active': !isPODetailForm}" href="#">
                             <i class="fas fa-users"></i> Approvers
                         </a>
                     </li>
@@ -22,42 +22,41 @@
         </div>
 
 
-        <div v-show="isMEQSDetailForm" class="row justify-content-center pt-5">
+        <div v-show="isPODetailForm" class="row justify-content-center pt-5">
 
             <div class="col-lg-6">
 
                 <div class="mb-3 d-flex align-items-center">
                     <label class="form-label me-2 mb-0">Status:</label>
-                    <div :class="{[`badge bg-${meqsStatus.color}`]: true}"> 
-                        {{ meqsStatus.label }} 
+                    <div :class="{[`badge bg-${poStatus.color}`]: true}"> 
+                        {{ poStatus.label }} 
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Reference</label>
-                    <input type="text" class="form-control" :value="referenceNumber" disabled>
-                    <nuxt-link v-if="meqsData.rv" class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/rv/view/' + meqsData.rv.id" target="_blank">View info</nuxt-link>
+                    <label class="form-label">PO Number</label>
+                    <input type="text" class="form-control" :value="poData.po_number" disabled>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Requisitioner</label>
-                    <input type="text" class="form-control" :value="getFullname(reference!.canvass.requested_by!.firstname, reference!.canvass.requested_by!.middlename, reference!.canvass.requested_by!.lastname)" disabled>
+                    <label class="form-label">MEQS Number</label>
+                    <input type="text" class="form-control" :value="poData.meqs_supplier.meqs.meqs_number" disabled>
+                    <nuxt-link class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/meqs/view/' + poData.meqs_supplier.meqs.id" target="_blank">View info</nuxt-link>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Requisitioner Purpose</label>
-                    <input type="text" class="form-control" :value="reference.canvass.purpose" disabled>
+                    <label class="form-label">Supplier</label>
+                    <input type="text" class="form-control" :value="poData.meqs_supplier.supplier.name" disabled>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Requisitioner Notes</label>
-                    <input type="text" class="form-control" :value="reference.canvass.notes" disabled>
+                    <label class="form-label">VAT</label>
+                    <input type="text" class="form-control" :value="VAT[poData.meqs_supplier.supplier.vat_type].label" disabled>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Notes</label>
-                    <textarea v-model="meqsData.notes" class="form-control" rows="3"></textarea>
-                    <small class="text-muted fst-italic">This note will be use during print out</small>
+                    <textarea v-model="poData.notes" class="form-control" rows="3"></textarea>
                 </div>
 
             </div>
@@ -65,11 +64,11 @@
         </div>
 
 
-        <div v-show="!isMEQSDetailForm" class="row justify-content-center pt-5">
+        <div v-show="!isPODetailForm" class="row justify-content-center pt-5">
             
             <div class="col-12">
                 <WarehouseApprover 
-                    :approvers="meqsData.meqs_approvers"
+                    :approvers="poData.po_approvers"
                     :employees="employees"
                     :isUpdatingApproverOrder="isUpdatingApproverOrder"
                     :isAddingApprover="isAddingApprover"
@@ -85,7 +84,7 @@
 
 
         <div class="row justify-content-center pt-3">
-            <div :class="{'col-lg-6': isMEQSDetailForm, 'col-12': !isMEQSDetailForm}">
+            <div :class="{'col-lg-6': isPODetailForm, 'col-12': !isPODetailForm}">
                 <div class="d-flex justify-content-between pt-3">
                     <div>
                         <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/meqs">
@@ -93,13 +92,13 @@
                         </nuxt-link>
                     </div>
                     <div>
-                        <button @click="onCancelMeqs" class="btn btn-danger me-2">
+                        <button @click="onCancelPo" class="btn btn-danger me-2">
                             <i class="fas fa-cancel"></i> Cancel
                         </button>
                         <button type="button" class="btn btn-primary me-2">
                             <i class="fas fa-print"></i> Print
                         </button>
-                        <button v-if="isMEQSDetailForm" @click="updateMeqsInfo()" type="button" class="btn btn-success" :disabled="isUpdating">
+                        <button v-if="isPODetailForm" @click="updatePoInfo()" type="button" class="btn btn-success" :disabled="isUpdating">
                             <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
                         </button>
                     </div>
@@ -113,7 +112,6 @@
 </template>
 
 
-
 <script setup lang="ts">
 
     definePageMeta({
@@ -124,9 +122,9 @@
     import { getFullname, formatToValidHtmlDate} from '~/utils/helpers'
     import { MOBILE_WIDTH } from '~/utils/config';
     import { useToast } from "vue-toastification";
-    import type { MEQS } from '~/composables/warehouse/meqs/meqs.types';
-    import * as meqsApi from '~/composables/warehouse/meqs/meqs.api'
-    import * as meqsApproverApi from '~/composables/warehouse/meqs/meqs-approver.api'
+    import type { PO } from '~/composables/warehouse/po/po.types';
+    import * as poApi from '~/composables/warehouse/po/po.api'
+    import * as poApproverApi from '~/composables/warehouse/po/po-approver.api'
 
     // DEPENDENCIES
     const route = useRoute()
@@ -135,13 +133,13 @@
 
     // FLAGS
     const isMobile = ref(false)
-    const isMEQSDetailForm = ref(true)
+    const isPODetailForm = ref(true)
     const isUpdating = ref(false)
     const isUpdatingApproverOrder = ref(false)
     const isAddingApprover = ref(false)
     const isEditingApprover = ref(false)
 
-    const meqsData = ref<MEQS>({} as MEQS)
+    const poData = ref<PO>({} as PO)
 
     const employees = ref<Employee[]>([])
 
@@ -153,10 +151,10 @@
 
         window.addEventListener('resize', checkMobile);
 
-        let response = await meqsApi.fetchFormDataInUpdate(route.params.id as string)
+        let response = await poApi.fetchFormDataInUpdate(route.params.id as string)
 
-        if(response && response.meqs) {
-            populateForm(response.meqs)
+        if(response && response.po) {
+            populateForm(response.po)
         }
 
         employees.value = response.employees.map((i) => {
@@ -169,11 +167,11 @@
 
     // ======================== COMPUTED ========================  
 
-    const meqsStatus = computed( () => {
+    const poStatus = computed( () => {
 
-        const approvers = meqsData.value.meqs_approvers
+        const approvers = poData.value.po_approvers
         
-        if(meqsData.value.is_cancelled) {
+        if(poData.value.is_cancelled) {
 
             return approvalStatus[APPROVAL_STATUS.CANCELLED]
 
@@ -196,41 +194,25 @@
     })
 
 
-    const reference = computed( () => {
-
-        if(meqsData.value.rv) {
-            return meqsData.value.rv
-        }
-
-    })
-
-    const referenceNumber = computed( () => {
-        if(meqsData.value.rv) {
-            return 'RV#' + meqsData.value.rv.rv_number
-        }
-        return ''
-    })
-
-
     // ======================== FUNCTIONS ========================  
-    function populateForm(data: MEQS) {
+    function populateForm(data: PO) {
         console.log('populateForm', data)
-        meqsData.value = data
+        poData.value = data
 
-        data.meqs_approvers.map(i => {
+        data.po_approvers.map(i => {
             i.date_approval = i.date_approval ? formatToValidHtmlDate(i.date_approval) : null
             i.approver!['fullname'] = getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname)
             return i
         })
     }
 
-    async function updateMeqsInfo() {
-        console.log('updateMeqsInfo')
+    async function updatePoInfo() {
+        console.log('updatePoInfo')
 
         console.log('updating...')
 
         isUpdating.value = true
-        const response = await meqsApi.update(meqsData.value.id, meqsData.value)
+        const response = await poApi.update(poData.value.id, poData.value)
         isUpdating.value = false
 
         if(response.success && response.data) {
@@ -251,14 +233,14 @@
 
     }
 
-    async function cancelMeqs() {
-        const response = await meqsApi.cancel(meqsData.value.id)
+    async function cancelPo() {
+        const response = await poApi.cancel(poData.value.id)
 
         if(response.success) {
             toast.success(response.msg)
-            meqsData.value.is_cancelled = true 
+            poData.value.is_cancelled = true 
 
-            router.push('/warehouse/purchasing/meqs')
+            router.push('/warehouse/purchasing/po')
 
         }else {
             Swal.fire({
@@ -282,7 +264,7 @@
         console.log('data', data)
 
         isAddingApprover.value = true
-        const response = await meqsApproverApi.create(meqsData.value.id, data)
+        const response = await poApproverApi.create(poData.value.id, data)
         isAddingApprover.value = false
 
         if(response.success && response.data) {
@@ -294,7 +276,7 @@
 
             response.data.date_approval = response.data.date_approval ? formatToValidHtmlDate(response.data.date_approval) : null
 
-            meqsData.value.meqs_approvers.push(response.data)
+            poData.value.po_approvers.push(response.data)
             modalCloseBtn.click()
         }else {
             Swal.fire({
@@ -311,13 +293,13 @@
         modalCloseBtn: HTMLButtonElement
     ) {
         isEditingApprover.value = true
-        const response = await meqsApproverApi.update(data)
+        const response = await poApproverApi.update(data)
         isEditingApprover.value = false
 
         if(response.success && response.data) {
             toast.success(response.msg)
 
-            const prevApproverItemIndx = meqsData.value.meqs_approvers.findIndex(i => i.id === data.id)
+            const prevApproverItemIndx = poData.value.po_approvers.findIndex(i => i.id === data.id)
 
             response.data.date_approval = response.data.date_approval ? formatToValidHtmlDate(response.data.date_approval) : null
 
@@ -325,7 +307,7 @@
 
             response.data.approver!['fullname'] = getFullname(a!.firstname, a!.middlename, a!.lastname)
 
-            meqsData.value.meqs_approvers[prevApproverItemIndx] = {...response.data}
+            poData.value.po_approvers[prevApproverItemIndx] = {...response.data}
 
             modalCloseBtn.click()
 
@@ -340,9 +322,9 @@
     }
 
     async function removeApprover(id: string) {
-        const indx = meqsData.value.meqs_approvers.findIndex(i => i.id === id)
+        const indx = poData.value.po_approvers.findIndex(i => i.id === id)
 
-        const item = meqsData.value.meqs_approvers[indx]
+        const item = poData.value.po_approvers[indx]
 
         if(!item){
             console.error('approver not found with id of: ' + id)
@@ -363,13 +345,13 @@
             preConfirm: async(remove) => {
                 
                 if(remove) {
-                    const response = await meqsApproverApi.remove(item.id)
+                    const response = await poApproverApi.remove(item.id)
 
                     if(response.success) {
                         
                         toast.success(`${item.approver?.fullname} removed!`)
 
-                        meqsData.value.meqs_approvers.splice(indx, 1)
+                        poData.value.po_approvers.splice(indx, 1)
 
                     }else {
 
@@ -396,13 +378,13 @@
         console.log('modalCloseBtn', modalCloseBtn)
 
         isUpdatingApproverOrder.value = true
-        const response = await meqsApproverApi.updateApproverOrder(data)
+        const response = await poApproverApi.updateApproverOrder(data)
         isUpdatingApproverOrder.value = false
 
         if(response.success && response.approvers) {
             toast.success(response.msg)
 
-            meqsData.value.meqs_approvers = response.approvers.map(i => {
+            poData.value.po_approvers = response.approvers.map(i => {
                 i.date_approval = i.date_approval ? formatToValidHtmlDate(i.date_approval) : null
                 i.approver!['fullname'] = getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname)
                 return i
@@ -424,10 +406,10 @@
 
     // ======================== UTILS ========================  
 
-    async function onCancelMeqs() {
+    async function onCancelPo() {
         Swal.fire({
             title: "Are you sure?",
-            text: `This MEQS will be cancelled!`,
+            text: `This PO will be cancelled!`,
             position: "top",
             icon: "warning",
             showCancelButton: true,
@@ -439,7 +421,7 @@
             preConfirm: async(remove) => {
                 
                 if(remove) {
-                    await cancelMeqs()
+                    await cancelPo()
                 }
 
             },

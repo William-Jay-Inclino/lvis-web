@@ -1,6 +1,7 @@
 import type { APPROVAL_STATUS } from "~/composables/common.types";
 import type { Canvass, Classification } from "../canvass/canvass.types";
 import type { RVApprover, RvApproverSettings } from "./rv-approver.types";
+import type { MEQS } from "../meqs/meqs.types";
 
 export interface RV {
   id: string;
@@ -22,13 +23,7 @@ export interface RV {
   is_deleted: boolean
   status: APPROVAL_STATUS
 
-  // set programmatically
-
-  // statusObject: {
-  //   value: APPROVAL_STATUS
-  //   label: string 
-  //   color: string 
-  // }
+  meqs?: MEQS
 
 }
 
@@ -52,7 +47,6 @@ export interface MutationResponse {
 export interface CreateRvInput {
   canvass: Canvass | null;
   supervisor: Employee | null;
-  date_requested: string;
   work_order_no: string;
   work_order_date: string | null;
   classification: Classification | null;

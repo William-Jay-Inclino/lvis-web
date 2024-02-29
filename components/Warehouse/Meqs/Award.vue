@@ -20,12 +20,13 @@
                 <tr>
                     <th class="bg-secondary text-white"> No. </th>
                     <th class="bg-secondary text-white"> Item </th>
+                    <th class="bg-secondary text-white"> Brand </th>
                     <th class="bg-secondary text-white"> Unit </th>
                     <th class="bg-secondary text-white"> Qty </th>
                     <th class="bg-secondary text-white text-center" v-for="meqsSupplier in meqs_suppliers">
                         {{ `${meqsSupplier.supplier?.name} (${meqsSupplier.payment_terms})` }}
                     </th>
-                    <th class="bg-secondary text-white text-center"></th>
+                    <th class="bg-secondary text-white text-center"> Remark </th>
                 </tr>
             </thead>
 
@@ -33,9 +34,31 @@
                 <tr v-for="item, i in canvass_items" :class="{'table-danger': !item.hasAwardedSupplier && !isInitial}">
                     <td class="text-muted align-middle"> {{ i + 1 }} </td>
                     <td class="text-muted align-middle nowrap">{{ item.description }}</td>
+                    <td class="text-muted align-middle nowrap">{{ item.brand ? item.brand.name : 'N/A' }}</td>
                     <td class="text-muted align-middle nowrap">{{ item.unit ? item.unit.name : 'N/A' }}</td>
                     <td class="text-muted align-middle nowrap">{{ item.quantity }}</td>
                     <td v-for="meqsSupplier in meqs_suppliers">
+                        <div class="d-flex justify-content-center align-items-center">
+
+                            <div v-for="supplierItem in meqsSupplier.meqs_supplier_items">
+                                <div v-if="supplierItem.canvass_item.id === item.id" class="d-flex align-items-center">
+                                    <input
+                                      type="text"
+                                      :value="(supplierItem.price === -1) ? 'N/A' : formatToPhpCurrency(supplierItem.price)"
+                                      class="form-control me-2"
+                                      style="width: 100px"
+                                      disabled
+                                      >
+                                    <i
+                                      class="fas fa-star clickable-icon fs-5"
+                                      @click="emits('awardSupplierItem', meqsSupplier, item.id)"
+                                      :class="{'text-warning': supplierItem.is_awarded}"></i>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </td>
+                    <!-- <td v-for="meqsSupplier in meqs_suppliers">
                         <div class="d-flex justify-content-center align-items-center">
                             <input
                               type="number"
@@ -52,11 +75,11 @@
                               @click="emits('awardSupplierItem', meqsSupplier, item.id)"
                               :class="{'text-warning': isAwarded(meqsSupplier, item.id)}"></i>
                         </div>
-                    </td>
-                    <td class="align-middle">
+                    </td> -->
+                    <td class="align-middle text-center">
                         <button @click="onClickAttachNote(item.id)" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#attachNoteModal">
+                            Attach
                             <i class="fas fa-book"></i>
-                            Note
                         </button>
                     </td>
                 </tr>
@@ -69,7 +92,7 @@
                 <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title text-warning" id="exampleModalLabel">
-                        Attach Note
+                        Attach Remark
                     </h5>
                     <button @click="onCloseAttachModal" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -97,10 +120,9 @@
 <script setup lang="ts">
 import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
 import type { CreateMeqsSupplierSubInput } from '~/composables/warehouse/meqs/meqs.types';
-import { VAT } from '~/utils/constants';
 
 
-const emits = defineEmits(['updatePrice', 'awardSupplierItem', 'attachNote']);
+const emits = defineEmits(['awardSupplierItem', 'attachNote']);
     
 const props = defineProps({
     meqs_suppliers: {
@@ -131,35 +153,35 @@ const attachNoteData = ref<AttachNoteData>({..._attachNoteDataInitial})
 const closeattachNoteModal = ref<HTMLButtonElement>()
 
 
-function updatePrice(event: Event, meqsSupplier: CreateMeqsSupplierSubInput, canvass_item_id: string) {
+// function updatePrice(event: Event, meqsSupplier: CreateMeqsSupplierSubInput, canvass_item_id: string) {
 
-    // @ts-ignore
-    const price = Number(event.target.value)
+//     // @ts-ignore
+//     const price = Number(event.target.value)
 
-    emits('updatePrice', meqsSupplier, canvass_item_id, price)
-}
+//     emits('updatePrice', meqsSupplier, canvass_item_id, price)
+// }
 
-function isAwarded(meqsSupplier: CreateMeqsSupplierSubInput, canvass_item_id: string) {
+// function isAwarded(meqsSupplier: CreateMeqsSupplierSubInput, canvass_item_id: string) {
 
-    const item = meqsSupplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
+//     const item = meqsSupplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
 
-    if(!item) return
+//     if(!item) return
 
-    return item.is_awarded
+//     return item.is_awarded
 
-}
+// }
 
-function isPriceInvalid(meqsSupplier: CreateMeqsSupplierSubInput, canvass_item_id: string) {
-    const item = meqsSupplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
+// function isPriceInvalid(meqsSupplier: CreateMeqsSupplierSubInput, canvass_item_id: string) {
+//     const item = meqsSupplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
 
-    if(!item) return
+//     if(!item) return
 
-    if(item.invalidPrice) {
-        return true 
-    }
-    return false
+//     if(item.invalidPrice) {
+//         return true 
+//     }
+//     return false
 
-}
+// }
 
 function attachNote() {
     console.log('attachNote', attachNoteData)

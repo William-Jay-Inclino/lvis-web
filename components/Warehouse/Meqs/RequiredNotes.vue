@@ -38,12 +38,12 @@
                             Why choose
                             <span class="fw-bold">
                                 {{ item.awardedItem.meqsSupplier?.supplier?.name }} at
-                                <span class="text-danger"> {{ item.awardedItem.price.toFixed(2) }} </span> PHP
+                                <span class="text-danger"> {{ formatToPhpCurrency(item.awardedItem.price) }} </span> PHP
                             </span> 
                             over the lowest price item
                             <span class="fw-bold">
                                 {{ item.lowestPriceItem.meqsSupplier?.supplier?.name }} at
-                                <span class="text-danger"> {{ item.lowestPriceItem.price.toFixed(2) }} </span> PHP ?
+                                <span class="text-danger"> {{ formatToPhpCurrency(item.lowestPriceItem.price) }} </span> PHP ?
                             </span>
                         </small>
                     </div>

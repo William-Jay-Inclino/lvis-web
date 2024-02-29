@@ -98,7 +98,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="i in filteredItems">
+                                        <tr v-for="i in items">
                                             <td class="text-muted align-middle"> {{ i.meqs_number }} </td>
                                             <td class="text-muted align-middle" v-if="i.rv"> RV#{{ i.rv.rv_number }} </td>
                                             <td class="text-muted align-middle" v-if="i.rv"> 
@@ -106,15 +106,15 @@
                                             </td>
                                             <td class="text-muted align-middle"> {{ formatDate(i.meqs_date) }} </td>
                                             <td class="text-center align-middle">
-                                                <div :class="{[`badge bg-${i.status.color}`]: true}"> 
-                                                    {{ i.status.label }} 
+                                                <div :class="{[`badge bg-${approvalStatus[i.status].color}`]: true}"> 
+                                                    {{ approvalStatus[i.status].label }} 
                                                 </div>
                                             </td>
                                             <td class="text-muted align-middle">
                                                 <nuxt-link class="btn btn-light w-50" :to="'/warehouse/purchasing/meqs/view/' + i.id">
                                                     <i class="fas fa-info-circle text-info"></i>
                                                 </nuxt-link>
-                                                <button v-if="i.status.value !== APPROVAL_STATUS.CANCELLED" @click="onClickEdit(i.id)" class="btn btn-light w-50">
+                                                <button v-if="i.status !== APPROVAL_STATUS.CANCELLED" @click="onClickEdit(i.id)" class="btn btn-light w-50">
                                                     <i class="fas fa-edit text-primary"></i>
                                                 </button>
                                             </td>
@@ -126,7 +126,7 @@
 
                         <div v-else>
 
-                            <div v-for="i in filteredItems" class="table-responsive">
+                            <div v-for="i in items" class="table-responsive">
 
                                 <table class="table table-hover table-bordered">
 
@@ -152,8 +152,8 @@
                                         <tr>
                                             <td class="text-muted"> Status </td>
                                             <td>
-                                                <div :class="{[`badge bg-${i.status.color}`]: true}"> 
-                                                    {{ i.status.label }} 
+                                                <div :class="{[`badge bg-${approvalStatus[i.status].color}`]: true}"> 
+                                                    {{ approvalStatus[i.status].label }} 
                                                 </div>
                                             </td>
                                         </tr>
@@ -276,15 +276,6 @@
 
 
     // ======================== COMPUTED ======================== 
-    // table data
-    const filteredItems = computed( () => {
-
-        return items.value.map( (i) => {
-            i.status = getStatus(i)
-            return i
-        })
-
-    })
 
     async function search() {
 

@@ -16,15 +16,50 @@
                             <hr class="result">
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-bordered">
+                            <table class="table table-bordered table-hover">
                                 <tbody>
                                     <tr>
                                         <td class="text-muted">RC Number</td>
                                         <td> {{ item.rc_number }} </td>
                                     </tr>
                                     <tr>
+                                        <td class="text-muted">RV Number</td>
+                                        <td>
+                                            <div v-if="item.rv">
+                                                <nuxt-link :to="'/warehouse/purchasing/rv/view/' + item.rv.id">{{ item.rv.rv_number }}</nuxt-link>
+                                            </div>
+                                            <div v-else>
+                                                N/A
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted">MEQS Number</td>
+                                        <td>
+                                            <div v-if="item.rv && item.rv.meqs">
+                                                <nuxt-link :to="'/warehouse/purchasing/meqs/view/' + item.rv.meqs.id">{{ item.rv.meqs.meqs_number }}</nuxt-link>
+                                            </div>
+                                            <div v-else>
+                                                N/A
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted">PO Number/s</td>
+                                        <td>
+                                            <div v-if="hasPO">
+                                                <div v-for="meqsSupplier in item.rv!.meqs!.meqs_suppliers">
+                                                    <nuxt-link v-if="meqsSupplier.po" :to="'/warehouse/purchasing/po/view/' + meqsSupplier.po.id">{{ meqsSupplier.po.po_number }}</nuxt-link>
+                                                </div>
+                                            </div>
+                                            <div v-else>
+                                                N/A
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <td class="text-muted">Date Requested</td>
-                                        <td> {{ item.date_requested }} </td>
+                                        <td> {{ formatDate(item.date_requested) }} </td>
                                     </tr>
                                     <tr>
                                         <td class="text-muted">Purpose</td>
@@ -63,7 +98,7 @@
                             </div>
 
                             <div class="table-responsive">
-                                <table class="table table-bordered">
+                                <table class="table table-bordered table-hover">
                                     <thead>
                                         <tr>
                                             <th class="bg-secondary text-white"> No. </th>
@@ -98,7 +133,7 @@
 
                             <div v-for="i, count in item.canvass_items" class="table-responsive">
 
-                                <table class="table table-hovered table-bordered">
+                                <table class="table table-hover table-bordered">
                                     <tbody> 
                                         <tr>
                                             <td class="bg-secondary text-white"> No. </td>
@@ -187,6 +222,26 @@
     function checkMobile() {
         isMobile.value = window.innerWidth < MOBILE_WIDTH
     }
+
+    const hasPO = computed( () => {
+
+        if(!item.value) return false 
+
+        if(item.value.rv && item.value.rv.meqs && item.value.rv.meqs.meqs_suppliers) {
+
+            const po = item.value.rv.meqs.meqs_suppliers.find(i => !!i.po)
+
+            if(po) {
+                return true 
+            }
+
+            return false 
+
+        }else {
+            return false
+        }
+
+    })
 
 
 </script>

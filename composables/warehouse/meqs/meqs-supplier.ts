@@ -1,3 +1,4 @@
+import type { PO } from "../po/po.types";
 import type { MeqsSupplierAttachment } from "./meqs-supplier-attachment";
 import type { MeqsSupplierItem } from "./meqs-supplier-item";
 import type { MEQS } from "./meqs.types";
@@ -11,6 +12,7 @@ export interface MeqsSupplier {
     is_referenced: boolean;
     meqs_supplier_items: MeqsSupplierItem[];
     attachments: MeqsSupplierAttachment[];
+    po?: PO
   }
   
 export interface Supplier {

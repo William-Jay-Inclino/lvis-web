@@ -21,7 +21,7 @@
                                     <li><a class="dropdown-item" href="#">SPR</a></li>
                                     <li><a class="dropdown-item" href="#">JO</a></li>
                                     <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/meqs">MEQS</nuxt-link></li>
-                                    <li><a class="dropdown-item" href="#">PO</a></li>
+                                    <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/po">PO</nuxt-link></li>
                                     <li><a class="dropdown-item" href="#">RR</a></li>
                                 </ul>
                             </li>
@@ -88,7 +88,7 @@
                             <li><a class="dropdown-item" href="#">SPR</a></li>
                             <li><a class="dropdown-item" href="#">JO</a></li>
                             <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/meqs">MEQS</nuxt-link></li>
-                            <li><a class="dropdown-item" href="#">PO</a></li>
+                            <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/po">PO</nuxt-link></li>
                             <li><a class="dropdown-item" href="#">RR</a></li>
                         </ul>
                     </li>

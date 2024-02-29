@@ -1,30 +1,23 @@
 import type { Employee } from "~/composables/common.types";
 import type { CanvassItem } from "./canvass-item.types"
+import type { RV } from "../rv/rv.types";
 
 
 export interface Canvass {
     id: string;
-  
     rc_number: string;
-  
     date_requested: string;
-  
     purpose: string;
-  
     notes: string;
-  
     requested_by_id: string;
-  
     requested_by: Employee | null;
-  
     is_referenced: boolean;
     disabled: boolean
-
     canvass_items: CanvassItem[]
+    rv?: RV
 }
 
 export interface CreateCanvassInput {
-    date_requested: string 
     purpose: string 
     notes: string 
     requested_by: Employee | null 

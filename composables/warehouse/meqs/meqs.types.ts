@@ -1,4 +1,4 @@
-import type { APPROVAL_STATUS, Approver } from "~/composables/common.types";
+import type { APPROVAL_STATUS, Approver, VAT_TYPE } from "~/composables/common.types";
 import type { RV } from "../rv/rv.types";
 import type { CanvassItem } from "../canvass/canvass-item.types";
 import type { MeqsSupplier, Supplier } from "./meqs-supplier";
@@ -14,15 +14,7 @@ export interface MEQS {
     meqs_suppliers: MeqsSupplier[];
     is_deleted: boolean;
     is_cancelled: boolean;
-
-
-    // set programmatically
-
-    status: {
-        value: APPROVAL_STATUS
-        label: string 
-        color: string 
-    }
+    status: APPROVAL_STATUS
 }
 
 export interface FindAllResponse {
@@ -37,7 +29,6 @@ export interface CreateMeqsInput {
   rv: RV | null;
   spr: null;
   notes: string;
-  meqs_date: string;
   approvers: MeqsApproverSettings[];
   meqs_suppliers: CreateMeqsSupplierSubInput[];
 }
@@ -53,6 +44,10 @@ export interface CreateMeqsSupplierItemSubInput {
   canvass_item: CanvassItem;
   price: number;
   notes: string;
+  vat: {
+    value: VAT_TYPE,
+    label: string
+  }
   is_awarded: boolean;
 
   // these fields are used in forms

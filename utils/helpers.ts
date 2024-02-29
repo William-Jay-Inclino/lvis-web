@@ -1,5 +1,5 @@
 import moment from "moment";
-
+import { VAT_TYPE } from "#imports";
 
 export function getFullname(firstname: string, middlename: string | null, lastname: string){
     if(middlename){
@@ -46,8 +46,6 @@ export function formatToValidHtmlDate(d: any): string {
 
 }
 
-
-
 export function isValidDate(dateString: string | null): boolean {
 
     if(!dateString) {
@@ -59,4 +57,27 @@ export function isValidDate(dateString: string | null): boolean {
 
     // Check if the parsed date is a valid date
     return !isNaN(date.getTime());
+}
+
+export function formatToPhpCurrency(number: number) {
+    return "₱" + number.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+export function getVatPerUnit(price: number, vat_type: VAT_TYPE) {
+
+    if(vat_type === VAT_TYPE.INC || vat_type === VAT_TYPE.NONE) return 0 
+
+    const vatAmount = (price * VAT_RATE)
+
+    return vatAmount
+
+}
+
+export function getTotalPrice(pricePerUnit: number, quantity: number, vatPerUnit: number) {
+
+    const totalPrice = pricePerUnit * quantity 
+    const totalVat = vatPerUnit * quantity 
+
+    return (totalPrice + totalVat)
+
 }
