@@ -258,7 +258,7 @@
             toast.success(response.msg)
             meqsData.value.is_cancelled = true 
 
-            // router.push('/warehouse/purchasing/meqs')
+            router.push('/warehouse/purchasing/meqs')
 
         }else {
             Swal.fire({

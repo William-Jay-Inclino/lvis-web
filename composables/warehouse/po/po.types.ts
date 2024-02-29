@@ -13,6 +13,7 @@ export interface PO {
   notes: string
   po_approvers: Approver[];
   is_deleted: boolean
+  is_cancelled: boolean
 }
 
 export interface CreatePoInput {

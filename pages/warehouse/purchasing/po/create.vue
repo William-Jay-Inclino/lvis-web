@@ -119,6 +119,14 @@
                                     }} 
                                 </td>
                             </tr>
+                            <tr>
+                                <td colspan="8" class="text-end fw-bold">
+                                    Summary Total 
+                                </td>
+                                <td class="fw-bold">
+                                    {{ formatToPhpCurrency(totalPriceOfAllItems) }}
+                                </td>
+                            </tr>
                         </tbody>
                         <tfoot v-show="supplierItems.length === 0">
                             <tr>
@@ -210,6 +218,25 @@
 
         return poData.value.meqs_supplier.meqs_supplier_items.filter(i => i.is_awarded)
         
+
+    })
+
+
+    const totalPriceOfAllItems = computed( () => {
+
+        if(supplierItems.value.length === 0) return 0
+
+        let totalPrice = 0 
+
+        for(let item of supplierItems.value) {
+
+            const totalPriceOfItem = getTotalPrice(item.price, item.canvass_item.quantity, getVatPerUnit(item.price, item.vat_type))
+
+            totalPrice += totalPriceOfItem
+
+        }
+
+        return totalPrice
 
     })
 
