@@ -1,4 +1,4 @@
-import type { APPROVAL_STATUS, Approver } from "~/composables/common.types";
+import type { APPROVAL_STATUS, Approver, VAT_TYPE } from "~/composables/common.types";
 import type { RV } from "../rv/rv.types";
 import type { CanvassItem } from "../canvass/canvass-item.types";
 import type { MeqsSupplier, Supplier } from "./meqs-supplier";
@@ -44,6 +44,10 @@ export interface CreateMeqsSupplierItemSubInput {
   canvass_item: CanvassItem;
   price: number;
   notes: string;
+  vat: {
+    value: VAT_TYPE,
+    label: string
+  }
   is_awarded: boolean;
 
   // these fields are used in forms

@@ -10,7 +10,7 @@
                     Step {{ currentStep }} of 3: 
                     <span v-show="currentStep === 1"> Add MEQS info </span>
                     <span v-show="currentStep === 2"> Add Suppliers </span>
-                    <span v-show="currentStep === 3"> Add Price & Award Supplier </span>
+                    <span v-show="currentStep === 3"> Award Supplier </span>
                 </span>
             </div>
         </div>
@@ -148,7 +148,6 @@
                                     :is-initial="isInitialStep3"
                                     :meqs_suppliers="meqsData.meqs_suppliers"
                                     :canvass_items="canvassItems"
-                                    @update-price="updatePrice"
                                     @award-supplier-item="awardSupplierItem"
                                     @attach-note="attachNote"
                                 />
@@ -533,23 +532,23 @@ function removeSupplier(indx: number) {
 
 // ======================== CHILD FUNCTIONS: AWARD ======================== 
 
-function updatePrice(meqsSupplier: CreateMeqsSupplierSubInput, canvass_item_id: string, price: number) {
+// function updatePrice(meqsSupplier: CreateMeqsSupplierSubInput, canvass_item_id: string, price: number) {
 
-    console.log('updatePrice', price)
+//     console.log('updatePrice', price)
     
-    const item = meqsSupplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
+//     const item = meqsSupplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
 
-    if(!item) return
+//     if(!item) return
 
-    item.price = price
+//     item.price = price
 
-    if(isInvalidPrice(item.price)) {
-        item['invalidPrice'] = true
-    } else {
-        item['invalidPrice'] = false
-    }
+//     if(isInvalidPrice(item.price)) {
+//         item['invalidPrice'] = true
+//     } else {
+//         item['invalidPrice'] = false
+//     }
 
-}
+// }
 
 function awardSupplierItem(meqsSupplier: CreateMeqsSupplierSubInput, canvass_item_id: string) {
 

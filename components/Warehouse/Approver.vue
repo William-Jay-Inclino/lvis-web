@@ -449,7 +449,7 @@
         editApproverData.value = {
             id: item.id,
             approver: item.approver,
-            date_approval: item.date_approval,
+            date_approval: item.date_approval || formatToValidHtmlDate(new Date()),
             notes: currentData.notes,
             status: {
                 id: currentData.status,

@@ -1,46 +1,48 @@
 <template>
 
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th class="bg-secondary text-white"> Supplier </th>
-                    <th class="bg-secondary text-white"> Payment Terms </th>
-                    <th class="bg-secondary text-white"> Attachments </th>
-                    <th class="bg-secondary text-white text-center">
-                        <i class="fas fa-cog"></i>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="item, i in meqs_suppliers">
-                    <td class="text-muted align-middle"> {{ item.supplier?.name }} </td>
-                    <td class="text-muted align-middle"> {{ item.payment_terms }} </td>
-                    <td class="text-muted align-middle">
-                        <ul class="list-group">
-                            <li class="list-group-item" v-for="attachment in item.attachments"> {{ attachment.filename }} </li>
-                        </ul>
-                    </td>
-                    <td class="align-middle">
-                        <button @click="removeSupplier(i)" class="btn btn-sm btn-light w-50">
-                            <i class="fas fa-trash text-danger"></i>
-                        </button>
-                        <button @click="onClickEdit(i)" class="btn btn-sm btn-light w-50" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
-                            <i class="fas fa-edit text-primary"></i>
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="5" class="text-center">
-                        <button @click="onClickAdd()" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
-                            <i class="fas fa-plus-circle"></i> Add Supplier
-                        </button>
-                    </td>
-                </tr>
-            </tfoot>
-        </table>
+    <div>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th class="bg-secondary text-white"> Supplier </th>
+                        <th class="bg-secondary text-white"> Payment Terms </th>
+                        <th class="bg-secondary text-white"> Attachments </th>
+                        <th class="bg-secondary text-white text-center">
+                            <i class="fas fa-cog"></i>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item, i in meqs_suppliers">
+                        <td class="text-muted align-middle"> {{ item.supplier?.name }} </td>
+                        <td class="text-muted align-middle"> {{ item.payment_terms }} </td>
+                        <td class="text-muted align-middle">
+                            <ul class="list-group">
+                                <li class="list-group-item" v-for="attachment in item.attachments"> {{ attachment.filename }} </li>
+                            </ul>
+                        </td>
+                        <td class="align-middle">
+                            <button @click="removeSupplier(i)" class="btn btn-sm btn-light w-50">
+                                <i class="fas fa-trash text-danger"></i>
+                            </button>
+                            <button @click="onClickEdit(i)" class="btn btn-sm btn-light w-50" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
+                                <i class="fas fa-edit text-primary"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5" class="text-center">
+                            <button @click="onClickAdd()" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
+                                <i class="fas fa-plus-circle"></i> Add Supplier
+                            </button>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
 
 
         <!-- Modal -->
@@ -52,50 +54,110 @@
                     <button @click="onCloseModal" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label"> Supplier </label> <span class="text-danger">*</span>
-                        <client-only>
-                            <v-select :options="availableSuppliers" v-model="formData.supplier" label="name"></v-select>
-                        </client-only>
-                        <small class="text-danger fst-italic" v-if="formDataErrors.supplier">This field is required</small>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Payment Terms <span class="text-danger">*</span>
-                        </label>
-                        <input type="text" class="form-control" v-model="formData.payment_terms">
-                        <small class="text-danger fst-italic" v-if="formDataErrors.paymentTerms">This field is required</small>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Attachments <i class="text-muted"></i> <span class="text-danger">*</span>
-                        </label>
-                        <small class="text-muted fst-italic">(Max files: 3 & Max size per file: 5mb)</small>
-                        <client-only>
-                            <file-pond
-                                name="test"
-                                :files="formData.attachments"
-                                ref="filepond"
-                                label-idle="Drop files here..."
-                                :allow-multiple="true"
-                                accepted-file-types="image/jpeg, image/png"
-                                :max-files="3"
-                                @updatefiles="handleFileProcessing"
-                                @removefile="handleFileRemove"
-                                fileSizeBase="1000"
-                            />
-                        </client-only>
-                        <small class="text-danger fst-italic" v-if="formDataErrors.attachments">This field is required</small>
+
+                    <div class="row">
+                        <div class="col">
+
+                            <div class="mb-3">
+                                <label class="form-label"> Supplier </label> <span class="text-danger">*</span>
+                                <client-only>
+                                    <v-select :options="availableSuppliers" v-model="formData.supplier" label="name"></v-select>
+                                </client-only>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"> Vat </label>
+                                <input type="text" class="form-control" :value="vat" disabled>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    Payment Terms <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" v-model="formData.payment_terms">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    Attachments <i class="text-muted"></i> <span class="text-danger">*</span>
+                                </label>
+                                <small class="text-muted fst-italic">(Max files: 3 & Max size per file: 5mb)</small>
+                                <client-only>
+                                    <file-pond
+                                        name="test"
+                                        :files="formData.attachments"
+                                        ref="filepond"
+                                        label-idle="Drop files here..."
+                                        :allow-multiple="true"
+                                        accepted-file-types="image/jpeg, image/png"
+                                        :max-files="3"
+                                        @updatefiles="handleFileProcessing"
+                                        @removefile="handleFileRemove"
+                                        fileSizeBase="1000"
+                                    />
+                                </client-only>
+                            </div>
+        
+                            <div v-for="file of unallowedFiles" class="mb-1">
+                                <small class="text-muted fst-italic" v-html="
+                                    `The file <b class='text-danger'>${file.name}</b> 
+                                    (<b class='text-danger'>${(file.size / (1024 * 1024)).toFixed(2)} MB</b>) 
+                                    exceeds the maximum allowed size of <b class=text-danger>${MAX_FILE_SIZE / (1024 * 1024)} MB</b>`
+                                ">
+                                </small>
+        
+                            </div>
+                        </div>
                     </div>
 
-                    <div v-for="file of unallowedFiles" class="mb-1">
-                        <small class="text-muted fst-italic" v-html="
-                            `The file <b class='text-danger'>${file.name}</b> 
-                            (<b class='text-danger'>${(file.size / (1024 * 1024)).toFixed(2)} MB</b>) 
-                            exceeds the maximum allowed size of <b class=text-danger>${MAX_FILE_SIZE / (1024 * 1024)} MB</b>`
-                        ">
-                        </small>
+                    <div class="h5wrapper mb-3 mt-3" v-show="formData.supplier">
+                        <hr class="result">
+                            <h6 class="text-warning fst-italic">
+                                <i class="fas fa-shopping-cart"></i> Items
+                            </h6>
+                        <hr class="result">
+                    </div>
 
+                    <div class="row" v-show="formData.supplier">
+                        <div class="col">
+
+                            <div class="alert alert-info" role="alert">
+                                <i class="fas fa-info-circle"></i> 
+                                <small class="fst-italic"> If the item is unavailable set the price to -1</small>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table table-hover table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th width="40%" class="bg-secondary text-white">Item</th>
+                                            <th width="30%" class="bg-secondary text-white">
+                                                Price <span class="text-danger"> * </span>
+                                            </th>
+                                            <th width="30%" class="bg-secondary text-white">Vat</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="item in formData.meqs_supplier_items">
+                                            <td class="text-muted"> {{ item.canvass_item.description }} </td>
+                                            <td class="text-muted">
+                                                <input 
+                                                    type="number" 
+                                                    class="form-control border border-2"
+                                                    @input="onUpdatePrice(item)"
+                                                    :class="{ 'border-danger': item.invalidPrice, 'border-success': !item.invalidPrice }"
+                                                    v-model="item.price"
+                                                >
+                                            </td>
+                                            <td class="text-muted">
+                                                <select class="form-select" v-model="item.vat">
+                                                    <option :value="item" :key="item.value" v-for="item in vatArray">
+                                                        {{ item.label }}
+                                                    </option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
@@ -117,6 +179,7 @@
 
     </div>
 
+
 </template>
 
 
@@ -132,6 +195,7 @@ import FilePondPluginImagePreview from "filepond-plugin-image-preview";
 import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
 import { MAX_FILE_SIZE } from '~/utils/config';
 import type { Supplier } from '~/composables/warehouse/meqs/meqs-supplier';
+import { VAT } from '~/utils/constants'
 
 const FilePond = vueFilePond(
   FilePondPluginFileValidateType,
@@ -156,7 +220,6 @@ const props = defineProps({
         default: () => [],
     }
 });
-
 
 const vatArray = ref([
     {
@@ -203,13 +266,23 @@ const meqs_supplier_items = computed( (): CreateMeqsSupplierItemSubInput[] => {
 
     const items: CreateMeqsSupplierItemSubInput[] = []
 
+    const vat = {
+        value: VAT_TYPE.NONE,
+        label: VAT[VAT_TYPE.NONE].label
+    }
+    if(formData.value.supplier) {
+        vat.value = formData.value.supplier.vat_type
+        vat.label = VAT[formData.value.supplier.vat_type].label
+    }
+
     for(let item of clonedCanvassItems) {
         items.push({
             canvass_item: item,
             price: 0.00,
             notes: '',
             is_awarded: false,
-            invalidPrice: true // default is 2 since default price is 0.00
+            invalidPrice: true, // default is 2 since default price is 0.00
+            vat
         })
     }
 
@@ -232,17 +305,32 @@ const unallowedFiles = computed((): File[] => {
         .filter(file => file.size > MAX_FILE_SIZE)
 });
 
-const canAddSupplier = computed( () => unallowedFiles.value.length === 0)
+const canAddSupplier = computed( () => {
 
+    if(!isValid()) return false 
+
+    const hasUnallowedFiles = unallowedFiles.value.length !== 0
+
+    if(hasUnallowedFiles) return false 
+
+    return true
+
+})
+
+const vat = computed( () => {
+
+    if(!formData.value.supplier) return ''
+
+    return VAT[formData.value.supplier.vat_type].label
+
+})
 
 function addSupplier() {
 
-    if(!isValid()){
-        return
-    }
+    // if(!isValid()){
+    //     return
+    // }
     
-    formData.value.meqs_supplier_items = meqs_supplier_items.value.map(i => ({ ...i }))
-
     console.log('formData', formData.value)
 
     emits("addSupplier", formData.value)
@@ -282,9 +370,22 @@ function isValid(): boolean {
         formDataErrors.value.attachments = true
     }
 
-    const hasError = Object.values(formDataErrors.value).includes(true);
+    const hasErrorForm = Object.values(formDataErrors.value).includes(true);
 
-    if(hasError) {
+    const hasInvalidPrice = formData.value.meqs_supplier_items.find(i => i.invalidPrice) 
+
+    // for(let item of formData.value.meqs_supplier_items) {
+
+    //     if(isInvalidPrice(item.price)) {
+    //         item.invalidPrice = true
+    //         hasInvalidPrice = true
+    //     }else {
+    //         item.invalidPrice = false
+    //     }
+
+    // }
+
+    if(hasErrorForm || hasInvalidPrice) {
         return false
     }
 
@@ -316,7 +417,6 @@ function removeSupplier(indx: number) {
 }
 
 function onClickEdit(indx: number) {
-
     formIsAdd.value = false
     editingIndx.value = indx
 
@@ -335,12 +435,23 @@ function onClickEdit(indx: number) {
 
 function onClickAdd() {
     formIsAdd.value = true
+    formData.value.meqs_supplier_items = meqs_supplier_items.value
 }
 
 function onCloseModal() {
     formData.value = {..._formDataInitial}
     formDataErrors.value = {..._formDataErrorsInitial}
     formData.value.attachments = []
+}
+
+function onUpdatePrice(item: CreateMeqsSupplierItemSubInput) {
+
+    if(isInvalidPrice(item.price)) {
+        item.invalidPrice = true 
+    }else {
+        item.invalidPrice = false
+    }
+
 }
 
 function handleFileProcessing(_files: any[]) {
@@ -355,5 +466,16 @@ function handleFileRemove(_files: any[]) {
     console.log('handleFileRemove', _files)
 }
 
+
+const isInvalidPrice = (price: number): boolean => {
+
+    if(!price) return true
+
+    if(price < -1 || price === 0) {
+        return true 
+    } else {
+        return false
+    }
+}
 
 </script>

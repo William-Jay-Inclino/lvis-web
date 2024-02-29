@@ -387,6 +387,7 @@ export async function fetchFormDataInCreate(): Promise<{
             suppliers{
                 id 
                 name
+                vat_type
             },
             meqsApproverSettings{
                 approver_id
@@ -619,6 +620,7 @@ export async function create(input: CreateMeqsInput): Promise<MutationResponse> 
               price: ${item.price}
               notes: "${item.notes}"
               is_awarded: ${item.is_awarded}
+              vat_type: ${item.vat.value}
             }`;
         }).join(', ');
 
