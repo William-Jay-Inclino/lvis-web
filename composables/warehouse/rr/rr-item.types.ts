@@ -6,7 +6,10 @@ export interface RrItem {
 	item: Item | null
 	item_brand: Brand | null
 	unit: Unit | null
-	item_class: ITEM_CLASS
+	item_class: {
+		value: ITEM_CLASS,
+		label: string
+	}
 	quantity_delivered: number
 	quantity_accepted: number
 	description: string

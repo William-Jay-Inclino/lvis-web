@@ -59,6 +59,7 @@
                         </v-select>
                     </client-only>
                     <nuxt-link v-if="rrData.po" class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/po/view/' + rrData.po.id" target="_blank">View info</nuxt-link>
+                    <small class="text-danger fst-italic" v-if="rrDataErrors.po"> This field is required </small>
                 </div>
 
                 <div class="mb-3">
@@ -70,9 +71,18 @@
 
                 <div class="mb-3">
                     <label class="form-label">
+                        Delivery Charge <span class="text-danger">*</span>
+                    </label>
+                    <input type="number" class="form-control" v-model="rrData.delivery_charge">
+                    <small class="text-danger fst-italic" v-if="rrDataErrors.delivery_charge"> This field is invalid </small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">
                         Invoice <span class="text-danger">*</span>
                     </label>
                     <input type="text" class="form-control" v-model="rrData.invoice_number">
+                    <small class="text-danger fst-italic" v-if="rrDataErrors.invoice_number"> This field is required </small>
                 </div>
 
                 <div class="mb-3">
@@ -82,6 +92,7 @@
                     <client-only>
                         <v-select :options="employees" label="fullname" v-model="rrData.received_by"></v-select>
                     </client-only>
+                    <small class="text-danger fst-italic" v-if="rrDataErrors.received_by"> This field is required </small>
                 </div>
 
                 <div class="mb-3">
@@ -110,6 +121,8 @@
 
             </div>
         </div>
+
+        <hr v-show="currentStep === 2">
 
         <div class="row justify-content-center pt-3">
             <div :class="{'col-6': currentStep === 1, 'col-12': currentStep === 2}">
@@ -153,7 +166,7 @@
     import * as rrApi from '~/composables/warehouse/rr/rr.api';
     import type { MeqsSupplierItem } from '~/composables/warehouse/meqs/meqs-supplier-item';
     import { itemClass } from '~/utils/constants';
-import type { RrItem } from '~/composables/warehouse/rr/rr-item.types';
+    import type { RrItem } from '~/composables/warehouse/rr/rr-item.types';
 
 
     // CONSTANTS
@@ -169,6 +182,13 @@ import type { RrItem } from '~/composables/warehouse/rr/rr-item.types';
 
     const pos = ref<PO[]>([])
 
+    const _rrDataErrorsInitial = {
+        po: false,
+        received_by: false,
+        invoice_number: false,
+        delivery_charge: false,
+    }
+
     const rrData = ref<CreateRrInput>({
         po: null,
         received_by: null,
@@ -180,36 +200,13 @@ import type { RrItem } from '~/composables/warehouse/rr/rr-item.types';
         rr_items: []
     })
 
+    const rrDataErrors = ref({..._rrDataErrorsInitial})
+
     // DROPDOWNS
     const employees = ref<Employee[]>([])
     const brands = ref<Brand[]>([])
     const units = ref<Unit[]>([])
     const items = ref<Item[]>([])
-    const itemClassArray = ref([
-        {
-            value: ITEM_CLASS.NON_STOCK,
-            label: itemClass[ITEM_CLASS.NON_STOCK].label
-        },
-        {
-            value: ITEM_CLASS.STOCK,
-            label: itemClass[ITEM_CLASS.STOCK].label
-        }
-    ])
-
-    const vatArray = ref([
-        {
-            value: VAT_TYPE.NONE,
-            label: VAT[VAT_TYPE.NONE].label
-        },
-        {
-            value: VAT_TYPE.INC,
-            label: VAT[VAT_TYPE.INC].label
-        },
-        {
-            value: VAT_TYPE.EXC,
-            label: VAT[VAT_TYPE.EXC].label
-        }
-    ])
 
     // ======================== LIFECYCLE HOOKS ======================== 
 
@@ -277,7 +274,10 @@ import type { RrItem } from '~/composables/warehouse/rr/rr-item.types';
                 item: null,
                 item_brand: item.canvass_item.brand || null,
                 unit: item.canvass_item.unit || null,
-                item_class: ITEM_CLASS.NON_STOCK,
+                item_class: {
+                    value: ITEM_CLASS.NON_STOCK,
+                    label: itemClass[ITEM_CLASS.NON_STOCK].label
+                },
                 quantity_delivered: 0,
                 quantity_accepted: 0,
                 description: item.canvass_item.description,
@@ -302,6 +302,35 @@ import type { RrItem } from '~/composables/warehouse/rr/rr-item.types';
         console.log('rrData.value', rrData.value)
     }
 
+    function isValidStep1(): boolean {
+
+        rrDataErrors.value = {..._rrDataErrorsInitial}
+
+        if(!rrData.value.po) {
+            rrDataErrors.value.po = true 
+        }
+
+        if(rrData.value.delivery_charge < 0) {
+            rrDataErrors.value.delivery_charge = true 
+        }
+
+        if(rrData.value.invoice_number.trim() === '') {
+            rrDataErrors.value.invoice_number = true 
+        }
+
+        if(!rrData.value.received_by) {
+            rrDataErrors.value.received_by = true 
+        }
+
+        const hasError = Object.values(rrDataErrors.value).includes(true);
+
+        if(hasError) {
+            return false 
+        }
+
+        return true
+    }
+
 
     // ======================== UTILS ======================== 
 
@@ -310,7 +339,13 @@ import type { RrItem } from '~/composables/warehouse/rr/rr-item.types';
     }
 
     const goToStep1 = () => currentStep.value = 1
-    const goToStep2 = () => currentStep.value = 2
+    const goToStep2 = () => {
+
+        if(! (isValidStep1()) ) return 
+        
+        currentStep.value = 2
+
+    }
 
 </script>
 

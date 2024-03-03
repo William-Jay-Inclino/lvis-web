@@ -65,11 +65,19 @@ export function formatToPhpCurrency(number: number) {
 
 export function getVatPerUnit(price: number, vat_type: VAT_TYPE) {
 
-    if(vat_type === VAT_TYPE.INC || vat_type === VAT_TYPE.NONE) return 0 
+    if(!price) return 0
 
-    const vatAmount = (price * VAT_RATE)
+    if(vat_type === VAT_TYPE.EXC) {
+        const vatAmount = (price * VAT_RATE)
+        return vatAmount
+    }
 
-    return vatAmount
+    if(vat_type === VAT_TYPE.INC) {
+        const vatAmount = price - (price / (1 + VAT_RATE))
+        return vatAmount
+    }
+
+    return 0
 
 }
 
