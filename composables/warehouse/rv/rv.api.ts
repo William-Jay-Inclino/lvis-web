@@ -403,6 +403,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 rv_number
                 status
                 canvass {
+                    id
                     rc_number
                     requested_by {
                         id

@@ -1,3 +1,6 @@
+import type { Brand, Unit } from "./warehouse/canvass/canvass.types"
+import type { RrItem } from "./warehouse/rr/rr-item.types"
+import type { RR } from "./warehouse/rr/rr.types"
 
 
 export enum USER_STATUS {
@@ -25,6 +28,16 @@ export enum VAT_TYPE {
     NONE = 1,
     INC = 2,
     EXC = 3
+}
+
+export enum ITEM_CLASS {
+    STOCK = 1,
+    NON_STOCK = 2
+}
+
+export enum ITEM_TRANSACTION_TYPE {
+    STOCK_IN = 1,
+    STOCK_OUT = 2
 }
 
 export interface Approver {
@@ -66,3 +79,39 @@ export interface Employee {
     lastname: string
     fullname?: string 
 }
+
+
+export interface Item {
+	id: string;
+	item_type_id: string;
+	unit_id: string;
+	code: string;
+	description: string;
+	total_quantity: number;
+	initial_quantity: number;
+	item_type: ItemType;
+	item_transactions: ItemTransaction[];
+	rr_items: RrItem[];
+	unit: Unit;
+}
+
+export interface ItemType {
+	id: string;
+	name: string;
+}
+
+export interface ItemTransaction {
+	id: string;
+	item_id: string;
+	rr_item_id?: string | null;
+	type: ITEM_TRANSACTION_TYPE;
+	quantity: number;
+	price: number;
+	remarks?: string | null;
+	item: Item;
+	rr_item?: RrItem;
+  }
+
+
+
+  

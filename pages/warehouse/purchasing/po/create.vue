@@ -16,7 +16,7 @@
                                 MEQS Number <span class="text-danger">*</span>
                             </label>
                             <client-only>
-                                <v-select @option:selected="onMeqsSelected" :options="meqs" label="meqs_number" v-model="selectedMeqs">
+                                <v-select @option:selected="onMeqsSelected" :options="meqs" label="meqs_number" v-model="selectedMeqs" :clearable=false>
                                     <template v-slot:option="option">
                                         <div v-if="option.status !== APPROVAL_STATUS.APPROVED" class="row">
                                             <div class="col">
@@ -297,6 +297,9 @@
 
     function onMeqsSelected(payload: MEQS) {
         console.log('onMeqsSelected()', payload)
+
+        resetSupplier()
+
         if(payload.status === APPROVAL_STATUS.APPROVED) {
             currentMeqs = payload
         }else {
@@ -326,7 +329,7 @@
         isMobile.value = window.innerWidth < MOBILE_WIDTH
     }
 
-    function onChangeMeqsNumber() {
+    function resetSupplier() {
         poData.value.meqs_supplier = null
         currentMeqsSupplier = null
     }

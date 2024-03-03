@@ -43,6 +43,7 @@
                         RC Number <span class="text-danger">*</span>
                     </label>
                     <input type="text" class="form-control" :value="rvData.canvass.rc_number" disabled>
+                    <nuxt-link class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/canvass/view/' + rvData.canvass.id" target="_blank">View info</nuxt-link>
                 </div>
 
                 <div class="mb-3">
