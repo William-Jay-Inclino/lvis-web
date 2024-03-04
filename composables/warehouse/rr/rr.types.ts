@@ -1,9 +1,7 @@
-import type { Employee, ITEM_CLASS, Item } from "~/composables/common.types";
+import type { Employee } from "~/composables/common.types";
 import type { PO } from "../po/po.types";
 import type { RrApproverSettings } from "./rr-approver.types";
-import type { VAT_TYPE } from '~/composables/common.types'
 import type { APPROVAL_STATUS } from "~/composables/common.types";
-import type { Brand, Unit } from "../canvass/canvass.types";
 import type { RrItem } from "./rr-item.types";
 
 export interface RR {
@@ -24,6 +22,11 @@ export interface RR {
   is_deleted: boolean;
   is_cancelled: boolean;
   status: APPROVAL_STATUS;
+
+  rr_approvers: Approver[];
+  rr_items: RrItem[]
+
+  received_by: Employee;
 }
 
 

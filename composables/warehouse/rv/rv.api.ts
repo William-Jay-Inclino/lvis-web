@@ -204,6 +204,10 @@ export async function findOne(id: string): Promise<RV | undefined> {
                         po {
                             id
                             po_number
+                            rr {
+                                id 
+                                rr_number
+                            }
                         }
                     }
                 }

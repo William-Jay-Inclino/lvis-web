@@ -140,7 +140,7 @@
                                     </div>
                                 </td>
                                 <td v-show="showClass" class="text-muted align-middle">
-                                    {{ rrItem.item_class.label }}
+                                    {{ rrItem.itemClassObject.label }}
                                 </td>
                                 <td v-show="showBrand" class="text-muted align-middle">
                                     {{ rrItem.item_brand ? rrItem.item_brand.name : '' }}
@@ -246,11 +246,11 @@
                             Class <span class="text-danger">*</span>
                         </label>
                         <client-only>
-                            <v-select :options="itemClassArray" label="label"  v-model="itemData.item_class" :clearable="false"></v-select>
+                            <v-select :options="itemClassArray" label="label"  v-model="itemData.itemClassObject" :clearable="false"></v-select>
                         </client-only>
                     </div>
 
-                    <div class="mb-3" v-if="itemData.item_class.value === ITEM_CLASS.STOCK">
+                    <div class="mb-3" v-if="itemData.itemClassObject.value === ITEM_CLASS.STOCK">
                         <label class="form-label">
                             Item Code & Description <span class="text-danger">*</span>
                         </label>
@@ -419,7 +419,7 @@
     import { VAT_TYPE } from '#imports';
     import type { Brand, Unit } from '~/composables/warehouse/canvass/canvass.types';
     import type { RrItem } from '~/composables/warehouse/rr/rr-item.types';
-    import { getTotalNetPrice, getVatAmount, getNetPrice } from '~/utils/helpers';
+    import { getTotalNetPrice, getVatAmount, getNetPrice, getGrossTotal, getVatTotal } from '~/utils/helpers';
     
 
     const emits = defineEmits(['addItem', 'removeItem', 'editItem']);
@@ -508,13 +508,15 @@
     const _itemDataInitial: RrItem = {
         id: '',
         item: null,
+        item_class: ITEM_CLASS.NON_STOCK,
         item_brand: null, 
         unit: null,
-        item_class: itemClassArray.value[0],
+        itemClassObject: itemClassArray.value[0],
         quantity_accepted: 0,
         quantity_delivered: 0,
         description: '',
         vat: vatArray.value[0],
+        vat_type: VAT_TYPE.NONE,
         gross_price: 0,
         net_price: 0,
         vat_amount: 0,
@@ -606,21 +608,6 @@
 
     })
 
-    function getVatTotal(payload: { price: number, quantity: number, vatType: VAT_TYPE }) {
-
-        const { price, quantity, vatType } = payload
-        const vatPerUnit = getVatAmount(price, vatType)
-        return vatPerUnit * quantity
-
-    } 
-
-    function getGrossTotal(payload: { price: number, quantity: number }) {
-        const { price, quantity } = payload 
-
-        return ( price * quantity )
-
-    }
-
     function addItem() {
 
         if(!isValidItemData()) {
@@ -688,7 +675,7 @@
             itemDataErrors.value.grossPrice = true 
         }
 
-        if(itemData.value.item_class.value === ITEM_CLASS.STOCK && !itemData.value.item) {
+        if(itemData.value.itemClassObject.value === ITEM_CLASS.STOCK && !itemData.value.item) {
             itemDataErrors.value.item = true
         }
 

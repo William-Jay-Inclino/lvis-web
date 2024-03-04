@@ -321,6 +321,10 @@ export async function findOne(id: string): Promise<MEQS | undefined> {
                     po {
                         id
                         po_number
+                        rr {
+                            id
+                            rr_number
+                        }
                     }
                 }
             }
@@ -717,7 +721,6 @@ export async function update(id: string, input: UpdateMeqsInput): Promise<Mutati
         };
     }
 }
-
 
 export async function cancel(id: string): Promise<MutationResponse> {
 

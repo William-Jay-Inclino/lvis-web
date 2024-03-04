@@ -46,6 +46,13 @@
                                 <td> {{ item.po_number }} </td>
                             </tr>
                             <tr>
+                                <td class="text-muted">RR Number</td>
+                                <td>
+                                    <nuxt-link v-if="item.rr" :to="'/warehouse/purchasing/rr/view/' + item.rr.id">{{ item.rr.rr_number }}</nuxt-link>
+                                    <div v-else> N/A </div>
+                                </td>
+                            </tr>
+                            <tr>
                                 <td class="text-muted">Date</td>
                                 <td> {{ formatDate(item.po_date) }} </td>
                             </tr>
@@ -253,13 +260,13 @@
 
     })
 
-    const requisitioner = computed( () => {
+    // const requisitioner = computed( () => {
 
-        const employee = meqsReference.value?.canvass.requested_by 
+    //     const employee = meqsReference.value?.canvass.requested_by 
 
-        return getFullname(employee!.firstname, employee!.middlename, employee!.lastname)
+    //     return getFullname(employee!.firstname, employee!.middlename, employee!.lastname)
 
-    }) 
+    // }) 
 
     const supplierItems = computed( () => {
 

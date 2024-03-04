@@ -31,12 +31,22 @@
                                                 </small>
                                             </div>
                                         </div>
+                                        <div v-else-if="!option.hasAvailableSupplier" class="row">
+                                            <div class="col">
+                                                <span class="text-danger">{{ option.meqs_number }}</span>
+                                            </div>
+                                            <div class="col text-end">
+                                                <small class="text-muted fst-italic">
+                                                    No Available Supplier
+                                                </small>
+                                            </div>
+                                        </div>
                                         <div v-else class="row">
                                             <div class="col">
                                                 <span>{{ option.meqs_number }}</span>
                                             </div>
                                             <div class="col text-end">
-                                                <small class="text-success fst-italic"> Available </small>
+                                                <small class="text-success fst-italic"> Available  </small>
                                             </div>
                                         </div>
                                     </template>
@@ -217,7 +227,19 @@
 
         const response = await poApi.fetchFormDataInCreate()
 
-        meqs.value = response.meqs
+        meqs.value = response.meqs.map(i => {
+
+            let hasAvailabelSupplier = i.meqs_suppliers.find(j => !j.is_referenced)
+
+            if(hasAvailabelSupplier) {
+                i.hasAvailableSupplier = true 
+            }else {
+                i.hasAvailableSupplier = false
+            }
+
+            return i
+
+        })
         poData.value.approvers = response.approvers
 
     })
@@ -308,7 +330,7 @@
 
         resetSupplier()
 
-        if(payload.status === APPROVAL_STATUS.APPROVED) {
+        if(payload.status === APPROVAL_STATUS.APPROVED && payload.hasAvailableSupplier) {
             currentMeqs = payload
         }else {
             if(currentMeqs) {

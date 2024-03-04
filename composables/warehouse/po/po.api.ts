@@ -476,6 +476,10 @@ export async function findOne(id: string): Promise<PO | undefined> {
                     label
                     order
                 }
+                rr {
+                    id
+                    rr_number
+                }
                 meqs_supplier {
                     id
                     payment_terms
@@ -583,8 +587,6 @@ export async function update(id: string, input: UpdatePoInput): Promise<Mutation
         };
     }
 }
-
-
 
 export async function cancel(id: string): Promise<MutationResponse> {
 

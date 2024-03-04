@@ -96,3 +96,20 @@ export function getTotalNetPrice(payload: {pricePerUnit: number, quantity: numbe
     return (totalPrice - totalVat)
 
 }
+
+
+
+export function getVatTotal(payload: { price: number, quantity: number, vatType: VAT_TYPE }) {
+
+    const { price, quantity, vatType } = payload
+    const vatPerUnit = getVatAmount(price, vatType)
+    return vatPerUnit * quantity
+
+} 
+
+export function getGrossTotal(payload: { price: number, quantity: number }) {
+    const { price, quantity } = payload 
+
+    return ( price * quantity )
+
+}

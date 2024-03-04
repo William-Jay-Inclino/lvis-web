@@ -362,6 +362,102 @@ export async function fetchFormDataInCreate(): Promise<{
 
 }
 
+export async function findOne(id: string): Promise<RR | undefined> {
+    const query = `
+        query {
+            rr(id: "${id}") {
+                id
+                rr_number
+                rr_date
+                invoice_number
+                delivery_number
+                notes
+                delivery_charge
+                status
+                is_deleted
+                is_cancelled
+                received_by {
+                    id
+                    firstname
+                    middlename
+                    lastname
+                }
+                rr_approvers{
+                    approver {
+                        firstname
+                        middlename
+                        lastname
+                    }
+                    approver_proxy {
+                        firstname
+                        middlename
+                        lastname
+                    }
+                    status
+                    label
+                    order
+                }
+                po {
+                    id
+                    po_number 
+                    meqs_supplier {
+                        meqs {
+                            id
+                            meqs_number
+                            rv {
+                                id
+                                rv_number
+                                canvass {
+                                    id
+                                    rc_number
+                                }
+                            }
+                        }
+                    }
+                }
+                rr_items {
+                    item {
+                        id 
+                        code 
+                        description
+                    }
+                    item_brand {
+                        id 
+                        name
+                    }
+                    unit {
+                        id
+                        name
+                    }
+                    item_class
+                    quantity_delivered
+                    quantity_accepted
+                    description
+                    vat_type
+                    gross_price
+                    net_price
+                    vat_amount
+                }
+            }
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        if(response.data && response.data.data && response.data.data.rr) {
+            return response.data.data.rr;
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+    } catch (error) {
+        console.error(error);
+        return undefined
+    }
+}
+
 export async function create(input: CreateRrInput): Promise<MutationResponse> {
 
     const approvers = input.approvers.map(item => {
@@ -396,7 +492,7 @@ export async function create(input: CreateRrInput): Promise<MutationResponse> {
           item_id: ${item_id}
           item_brand_id: ${item_brand_id}
           unit_id: ${unit_id}
-          item_class: ${item.item_class.value}
+          item_class: ${item.itemClassObject.value}
           quantity_delivered: ${item.quantity_delivered}
           quantity_accepted: ${item.quantity_accepted}
           description: "${item.description}"
@@ -447,3 +543,4 @@ export async function create(input: CreateRrInput): Promise<MutationResponse> {
         };
     }
 }
+

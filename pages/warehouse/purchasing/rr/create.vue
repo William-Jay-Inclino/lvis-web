@@ -195,7 +195,7 @@
     import type { RrItem } from '~/composables/warehouse/rr/rr-item.types';
     import Swal from 'sweetalert2'
     import { useToast } from "vue-toastification";
-import { getNetPrice } from '~/utils/helpers';
+    import { getNetPrice } from '~/utils/helpers';
 
     // CONSTANTS
     const router = useRouter();
@@ -322,9 +322,10 @@ import { getNetPrice } from '~/utils/helpers';
             const rrItem: RrItem = {
                 id: '',
                 item: null,
+                item_class: ITEM_CLASS.NON_STOCK,
                 item_brand: item.canvass_item.brand || null,
                 unit: item.canvass_item.unit || null,
-                item_class: {
+                itemClassObject: {
                     value: ITEM_CLASS.NON_STOCK,
                     label: itemClass[ITEM_CLASS.NON_STOCK].label
                 },
@@ -335,6 +336,7 @@ import { getNetPrice } from '~/utils/helpers';
                     value: item.vat_type,
                     label: VAT[item.vat_type].label
                 },
+                vat_type: item.vat_type,
                 gross_price: item.price,
                 net_price: netPrice,
                 vat_amount: vatAmount

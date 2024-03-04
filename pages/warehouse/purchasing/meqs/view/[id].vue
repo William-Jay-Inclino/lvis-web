@@ -55,6 +55,19 @@
                                     </td>
                                 </tr>
                                 <tr>
+                                        <td class="text-muted">RR Number/s</td>
+                                        <td>
+                                            <div v-if="hasPO">
+                                                <div v-for="meqsSupplier in item.meqs_suppliers">
+                                                    <nuxt-link v-if="meqsSupplier.po && meqsSupplier.po.rr" :to="'/warehouse/purchasing/rr/view/' + meqsSupplier.po.rr.id">{{ meqsSupplier.po.rr.rr_number }}</nuxt-link>
+                                                </div>
+                                            </div>
+                                            <div v-else>
+                                                N/A
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <tr>
                                     <td class="text-muted">Date</td>
                                     <td> {{ formatDate(item?.meqs_date) }} </td>
                                 </tr>

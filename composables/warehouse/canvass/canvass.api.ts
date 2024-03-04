@@ -120,6 +120,10 @@ export async function findOne(id: string): Promise<Canvass | undefined> {
                             po {
                                 id
                                 po_number
+                                rr {
+                                    id
+                                    rr_number
+                                }
                             }
                         }
                     }

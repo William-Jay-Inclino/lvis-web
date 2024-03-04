@@ -15,6 +15,9 @@ export interface MEQS {
     is_deleted: boolean;
     is_cancelled: boolean;
     status: APPROVAL_STATUS
+
+    // set programmatically
+    hasAvailableSupplier?: boolean
 }
 
 export interface FindAllResponse {
