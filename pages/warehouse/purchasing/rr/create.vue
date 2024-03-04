@@ -313,6 +313,8 @@
 
         for(let item of items) {
 
+            if(!item.is_awarded) continue
+
             const vatAmount = getVatAmount(item.price, item.vat_type)
             const netPrice = getNetPrice({
                 grossPrice: item.price,
