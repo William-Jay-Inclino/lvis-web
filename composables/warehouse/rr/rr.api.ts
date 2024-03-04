@@ -2,7 +2,7 @@ import type { Brand } from "../canvass/canvass.types"
 import type { PO } from "../po/po.types"
 import type { Unit } from "../unit/unit.types"
 import type { RrApproverSettings } from "./rr-approver.types"
-import type { FindAllResponse, RR } from "./rr.types"
+import type { CreateRrInput, FindAllResponse, MutationResponse, RR } from "./rr.types"
 
 
 export async function findByRefNumber(payload: { po_number?: string, rr_number?: string }): Promise<RR | undefined> {
@@ -65,7 +65,6 @@ export async function findByRefNumber(payload: { po_number?: string, rr_number?:
         return undefined
     }
 }
-
 
 export async function findAll(payload: {page: number, pageSize: number, date_requested: string | null, requested_by_id: string | null}): Promise<FindAllResponse> {
     
@@ -205,13 +204,13 @@ export async function fetchDataInSearchFilters(): Promise<{
     }
 }
 
-
 export async function fetchFormDataInCreate(): Promise<{
     pos: PO[],
     approvers: RrApproverSettings[],
     brands: Brand[],
     units: Unit[],
     employees: Employee[],
+    items: Item[]
 }> {
 
     const query = `
@@ -221,6 +220,7 @@ export async function fetchFormDataInCreate(): Promise<{
                     id
                     po_number
                     status
+                    is_referenced
                     meqs_supplier {
                         id
                         payment_terms
@@ -289,6 +289,11 @@ export async function fetchFormDataInCreate(): Promise<{
                     lastname
                 }
             },
+            items{
+                id
+                code 
+                description
+            }
         }
     `;
 
@@ -301,6 +306,7 @@ export async function fetchFormDataInCreate(): Promise<{
         let brands = []
         let units = []
         let employees = []
+        let items = []
 
         if(!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
@@ -320,6 +326,10 @@ export async function fetchFormDataInCreate(): Promise<{
             brands = data.brands
         }
 
+        if(data.items) { // temp
+            items = data.items
+        }
+
         if(data.units && data.units.data) {
             units = response.data.data.units.data
         }
@@ -334,6 +344,7 @@ export async function fetchFormDataInCreate(): Promise<{
             brands,
             units,
             employees,
+            items,
         }
 
     } catch (error) {
@@ -343,9 +354,96 @@ export async function fetchFormDataInCreate(): Promise<{
             approvers: [],
             brands: [],
             units: [],
-            employees: []
+            employees: [],
+            items: []
         }
     }
     
 
+}
+
+export async function create(input: CreateRrInput): Promise<MutationResponse> {
+
+    const approvers = input.approvers.map(item => {
+        return `
+        {
+          approver_id: "${item.approver?.id}"
+          label: "${item.label}"
+          order: ${item.order}
+        }`;
+    }).join(', ');
+
+    const rrItems = input.rr_items.map(item => {
+
+        let item_brand_id = null 
+        let unit_id = null 
+        let item_id = null
+
+        if(item.item_brand) {
+            item_brand_id = `"${item.item_brand.id}"`
+        }
+
+        if(item.unit) {
+            unit_id = `"${item.unit.id}"`
+        }
+
+        if(item.item) {
+            item_id = `"${item.item.id}"`
+        }
+
+        return `
+        {
+          item_id: ${item_id}
+          item_brand_id: ${item_brand_id}
+          unit_id: ${unit_id}
+          item_class: ${item.item_class.value}
+          quantity_delivered: ${item.quantity_delivered}
+          quantity_accepted: ${item.quantity_accepted}
+          description: "${item.description}"
+          vat_type: ${item.vat.value}
+          gross_price: ${item.gross_price}
+          net_price: ${item.net_price}
+        }`;
+    }).join(', ');
+
+    const mutation = `
+        mutation {
+            createRr(
+                input: {
+                    po_id: "${input.po?.id}"
+                    received_by_id: "${input.received_by?.id}"
+                    invoice_number: "${input.invoice_number}"
+                    delivery_number: "${input.delivery_number}"
+                    notes: "${input.notes}"
+                    delivery_charge: ${input.delivery_charge}
+                    approvers: [${approvers}]
+                    rr_items: [${rrItems}]
+                }
+            ) {
+                id
+            }
+        }`;
+
+    try {
+        const response = await sendRequest(mutation);
+        console.log('response', response);
+
+        if(response.data && response.data.data && response.data.data.createRr) {
+            return {
+                success: true,
+                msg: 'RR created successfully!',
+                data: response.data.data.createRr 
+            };
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+    } catch (error) {
+        console.error(error);
+        
+        return {
+            success: false,
+            msg: 'Failed to create RR. Please contact system administrator'
+        };
+    }
 }

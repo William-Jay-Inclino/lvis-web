@@ -9,7 +9,7 @@
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="flush-headingOne">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                            Column Filters
+                            Table Filters
                         </button>
                         </h2>
                         <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
@@ -127,7 +127,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="rrItem, i in rrItems">
+                            <tr v-for="rrItem, i in rrItems" :key="i">
                                 <td v-show="showDescription" class="text-muted">
                                     <div class="input-group input-group-sm">
                                         {{ i + 1 }}.
@@ -135,7 +135,9 @@
                                     </div>
                                 </td>
                                 <td v-show="showItemCode" class="text-muted align-middle">
-                                    {{ rrItem.item ? rrItem.item.code : '' }}
+                                    <div class="input-group input-group-sm">
+                                        <textarea class="form-control ms-2" rows="3" :value="rrItem.item ? rrItem.item.label : ''" disabled></textarea>
+                                    </div>
                                 </td>
                                 <td v-show="showClass" class="text-muted align-middle">
                                     {{ rrItem.item_class.label }}
@@ -200,11 +202,11 @@
                                         ) 
                                     }}
                                 </td>
-                                <td class="text-muted align-middle">
-                                    <button class="btn btn-light btn-sm w-50">
+                                <td class="align-middle">
+                                    <button @click="emits('removeItem', i)" class="btn btn-light btn-sm w-50">
                                         <i class="fas fa-trash text-danger"></i>
                                     </button>
-                                    <button class="btn btn-light btn-sm w-50">
+                                    <button @click="onClickEditItem(i)" class="btn btn-light btn-sm w-50" data-bs-toggle="modal" data-bs-target="#addItemModal">
                                         <i class="fas fa-edit text-info"></i>
                                     </button>
                                 </td>
@@ -212,7 +214,7 @@
                         </tbody>
                     </table>
                     <div class="text-center"> 
-                        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addItemModal">
+                        <button @click="onClickAddItem" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addItemModal">
                             Add Item
                         </button>
                     </div>
@@ -221,180 +223,188 @@
         </div>
 
 
-            <!-- Modal -->
-            <div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title text-warning" id="exampleModalLabel">Add Item</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <!-- Modal -->
+        <div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-warning" id="exampleModalLabel">{{ formIsAdd ? 'Add' : 'Edit' }} Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="onCloseModal"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Description <span class="text-danger">*</span>
+                        </label>
+                        <textarea v-model="itemData.description" class="form-control" rows="3"></textarea>
+                        <small class="text-danger fst-italic" v-if="itemDataErrors.description"> This field is required </small>
                     </div>
-                    <div class="modal-body">
 
-                        <div class="mb-3">
-                            <label class="form-label">
-                                Description <span class="text-danger">*</span>
-                            </label>
-                            <textarea v-model="itemData.description" class="form-control" rows="3"></textarea>
-                        </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Class <span class="text-danger">*</span>
+                        </label>
+                        <client-only>
+                            <v-select :options="itemClassArray" label="label"  v-model="itemData.item_class" :clearable="false"></v-select>
+                        </client-only>
+                    </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">
-                                Class <span class="text-danger">*</span>
-                            </label>
-                            <client-only>
-                                <v-select :options="itemClassArray" label="label"  v-model="itemData.item_class" :clearable="false"></v-select>
-                            </client-only>
-                        </div>
+                    <div class="mb-3" v-if="itemData.item_class.value === ITEM_CLASS.STOCK">
+                        <label class="form-label">
+                            Item Code & Description <span class="text-danger">*</span>
+                        </label>
+                        <client-only>
+                            <v-select :options="items" label="label" v-model="itemData.item"></v-select>
+                        </client-only>
+                        <small class="text-danger fst-italic" v-if="itemDataErrors.item"> This field is invalid </small>
+                    </div>
 
-                        <div class="mb-3" v-if="itemData.item_class.value === ITEM_CLASS.STOCK">
-                            <label class="form-label">
-                                Item Code & Description <span class="text-danger">*</span>
-                            </label>
-                            <client-only>
-                                <v-select :options="items" label="code" v-model="itemData.item"></v-select>
-                            </client-only>
-                        </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Brand <span class="text-danger">*</span>
+                        </label>
+                        <client-only>
+                            <v-select :options="brands" label="name" v-model="itemData.item_brand"></v-select>
+                        </client-only>
+                    </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">
-                                Brand <span class="text-danger">*</span>
-                            </label>
-                            <client-only>
-                                <v-select :options="brands" label="name" v-model="itemData.item_brand"></v-select>
-                            </client-only>
-                        </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Unit <span class="text-danger">*</span>
+                        </label>
+                        <client-only>
+                            <v-select :options="units" label="name" v-model="itemData.unit"></v-select>
+                        </client-only>
+                    </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">
-                                Unit <span class="text-danger">*</span>
-                            </label>
-                            <client-only>
-                                <v-select :options="units" label="name" v-model="itemData.unit"></v-select>
-                            </client-only>
-                        </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Quantity Delivered <span class="text-danger">*</span>
+                        </label>
+                        <input type="number" class="form-control" v-model="itemData.quantity_delivered">
+                        <small class="text-danger fst-italic" v-if="itemDataErrors.quantityDelivered"> This field is invalid </small>
+                    </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">
-                                Quantity Delivered <span class="text-danger">*</span>
-                            </label>
-                            <input type="number" class="form-control" v-model="itemData.quantity_delivered">
-                        </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Quantity Accepted <span class="text-danger">*</span>
+                        </label>
+                        <input type="number" class="form-control" v-model="itemData.quantity_accepted">
+                        <small class="text-danger fst-italic" v-if="itemDataErrors.quantityAccepted"> This field is invalid </small>
+                    </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">
-                                Quantity Accepted <span class="text-danger">*</span>
-                            </label>
-                            <input type="number" class="form-control" v-model="itemData.quantity_accepted">
-                        </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            VAT <span class="text-danger">*</span>
+                        </label>
+                        <client-only>
+                            <v-select :options="vatArray" label="label" v-model="itemData.vat" :clearable="false"></v-select>
+                        </client-only>
+                    </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">
-                                VAT <span class="text-danger">*</span>
-                            </label>
-                            <client-only>
-                                <v-select :options="vatArray" label="label" v-model="itemData.vat"></v-select>
-                            </client-only>
-                        </div>
-
-                        <div class="mb-3">
-                            <div class="row">
-                                <div class="col">
-                                    <label class="form-label">
-                                        Gross Price <span class="text-danger">*</span>
-                                    </label>
-                                    <input type="number" class="form-control" v-model="itemData.gross_price">
-                                    <small class="text-muted fst-italic"> {{ formatToPhpCurrency(itemData.gross_price) }} </small>
-                                </div>
-                                <div class="col">
-                                    <label class="form-label">
-                                        Gross Total 
-                                        <i
-                                            class="fas fa-info-circle text-warning ms-1"
-                                            data-bs-toggle="tooltip"
-                                            data-bs-placement="top"
-                                            title="GT = GP * QA"
-                                        ></i>
-                                    </label>
-                                    <input type="text" class="form-control" :value="formatToPhpCurrency(grossTotal)" disabled>
-                                </div>
+                    <div class="mb-3">
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-label">
+                                    Gross Price <span class="text-danger">*</span>
+                                </label>
+                                <input type="number" class="form-control" v-model="itemData.gross_price">
+                                <small class="text-muted fst-italic"> {{ formatToPhpCurrency(itemData.gross_price) }} </small>
+                                <small class="text-danger fst-italic" v-if="itemDataErrors.grossPrice"> This field is invalid </small>
+                            </div>
+                            <div class="col">
+                                <label class="form-label">
+                                    Gross Total 
+                                    <i
+                                        class="fas fa-info-circle text-warning ms-1"
+                                        data-bs-toggle="tooltip"
+                                        data-bs-placement="top"
+                                        title="GT = GP * QA"
+                                    ></i>
+                                </label>
+                                <input type="text" class="form-control" :value="formatToPhpCurrency(grossTotal)" disabled>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="mb-3">
-                            <div class="row">
-                                <div class="col">
-                                    <label class="form-label">
-                                        VAT Amount
-                                        <i
-                                            class="fas fa-info-circle text-warning ms-1"
-                                            data-bs-toggle="tooltip"
-                                            data-bs-html="true"
-                                            data-bs-placement="top"
-                                            :title="vatPriceToolTip"
-                                        ></i>
-                                    </label>
-                                    <input type="text" class="form-control" :value="formatToPhpCurrency(getVatAmount(itemData.gross_price, itemData.vat.value))" disabled>
-                                </div>
-                                <div class="col">
-                                    <label class="form-label">
-                                        VAT Total
-                                    </label>
+                    <div class="mb-3">
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-label">
+                                    VAT Amount
                                     <i
                                         class="fas fa-info-circle text-warning ms-1"
                                         data-bs-toggle="tooltip"
                                         data-bs-html="true"
                                         data-bs-placement="top"
-                                        title="VT = VA * QA"
+                                        :title="vatPriceToolTip"
                                     ></i>
-                                    <input type="text" class="form-control" :value="formatToPhpCurrency(vatTotal)" disabled>
-                                </div>
+                                </label>
+                                <input type="text" class="form-control" :value="formatToPhpCurrency(getVatAmount(itemData.gross_price, itemData.vat.value))" disabled>
+                            </div>
+                            <div class="col">
+                                <label class="form-label">
+                                    VAT Total
+                                </label>
+                                <i
+                                    class="fas fa-info-circle text-warning ms-1"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-html="true"
+                                    data-bs-placement="top"
+                                    title="VT = VA * QA"
+                                ></i>
+                                <input type="text" class="form-control" :value="formatToPhpCurrency(vatTotal)" disabled>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="mb-3">
-                            <div class="row">
-                                <div class="col">
-                                    <label class="form-label">
-                                        Net Price
-                                    </label>
+                    <div class="mb-3">
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-label">
+                                    Net Price
+                                </label>
+                                <i
+                                    class="fas fa-info-circle text-warning ms-1"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-html="true"
+                                    data-bs-placement="top"
+                                    title="NP = GP - VA"
+                                ></i>
+                                <input type="text" class="form-control" :value="formatToPhpCurrency(netPrice)" disabled>
+                            </div>
+                            <div class="col">
+                                <label class="form-label">
+                                    Net Total
                                     <i
                                         class="fas fa-info-circle text-warning ms-1"
                                         data-bs-toggle="tooltip"
                                         data-bs-html="true"
                                         data-bs-placement="top"
-                                        title="NP = GP - VA"
+                                        title="NT = GT - VT"
                                     ></i>
-                                    <input type="text" class="form-control" :value="formatToPhpCurrency(netPrice)" disabled>
-                                </div>
-                                <div class="col">
-                                    <label class="form-label">
-                                        Net Total
-                                        <i
-                                            class="fas fa-info-circle text-warning ms-1"
-                                            data-bs-toggle="tooltip"
-                                            data-bs-html="true"
-                                            data-bs-placement="top"
-                                            title="NT = GT - VT"
-                                        ></i>
-                                    </label>
-                                    <input type="text" class="form-control" :value="formatToPhpCurrency(netTotal)" disabled>
-                                </div>
+                                </label>
+                                <input type="text" class="form-control" :value="formatToPhpCurrency(netTotal)" disabled>
                             </div>
                         </div>
+                    </div>
 
-                    </div>
-                    <div class="modal-footer">
-                        <button ref="closeItemModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                            <i class="fas fa-close"></i> Close
-                        </button>
-                        <button type="button" class="btn btn-primary">
-                            <i class="fas fa-plus-circle"></i> Add Item
-                        </button>
-                    </div>
-                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button @click="onCloseModal" ref="rrCloseItemModalBtn" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-close"></i> Close
+                    </button>
+                    <button v-if="formIsAdd" @click="addItem" type="button" class="btn btn-primary" :disabled="isAdding">
+                        <i class="fas fa-plus-circle"></i> {{ isAdding ? 'Adding Item...' : 'Add Item' }}
+                    </button>
+                    <button v-else @click="editItem" type="button" class="btn btn-primary" :disabled="isEditing">
+                        <i class="fas fa-plus-circle"></i> {{ isEditing ? 'Editing Item...' : 'Edit Item' }}
+                    </button>
+                </div>
                 </div>
             </div>
+        </div>
 
 
     </div>
@@ -409,8 +419,10 @@
     import { VAT_TYPE } from '#imports';
     import type { Brand, Unit } from '~/composables/warehouse/canvass/canvass.types';
     import type { RrItem } from '~/composables/warehouse/rr/rr-item.types';
-    import { getTotalNetPrice, getVatAmount } from '~/utils/helpers';
+    import { getTotalNetPrice, getVatAmount, getNetPrice } from '~/utils/helpers';
+    
 
+    const emits = defineEmits(['addItem', 'removeItem', 'editItem']);
 
     const props = defineProps({
         rrItems: {
@@ -428,6 +440,14 @@
         items: {
             type: Array as () => Item[],
             default: () => [],
+        },
+        isAdding: {
+            type: Boolean,
+            default: false
+        },
+        isEditing: {
+            type: Boolean,
+            default: false
         },
     });
 
@@ -457,6 +477,8 @@
         }
     ])
 
+    const rrCloseItemModalBtn = ref<HTMLButtonElement>()
+
     const showDescription = ref(true)
     const showItemCode = ref(true)
     const showClass = ref(false)
@@ -464,12 +486,24 @@
     const showUnit = ref(false)
     const showDelivered = ref(true)
     const showAccepted = ref(true)
-    const showVat = ref(false)
-    const showGrossPrice = ref(false)
+    const showVat = ref(true)
+    const showGrossPrice = ref(true)
     const showNetPrice = ref(false)
     const showGrossTotal = ref(true)
     const showVatTotal = ref(true)
     const showNetTotal = ref(true)
+
+    const formIsAdd = ref(true)
+    // use in editing
+    const indxToEdit = ref()
+    
+    const _itemDataErrorsInitial = {
+        description: false,
+        item: false,
+        quantityDelivered: false,
+        quantityAccepted: false,
+        grossPrice: false,
+    } 
 
     const _itemDataInitial: RrItem = {
         id: '',
@@ -481,10 +515,13 @@
         quantity_delivered: 0,
         description: '',
         vat: vatArray.value[0],
-        gross_price: 0
+        gross_price: 0,
+        net_price: 0,
+        vat_amount: 0,
     }
 
     const itemData = ref<RrItem>({..._itemDataInitial})
+    const itemDataErrors = ref({..._itemDataErrorsInitial})
 
     onMounted(() => {
         const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]')) as Element[];
@@ -584,13 +621,92 @@
 
     }
 
-    function getNetPrice(payload: { grossPrice: number, vatAmount: number }) {
-        const { grossPrice, vatAmount } = payload 
+    function addItem() {
 
-        return ( grossPrice - vatAmount )
+        if(!isValidItemData()) {
+            return 
+        }
+
+        emits("addItem", itemData.value, rrCloseItemModalBtn.value)
 
     }
 
+    function editItem() {
+
+        if(!isValidItemData()) {
+            return 
+        }
+
+        console.log('rrCloseItemModalBtn.value', rrCloseItemModalBtn.value)
+
+        itemData.value.vat_amount = getVatAmount(itemData.value.gross_price, itemData.value.vat.value)
+        itemData.value.net_price = getNetPrice({
+            grossPrice: itemData.value.gross_price,
+            vatAmount: itemData.value.vat_amount
+        })
+
+        emits("editItem", indxToEdit.value, itemData.value, rrCloseItemModalBtn.value)
+
+    }
+
+    function onClickAddItem() {
+        console.log('onClickAddItem')
+
+        formIsAdd.value = true
+
+    }
+
+    function onClickEditItem(indx: number) {
+        console.log('onClickEditItem')
+
+        const item = props.rrItems[indx]
+
+        formIsAdd.value = false 
+        indxToEdit.value = indx 
+
+        itemData.value = {...item}
+
+    }
+
+    function isValidItemData(): boolean {
+
+        itemDataErrors.value = {..._itemDataErrorsInitial}
+
+        if(itemData.value.description.trim() === '') {
+            itemDataErrors.value.description = true 
+        }
+
+        if(itemData.value.quantity_delivered <= 0) {
+            itemDataErrors.value.quantityDelivered = true 
+        }
+
+        if(itemData.value.quantity_accepted <= 0) {
+            itemDataErrors.value.quantityAccepted = true 
+        }
+
+        if(itemData.value.gross_price <= 0) {
+            itemDataErrors.value.grossPrice = true 
+        }
+
+        if(itemData.value.item_class.value === ITEM_CLASS.STOCK && !itemData.value.item) {
+            itemDataErrors.value.item = true
+        }
+
+        const hasError = Object.values(itemDataErrors.value).includes(true);
+
+        if(hasError) {
+            return false 
+        }
+
+        return true
+
+    }
+
+    function onCloseModal() {
+        itemData.value = {..._itemDataInitial}
+        itemDataErrors.value = {..._itemDataErrorsInitial}
+        indxToEdit.value = undefined
+    }
 
 
 </script>

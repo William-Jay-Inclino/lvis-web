@@ -93,6 +93,9 @@ export interface Item {
 	item_transactions: ItemTransaction[];
 	rr_items: RrItem[];
 	unit: Unit;
+
+    // set programmatically
+    label?: string 
 }
 
 export interface ItemType {

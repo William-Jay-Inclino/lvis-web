@@ -18,6 +18,6 @@ export interface RrItem {
         label: string
     }
 	gross_price: number
-	// net_price: number
-	// vat_amount: number
+	net_price: number
+	vat_amount: number
   }

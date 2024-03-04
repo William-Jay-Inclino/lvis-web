@@ -79,6 +79,13 @@ export function getVatAmount(price: number, vat_type: VAT_TYPE) {
 
 }
 
+export function getNetPrice(payload: { grossPrice: number, vatAmount: number }) {
+    const { grossPrice, vatAmount } = payload 
+
+    return ( grossPrice - vatAmount )
+
+}
+
 export function getTotalNetPrice(payload: {pricePerUnit: number, quantity: number, vatPerUnit: number}) {
 
     const { pricePerUnit, quantity, vatPerUnit } = payload

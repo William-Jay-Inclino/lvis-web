@@ -14,6 +14,7 @@ export interface PO {
   po_approvers: Approver[];
   is_deleted: boolean
   is_cancelled: boolean
+  is_referenced: boolean
 }
 
 export interface CreatePoInput {
