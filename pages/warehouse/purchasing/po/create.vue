@@ -136,10 +136,14 @@
                                 <td class="text-muted"> {{ item.canvass_item.quantity }} </td>
                                 <td class="text-muted"> {{ VAT[item.vat_type].label }} </td>
                                 <td class="text-muted"> {{ formatToPhpCurrency(item.price) }} </td>
-                                <td class="text-muted"> {{ formatToPhpCurrency(getVatPerUnit(item.price, item.vat_type)) }} </td>
+                                <td class="text-muted"> {{ formatToPhpCurrency(getVatAmount(item.price, item.vat_type)) }} </td>
                                 <td class="text-muted"> 
                                     {{ 
-                                        formatToPhpCurrency(getTotalPrice(item.price, item.canvass_item.quantity, getVatPerUnit(item.price, item.vat_type))) 
+                                        formatToPhpCurrency(getTotalNetPrice({
+                                            pricePerUnit: item.price,
+                                            vatPerUnit: getVatAmount(item.price, item.vat_type),
+                                            quantity: item.canvass_item.quantity
+                                        })) 
                                     }} 
                                 </td>
                             </tr>
@@ -179,7 +183,7 @@
     import { formatToPhpCurrency } from '~/utils/helpers'
     import type { MeqsSupplier } from '~/composables/warehouse/meqs/meqs-supplier';
     import Swal from 'sweetalert2'
-    import { getTotalPrice, getVatPerUnit } from '~/utils/helpers';
+    import { getTotalNetPrice, getVatAmount } from '~/utils/helpers';
 
     definePageMeta({
         layout: "layout-admin"
@@ -255,7 +259,11 @@
 
         for(let item of supplierItems.value) {
 
-            const totalPriceOfItem = getTotalPrice(item.price, item.canvass_item.quantity, getVatPerUnit(item.price, item.vat_type))
+            const totalPriceOfItem = getTotalNetPrice({
+                pricePerUnit: item.price,
+                vatPerUnit: getVatAmount(item.price, item.vat_type),
+                quantity: item.canvass_item.quantity
+            })
 
             totalPrice += totalPriceOfItem
 

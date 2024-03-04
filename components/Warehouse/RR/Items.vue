@@ -161,27 +161,42 @@
                                 <td v-show="showNetPrice" class="text-muted text-center align-middle">
                                     {{ 
                                         formatToPhpCurrency(
-                                            (rrItem.gross_price) +  ( getVatPerUnit(rrItem.gross_price, rrItem.vat.value) )
+                                            getNetPrice({
+                                                grossPrice: rrItem.gross_price,
+                                                vatAmount: getVatAmount(rrItem.gross_price, rrItem.vat.value)
+                                            })
                                         ) 
                                     }}
                                 </td>
                                 <td v-show="showGrossTotal" class="text-muted text-center align-middle">
-                                    {{ formatToPhpCurrency(rrItem.gross_price * rrItem.quantity_accepted) }}
+                                    {{ 
+                                        formatToPhpCurrency(
+                                            getGrossTotal({
+                                                price: rrItem.gross_price,
+                                                quantity: rrItem.quantity_accepted
+                                            })
+                                        ) 
+                                    }}
                                 </td>
                                 <td v-show="showVatTotal" class="text-muted text-center align-middle">
                                     {{ 
                                         formatToPhpCurrency(
-                                            ( getVatPerUnit(rrItem.gross_price, rrItem.vat.value) ) * rrItem.quantity_accepted
+                                            getVatTotal({
+                                                price: rrItem.gross_price,
+                                                quantity: rrItem.quantity_accepted,
+                                                vatType: rrItem.vat.value
+                                            })
                                         )
                                     }}
                                 </td>
                                 <td v-show="showNetTotal" class="text-muted text-center align-middle">
                                     {{ 
                                         formatToPhpCurrency(
-                                            (rrItem.gross_price * rrItem.quantity_accepted) +
-                                            (
-                                                getVatPerUnit(rrItem.gross_price, rrItem.vat.value)
-                                            ) * rrItem.quantity_accepted
+                                            getTotalNetPrice({
+                                                pricePerUnit: rrItem.gross_price,
+                                                vatPerUnit: getVatAmount(rrItem.gross_price, rrItem.vat.value),
+                                                quantity: rrItem.quantity_accepted
+                                            })
                                         ) 
                                     }}
                                 </td>
@@ -289,10 +304,17 @@
                                         Gross Price <span class="text-danger">*</span>
                                     </label>
                                     <input type="number" class="form-control" v-model="itemData.gross_price">
+                                    <small class="text-muted fst-italic"> {{ formatToPhpCurrency(itemData.gross_price) }} </small>
                                 </div>
                                 <div class="col">
                                     <label class="form-label">
-                                        Gross Total
+                                        Gross Total 
+                                        <i
+                                            class="fas fa-info-circle text-warning ms-1"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-placement="top"
+                                            title="GT = GP * QA"
+                                        ></i>
                                     </label>
                                     <input type="text" class="form-control" :value="formatToPhpCurrency(grossTotal)" disabled>
                                 </div>
@@ -303,14 +325,28 @@
                             <div class="row">
                                 <div class="col">
                                     <label class="form-label">
-                                        Vat Price
+                                        VAT Amount
+                                        <i
+                                            class="fas fa-info-circle text-warning ms-1"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-html="true"
+                                            data-bs-placement="top"
+                                            :title="vatPriceToolTip"
+                                        ></i>
                                     </label>
-                                    <input type="text" class="form-control" :value="formatToPhpCurrency(getVatPerUnit(itemData.gross_price, itemData.vat.value))" disabled>
+                                    <input type="text" class="form-control" :value="formatToPhpCurrency(getVatAmount(itemData.gross_price, itemData.vat.value))" disabled>
                                 </div>
                                 <div class="col">
                                     <label class="form-label">
-                                        Vat Total
+                                        VAT Total
                                     </label>
+                                    <i
+                                        class="fas fa-info-circle text-warning ms-1"
+                                        data-bs-toggle="tooltip"
+                                        data-bs-html="true"
+                                        data-bs-placement="top"
+                                        title="VT = VA * QA"
+                                    ></i>
                                     <input type="text" class="form-control" :value="formatToPhpCurrency(vatTotal)" disabled>
                                 </div>
                             </div>
@@ -322,11 +358,25 @@
                                     <label class="form-label">
                                         Net Price
                                     </label>
+                                    <i
+                                        class="fas fa-info-circle text-warning ms-1"
+                                        data-bs-toggle="tooltip"
+                                        data-bs-html="true"
+                                        data-bs-placement="top"
+                                        title="NP = GP - VA"
+                                    ></i>
                                     <input type="text" class="form-control" :value="formatToPhpCurrency(netPrice)" disabled>
                                 </div>
                                 <div class="col">
                                     <label class="form-label">
                                         Net Total
+                                        <i
+                                            class="fas fa-info-circle text-warning ms-1"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-html="true"
+                                            data-bs-placement="top"
+                                            title="NT = GT - VT"
+                                        ></i>
                                     </label>
                                     <input type="text" class="form-control" :value="formatToPhpCurrency(netTotal)" disabled>
                                 </div>
@@ -359,6 +409,7 @@
     import { VAT_TYPE } from '#imports';
     import type { Brand, Unit } from '~/composables/warehouse/canvass/canvass.types';
     import type { RrItem } from '~/composables/warehouse/rr/rr-item.types';
+    import { getTotalNetPrice, getVatAmount } from '~/utils/helpers';
 
 
     const props = defineProps({
@@ -435,13 +486,22 @@
 
     const itemData = ref<RrItem>({..._itemDataInitial})
 
+    onMounted(() => {
+        const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]')) as Element[];
+        // @ts-ignore
+        let tooltipList = tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    })
+
+
     const vatTotal = computed( () => {
 
         if(!itemData.value.quantity_accepted || !itemData.value.gross_price) return 0 
 
-        const vatPerUnit = getVatPerUnit(itemData.value.gross_price, itemData.value.vat.value)
-
-        return (vatPerUnit * itemData.value.quantity_accepted)
+        return getVatTotal({
+            price: itemData.value.gross_price,
+            quantity: itemData.value.quantity_accepted,
+            vatType: itemData.value.vat.value
+        })
 
     })
 
@@ -449,7 +509,10 @@
 
         if(!itemData.value.quantity_accepted || !itemData.value.gross_price) return 0 
 
-        return itemData.value.gross_price * itemData.value.quantity_accepted
+        return getGrossTotal({
+            price: itemData.value.gross_price,
+            quantity: itemData.value.quantity_accepted
+        })
 
     })
 
@@ -457,9 +520,12 @@
 
         if(!itemData.value.quantity_accepted || !itemData.value.gross_price) return 0 
 
-        const vatPerUnit = getVatPerUnit(itemData.value.gross_price, itemData.value.vat.value)
+        const vatPerUnit = getVatAmount(itemData.value.gross_price, itemData.value.vat.value)
 
-        return (itemData.value.gross_price - vatPerUnit)
+        return getNetPrice({
+            grossPrice: itemData.value.gross_price,
+            vatAmount: vatPerUnit
+        })
 
     })
 
@@ -467,9 +533,63 @@
 
         if(!itemData.value.quantity_accepted || !itemData.value.gross_price) return 0 
 
-        return ( grossTotal.value - vatTotal.value )
+        return getTotalNetPrice({
+            pricePerUnit: itemData.value.gross_price,
+            vatPerUnit: getVatAmount(itemData.value.gross_price, itemData.value.vat.value),
+            quantity: itemData.value.quantity_accepted
+        })
 
     })
+
+    const vatPriceToolTip = computed( () => {
+
+        let t = `let VAT_RATE = <b>${VAT_RATE}</b>`
+        t += '<br>'
+        t += '<br>'
+
+        t += '<em>if VAT = None:</em>'
+        t += '<br>'
+        t += '<b>VA = 0</b>'
+
+        t += '<br>'
+        t += '<br>'
+
+        t += '<em>if VAT = EXC:</em>'
+        t += '<br>'
+        t += '<b>VA = GP * VAT_RATE</b>'
+
+        t += '<br>'
+        t += '<br>'
+
+        t += '<em>if VAT = INC:</em>'
+        t += '<br>'
+        t += '<b>VA = (GP * VAT_RATE) / (1 + VAT_RATE)</b>'
+
+        return t
+
+    })
+
+    function getVatTotal(payload: { price: number, quantity: number, vatType: VAT_TYPE }) {
+
+        const { price, quantity, vatType } = payload
+        const vatPerUnit = getVatAmount(price, vatType)
+        return vatPerUnit * quantity
+
+    } 
+
+    function getGrossTotal(payload: { price: number, quantity: number }) {
+        const { price, quantity } = payload 
+
+        return ( price * quantity )
+
+    }
+
+    function getNetPrice(payload: { grossPrice: number, vatAmount: number }) {
+        const { grossPrice, vatAmount } = payload 
+
+        return ( grossPrice - vatAmount )
+
+    }
 
 
 

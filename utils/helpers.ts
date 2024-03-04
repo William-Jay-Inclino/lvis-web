@@ -63,29 +63,29 @@ export function formatToPhpCurrency(number: number) {
     return "₱" + number.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-export function getVatPerUnit(price: number, vat_type: VAT_TYPE) {
+export function getVatAmount(price: number, vat_type: VAT_TYPE) {
 
     if(!price) return 0
 
     if(vat_type === VAT_TYPE.EXC) {
-        const vatAmount = (price * VAT_RATE)
-        return vatAmount
+        return price * VAT_RATE
     }
 
     if(vat_type === VAT_TYPE.INC) {
-        const vatAmount = price - (price / (1 + VAT_RATE))
-        return vatAmount
+        return (price * VAT_RATE) / (1 + VAT_RATE);
     }
 
     return 0
 
 }
 
-export function getTotalPrice(pricePerUnit: number, quantity: number, vatPerUnit: number) {
+export function getTotalNetPrice(payload: {pricePerUnit: number, quantity: number, vatPerUnit: number}) {
+
+    const { pricePerUnit, quantity, vatPerUnit } = payload
 
     const totalPrice = pricePerUnit * quantity 
     const totalVat = vatPerUnit * quantity 
 
-    return (totalPrice + totalVat)
+    return (totalPrice - totalVat)
 
 }
