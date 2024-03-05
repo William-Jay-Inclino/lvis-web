@@ -107,6 +107,7 @@ export interface ItemType {
 export interface ItemTransaction {
 	id: string;
 	item_id: string;
+	txn_number: string;
 	rr_item_id?: string | null;
 	type: ITEM_TRANSACTION_TYPE;
 	quantity: number;
@@ -114,7 +115,9 @@ export interface ItemTransaction {
 	remarks?: string | null;
 	item: Item;
 	rr_item?: RrItem;
-  }
+
+    created_at: Date
+}
 
 
 

@@ -1,5 +1,6 @@
 import type { Brand, Unit } from "../canvass/canvass.types"
 import { ITEM_CLASS, VAT_TYPE } from '~/composables/common.types'
+import type { RR } from "./rr.types"
 
 export interface RrItem {
 	id: string
@@ -15,6 +16,8 @@ export interface RrItem {
 	gross_price: number
 	net_price: number
 	vat_amount: number
+
+	rr: RR
 
 	// props that are set programmatically
 
