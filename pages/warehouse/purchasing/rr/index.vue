@@ -248,7 +248,7 @@
     // ======================== FUNCTIONS ======================== 
 
     function onClickEdit(id: string) {
-        router.push('/warehouse/purchasing/po/' + id)
+        router.push('/warehouse/purchasing/rr/' + id)
     }
 
     async function changePage(page: number) {

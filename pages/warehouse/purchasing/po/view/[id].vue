@@ -185,7 +185,7 @@
         
 
         <div class="row mb-3 pt-3 justify-content-center">
-            <div class="col-lg-9">
+            <div class="col-lg-11">
                 <hr>
                 <div class="d-flex justify-content-between">
                     <div>

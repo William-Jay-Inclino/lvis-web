@@ -2,7 +2,7 @@ import type { Brand } from "../canvass/canvass.types"
 import type { PO } from "../po/po.types"
 import type { Unit } from "../unit/unit.types"
 import type { RrApproverSettings } from "./rr-approver.types"
-import type { CreateRrInput, FindAllResponse, MutationResponse, RR } from "./rr.types"
+import type { CreateRrInput, FindAllResponse, MutationResponse, RR, UpdateRrInput } from "./rr.types"
 
 
 export async function findByRefNumber(payload: { po_number?: string, rr_number?: string }): Promise<RR | undefined> {
@@ -362,6 +362,95 @@ export async function fetchFormDataInCreate(): Promise<{
 
 }
 
+export async function fetchFormDataInUpdate(id: string): Promise<{
+    employees: Employee[],
+    rr: RR | undefined
+}> {
+
+    const query = `
+        query {
+            rr(id: "${id}") {
+                id 
+                rr_number 
+                rr_date
+                invoice_number
+                delivery_number
+                notes
+                delivery_charge
+                is_cancelled
+                is_deleted
+                received_by {
+                    id
+                    firstname
+                    middlename
+                    lastname
+                }
+                rr_approvers {
+                    id
+                    approver {
+                        id
+                        firstname
+                        middlename
+                        lastname
+                    }
+                    date_approval 
+                    notes
+                    status
+                    label
+                    order
+                }
+                po {
+                    id
+                    po_number
+                }
+            },
+            employees(page: 1, pageSize: 50) {
+                data {
+                    id
+                    firstname
+                    middlename
+                    lastname
+                }
+            },
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        let employees: Employee[] = []
+
+        if(!response.data || !response.data.data) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+
+        const data = response.data.data
+
+        if(!data.rr) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+
+        if(data.employees && data.employees.data) {
+            employees = response.data.data.employees.data
+        }
+
+        return {
+            rr: data.rr,
+            employees
+        }
+
+    } catch (error) {
+        console.error(error);
+        return {
+            rr: undefined,
+            employees: []
+        }
+    }
+    
+
+}
+
 export async function findOne(id: string): Promise<RR | undefined> {
     const query = `
         query {
@@ -544,3 +633,92 @@ export async function create(input: CreateRrInput): Promise<MutationResponse> {
     }
 }
 
+export async function update(id: string, input: UpdateRrInput): Promise<MutationResponse> {
+
+    
+    const mutation = `
+        mutation {
+            updateRr(
+                id: "${id}",
+                input: {
+                    received_by_id: "${input.received_by?.id}"
+                    invoice_number: "${input.invoice_number}"
+                    delivery_number: "${input.delivery_number}"
+                    notes: "${input.notes}"
+                    delivery_charge: ${input.delivery_charge}
+                }
+            ) {
+                id
+            }
+    }`;
+
+    try {
+        const response = await sendRequest(mutation);
+        console.log('response', response);
+
+        if(response.data && response.data.data && response.data.data.updateRr) {
+            return {
+                success: true,
+                msg: 'RR updated successfully!',
+                data: response.data.data.updateRr 
+            };
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+    } catch (error) {
+        console.error(error);
+        
+        return {
+            success: false,
+            msg: 'Failed to update RR. Please contact system administrator'
+        };
+    }
+}
+
+
+export async function cancel(id: string): Promise<MutationResponse> {
+
+    const authUserJson = localStorage.getItem('authUser')
+
+    if(!authUserJson) {
+        throw console.error('authUser in localstorage not found');
+    }
+
+    const authUser = JSON.parse(authUserJson) as AuthUser
+
+    const mutation = `
+        mutation {
+            updateRr(
+                id: "${id}",
+                input: {
+                    canceller_id: "${authUser.user.id}"
+                }
+            ) {
+                id
+                is_cancelled
+            }
+    }`;
+
+    try {
+        const response = await sendRequest(mutation);
+        console.log('response', response);
+
+        if(response.data && response.data.data && response.data.data.updateRr) {
+            return {
+                success: true,
+                msg: 'RR cancelled!' 
+            };
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+    } catch (error) {
+        console.error(error);
+        
+        return {
+            success: false,
+            msg: 'Failed to cancel RR. Please contact system administrator'
+        };
+    }
+}

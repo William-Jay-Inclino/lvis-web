@@ -13,7 +13,7 @@ export interface RR {
   canceller_id: string;
   date_cancelled: Date;
   invoice_number: string;
-  delivery_number?: string | null;
+  delivery_number: string;
   notes: string;
   delivery_charge: number;
   created_at: Date;
@@ -42,7 +42,13 @@ export interface CreateRrInput {
     rr_items: RrItem[];
 }
 
-
+export interface UpdateRrInput {
+    received_by: Employee | null;
+    invoice_number: string;
+    delivery_number: string;
+    notes: string;
+    delivery_charge: number;
+}
 
 // export interface CreateRRItemSubInput {
 //     item: Item | null;
