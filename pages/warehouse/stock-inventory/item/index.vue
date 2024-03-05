@@ -82,9 +82,9 @@
                                             <td class="text-muted align-middle"> {{ i.item_type.name }} </td>
                                             <td class="text-muted align-middle"> {{ i.total_quantity }} </td>
                                             <td class="text-muted align-middle">
-                                                <button @click="onClickEdit(i.id)" class="btn btn-light w-50">
+                                                <nuxt-link class="btn btn-light w-50" :to="'/warehouse/stock-inventory/item/view/' + i.id">
                                                     <i class="fas fa-info-circle text-info"></i>
-                                                </button>
+                                                </nuxt-link>
                                                 <button @click="onClickEdit(i.id)" class="btn btn-light w-50">
                                                     <i class="fas fa-edit text-primary"></i>
                                                 </button>
@@ -124,9 +124,9 @@
                                         </tr>
                                         <tr>
                                             <td class="text-center">
-                                                <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light text-primary w-100">
+                                                <nuxt-link class="btn btn-sm btn-light text-primary w-100" :to="'/warehouse/stock-inventory/item/view/' + i.id">
                                                     View Details
-                                                </button>
+                                                </nuxt-link>
                                             </td>
                                             <td class="text-center">
                                                 <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light text-primary w-100">

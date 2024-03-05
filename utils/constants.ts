@@ -49,6 +49,17 @@ export const itemClass = {
     }
 }
 
+export const itemTransaction = {
+    [ITEM_TRANSACTION_TYPE.STOCK_IN]: {
+        value: ITEM_TRANSACTION_TYPE.STOCK_IN,
+        label: 'Stock In'
+    },
+    [ITEM_TRANSACTION_TYPE.STOCK_OUT]: {
+        value: ITEM_TRANSACTION_TYPE.STOCK_OUT,
+        label: 'Stock Out'
+    }
+}
+
 
 export const NOTE_OPTIONS = [
     'Design',

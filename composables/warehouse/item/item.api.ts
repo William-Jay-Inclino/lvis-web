@@ -105,8 +105,6 @@ export async function findAll(payload: {page: number, pageSize: number, name: st
     }
 }
 
-
-
 export async function findByCode(code: string): Promise<Item | undefined> {
     const query = `
         query {
@@ -119,6 +117,58 @@ export async function findByCode(code: string): Promise<Item | undefined> {
                 item_type {
                     id 
                     name
+                }
+            }
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        if(response.data && response.data.data && response.data.data.item) {
+            return response.data.data.item;
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+    } catch (error) {
+        console.error(error);
+        return undefined
+    }
+}
+
+export async function findOne(id: string): Promise<Item | undefined> {
+    const query = `
+        query {
+            item(id: "${id}") {
+                id
+                code 
+                name
+                description
+                total_quantity
+                initial_quantity
+                item_type {
+                    id 
+                    name
+                }
+                unit {
+                    id
+                    name
+                }
+                item_transactions {
+                    txn_number
+                    type 
+                    quantity
+                    price 
+                    remarks
+                    created_at
+                    rr_item {
+                        rr {
+                            id 
+                            rr_number
+                        }
+                    }
                 }
             }
         }
