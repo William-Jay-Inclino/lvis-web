@@ -27,7 +27,15 @@
                             </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Data Mgmt
+                                    Stock Inventory
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <li><nuxt-link class="dropdown-item" to="/warehouse/stock-inventory/item">Item</nuxt-link></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Data Management
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <li><nuxt-link class="dropdown-item" to="/warehouse/data-management/unit">Unit</nuxt-link></li>
@@ -90,6 +98,14 @@
                             <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/meqs">MEQS</nuxt-link></li>
                             <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/po">PO</nuxt-link></li>
                             <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/rr">RR</nuxt-link></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Stock Inventory
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><nuxt-link class="dropdown-item" to="/warehouse/stock-inventory/item">Item</nuxt-link></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">

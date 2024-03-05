@@ -114,7 +114,7 @@ export interface ItemTransaction {
 	remarks?: string | null;
 	item: Item;
 	rr_item?: RrItem;
-  }
+}
 
 
 
