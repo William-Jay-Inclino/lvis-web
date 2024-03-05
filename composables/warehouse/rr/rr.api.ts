@@ -289,10 +289,12 @@ export async function fetchFormDataInCreate(): Promise<{
                     lastname
                 }
             },
-            items{
-                id
-                code 
-                description
+            items(page: 1, pageSize: 10) {
+                data {
+                    id
+                    code
+                    name
+                }
             }
         }
     `;
@@ -326,8 +328,8 @@ export async function fetchFormDataInCreate(): Promise<{
             brands = data.brands
         }
 
-        if(data.items) { // temp
-            items = data.items
+        if(data.items && data.items.data) {
+            items = response.data.data.items.data
         }
 
         if(data.units && data.units.data) {
@@ -508,7 +510,7 @@ export async function findOne(id: string): Promise<RR | undefined> {
                     item {
                         id 
                         code 
-                        description
+                        name
                     }
                     item_brand {
                         id 

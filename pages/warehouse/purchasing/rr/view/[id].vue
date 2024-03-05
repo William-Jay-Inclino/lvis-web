@@ -238,7 +238,7 @@
                                 <thead>
                                     <tr>
                                         <th v-show="showDescription" class="bg-secondary text-white">Description</th>
-                                        <th v-show="showItemCode" class="bg-secondary text-white">Item Code & Description</th>
+                                        <th v-show="showItemCode" class="bg-secondary text-white">Item Code</th>
                                         <th v-show="showClass" class="bg-secondary text-white">Class</th>
                                         <th v-show="showBrand" class="bg-secondary text-white">Brand</th>
                                         <th v-show="showUnit" class="bg-secondary text-white">Unit</th>
@@ -424,7 +424,7 @@
         rr?.rr_items.map(i => {
 
             if(i.item) {
-                i.item.label = `${i.item.code} - ${i.item.description}`
+                i.item.label = `${i.item.code} - ${i.item.name}`
             }
 
             return i

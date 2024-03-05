@@ -109,7 +109,7 @@
                         <thead>
                             <tr>
                                 <th v-show="showDescription" class="bg-secondary text-white">Description</th>
-                                <th v-show="showItemCode" class="bg-secondary text-white">Item Code & Description</th>
+                                <th v-show="showItemCode" class="bg-secondary text-white">Item Code</th>
                                 <th v-show="showClass" class="bg-secondary text-white">Class</th>
                                 <th v-show="showBrand" class="bg-secondary text-white">Brand</th>
                                 <th v-show="showUnit" class="bg-secondary text-white">Unit</th>
@@ -515,6 +515,7 @@
         quantity_accepted: 0,
         quantity_delivered: 0,
         description: '',
+        name: '',
         vat: vatArray.value[0],
         vat_type: VAT_TYPE.NONE,
         gross_price: 0,

@@ -255,7 +255,7 @@
         units.value = response.units
         rrData.value.approvers = response.approvers
         pos.value = response.pos
-        items.value = response.items.map(i => ({...i, label: `${i.code} - ${i.description}`}))
+        items.value = response.items.map(i => ({...i, label: `${i.code} - ${i.name}`}))
 
     })
 
@@ -334,6 +334,7 @@
                 quantity_delivered: item.canvass_item.quantity,
                 quantity_accepted: item.canvass_item.quantity,
                 description: item.canvass_item.description,
+                name: '',
                 vat: {
                     value: item.vat_type,
                     label: VAT[item.vat_type].label

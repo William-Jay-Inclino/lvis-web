@@ -9,6 +9,7 @@ export interface RrItem {
 	item_class: ITEM_CLASS
 	quantity_delivered: number
 	quantity_accepted: number
+	name: string
 	description: string
 	vat_type: VAT_TYPE,
 	gross_price: number

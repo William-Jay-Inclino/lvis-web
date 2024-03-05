@@ -86,6 +86,7 @@ export interface Item {
 	item_type_id: string;
 	unit_id: string;
 	code: string;
+	name: string;
 	description: string;
 	total_quantity: number;
 	initial_quantity: number;
