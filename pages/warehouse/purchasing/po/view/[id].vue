@@ -46,6 +46,13 @@
                                 <td> {{ item.po_number }} </td>
                             </tr>
                             <tr>
+                                <td class="text-muted">RR Number</td>
+                                <td>
+                                    <nuxt-link v-if="item.rr" :to="'/warehouse/purchasing/rr/view/' + item.rr.id">{{ item.rr.rr_number }}</nuxt-link>
+                                    <div v-else> N/A </div>
+                                </td>
+                            </tr>
+                            <tr>
                                 <td class="text-muted">Date</td>
                                 <td> {{ formatDate(item.po_date) }} </td>
                             </tr>
@@ -147,10 +154,15 @@
                                 <td class="text-muted"> {{ item.canvass_item.quantity }} </td>
                                 <td class="text-muted"> {{ VAT[item.vat_type].label }} </td>
                                 <td class="text-muted"> {{ formatToPhpCurrency(item.price) }} </td>
-                                <td class="text-muted"> {{ formatToPhpCurrency(getVatPerUnit(item.price, item.vat_type)) }} </td>
+                                <td class="text-muted"> {{ formatToPhpCurrency(getVatAmount(item.price, item.vat_type)) }} </td>
                                 <td class="text-muted"> 
                                     {{ 
-                                        formatToPhpCurrency(getTotalPrice(item.price, item.canvass_item.quantity, getVatPerUnit(item.price, item.vat_type))) 
+                                        // formatToPhpCurrency(getTotalNetPrice(item.price, item.canvass_item.quantity, getVatAmount(item.price, item.vat_type))) 
+                                        formatToPhpCurrency(getTotalNetPrice({
+                                            pricePerUnit: item.price,
+                                            vatPerUnit: getVatAmount(item.price, item.vat_type),
+                                            quantity: item.canvass_item.quantity
+                                        })) 
                                     }} 
                                 </td>
                             </tr>
@@ -173,7 +185,7 @@
         
 
         <div class="row mb-3 pt-3 justify-content-center">
-            <div class="col-lg-9">
+            <div class="col-lg-11">
                 <hr>
                 <div class="d-flex justify-content-between">
                     <div>
@@ -208,7 +220,7 @@
     import type { PO } from '~/composables/warehouse/po/po.types';
     import { MOBILE_WIDTH } from '~/utils/config';
     import { approvalStatus } from '~/utils/constants'
-    import { getTotalPrice, getVatPerUnit } from '~/utils/helpers';
+    import { getTotalNetPrice, getVatAmount } from '~/utils/helpers';
 
     const route = useRoute()
     const item = ref<PO | undefined>()
@@ -248,13 +260,13 @@
 
     })
 
-    const requisitioner = computed( () => {
+    // const requisitioner = computed( () => {
 
-        const employee = meqsReference.value?.canvass.requested_by 
+    //     const employee = meqsReference.value?.canvass.requested_by 
 
-        return getFullname(employee!.firstname, employee!.middlename, employee!.lastname)
+    //     return getFullname(employee!.firstname, employee!.middlename, employee!.lastname)
 
-    }) 
+    // }) 
 
     const supplierItems = computed( () => {
 
@@ -279,7 +291,12 @@
 
         for(let item of supplierItems.value) {
 
-            const totalPriceOfItem = getTotalPrice(item.price, item.canvass_item.quantity, getVatPerUnit(item.price, item.vat_type))
+            // const totalPriceOfItem = getTotalNetPrice(item.price, item.canvass_item.quantity, getVatAmount(item.price, item.vat_type))
+            const totalPriceOfItem = getTotalNetPrice({
+                pricePerUnit: item.price,
+                vatPerUnit: getVatAmount(item.price, item.vat_type),
+                quantity: item.canvass_item.quantity
+            })
 
             totalPrice += totalPriceOfItem
 

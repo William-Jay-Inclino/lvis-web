@@ -204,6 +204,10 @@ export async function findOne(id: string): Promise<RV | undefined> {
                         po {
                             id
                             po_number
+                            rr {
+                                id 
+                                rr_number
+                            }
                         }
                     }
                 }
@@ -403,6 +407,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 rv_number
                 status
                 canvass {
+                    id
                     rc_number
                     requested_by {
                         id

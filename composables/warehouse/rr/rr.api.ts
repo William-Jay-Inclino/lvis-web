@@ -1,38 +1,45 @@
-import type { MEQS } from "../meqs/meqs.types";
-import type { PoApproverSettings } from "./po-approver.types";
-import type { CreatePoInput, FindAllResponse, MutationResponse, PO, UpdatePoInput } from "./po.types";
+import type { Brand } from "../canvass/canvass.types"
+import type { PO } from "../po/po.types"
+import type { Unit } from "../unit/unit.types"
+import type { RrApproverSettings } from "./rr-approver.types"
+import type { CreateRrInput, FindAllResponse, MutationResponse, RR, UpdateRrInput } from "./rr.types"
 
-export async function findByRefNumber(payload: { po_number?: string, meqs_number?: string }): Promise<PO | undefined> {
 
-    let referenceField = 'po_number'
+export async function findByRefNumber(payload: { po_number?: string, rr_number?: string }): Promise<RR | undefined> {
+
+    let referenceField = 'rr_number'
     let referenceValue = null
 
-    if(payload.meqs_number) {
-        referenceField = 'meqs_number'
-        referenceValue = payload.meqs_number
-    }else {
+    if(payload.po_number) {
+        referenceField = 'po_number'
         referenceValue = payload.po_number
+    }else {
+        referenceValue = payload.rr_number
     }
 
     const query = `
         query {
-            po(${referenceField}: "${referenceValue}") {
+            rr(${referenceField}: "${referenceValue}") {
                 id
-                po_number
+                rr_number
                 status
-                po_date
-                meqs_supplier {
-                    meqs {
-                        meqs_number
-                        rv {
-                            rv_number
-                            canvass {
-                                rc_number 
-                                requested_by {
-                                    id 
-                                    firstname
-                                    middlename
-                                    lastname
+                rr_date
+                po {
+                    id
+                    po_number
+                    meqs_supplier {
+                        meqs {
+                            meqs_number
+                            rv {
+                                rv_number
+                                canvass {
+                                    rc_number 
+                                    requested_by {
+                                        id 
+                                        firstname
+                                        middlename
+                                        lastname
+                                    }
                                 }
                             }
                         }
@@ -47,8 +54,8 @@ export async function findByRefNumber(payload: { po_number?: string, meqs_number
         const response = await sendRequest(query);
         console.log('response', response)
 
-        if(response.data && response.data.data && response.data.data.po) {
-            return response.data.data.po;
+        if(response.data && response.data.data && response.data.data.rr) {
+            return response.data.data.rr;
         }
 
         throw new Error(JSON.stringify(response.data.errors));
@@ -76,7 +83,7 @@ export async function findAll(payload: {page: number, pageSize: number, date_req
 
     const query = `
         query {
-            pos(
+            rrs(
                 page: ${page},
                 pageSize: ${pageSize},
                 date_requested: ${date_requested2},
@@ -84,27 +91,31 @@ export async function findAll(payload: {page: number, pageSize: number, date_req
             ) {
                 data {
                     id
-                    po_number
+                    rr_number
                     status
-                    po_date
-                    meqs_supplier {
+                    rr_date
+                    po {
+                      id
+                      po_number
+                      is_cancelled
+                      meqs_supplier {
                         meqs {
-                            meqs_number
-                            rv {
-                                rv_number
-                                canvass {
-                                    rc_number 
-                                    requested_by {
-                                        id 
-                                        firstname
-                                        middlename
-                                        lastname
-                                    }
-                                }
+                          meqs_number
+                          rv {
+                            rv_number
+                            canvass {
+                              rc_number
+                              requested_by {
+                                id
+                                firstname
+                                middlename
+                                lastname
+                              }
                             }
+                          }
                         }
+                      }
                     }
-                    canceller_id
                 }
                 totalItems
                 currentPage
@@ -116,7 +127,7 @@ export async function findAll(payload: {page: number, pageSize: number, date_req
     try {
         const response = await sendRequest(query);
         console.log('response', response)
-        return response.data.data.pos;
+        return response.data.data.rrs;
     } catch (error) {
         console.error(error);
         throw error
@@ -126,7 +137,7 @@ export async function findAll(payload: {page: number, pageSize: number, date_req
 export async function fetchDataInSearchFilters(): Promise<{
     pos: PO[],
     employees: Employee[],
-    meqs: MEQS[],
+    rrs: RR[],
 }> {
     const query = `
         query {
@@ -135,9 +146,9 @@ export async function fetchDataInSearchFilters(): Promise<{
                     po_number
                 }
             },
-            meqs(page: 1, pageSize: 10) {
+            rrs(page: 1, pageSize: 10) {
                 data{
-                    meqs_number
+                    rr_number
                 }
             },
             employees(page: 1, pageSize: 50) {
@@ -157,7 +168,7 @@ export async function fetchDataInSearchFilters(): Promise<{
 
         let pos = []
         let employees = []
-        let meqs = []
+        let rrs = []
 
         if(!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
@@ -173,14 +184,14 @@ export async function fetchDataInSearchFilters(): Promise<{
             pos = data.pos.data
         }
 
-        if(data.meqs && data.meqs.data) { 
-            meqs = data.meqs.data
+        if(data.rrs && data.rrs.data) { 
+            rrs = data.rrs.data
         }
 
         return {
             pos,
             employees,
-            meqs,
+            rrs,
         }
 
     } catch (error) {
@@ -188,24 +199,29 @@ export async function fetchDataInSearchFilters(): Promise<{
         return {
             pos: [],
             employees: [],
-            meqs: [],
+            rrs: [],
         }
     }
 }
 
 export async function fetchFormDataInCreate(): Promise<{
-    meqs: MEQS[],
-    approvers: PoApproverSettings[]
+    pos: PO[],
+    approvers: RrApproverSettings[],
+    brands: Brand[],
+    units: Unit[],
+    employees: Employee[],
+    items: Item[]
 }> {
 
     const query = `
         query {
-            meqs(page: 1, pageSize: 10) {
+            pos(page: 1, pageSize: 10) {
                 data{
                     id
-                    meqs_number
+                    po_number
                     status
-                    meqs_suppliers {
+                    is_referenced
+                    meqs_supplier {
                         id
                         payment_terms
                         is_referenced
@@ -237,7 +253,7 @@ export async function fetchFormDataInCreate(): Promise<{
                     }
                 }
             },
-            poApproverSettings{
+            rrApproverSettings{
                 approver_id
                 approver{
                   id
@@ -255,6 +271,31 @@ export async function fetchFormDataInCreate(): Promise<{
                 label
                 order
             },
+            brands{
+                id
+                name
+            },
+            units(page: 1, pageSize: 10){
+                data {
+                    id
+                    name
+                }
+            },
+            employees(page: 1, pageSize: 10) {
+                data {
+                    id
+                    firstname
+                    middlename
+                    lastname
+                }
+            },
+            items(page: 1, pageSize: 10) {
+                data {
+                    id
+                    code
+                    name
+                }
+            }
         }
     `;
 
@@ -262,8 +303,12 @@ export async function fetchFormDataInCreate(): Promise<{
         const response = await sendRequest(query);
         console.log('response', response)
 
-        let meqs = []
+        let pos = []
         let approvers = []
+        let brands = []
+        let units = []
+        let employees = []
+        let items = []
 
         if(!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
@@ -271,24 +316,48 @@ export async function fetchFormDataInCreate(): Promise<{
 
         const data = response.data.data
 
-        if(data.meqs && data.meqs.data) {
-            meqs = data.meqs.data
+        if(data.pos && data.pos.data) {
+            pos = data.pos.data
         }
 
-        if(data.poApproverSettings) {
-            approvers = data.poApproverSettings
+        if(data.rrApproverSettings) {
+            approvers = data.rrApproverSettings
+        }
+
+        if(data.brands) { // temp
+            brands = data.brands
+        }
+
+        if(data.items && data.items.data) {
+            items = response.data.data.items.data
+        }
+
+        if(data.units && data.units.data) {
+            units = response.data.data.units.data
+        }
+
+        if(data.employees && data.employees.data) {
+            employees = response.data.data.employees.data
         }
 
         return {
-            meqs,
-            approvers
+            pos,
+            approvers,
+            brands,
+            units,
+            employees,
+            items,
         }
 
     } catch (error) {
         console.error(error);
         return {
-            meqs: [],
-            approvers: []
+            pos: [],
+            approvers: [],
+            brands: [],
+            units: [],
+            employees: [],
+            items: []
         }
     }
     
@@ -297,45 +366,28 @@ export async function fetchFormDataInCreate(): Promise<{
 
 export async function fetchFormDataInUpdate(id: string): Promise<{
     employees: Employee[],
-    po: PO | undefined
+    rr: RR | undefined
 }> {
 
     const query = `
         query {
-            po(id: "${id}") {
+            rr(id: "${id}") {
                 id 
-                po_number 
-                po_date
-                is_cancelled
+                rr_number 
+                rr_date
+                invoice_number
+                delivery_number
                 notes
-                meqs_supplier{
+                delivery_charge
+                is_cancelled
+                is_deleted
+                received_by {
                     id
-                    supplier {
-                        id 
-                        name
-                        vat_type
-                    }
-                    meqs {
-                        id 
-                        meqs_number
-                        rv {
-                            id
-                            rv_number 
-                            canvass {
-                                rc_number
-                                requested_by {
-                                    id
-                                    firstname
-                                    middlename
-                                    lastname
-                                }
-                                purpose
-                                notes
-                            }
-                        }
-                    }
+                    firstname
+                    middlename
+                    lastname
                 }
-                po_approvers {
+                rr_approvers {
                     id
                     approver {
                         id
@@ -348,6 +400,10 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                     status
                     label
                     order
+                }
+                po {
+                    id
+                    po_number
                 }
             },
             employees(page: 1, pageSize: 50) {
@@ -373,7 +429,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
 
         const data = response.data.data
 
-        if(!data.po) {
+        if(!data.rr) {
             throw new Error(JSON.stringify(response.data.errors));
         }
 
@@ -382,14 +438,14 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
         }
 
         return {
-            po: data.po,
+            rr: data.rr,
             employees
         }
 
     } catch (error) {
         console.error(error);
         return {
-            po: undefined,
+            rr: undefined,
             employees: []
         }
     }
@@ -397,71 +453,27 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
 
 }
 
-export async function create(input: CreatePoInput): Promise<MutationResponse> {
-
-    const approvers = input.approvers.map(item => {
-        return `
-        {
-          approver_id: "${item.approver?.id}"
-          label: "${item.label}"
-          order: ${item.order}
-        }`;
-    }).join(', ');
-
-    const mutation = `
-        mutation {
-            createPo(
-                input: {
-                    meqs_supplier_id: "${input.meqs_supplier?.id}"
-                    notes: "${input.notes}"
-                    approvers: [${approvers}]
-                }
-            ) {
-                id
-            }
-        }`;
-
-    try {
-        const response = await sendRequest(mutation);
-        console.log('response', response);
-
-        if(response.data && response.data.data && response.data.data.createPo) {
-            return {
-                success: true,
-                msg: 'PO created successfully!',
-                data: response.data.data.createPo 
-            };
-        }
-
-        throw new Error(JSON.stringify(response.data.errors));
-
-    } catch (error) {
-        console.error(error);
-        
-        return {
-            success: false,
-            msg: 'Failed to create PO. Please contact system administrator'
-        };
-    }
-}
-
-export async function findOne(id: string): Promise<PO | undefined> {
+export async function findOne(id: string): Promise<RR | undefined> {
     const query = `
         query {
-            po(id: "${id}") {
+            rr(id: "${id}") {
                 id
-                po_number
-                status
-                po_date
+                rr_number
+                rr_date
+                invoice_number
+                delivery_number
                 notes
+                delivery_charge
+                status
                 is_deleted
-                canceller{
+                is_cancelled
+                received_by {
                     id
                     firstname
                     middlename
                     lastname
                 }
-                po_approvers{
+                rr_approvers{
                     approver {
                         firstname
                         middlename
@@ -476,58 +488,46 @@ export async function findOne(id: string): Promise<PO | undefined> {
                     label
                     order
                 }
-                rr {
+                po {
                     id
-                    rr_number
-                }
-                meqs_supplier {
-                    id
-                    payment_terms
-                    supplier{
-                        id
-                        name 
-                        vat_type
-                    }
-                    meqs {
-                        id
-                        meqs_number
-                        rv {
+                    po_number 
+                    meqs_supplier {
+                        meqs {
                             id
-                            rv_number
-                            canvass {
+                            meqs_number
+                            rv {
                                 id
-                                rc_number
-                                purpose 
-                                notes
-                                requested_by {
+                                rv_number
+                                canvass {
                                     id
-                                    firstname
-                                    middlename
-                                    lastname
+                                    rc_number
                                 }
                             }
                         }
                     }
-                    meqs_supplier_items {
+                }
+                rr_items {
+                    item {
                         id 
-                        price 
-                        notes 
-                        is_awarded
-                        vat_type
-                        canvass_item {
-                            id 
-                            description
-                            brand {
-                                id 
-                                name
-                            }
-                            unit {
-                                id 
-                                name 
-                            }
-                            quantity
-                        }
+                        code 
+                        name
                     }
+                    item_brand {
+                        id 
+                        name
+                    }
+                    unit {
+                        id
+                        name
+                    }
+                    item_class
+                    quantity_delivered
+                    quantity_accepted
+                    description
+                    vat_type
+                    gross_price
+                    net_price
+                    vat_amount
                 }
             }
         }
@@ -537,8 +537,8 @@ export async function findOne(id: string): Promise<PO | undefined> {
         const response = await sendRequest(query);
         console.log('response', response)
 
-        if(response.data && response.data.data && response.data.data.po) {
-            return response.data.data.po;
+        if(response.data && response.data.data && response.data.data.rr) {
+            return response.data.data.rr;
         }
 
         throw new Error(JSON.stringify(response.data.errors));
@@ -549,30 +549,77 @@ export async function findOne(id: string): Promise<PO | undefined> {
     }
 }
 
-export async function update(id: string, input: UpdatePoInput): Promise<MutationResponse> {
+export async function create(input: CreateRrInput): Promise<MutationResponse> {
 
-    
+    const approvers = input.approvers.map(item => {
+        return `
+        {
+          approver_id: "${item.approver?.id}"
+          label: "${item.label}"
+          order: ${item.order}
+        }`;
+    }).join(', ');
+
+    const rrItems = input.rr_items.map(item => {
+
+        let item_brand_id = null 
+        let unit_id = null 
+        let item_id = null
+
+        if(item.item_brand) {
+            item_brand_id = `"${item.item_brand.id}"`
+        }
+
+        if(item.unit) {
+            unit_id = `"${item.unit.id}"`
+        }
+
+        if(item.item) {
+            item_id = `"${item.item.id}"`
+        }
+
+        return `
+        {
+          item_id: ${item_id}
+          item_brand_id: ${item_brand_id}
+          unit_id: ${unit_id}
+          item_class: ${item.itemClassObject.value}
+          quantity_delivered: ${item.quantity_delivered}
+          quantity_accepted: ${item.quantity_accepted}
+          description: "${item.description}"
+          vat_type: ${item.vat.value}
+          gross_price: ${item.gross_price}
+          net_price: ${item.net_price}
+        }`;
+    }).join(', ');
+
     const mutation = `
         mutation {
-            updatePo(
-                id: "${id}",
+            createRr(
                 input: {
+                    po_id: "${input.po?.id}"
+                    received_by_id: "${input.received_by?.id}"
+                    invoice_number: "${input.invoice_number}"
+                    delivery_number: "${input.delivery_number}"
                     notes: "${input.notes}"
+                    delivery_charge: ${input.delivery_charge}
+                    approvers: [${approvers}]
+                    rr_items: [${rrItems}]
                 }
             ) {
                 id
             }
-    }`;
+        }`;
 
     try {
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.updatePo) {
+        if(response.data && response.data.data && response.data.data.createRr) {
             return {
                 success: true,
-                msg: 'PO updated successfully!',
-                data: response.data.data.updatePo 
+                msg: 'RR created successfully!',
+                data: response.data.data.createRr 
             };
         }
 
@@ -583,10 +630,54 @@ export async function update(id: string, input: UpdatePoInput): Promise<Mutation
         
         return {
             success: false,
-            msg: 'Failed to update PO. Please contact system administrator'
+            msg: 'Failed to create RR. Please contact system administrator'
         };
     }
 }
+
+export async function update(id: string, input: UpdateRrInput): Promise<MutationResponse> {
+
+    
+    const mutation = `
+        mutation {
+            updateRr(
+                id: "${id}",
+                input: {
+                    received_by_id: "${input.received_by?.id}"
+                    invoice_number: "${input.invoice_number}"
+                    delivery_number: "${input.delivery_number}"
+                    notes: "${input.notes}"
+                    delivery_charge: ${input.delivery_charge}
+                }
+            ) {
+                id
+            }
+    }`;
+
+    try {
+        const response = await sendRequest(mutation);
+        console.log('response', response);
+
+        if(response.data && response.data.data && response.data.data.updateRr) {
+            return {
+                success: true,
+                msg: 'RR updated successfully!',
+                data: response.data.data.updateRr 
+            };
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+    } catch (error) {
+        console.error(error);
+        
+        return {
+            success: false,
+            msg: 'Failed to update RR. Please contact system administrator'
+        };
+    }
+}
+
 
 export async function cancel(id: string): Promise<MutationResponse> {
 
@@ -600,7 +691,7 @@ export async function cancel(id: string): Promise<MutationResponse> {
 
     const mutation = `
         mutation {
-            updatePo(
+            updateRr(
                 id: "${id}",
                 input: {
                     canceller_id: "${authUser.user.id}"
@@ -615,10 +706,10 @@ export async function cancel(id: string): Promise<MutationResponse> {
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.updatePo) {
+        if(response.data && response.data.data && response.data.data.updateRr) {
             return {
                 success: true,
-                msg: 'PO cancelled!' 
+                msg: 'RR cancelled!' 
             };
         }
 
@@ -629,7 +720,7 @@ export async function cancel(id: string): Promise<MutationResponse> {
         
         return {
             success: false,
-            msg: 'Failed to cancel PO. Please contact system administrator'
+            msg: 'Failed to cancel RR. Please contact system administrator'
         };
     }
 }

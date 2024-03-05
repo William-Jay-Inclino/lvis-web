@@ -1,19 +1,24 @@
 import type { APPROVAL_STATUS } from "~/composables/common.types";
 import type { MeqsSupplier } from "../meqs/meqs-supplier";
 import type { PoApproverSettings } from "./po-approver.types";
+import type { RR } from "../rr/rr.types";
 
 export interface PO {
-  id: string;
-  meqs_supplier_id: string;
-  po_number: string;
-  po_date: string;
-  status: APPROVAL_STATUS;
-  canceller_id: string;
-  meqs_supplier: MeqsSupplier
-  notes: string
-  po_approvers: Approver[];
-  is_deleted: boolean
-  is_cancelled: boolean
+    id: string;
+    meqs_supplier_id: string;
+    po_number: string;
+    po_date: string;
+    status: APPROVAL_STATUS;
+    canceller_id: string;
+    meqs_supplier: MeqsSupplier
+    notes: string
+    po_approvers: Approver[];
+    is_deleted: boolean
+    is_cancelled: boolean
+    is_referenced: boolean
+
+    rr?: RR
+
 }
 
 export interface CreatePoInput {

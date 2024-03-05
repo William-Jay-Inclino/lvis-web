@@ -118,7 +118,7 @@
 
                         <div class="row">
                             <div class="col">
-                                <WarehouseMeqsSupplier
+                                <WarehouseMEQSSupplier
                                   :suppliers="suppliers"
                                   :meqs_suppliers="meqsData.meqs_suppliers"
                                   :canvass_items="canvassItems" 
@@ -144,7 +144,7 @@
 
                         <div class="row">
                             <div class="col">
-                                <WarehouseMeqsAward 
+                                <WarehouseMEQSAward 
                                     :is-initial="isInitialStep3"
                                     :meqs_suppliers="meqsData.meqs_suppliers"
                                     :canvass_items="canvassItems"
@@ -171,7 +171,7 @@
 
         <button v-show="false" ref="requiredNotesBtn" data-bs-toggle="modal" data-bs-target="#requiredNotesModal"></button>
 
-        <WarehouseMeqsRequiredNotes 
+        <WarehouseMEQSRequiredNotes 
             :items-needing-justification="itemsNeedingJustification"
             :is-saving-meqs="isSavingMeqs" 
             @update-notes="updateNotes"

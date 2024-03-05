@@ -63,21 +63,53 @@ export function formatToPhpCurrency(number: number) {
     return "₱" + number.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-export function getVatPerUnit(price: number, vat_type: VAT_TYPE) {
+export function getVatAmount(price: number, vat_type: VAT_TYPE) {
 
-    if(vat_type === VAT_TYPE.INC || vat_type === VAT_TYPE.NONE) return 0 
+    if(!price) return 0
 
-    const vatAmount = (price * VAT_RATE)
+    if(vat_type === VAT_TYPE.EXC) {
+        return price * VAT_RATE
+    }
 
-    return vatAmount
+    if(vat_type === VAT_TYPE.INC) {
+        return (price * VAT_RATE) / (1 + VAT_RATE);
+    }
+
+    return 0
 
 }
 
-export function getTotalPrice(pricePerUnit: number, quantity: number, vatPerUnit: number) {
+export function getNetPrice(payload: { grossPrice: number, vatAmount: number }) {
+    const { grossPrice, vatAmount } = payload 
+
+    return ( grossPrice - vatAmount )
+
+}
+
+export function getTotalNetPrice(payload: {pricePerUnit: number, quantity: number, vatPerUnit: number}) {
+
+    const { pricePerUnit, quantity, vatPerUnit } = payload
 
     const totalPrice = pricePerUnit * quantity 
     const totalVat = vatPerUnit * quantity 
 
-    return (totalPrice + totalVat)
+    return (totalPrice - totalVat)
+
+}
+
+
+
+export function getVatTotal(payload: { price: number, quantity: number, vatType: VAT_TYPE }) {
+
+    const { price, quantity, vatType } = payload
+    const vatPerUnit = getVatAmount(price, vatType)
+    return vatPerUnit * quantity
+
+} 
+
+export function getGrossTotal(payload: { price: number, quantity: number }) {
+    const { price, quantity } = payload 
+
+    return ( price * quantity )
 
 }

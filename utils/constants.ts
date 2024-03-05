@@ -38,6 +38,17 @@ export const VAT = {
     }
 }
 
+export const itemClass = {
+    [ITEM_CLASS.NON_STOCK]: {
+        value: ITEM_CLASS.NON_STOCK,
+        label: 'Non-Stock'
+    },
+    [ITEM_CLASS.STOCK]: {
+        value: ITEM_CLASS.STOCK,
+        label: 'Stock'
+    }
+}
+
 
 export const NOTE_OPTIONS = [
     'Design',

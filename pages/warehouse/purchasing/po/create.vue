@@ -16,7 +16,41 @@
                                 MEQS Number <span class="text-danger">*</span>
                             </label>
                             <client-only>
-                                <v-select :options="meqs" label="meqs_number" v-model="selectedMeqs" @option:selected="onChangeMeqsNumber"></v-select>
+                                <v-select @option:selected="onMeqsSelected" :options="meqs" label="meqs_number" v-model="selectedMeqs" :clearable=false>
+                                    <template v-slot:option="option">
+                                        <div v-if="option.status !== APPROVAL_STATUS.APPROVED" class="row">
+                                            <div class="col">
+                                                <span class="text-danger">{{ option.meqs_number }}</span>
+                                            </div>
+                                            <div class="col text-end">
+                                                <small class="text-muted fst-italic">
+                                                    {{
+                                                        // @ts-ignore
+                                                        approvalStatus[option.status].label
+                                                    }}
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div v-else-if="!option.hasAvailableSupplier" class="row">
+                                            <div class="col">
+                                                <span class="text-danger">{{ option.meqs_number }}</span>
+                                            </div>
+                                            <div class="col text-end">
+                                                <small class="text-muted fst-italic">
+                                                    No Available Supplier
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div v-else class="row">
+                                            <div class="col">
+                                                <span>{{ option.meqs_number }}</span>
+                                            </div>
+                                            <div class="col text-end">
+                                                <small class="text-success fst-italic"> Available  </small>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </v-select>
                             </client-only>
                             <nuxt-link v-if="selectedMeqs" class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/meqs/view/' + selectedMeqs.id" target="_blank">View info</nuxt-link>
                         </div>
@@ -25,7 +59,7 @@
                             <label class="form-label">
                                 Supplier <span class="text-danger">*</span>
                             </label>
-                            <v-select @option:selected="onMeqsNumberSelected" :options="suppliers" label="label" v-model="poData.meqs_supplier">
+                            <v-select @option:selected="onSupplierSelected" :options="suppliers" label="label" v-model="poData.meqs_supplier">
                                 <template v-slot:option="option">
                                     <div v-if="option.is_referenced" class="row">
                                         <div class="col">
@@ -112,10 +146,14 @@
                                 <td class="text-muted"> {{ item.canvass_item.quantity }} </td>
                                 <td class="text-muted"> {{ VAT[item.vat_type].label }} </td>
                                 <td class="text-muted"> {{ formatToPhpCurrency(item.price) }} </td>
-                                <td class="text-muted"> {{ formatToPhpCurrency(getVatPerUnit(item.price, item.vat_type)) }} </td>
+                                <td class="text-muted"> {{ formatToPhpCurrency(getVatAmount(item.price, item.vat_type)) }} </td>
                                 <td class="text-muted"> 
                                     {{ 
-                                        formatToPhpCurrency(getTotalPrice(item.price, item.canvass_item.quantity, getVatPerUnit(item.price, item.vat_type))) 
+                                        formatToPhpCurrency(getTotalNetPrice({
+                                            pricePerUnit: item.price,
+                                            vatPerUnit: getVatAmount(item.price, item.vat_type),
+                                            quantity: item.canvass_item.quantity
+                                        })) 
                                     }} 
                                 </td>
                             </tr>
@@ -155,7 +193,7 @@
     import { formatToPhpCurrency } from '~/utils/helpers'
     import type { MeqsSupplier } from '~/composables/warehouse/meqs/meqs-supplier';
     import Swal from 'sweetalert2'
-    import { getTotalPrice, getVatPerUnit } from '~/utils/helpers';
+    import { getTotalNetPrice, getVatAmount } from '~/utils/helpers';
 
     definePageMeta({
         layout: "layout-admin"
@@ -168,6 +206,7 @@
     const isSaving = ref(false)
 
     let currentMeqsSupplier: MeqsSupplier | null = null
+    let currentMeqs: MEQS | null = null
 
     const selectedMeqs = ref<MEQS | null>(null)
     const meqs = ref<MEQS[]>([])
@@ -188,7 +227,19 @@
 
         const response = await poApi.fetchFormDataInCreate()
 
-        meqs.value = response.meqs
+        meqs.value = response.meqs.map(i => {
+
+            let hasAvailabelSupplier = i.meqs_suppliers.find(j => !j.is_referenced)
+
+            if(hasAvailabelSupplier) {
+                i.hasAvailableSupplier = true 
+            }else {
+                i.hasAvailableSupplier = false
+            }
+
+            return i
+
+        })
         poData.value.approvers = response.approvers
 
     })
@@ -230,7 +281,11 @@
 
         for(let item of supplierItems.value) {
 
-            const totalPriceOfItem = getTotalPrice(item.price, item.canvass_item.quantity, getVatPerUnit(item.price, item.vat_type))
+            const totalPriceOfItem = getTotalNetPrice({
+                pricePerUnit: item.price,
+                vatPerUnit: getVatAmount(item.price, item.vat_type),
+                quantity: item.canvass_item.quantity
+            })
 
             totalPrice += totalPriceOfItem
 
@@ -270,8 +325,24 @@
         }
     }
 
-    function onMeqsNumberSelected(payload: MeqsSupplier) {
-        console.log('onMeqsNumberSelected()', payload)
+    function onMeqsSelected(payload: MEQS) {
+        console.log('onMeqsSelected()', payload)
+
+        resetSupplier()
+
+        if(payload.status === APPROVAL_STATUS.APPROVED && payload.hasAvailableSupplier) {
+            currentMeqs = payload
+        }else {
+            if(currentMeqs) {
+                selectedMeqs.value = currentMeqs
+            }else{
+                selectedMeqs.value = null
+            }
+        }
+    }
+
+    function onSupplierSelected(payload: MeqsSupplier) {
+        console.log('onSupplierSelected()', payload)
         if(payload.is_referenced) {
             if(currentMeqsSupplier) {
                 poData.value.meqs_supplier = currentMeqsSupplier
@@ -288,7 +359,7 @@
         isMobile.value = window.innerWidth < MOBILE_WIDTH
     }
 
-    function onChangeMeqsNumber() {
+    function resetSupplier() {
         poData.value.meqs_supplier = null
         currentMeqsSupplier = null
     }
