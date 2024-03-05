@@ -108,18 +108,18 @@
             <div :class="{'col-lg-6': isRRDetailForm, 'col-12': !isRRDetailForm}">
                 <div class="d-flex justify-content-between pt-3">
                     <div>
-                        <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/po">
+                        <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rr">
                             <i class="fas fa-chevron-left"></i> Back to Search
                         </nuxt-link>
                     </div>
                     <div>
-                        <button @click="onCancelPo" class="btn btn-danger me-2">
+                        <button @click="onCancelRr" class="btn btn-danger me-2">
                             <i class="fas fa-cancel"></i> Cancel
                         </button>
                         <button type="button" class="btn btn-primary me-2">
                             <i class="fas fa-print"></i> Print
                         </button>
-                        <button v-if="isRRDetailForm" @click="updatePoInfo()" type="button" class="btn btn-success" :disabled="isUpdating">
+                        <button v-if="isRRDetailForm" @click="updateRrInfo()" type="button" class="btn btn-success" :disabled="isUpdating">
                             <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
                         </button>
                     </div>
@@ -239,7 +239,7 @@
         })
     }
 
-    async function updatePoInfo() {
+    async function updateRrInfo() {
         console.log('updatePoInfo')
 
         console.log('updating...')
@@ -274,7 +274,7 @@
 
     }
 
-    async function cancelPo() {
+    async function cancelRr() {
         const response = await rrApi.cancel(rrData.value.id)
 
         if(response.success) {
@@ -447,7 +447,7 @@
 
     // ======================== UTILS ========================  
 
-    async function onCancelPo() {
+    async function onCancelRr() {
         Swal.fire({
             title: "Are you sure?",
             text: `This RR will be cancelled!`,
@@ -462,7 +462,7 @@
             preConfirm: async(remove) => {
                 
                 if(remove) {
-                    await cancelPo()
+                    await cancelRr()
                 }
 
             },

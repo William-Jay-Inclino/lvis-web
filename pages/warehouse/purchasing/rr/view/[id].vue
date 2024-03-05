@@ -419,7 +419,19 @@
     onMounted( async() => {
         isMobile.value = window.innerWidth < MOBILE_WIDTH
         window.addEventListener('resize', checkMobile);
-        item.value = await rrApi.findOne(route.params.id as string)
+        const rr = await rrApi.findOne(route.params.id as string)
+        
+        rr?.rr_items.map(i => {
+
+            if(i.item) {
+                i.item.label = `${i.item.code} - ${i.item.description}`
+            }
+
+            return i
+
+        })
+
+        item.value = rr
     })
 
     function checkMobile() {
