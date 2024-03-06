@@ -494,7 +494,7 @@ function getLowestPriceItem(items: CreateMeqsSupplierItemSubInput[]): CreateMeqs
     const getInitialItemIndx = items.findIndex(i => i.price !== -1)
 
     const lowestPriceItem = items.reduce((lowest, item) => {
-        return (item.price <= lowest.price && item.price !== -1) ? item : lowest;
+        return (item.price < lowest.price && item.price !== -1) ? item : lowest;
     }, items[getInitialItemIndx]);
 
     return lowestPriceItem
