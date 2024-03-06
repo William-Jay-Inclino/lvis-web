@@ -31,12 +31,32 @@
                                         <td> {{ item.description }} </td>
                                     </tr>
                                     <tr>
+                                        <td class="text-muted">Item Type</td>
+                                        <td> {{ item.item_type.name }} </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted">Unit</td>
+                                        <td> {{ item.unit.name }} </td>
+                                    </tr>
+                                    <tr>
                                         <td class="text-muted">Total Quantity</td>
                                         <td> {{ item.total_quantity }} </td>
                                     </tr>
                                     <tr>
+                                        <td class="text-muted">Highest Price</td>
+                                        <td> {{ highestPrice }} </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted">GWA Price</td>
+                                        <td> {{ GWAPrice }} </td>
+                                    </tr>
+                                    <tr>
                                         <td class="text-muted">Initial Quantity</td>
                                         <td> {{ item.initial_quantity }} </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted">Initial Price</td>
+                                        <td> {{ initialPrice }} </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -45,8 +65,6 @@
                     </div>
 
                 </div>
-
-
 
 
                 <div class="row pt-3">
@@ -67,7 +85,7 @@
                                     <thead>
                                         <tr>
                                             <th class="bg-secondary text-white"> Txn Number </th>
-                                            <th class="bg-secondary text-white"> Reference </th>
+                                            <th class="bg-secondary text-white"> Transaction </th>
                                             <th class="bg-secondary text-white"> Type </th>
                                             <th class="bg-secondary text-white"> Quantity </th>
                                             <th class="bg-secondary text-white"> Price </th>
@@ -77,20 +95,23 @@
                                     </thead>
                                     <tbody>
                                         <tr v-for="i in item.item_transactions">
-                                            <td> {{ i.txn_number }} </td>
-                                            <td>
+                                            <td class="text-muted"> {{ i.txn_number }} </td>
+                                            <td class="text-muted">
                                                 <div v-if="i.rr_item">
                                                     <nuxt-link :to="'/warehouse/purchasing/rr/view/' + i.rr_item.rr.id" target="_blank">
                                                         {{ `RR#${i.rr_item.rr.rr_number}` }}
                                                     </nuxt-link>
 
                                                 </div>
+                                                <div v-else>
+                                                    Initial Transaction
+                                                </div>
                                             </td>
-                                            <td> {{ itemTransaction[i.type].label }} </td>
-                                            <td> {{ i.quantity }} </td>
-                                            <td> {{ i.price }} </td>
-                                            <td> {{ i.remarks }} </td>
-                                            <td> {{ formatDate(i.created_at) }} </td>
+                                            <td class="text-muted"> {{ itemTransaction[i.type].label }} </td>
+                                            <td class="text-muted"> {{ i.quantity }} </td>
+                                            <td class="text-muted"> {{ formatToPhpCurrency(i.price) }} </td>
+                                            <td class="text-muted"> {{ i.remarks }} </td>
+                                            <td class="text-muted"> {{ formatDate(i.created_at) }} </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -152,6 +173,25 @@
         window.addEventListener('resize', checkMobile);
 
         item.value = await itemApi.findOne(route.params.id as string)
+
+    })
+
+    const initialPrice = computed( () => {
+        const indx = item.value!.item_transactions.length - 1
+        const initialTransaction = item.value!.item_transactions[indx]
+        return formatToPhpCurrency(initialTransaction.price)
+    })
+
+    const highestPrice = computed( () => {
+        const largestNumber = item.value!.item_transactions.reduce((max: number, obj: ItemTransaction) => obj.price > max ? obj.price : max, item.value!.item_transactions[0].price);
+
+        return formatToPhpCurrency(largestNumber)
+    })
+
+    const GWAPrice = computed( () => {
+        const totalPrices = item.value!.item_transactions.reduce((total, item) => total + item.price, 0);
+        const gwa = totalPrices / item.value!.item_transactions.length;
+        return formatToPhpCurrency(gwa)
 
     })
 
