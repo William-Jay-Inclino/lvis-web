@@ -28,7 +28,7 @@
                     <div class="card shadow bg-primary text-white">
                         <div class="card-body">
                             <h5 class="card-title">e-FORMS</h5>
-                            <a href="e-forms.html" class="stretched-link"></a>
+                            <nuxt-link to="/e-forms" class="stretched-link"></nuxt-link>
                         </div>
                     </div>
                 </div>

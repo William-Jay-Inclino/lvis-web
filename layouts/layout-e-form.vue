@@ -14,39 +14,8 @@
                             <li class="nav-item">
                                 <nuxt-link class="nav-link text-white" to="/home">Home</nuxt-link>
                             </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Purchasing
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/canvass">Canvass</nuxt-link></li>
-                                    <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/rv">RV</nuxt-link></li>
-                                    <li><a class="dropdown-item" href="#">SPR</a></li>
-                                    <li><a class="dropdown-item" href="#">JO</a></li>
-                                    <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/meqs">MEQS</nuxt-link></li>
-                                    <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/po">PO</nuxt-link></li>
-                                    <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/rr">RR</nuxt-link></li>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Stock Inventory
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><nuxt-link class="dropdown-item" to="/warehouse/stock-inventory/item">Item</nuxt-link></li>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Data Management
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><nuxt-link class="dropdown-item" to="/warehouse/data-management/unit">Unit</nuxt-link></li>
-                                    <li><a class="dropdown-item" href="#">Item Brand</a></li>
-                                    <li><a class="dropdown-item" href="#">Vehicle</a></li>
-                                    <li><a class="dropdown-item" href="#">Supplier</a></li>
-                                    <li><a class="dropdown-item" href="#">Stock Inventory</a></li>
-                                </ul>
+                            <li class="nav-item">
+                                <nuxt-link class="nav-link text-white" to="/e-forms/pending-forms">Pending Forms</nuxt-link>
                             </li>
                             <li v-if="authUser" class="nav-item dropdown">
                                 <a style="color: #FFFF00;" class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -106,26 +75,6 @@
                             <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/meqs">MEQS</nuxt-link></li>
                             <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/po">PO</nuxt-link></li>
                             <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/rr">RR</nuxt-link></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Stock Inventory
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><nuxt-link class="dropdown-item" to="/warehouse/stock-inventory/item">Item</nuxt-link></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Data Management
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><nuxt-link class="dropdown-item" to="/warehouse/data-management/unit">Unit</nuxt-link></li>
-                            <li><a class="dropdown-item" href="#">Item Brand</a></li>
-                            <li><a class="dropdown-item" href="#">Vehicle</a></li>
-                            <li><a class="dropdown-item" href="#">Supplier</a></li>
-                            <li><a class="dropdown-item" href="#">Stock Inventory</a></li>
                         </ul>
                     </li>
                 </ul>

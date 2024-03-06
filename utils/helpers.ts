@@ -1,8 +1,20 @@
 import moment from "moment";
 import { VAT_TYPE } from "#imports";
 
-export function getFullname(firstname: string, middlename: string | null, lastname: string){
-    if(middlename){
+export function getAuthUser(): AuthUser {
+    const authUserJson = localStorage.getItem('authUser')
+
+    if (!authUserJson) {
+        throw console.error('authUser in localstorage not found');
+    }
+
+    const authUser = JSON.parse(authUserJson) as AuthUser
+
+    return authUser
+}
+
+export function getFullname(firstname: string, middlename: string | null, lastname: string) {
+    if (middlename) {
         return lastname + ', ' + firstname + ' ' + convertMiddleNameToInitial(middlename)
     }
     return lastname + ', ' + firstname
@@ -20,7 +32,7 @@ export function formatDate(d: any) {
 
     console.log('d', d)
 
-    if(!d) {
+    if (!d) {
         return ""
     }
 
@@ -48,7 +60,7 @@ export function formatToValidHtmlDate(d: any): string {
 
 export function isValidDate(dateString: string | null): boolean {
 
-    if(!dateString) {
+    if (!dateString) {
         return false
     }
 
@@ -65,13 +77,13 @@ export function formatToPhpCurrency(number: number) {
 
 export function getVatAmount(price: number, vat_type: VAT_TYPE) {
 
-    if(!price) return 0
+    if (!price) return 0
 
-    if(vat_type === VAT_TYPE.EXC) {
+    if (vat_type === VAT_TYPE.EXC) {
         return price * VAT_RATE
     }
 
-    if(vat_type === VAT_TYPE.INC) {
+    if (vat_type === VAT_TYPE.INC) {
         return (price * VAT_RATE) / (1 + VAT_RATE);
     }
 
@@ -80,24 +92,22 @@ export function getVatAmount(price: number, vat_type: VAT_TYPE) {
 }
 
 export function getNetPrice(payload: { grossPrice: number, vatAmount: number }) {
-    const { grossPrice, vatAmount } = payload 
+    const { grossPrice, vatAmount } = payload
 
-    return ( grossPrice - vatAmount )
+    return (grossPrice - vatAmount)
 
 }
 
-export function getTotalNetPrice(payload: {pricePerUnit: number, quantity: number, vatPerUnit: number}) {
+export function getTotalNetPrice(payload: { pricePerUnit: number, quantity: number, vatPerUnit: number }) {
 
     const { pricePerUnit, quantity, vatPerUnit } = payload
 
-    const totalPrice = pricePerUnit * quantity 
-    const totalVat = vatPerUnit * quantity 
+    const totalPrice = pricePerUnit * quantity
+    const totalVat = vatPerUnit * quantity
 
     return (totalPrice - totalVat)
 
 }
-
-
 
 export function getVatTotal(payload: { price: number, quantity: number, vatType: VAT_TYPE }) {
 
@@ -105,11 +115,11 @@ export function getVatTotal(payload: { price: number, quantity: number, vatType:
     const vatPerUnit = getVatAmount(price, vatType)
     return vatPerUnit * quantity
 
-} 
+}
 
 export function getGrossTotal(payload: { price: number, quantity: number }) {
-    const { price, quantity } = payload 
+    const { price, quantity } = payload
 
-    return ( price * quantity )
+    return (price * quantity)
 
 }

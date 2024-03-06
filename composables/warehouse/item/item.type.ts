@@ -14,6 +14,7 @@ export interface Item {
 	item_transactions: ItemTransaction[];
 	rr_items: RrItem[];
 	unit: Unit;
+	GWAPrice: number
 
     // set programmatically
     label?: string 

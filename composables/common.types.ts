@@ -8,12 +8,29 @@ export enum USER_STATUS {
     INACTIVE = 2
 }
 
+export enum ROLE {
+    USER = 'USER',
+    ADMIN = 'ADMIN'
+}
+
+export interface User {
+    id: string
+    username: string
+    status: USER_STATUS
+    role: ROLE
+    user_employee: UserEmployee
+}
+
+export interface UserEmployee {
+    id: string
+    user_id: string
+    user: User
+    employee_id: string
+    employee: Employee
+}
+
 export interface AuthUser {
-    user: {
-        id: string
-        username: string 
-        status: USER_STATUS
-    }
+    user: User
     access_token: string
 }
 
@@ -41,11 +58,11 @@ export enum ITEM_TRANSACTION_TYPE {
 }
 
 export interface Approver {
-    id: string 
-    approver_id: string 
+    id: string
+    approver_id: string
     approver: Employee | null
     date_approval: string | null
-    notes: string 
+    notes: string
     status: APPROVAL_STATUS,
     label: string
     order: number
@@ -53,20 +70,20 @@ export interface Approver {
 
 export interface CreateApproverInput {
     approver: Employee | null
-    label: string 
+    label: string
     order: number
 }
 
 export interface UpdateApproverInput {
     id: string
-    approver: Employee | null 
-    date_approval: string | null 
+    approver: Employee | null
+    date_approval: string | null
     notes: string | null
     status: {
         id: APPROVAL_STATUS,
         label: string
     }
-    label: string 
+    label: string
     order: number
 }
 
@@ -77,48 +94,48 @@ export interface Employee {
     firstname: string
     middlename: string
     lastname: string
-    fullname?: string 
+    fullname?: string
 }
 
 
 export interface Item {
-	id: string;
-	item_type_id: string;
-	unit_id: string;
-	code: string;
-	name: string;
-	description: string;
-	total_quantity: number;
-	initial_quantity: number;
-	item_type: ItemType;
-	item_transactions: ItemTransaction[];
-	rr_items: RrItem[];
-	unit: Unit;
+    id: string;
+    item_type_id: string;
+    unit_id: string;
+    code: string;
+    name: string;
+    description: string;
+    total_quantity: number;
+    initial_quantity: number;
+    item_type: ItemType;
+    item_transactions: ItemTransaction[];
+    rr_items: RrItem[];
+    unit: Unit;
+    GWAPrice: number
 
     // set programmatically
-    label?: string 
+    label?: string
 }
 
 export interface ItemType {
-	id: string;
-	name: string;
+    id: string;
+    name: string;
 }
 
 export interface ItemTransaction {
-	id: string;
-	item_id: string;
-	txn_number: string;
-	rr_item_id?: string | null;
-	type: ITEM_TRANSACTION_TYPE;
-	quantity: number;
-	price: number;
-	remarks?: string | null;
-	item: Item;
-	rr_item?: RrItem;
+    id: string;
+    item_id: string;
+    txn_number: number;
+    rr_item_id?: string | null;
+    type: ITEM_TRANSACTION_TYPE;
+    quantity: number;
+    price: number;
+    remarks?: string | null;
+    item: Item;
+    rr_item?: RrItem;
 
     created_at: Date
 }
 
 
 
-  

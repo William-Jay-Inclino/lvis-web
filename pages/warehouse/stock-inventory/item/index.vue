@@ -68,6 +68,7 @@
                                             <th class="bg-secondary text-white">Name</th>
                                             <th class="bg-secondary text-white">Description</th>
                                             <th class="bg-secondary text-white">Type</th>
+                                            <th class="bg-secondary text-white">GWA Price</th>
                                             <th class="bg-secondary text-white">Quantity</th>
                                             <th class="text-center bg-secondary text-white">
                                                 <i class="fas fa-cogs"></i>
@@ -80,6 +81,7 @@
                                             <td class="text-muted align-middle"> {{ i.name }} </td>
                                             <td class="text-muted align-middle"> {{ i.description }} </td>
                                             <td class="text-muted align-middle"> {{ i.item_type.name }} </td>
+                                            <td class="text-muted align-middle"> {{ formatToPhpCurrency(i.GWAPrice) }} </td>
                                             <td class="text-muted align-middle"> {{ i.total_quantity }} </td>
                                             <td class="text-muted align-middle">
                                                 <nuxt-link class="btn btn-light w-50" :to="'/warehouse/stock-inventory/item/view/' + i.id">
@@ -117,6 +119,10 @@
                                         <tr>
                                             <td width="50%" class="bg-secondary text-white"> Item Type </td>
                                             <td class="bg-secondary text-white"> {{ i.item_type.name }} </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="50%" class="bg-secondary text-white"> GWA Price </td>
+                                            <td class="bg-secondary text-white"> {{ formatToPhpCurrency(i.GWAPrice) }} </td>
                                         </tr>
                                         <tr>
                                             <td width="50%" class="bg-secondary text-white"> Quantity </td>

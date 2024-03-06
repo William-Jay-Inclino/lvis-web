@@ -83,6 +83,7 @@ export async function findAll(payload: {page: number, pageSize: number, name: st
                     name
                     description
                     total_quantity
+                    GWAPrice
                     item_type {
                         id 
                         name
@@ -114,6 +115,7 @@ export async function findByCode(code: string): Promise<Item | undefined> {
                 name
                 description
                 total_quantity
+                GWAPrice
                 item_type {
                     id 
                     name
@@ -148,6 +150,7 @@ export async function findOne(id: string): Promise<Item | undefined> {
                 description
                 total_quantity
                 initial_quantity
+                GWAPrice
                 item_type {
                     id 
                     name
