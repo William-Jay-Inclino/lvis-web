@@ -11,7 +11,7 @@
                 <div class="mb-3">
                     <label class="form-label">RR Number</label>
                     <client-only>
-                        <v-select :options="rrs" label="po_number" v-model="rr"></v-select>
+                        <v-select :options="rrs" label="rr_number" v-model="rr"></v-select>
                     </client-only>
                 </div>
             </div>

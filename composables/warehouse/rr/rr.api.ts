@@ -24,6 +24,7 @@ export async function findByRefNumber(payload: { po_number?: string, rr_number?:
                 rr_number
                 status
                 rr_date
+                is_cancelled
                 po {
                     id
                     po_number
@@ -45,7 +46,7 @@ export async function findByRefNumber(payload: { po_number?: string, rr_number?:
                         }
                     }
                 }
-                canceller_id
+                
             }
         }
     `;
@@ -94,6 +95,7 @@ export async function findAll(payload: { page: number, pageSize: number, date_re
                     rr_number
                     status
                     rr_date
+                    is_cancelled
                     po {
                       id
                       po_number
