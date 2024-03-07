@@ -155,9 +155,9 @@
                 </div>
                 <div class="modal-body">
 
-                    <small class="text-muted fst-italic">
-                        Drag items to reorder
-                    </small>
+                    <div class="alert alert-info" role="alert">
+                        <small class="fst-italic">Drag items to reorder</small>
+                    </div>
 
                     <div class="pt-4">
                         <draggable
