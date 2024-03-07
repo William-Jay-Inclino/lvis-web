@@ -1,18 +1,18 @@
 import type { Brand, Canvass, CreateCanvassInput, FindAllResponse, MutationResponse, Unit, UpdateCanvassInput } from "./canvass.types";
 import { sendRequest } from "~/utils/api"
 
-export async function findAll(payload: {page: number, pageSize: number, date_requested: string | null, requested_by_id: string | null}): Promise<FindAllResponse> {
-    
+export async function findAll(payload: { page: number, pageSize: number, date_requested: string | null, requested_by_id: string | null }): Promise<FindAllResponse> {
+
     const { page, pageSize, date_requested, requested_by_id } = payload;
 
     let date_requested2 = null
     let requested_by_id2 = null
 
-    if(date_requested) {
+    if (date_requested) {
         date_requested2 = `"${date_requested}"`
-    } 
+    }
 
-    if(requested_by_id) {
+    if (requested_by_id) {
         requested_by_id2 = `"${requested_by_id}"`
     }
 
@@ -73,7 +73,7 @@ export async function findByRcNumber(rcNumber: string): Promise<Canvass | undefi
         const response = await sendRequest(query);
         console.log('response', response)
 
-        if(response.data && response.data.data && response.data.data.canvass) {
+        if (response.data && response.data.data && response.data.data.canvass) {
             return response.data.data.canvass;
         }
 
@@ -136,7 +136,7 @@ export async function findOne(id: string): Promise<Canvass | undefined> {
         const response = await sendRequest(query);
         console.log('response', response)
 
-        if(response.data && response.data.data && response.data.data.canvass) {
+        if (response.data && response.data.data && response.data.data.canvass) {
             return response.data.data.canvass;
         }
 
@@ -186,21 +186,21 @@ export async function fetchFormDataInCreate(): Promise<{
         let brands = []
         let units = []
 
-        if(!response.data || !response.data.data) {
+        if (!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
         }
 
         const data = response.data.data
 
-        if(data.employees && data.employees.data) {
+        if (data.employees && data.employees.data) {
             employees = response.data.data.employees.data
         }
 
-        if(data.brands) { // temp
+        if (data.brands) { // temp
             brands = data.brands
         }
 
-        if(data.units && data.units.data) {
+        if (data.units && data.units.data) {
             units = response.data.data.units.data
         }
 
@@ -218,7 +218,7 @@ export async function fetchFormDataInCreate(): Promise<{
             units: []
         }
     }
-    
+
 
 }
 
@@ -285,27 +285,27 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
         let brands = []
         let units = []
 
-        if(!response.data || !response.data.data) {
+        if (!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
         }
 
         const data = response.data.data
 
-        if(!data.canvass) {
+        if (!data.canvass) {
             throw new Error(JSON.stringify(response.data.errors));
         }
 
         const canvass = data.canvass
 
-        if(data.employees && data.employees.data) {
+        if (data.employees && data.employees.data) {
             employees = response.data.data.employees.data
         }
 
-        if(data.brands) { // temp
+        if (data.brands) { // temp
             brands = data.brands
         }
 
-        if(data.units && data.units.data) {
+        if (data.units && data.units.data) {
             units = response.data.data.units.data
         }
 
@@ -356,17 +356,17 @@ export async function fetchDataInSearchFilters(): Promise<{
         let canvasses = []
         let employees = []
 
-        if(!response.data || !response.data.data) {
+        if (!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
         }
 
         const data = response.data.data
 
-        if(data.employees && data.employees.data) {
+        if (data.employees && data.employees.data) {
             employees = response.data.data.employees.data
         }
 
-        if(data.canvasses && data.canvasses.data) { 
+        if (data.canvasses && data.canvasses.data) {
             canvasses = data.canvasses.data
         }
         return {
@@ -387,14 +387,14 @@ export async function create(input: CreateCanvassInput): Promise<MutationRespons
 
     const canvassItems = input.canvass_items.map(item => {
 
-        let brandId = null 
-        let unitId = null 
-    
-        if(item.brand) {
+        let brandId = null
+        let unitId = null
+
+        if (item.brand) {
             brandId = `"${item.brand.id}"`
         }
 
-        if(item.unit) {
+        if (item.unit) {
             unitId = `"${item.unit.id}"`
         }
 
@@ -442,11 +442,11 @@ export async function create(input: CreateCanvassInput): Promise<MutationRespons
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.createCanvass) {
+        if (response.data && response.data.data && response.data.data.createCanvass) {
             return {
                 success: true,
                 msg: 'Canvass created successfully!',
-                data: response.data.data.createCanvass 
+                data: response.data.data.createCanvass
             };
         }
 
@@ -454,7 +454,7 @@ export async function create(input: CreateCanvassInput): Promise<MutationRespons
 
     } catch (error) {
         console.error(error);
-        
+
         return {
             success: false,
             msg: 'Failed to create Canvass. Please contact system administrator'
@@ -486,11 +486,11 @@ export async function update(id: string, input: UpdateCanvassInput): Promise<Mut
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.updateCanvass) {
+        if (response.data && response.data.data && response.data.data.updateCanvass) {
             return {
                 success: true,
                 msg: 'Canvass updated successfully!',
-                data: response.data.data.updateCanvass 
+                data: response.data.data.updateCanvass
             };
         }
 
@@ -498,7 +498,7 @@ export async function update(id: string, input: UpdateCanvassInput): Promise<Mut
 
     } catch (error) {
         console.error(error);
-        
+
         return {
             success: false,
             msg: 'Failed to Update Canvass. Please contact system administrator'
