@@ -18,11 +18,12 @@ export interface PO {
     is_referenced: boolean
 
     rr?: RR
+    created_by: string
 
 }
 
 export interface CreatePoInput {
-    meqs_supplier: MeqsSupplier| null
+    meqs_supplier: MeqsSupplier | null
     approvers: PoApproverSettings[];
     notes: string
 }
@@ -40,8 +41,8 @@ export interface CreatePoApproverSubInput {
 }
 
 export interface MutationResponse {
-    success: boolean 
-    msg: string 
+    success: boolean
+    msg: string
     data?: PO
 }
 

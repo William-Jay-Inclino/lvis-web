@@ -377,7 +377,7 @@
                             <i class="fas fa-chevron-left"></i> Back to Search
                         </nuxt-link>
                     </div>
-                    <div v-if="!item.is_deleted && !item.canceller_id">
+                    <div v-if="!item.is_deleted && !item.canceller_id && isAdminOrOwner(item.created_by, authUser)">
                         <nuxt-link class="btn btn-success me-2" :to="`/warehouse/purchasing/rr/${item.id}`">
                             <i class="fas fa-sync"></i> Update
                         </nuxt-link>
@@ -405,6 +405,7 @@
     import { approvalStatus } from '~/utils/constants'
     import { getTotalNetPrice, getVatAmount, getNetPrice, getGrossTotal, getVatTotal } from '~/utils/helpers';
 
+    const authUser = ref<AuthUser>({} as AuthUser)
     const route = useRoute()
     const item = ref<RR | undefined>()
     const isMobile = ref(false)
@@ -426,6 +427,7 @@
     onMounted( async() => {
         isMobile.value = window.innerWidth < MOBILE_WIDTH
         window.addEventListener('resize', checkMobile);
+        authUser.value = getAuthUser()
         const rr = await rrApi.findOne(route.params.id as string)
         
         rr?.rr_items.map(i => {

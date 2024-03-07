@@ -200,7 +200,7 @@
                             <i class="fas fa-chevron-left"></i> Back to Search
                         </nuxt-link>
                     </div>
-                    <div v-if="!item.is_deleted && !item.canceller_id">
+                    <div v-if="!item.is_deleted && !item.canceller_id && isAdminOrOwner(item.created_by, authUser)">
                         <nuxt-link class="btn btn-success me-2" :to="`/warehouse/purchasing/po/${item.id}`">
                             <i class="fas fa-sync"></i> Update
                         </nuxt-link>
@@ -229,6 +229,7 @@
     import { approvalStatus } from '~/utils/constants'
     import { getTotalNetPrice, getVatAmount } from '~/utils/helpers';
 
+    const authUser = ref<AuthUser>({} as AuthUser)
     const route = useRoute()
     const item = ref<PO | undefined>()
     const isMobile = ref(false)
@@ -239,6 +240,7 @@
 
         window.addEventListener('resize', checkMobile);
 
+        authUser.value = getAuthUser()
         item.value = await poApi.findOne(route.params.id as string)
 
     })

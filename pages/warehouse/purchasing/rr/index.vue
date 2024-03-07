@@ -104,7 +104,7 @@
                                                 <nuxt-link class="btn btn-light w-50" :to="'/warehouse/purchasing/rr/view/' + i.id">
                                                     <i class="fas fa-info-circle text-info"></i>
                                                 </nuxt-link>
-                                                <button @click="onClickEdit(i.id)" class="btn btn-light w-50">
+                                                <button v-if="isAdminOrOwner(i.created_by, authUser)" @click="onClickEdit(i.id)" class="btn btn-light w-50">
                                                     <i class="fas fa-edit text-primary"></i>
                                                 </button>
                                             </td>
@@ -120,29 +120,51 @@
 
                                 <table class="table table-hover table-bordered">
 
-                                    <!-- <tbody>
+                                    <tbody>
                                         <tr>
-                                            <td width="50%" class="bg-secondary text-white"> RC Number </td>
-                                            <td class="bg-secondary text-white"> {{ i.rc_number }} </td>
+                                            <td width="50%" class="bg-secondary text-white"> RR Number </td>
+                                            <td class="bg-secondary text-white"> {{ i.rr_number }} </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-muted"> PO Number </td>
+                                            <td> {{ i.po.po_number }} </td>
                                         </tr>
                                         <tr>
                                             <td class="text-muted"> Requisitioner </td>
-                                            <td> {{ getFullname(i.requested_by!.firstname, i.requested_by!.middlename, i.requested_by!.lastname) }} </td>
+                                            <td>
+                                                <span v-if="i.po.meqs_supplier.meqs.rv">
+                                                    {{ getRequisitionerFullname(i.po.meqs_supplier.meqs.rv.canvass.requested_by) }} 
+                                                </span>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td class="text-muted"> Date </td>
-                                            <td> {{ moment(i.date_requested).format('YYYY-MM-DD') }} </td>
+                                            <td> {{ formatDate(i.rr_date) }} </td>
                                         </tr>
                                         <tr>
-                                            <td colspan="2" class="text-center">
+                                            <td class="text-muted"> Status </td>
+                                            <td>
+                                                <div :class="{[`badge bg-${approvalStatus[i.status].color}`]: true}"> 
+                                                    {{ approvalStatus[i.status].label }} 
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" :colspan="isAdminOrOwner(i.created_by, authUser) ? 1 : 2">
+                                                <nuxt-link class="btn btn-sm btn-light text-info w-100" :to="'/warehouse/purchasing/rr/view/' + i.id">
+                                                    <i class="fas fa-info-circle text-info"></i> View Details
+                                                </nuxt-link>
+                                            </td>
+                                            <td v-if="isAdminOrOwner(i.created_by, authUser)" class="text-center">
                                                 <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light text-primary w-100">
-                                                    View Details
+                                                    <i class="fas fa-edit"></i>
+                                                    Edit Canvass
                                                 </button>
                                             </td>
                                         </tr>
-                                    </tbody> -->
+                                    </tbody>
 
-                                </table>
+                                    </table>
 
 
                             </div>
@@ -194,6 +216,7 @@
     import type { PO } from '~/composables/warehouse/po/po.types';
 
 
+    const authUser = ref<AuthUser>({} as AuthUser)
     const router = useRouter()
 
     // flags
@@ -232,6 +255,7 @@
 
         window.addEventListener('resize', checkMobile);
 
+        authUser.value = getAuthUser()
         const response = await rrApi.fetchDataInSearchFilters()
 
         pos.value = response.pos

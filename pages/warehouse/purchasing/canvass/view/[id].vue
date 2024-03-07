@@ -188,7 +188,7 @@
                                     <i class="fas fa-chevron-left"></i> Back to Search
                                 </nuxt-link>
                             </div>
-                            <div>
+                            <div v-if="!item.is_deleted && isAdminOrOwner(item.created_by, authUser)">
                                 <nuxt-link class="btn btn-success me-2" :to="`/warehouse/purchasing/canvass/${item.id}`">
                                     <i class="fas fa-sync"></i> Update
                                 </nuxt-link>
@@ -218,6 +218,7 @@
     import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
     import { MOBILE_WIDTH } from '~/utils/config';
 
+    const authUser = ref<AuthUser>({} as AuthUser)
     const route = useRoute()
     const item = ref<Canvass | undefined>()
     const isMobile = ref(false)
@@ -227,6 +228,8 @@
         isMobile.value = window.innerWidth < MOBILE_WIDTH
 
         window.addEventListener('resize', checkMobile);
+
+        authUser.value = getAuthUser()
 
         item.value = await api.findOne(route.params.id as string)
 
@@ -255,6 +258,8 @@
         }
 
     })
+
+    
 
 
 </script>
