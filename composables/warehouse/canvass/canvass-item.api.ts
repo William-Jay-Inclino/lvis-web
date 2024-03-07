@@ -3,14 +3,14 @@ import { sendRequest } from "~/utils/api"
 
 export async function create(input: CreateCanvassItemInput): Promise<MutationResponse> {
 
-    let brandId = null 
-    let unitId = null 
+    let brandId = null
+    let unitId = null
 
-    if(input.brand) {
+    if (input.brand) {
         brandId = `"${input.brand.id}"`
     }
 
-    if(input.unit) {
+    if (input.unit) {
         unitId = `"${input.unit.id}"`
     }
 
@@ -44,11 +44,11 @@ export async function create(input: CreateCanvassItemInput): Promise<MutationRes
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.createCanvassItem) {
+        if (response.data && response.data.data && response.data.data.createCanvassItem) {
             return {
                 success: true,
                 msg: 'Canvass Item created successfully!',
-                data: response.data.data.createCanvassItem 
+                data: response.data.data.createCanvassItem
             };
         }
 
@@ -56,7 +56,7 @@ export async function create(input: CreateCanvassItemInput): Promise<MutationRes
 
     } catch (error) {
         console.error(error);
-        
+
         return {
             success: false,
             msg: 'Failed to create Canvass Item. Please contact system administrator'
@@ -69,14 +69,14 @@ export async function update(id: string, input: UpdateCanvassItemInput): Promise
 
     console.log('input', input)
 
-    let brandId = null 
-    let unitId = null 
+    let brandId = null
+    let unitId = null
 
-    if(input.brand) {
+    if (input.brand) {
         brandId = `"${input.brand.id}"`
     }
 
-    if(input.unit) {
+    if (input.unit) {
         unitId = `"${input.unit.id}"`
     }
 
@@ -110,11 +110,11 @@ export async function update(id: string, input: UpdateCanvassItemInput): Promise
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.updateCanvassItem) {
+        if (response.data && response.data.data && response.data.data.updateCanvassItem) {
             return {
                 success: true,
                 msg: 'Canvass Item updated successfully!',
-                data: response.data.data.updateCanvassItem 
+                data: response.data.data.updateCanvassItem
             };
         }
 
@@ -122,7 +122,7 @@ export async function update(id: string, input: UpdateCanvassItemInput): Promise
 
     } catch (error) {
         console.error(error);
-        
+
         return {
             success: false,
             msg: 'Failed to update Canvass Item. Please contact system administrator'
@@ -130,7 +130,7 @@ export async function update(id: string, input: UpdateCanvassItemInput): Promise
     }
 }
 
-export async function remove(id: string): Promise<{success: boolean, msg: string}> {
+export async function remove(id: string): Promise<{ success: boolean, msg: string }> {
 
     const mutation = `
         mutation {
@@ -146,7 +146,7 @@ export async function remove(id: string): Promise<{success: boolean, msg: string
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.removeCanvassItem) {
+        if (response.data && response.data.data && response.data.data.removeCanvassItem) {
             return {
                 success: response.data.data.removeCanvassItem.success,
                 msg: response.data.data.removeCanvassItem.msg
@@ -157,7 +157,7 @@ export async function remove(id: string): Promise<{success: boolean, msg: string
 
     } catch (error) {
         console.error(error);
-        
+
         return {
             success: false,
             msg: 'Failed to remove Canvass Item. Please contact system administrator'

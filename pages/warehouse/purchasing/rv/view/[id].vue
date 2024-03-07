@@ -2,7 +2,7 @@
 
     <div class="row justify-content-center">
 
-        <div class="col-lg-9">
+        <div class="col-lg-10">
 
             <div v-if="item">
                 
@@ -137,17 +137,24 @@
                                             <th class="bg-secondary text-white"> Label </th>
                                             <th class="bg-secondary text-white"> Approver </th>
                                             <th class="bg-secondary text-white"> Status </th>
+                                            <th class="bg-secondary text-white"> Notes </th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr v-for="i, count in item.rv_approvers">
-                                            <td> {{ i.order }} </td>
-                                            <td> {{ i.label }} </td>
-                                            <td> {{ getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname) }} </td>
-                                            <td>
-                                                <span :class="{[`badge bg-${approvalStatus[i.status].color}`]: true}"> 
+                                            <td class="align-middle"> {{ i.order }} </td>
+                                            <td class="align-middle"> {{ i.label }} </td>
+                                            <td class="align-middle"> {{ getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname) }} </td>
+                                            <td class="text-muted text-center align-middle">
+                                                <div :class="{[`badge bg-${approvalStatus[i.status].color}`]: true}"> 
                                                     {{ approvalStatus[i.status].label }} 
-                                                </span> 
+                                                </div>
+                                                <div class="fst-italic" v-if="i.date_approval">
+                                                    <small> {{ formatDate(i.date_approval) }} </small>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <textarea rows="3" class="form-control" disabled :value="i.notes"></textarea>
                                             </td>
                                         </tr>
                                     </tbody>

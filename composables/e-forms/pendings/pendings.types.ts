@@ -7,6 +7,7 @@ export enum PENDING_APPROVAL_TYPE {
 }
 
 export interface PendingApproval {
+    id: string
     type: PENDING_APPROVAL_TYPE
     description: string
     // id of either rv, meqs, po, rr
