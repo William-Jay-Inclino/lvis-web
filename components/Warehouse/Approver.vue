@@ -228,7 +228,7 @@
                             Approver <span class="text-danger">*</span>
                         </label>
                         <client-only>
-                            <v-select :options="employees" label="fullname" v-model="addApproverData.approver"></v-select>
+                            <v-select :options="uniqueEmployees" label="fullname" v-model="addApproverData.approver"></v-select>
                         </client-only>
                         <small class="text-danger fst-italic" v-show="addApproverErrors.approver">
                             This field is required
@@ -283,7 +283,7 @@
                             Approver <span class="text-danger">*</span>
                         </label>
                         <client-only>
-                            <v-select :options="employees" label="fullname" v-model="editApproverData.approver" :clearable="false"></v-select>
+                            <v-select :options="uniqueEmployees" label="fullname" v-model="editApproverData.approver" :clearable="false"></v-select>
                         </client-only>
                     </div>
 
@@ -431,8 +431,18 @@
 
 
 
-    // ======================== FUNCTIONS ========================  
 
+    // ======================== COMPUTED ========================  
+    
+    const uniqueEmployees = computed( () => {
+        return props.employees.filter(employee => !props.approvers.some(approver => employee.id === approver.approver?.id));
+
+    })
+
+
+
+
+    // ======================== FUNCTIONS ========================  
 
     function onClickAddApprover() {
         isApproverModalAdd.value = true
