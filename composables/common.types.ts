@@ -18,7 +18,7 @@ export interface User {
     username: string
     status: USER_STATUS
     role: ROLE
-    user_employee: UserEmployee
+    user_employee?: UserEmployee
 }
 
 export interface UserEmployee {

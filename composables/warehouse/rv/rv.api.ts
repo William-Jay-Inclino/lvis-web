@@ -41,21 +41,21 @@ export async function fetchDataInSearchFilters(): Promise<{
         let rvs = []
         let employees = []
 
-        if(!response.data || !response.data.data) {
+        if (!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
         }
 
         const data = response.data.data
 
-        if(data.employees && data.employees.data) {
+        if (data.employees && data.employees.data) {
             employees = response.data.data.employees.data
         }
 
-        if(data.canvasses && data.canvasses.data) { 
+        if (data.canvasses && data.canvasses.data) {
             canvasses = data.canvasses.data
         }
 
-        if(data.rvs && data.rvs.data) { 
+        if (data.rvs && data.rvs.data) {
             rvs = data.rvs.data
         }
 
@@ -101,7 +101,7 @@ export async function findByRcNumber(rcNumber: string): Promise<RV | undefined> 
         const response = await sendRequest(query);
         console.log('response', response)
 
-        if(response.data && response.data.data && response.data.data.rv) {
+        if (response.data && response.data.data && response.data.data.rv) {
             return response.data.data.rv;
         }
 
@@ -139,7 +139,7 @@ export async function findByRvNumber(rvNumber: string): Promise<RV | undefined> 
         const response = await sendRequest(query);
         console.log('response', response)
 
-        if(response.data && response.data.data && response.data.data.rv) {
+        if (response.data && response.data.data && response.data.data.rv) {
             return response.data.data.rv;
         }
 
@@ -196,6 +196,8 @@ export async function findOne(id: string): Promise<RV | undefined> {
                     status
                     label
                     order
+                    notes
+                    date_approval
                 }
                 meqs {
                     id
@@ -219,7 +221,7 @@ export async function findOne(id: string): Promise<RV | undefined> {
         const response = await sendRequest(query);
         console.log('response', response)
 
-        if(response.data && response.data.data && response.data.data.rv) {
+        if (response.data && response.data.data && response.data.data.rv) {
             return response.data.data.rv;
         }
 
@@ -231,18 +233,18 @@ export async function findOne(id: string): Promise<RV | undefined> {
     }
 }
 
-export async function findAll(payload: {page: number, pageSize: number, date_requested: string | null, requested_by_id: string | null}): Promise<FindAllResponse> {
-    
+export async function findAll(payload: { page: number, pageSize: number, date_requested: string | null, requested_by_id: string | null }): Promise<FindAllResponse> {
+
     const { page, pageSize, date_requested, requested_by_id } = payload;
 
     let date_requested2 = null
     let requested_by_id2 = null
 
-    if(date_requested) {
+    if (date_requested) {
         date_requested2 = `"${date_requested}"`
-    } 
+    }
 
-    if(requested_by_id) {
+    if (requested_by_id) {
         requested_by_id2 = `"${requested_by_id}"`
     }
 
@@ -353,25 +355,25 @@ export async function fetchFormDataInCreate(): Promise<{
         let approvers = []
         let classifications = []
 
-        if(!response.data || !response.data.data) {
+        if (!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
         }
 
         const data = response.data.data
 
-        if(data.canvasses && data.canvasses.data) {
+        if (data.canvasses && data.canvasses.data) {
             canvasses = response.data.data.canvasses.data
         }
 
-        if(data.employees && data.employees.data) {
+        if (data.employees && data.employees.data) {
             employees = response.data.data.employees.data
         }
 
-        if(data.rvApproverSettings) {
+        if (data.rvApproverSettings) {
             approvers = data.rvApproverSettings
         }
 
-        if(data.classifications) {
+        if (data.classifications) {
             classifications = data.classifications
         }
 
@@ -391,7 +393,7 @@ export async function fetchFormDataInCreate(): Promise<{
             classifications: [],
         }
     }
-    
+
 
 }
 
@@ -478,23 +480,23 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
         let employees: Employee[] = []
         let classifications: Classification[] = []
 
-        if(!response.data || !response.data.data) {
+        if (!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
         }
 
         const data = response.data.data
 
-        if(!data.rv) {
+        if (!data.rv) {
             throw new Error(JSON.stringify(response.data.errors));
         }
 
         const rv = data.rv
 
-        if(data.employees && data.employees.data) {
+        if (data.employees && data.employees.data) {
             employees = response.data.data.employees.data
         }
 
-        if(data.classifications) {
+        if (data.classifications) {
             classifications = response.data.data.classifications
         }
 
@@ -520,15 +522,15 @@ export async function create(input: CreateRvInput): Promise<MutationResponse> {
     let work_order_date = null
     let classification_id = null
 
-    if(input.work_order_no) {
+    if (input.work_order_no) {
         work_order_no = `"${input.work_order_no}"`
     }
 
-    if(input.work_order_date) {
+    if (input.work_order_date) {
         work_order_date = `"${input.work_order_date}"`
     }
 
-    if(input.classification) {
+    if (input.classification) {
         classification_id = `"${input.classification.id}"`
     }
 
@@ -543,9 +545,9 @@ export async function create(input: CreateRvInput): Promise<MutationResponse> {
 
     const approvers = input.approvers.map(item => {
 
-        let approver_proxy_id = null 
+        let approver_proxy_id = null
 
-        if(item.approver_proxy) {
+        if (item.approver_proxy) {
             approver_proxy_id = `"${item.approver_proxy.id}"`
         }
 
@@ -579,11 +581,11 @@ export async function create(input: CreateRvInput): Promise<MutationResponse> {
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.createRv) {
+        if (response.data && response.data.data && response.data.data.createRv) {
             return {
                 success: true,
                 msg: 'RV created successfully!',
-                data: response.data.data.createRv 
+                data: response.data.data.createRv
             };
         }
 
@@ -591,7 +593,7 @@ export async function create(input: CreateRvInput): Promise<MutationResponse> {
 
     } catch (error) {
         console.error(error);
-        
+
         return {
             success: false,
             msg: 'Failed to create RV. Please contact system administrator'
@@ -605,15 +607,15 @@ export async function update(id: string, input: UpdateRvInput): Promise<Mutation
     let work_order_date = null
     let classification_id = null
 
-    if(input.work_order_no) {
+    if (input.work_order_no) {
         work_order_no = `"${input.work_order_no}"`
     }
 
-    if(input.work_order_date) {
+    if (input.work_order_date) {
         work_order_date = `"${input.work_order_date}"`
     }
 
-    if(input.classification) {
+    if (input.classification) {
         classification_id = `"${input.classification.id}"`
     }
 
@@ -657,11 +659,11 @@ export async function update(id: string, input: UpdateRvInput): Promise<Mutation
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.updateRv) {
+        if (response.data && response.data.data && response.data.data.updateRv) {
             return {
                 success: true,
                 msg: 'RV updated successfully!',
-                data: response.data.data.updateRv 
+                data: response.data.data.updateRv
             };
         }
 
@@ -669,7 +671,7 @@ export async function update(id: string, input: UpdateRvInput): Promise<Mutation
 
     } catch (error) {
         console.error(error);
-        
+
         return {
             success: false,
             msg: 'Failed to update RV. Please contact system administrator'
@@ -682,7 +684,7 @@ export async function cancel(id: string): Promise<MutationResponse> {
 
     const authUserJson = localStorage.getItem('authUser')
 
-    if(!authUserJson) {
+    if (!authUserJson) {
         throw console.error('authUser in localstorage not found');
     }
 
@@ -705,10 +707,10 @@ export async function cancel(id: string): Promise<MutationResponse> {
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.updateRv) {
+        if (response.data && response.data.data && response.data.data.updateRv) {
             return {
                 success: true,
-                msg: 'RV cancelled!' 
+                msg: 'RV cancelled!'
             };
         }
 
@@ -716,7 +718,7 @@ export async function cancel(id: string): Promise<MutationResponse> {
 
     } catch (error) {
         console.error(error);
-        
+
         return {
             success: false,
             msg: 'Failed to cancel RV. Please contact system administrator'

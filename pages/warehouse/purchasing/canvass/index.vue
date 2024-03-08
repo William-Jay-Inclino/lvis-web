@@ -82,7 +82,7 @@
                                                 <nuxt-link class="btn btn-light w-50" :to="'/warehouse/purchasing/canvass/view/' + i.id">
                                                     <i class="fas fa-info-circle text-info"></i>
                                                 </nuxt-link>
-                                                <button @click="onClickEdit(i.id)" class="btn btn-light w-50">
+                                                <button v-if="isAdminOrOwner(i.created_by, authUser)" @click="onClickEdit(i.id)" class="btn btn-light w-50">
                                                     <i class="fas fa-edit text-primary"></i>
                                                 </button>
                                             </td>
@@ -112,9 +112,15 @@
                                             <td> {{ moment(i.date_requested).format('YYYY-MM-DD') }} </td>
                                         </tr>
                                         <tr>
-                                            <td colspan="2" class="text-center">
+                                            <td class="text-center" :colspan="isAdminOrOwner(i.created_by, authUser) ? 1 : 2">
+                                                <nuxt-link class="btn btn-sm btn-light text-info w-100" :to="'/warehouse/purchasing/canvass/view/' + i.id">
+                                                    <i class="fas fa-info-circle text-info"></i> View Details
+                                                </nuxt-link>
+                                            </td>
+                                            <td v-if="isAdminOrOwner(i.created_by, authUser)" class="text-center">
                                                 <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light text-primary w-100">
-                                                    View Details
+                                                    <i class="fas fa-edit"></i>
+                                                    Edit Canvass
                                                 </button>
                                             </td>
                                         </tr>
@@ -166,10 +172,12 @@
 
     import * as api from '~/composables/warehouse/canvass/canvass.api'
     import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
-    import { getFullname, formatDate } from '~/utils/helpers'
+    import { getFullname, formatDate, isAdminOrOwner } from '~/utils/helpers'
     import moment from 'moment'
     import { MOBILE_WIDTH, PAGINATION_SIZE } from '~/utils/config'
     
+
+    const authUser = ref<AuthUser>({} as AuthUser)
 
     const router = useRouter()
 
@@ -208,6 +216,8 @@
 
         window.addEventListener('resize', checkMobile);
 
+        authUser.value = getAuthUser()
+
         const response = await api.fetchDataInSearchFilters()
 
         canvasses.value = response.canvasses
@@ -217,7 +227,6 @@
         })
 
     })
-
 
 
     // ======================== FUNCTIONS ======================== 
@@ -291,9 +300,6 @@
     function checkMobile() {
         isMobile.value = window.innerWidth < MOBILE_WIDTH
     }
-
-
-    
 
 </script>
 

@@ -40,7 +40,7 @@ export async function fetchDataInSearchFilters(): Promise<{
         let rvs = []
         let employees = []
 
-        if(!response.data || !response.data.data) {
+        if (!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
         }
 
@@ -48,15 +48,15 @@ export async function fetchDataInSearchFilters(): Promise<{
 
         console.log('data', data)
 
-        if(data.employees && data.employees.data) {
+        if (data.employees && data.employees.data) {
             employees = data.employees.data
         }
 
-        if(data.meqs && data.meqs.data) { 
+        if (data.meqs && data.meqs.data) {
             meqs = data.meqs.data
         }
 
-        if(data.rvs && data.rvs.data) { 
+        if (data.rvs && data.rvs.data) {
             rvs = data.rvs.data
         }
 
@@ -107,7 +107,7 @@ export async function findByMeqsNumber(meqsNumber: string): Promise<MEQS | undef
         const response = await sendRequest(query);
         console.log('response', response)
 
-        if(response.data && response.data.data && response.data.data.meq) {
+        if (response.data && response.data.data && response.data.data.meq) {
             return response.data.data.meq;
         }
 
@@ -122,7 +122,7 @@ export async function findByMeqsNumber(meqsNumber: string): Promise<MEQS | undef
 export async function findByReferenceNumber(payload: {
     rv_number?: string,
     jo_number?: string,
-    spr_number?: string 
+    spr_number?: string
 }): Promise<MEQS | undefined> {
 
     const { rv_number, jo_number, spr_number } = payload;
@@ -166,7 +166,7 @@ export async function findByReferenceNumber(payload: {
         const response = await sendRequest(query);
         console.log('response', response)
 
-        if(response.data && response.data.data && response.data.data.meq) {
+        if (response.data && response.data.data && response.data.data.meq) {
             return response.data.data.meq;
         }
 
@@ -178,18 +178,18 @@ export async function findByReferenceNumber(payload: {
     }
 }
 
-export async function findAll(payload: {page: number, pageSize: number, date_requested: string | null, requested_by_id: string | null}): Promise<FindAllResponse> {
-    
+export async function findAll(payload: { page: number, pageSize: number, date_requested: string | null, requested_by_id: string | null }): Promise<FindAllResponse> {
+
     const { page, pageSize, date_requested, requested_by_id } = payload;
 
     let date_requested2 = null
     let requested_by_id2 = null
 
-    if(date_requested) {
+    if (date_requested) {
         date_requested2 = `"${date_requested}"`
-    } 
+    }
 
-    if(requested_by_id) {
+    if (requested_by_id) {
         requested_by_id2 = `"${requested_by_id}"`
     }
 
@@ -245,6 +245,7 @@ export async function findOne(id: string): Promise<MEQS | undefined> {
             meq(id: "${id}") {
                 id
                 meqs_number
+                notes
                 rv{
                     id
                     rv_number
@@ -289,6 +290,8 @@ export async function findOne(id: string): Promise<MEQS | undefined> {
                     order
                     status
                     notes
+                    notes
+                    date_approval
                 }
                 meqs_suppliers{
                     id
@@ -335,7 +338,7 @@ export async function findOne(id: string): Promise<MEQS | undefined> {
         const response = await sendRequest(query);
         console.log('response', response)
 
-        if(response.data && response.data.data && response.data.data.meq) {
+        if (response.data && response.data.data && response.data.data.meq) {
             return response.data.data.meq;
         }
 
@@ -422,21 +425,21 @@ export async function fetchFormDataInCreate(): Promise<{
         let suppliers = []
         let approvers = []
 
-        if(!response.data || !response.data.data) {
+        if (!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
         }
 
         const data = response.data.data
 
-        if(data.rvs && data.rvs.data) {
+        if (data.rvs && data.rvs.data) {
             rvs = response.data.data.rvs.data
         }
 
-        if(data.suppliers) {
+        if (data.suppliers) {
             suppliers = data.suppliers
         }
 
-        if(data.meqsApproverSettings) {
+        if (data.meqsApproverSettings) {
             approvers = data.meqsApproverSettings
         }
 
@@ -454,7 +457,7 @@ export async function fetchFormDataInCreate(): Promise<{
             approvers: []
         }
     }
-    
+
 
 }
 
@@ -518,17 +521,17 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
 
         let employees: Employee[] = []
 
-        if(!response.data || !response.data.data) {
+        if (!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
         }
 
         const data = response.data.data
 
-        if(!data.meq) {
+        if (!data.meq) {
             throw new Error(JSON.stringify(response.data.errors));
         }
 
-        if(data.employees && data.employees.data) {
+        if (data.employees && data.employees.data) {
             employees = response.data.data.employees.data
         }
 
@@ -544,7 +547,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
             employees: []
         }
     }
-    
+
 
 }
 
@@ -558,7 +561,7 @@ export async function uploadAttachments(attachments: any[], apiUrl: string): Pro
 
     const formData = new FormData();
 
-    for(let img of images) {
+    for (let img of images) {
         formData.append('files', img)
     }
 
@@ -567,17 +570,17 @@ export async function uploadAttachments(attachments: any[], apiUrl: string): Pro
     try {
         const response = await axios.post(fileUploadApi, formData, {
             headers: {
-              'Content-Type': 'multipart/form-data'
+                'Content-Type': 'multipart/form-data'
             }
-          });
-      
-          console.log('response', response.data);
+        });
 
-          if(response.data && response.data.success && response.data.data) {
+        console.log('response', response.data);
+
+        if (response.data && response.data.success && response.data.data) {
             return response.data.data as string[]
-          }
+        }
 
-          return null
+        return null
 
     } catch (error) {
         console.error('Error uploading images:', error);
@@ -592,9 +595,9 @@ export async function create(input: CreateMeqsInput): Promise<MutationResponse> 
     let rv_id = null
     let spr_id = null
 
-    if(input.rv){
+    if (input.rv) {
         rv_id = `"${input.rv.id}"`
-    } else if(input.jo) {
+    } else if (input.jo) {
         // todo
     } else {
         // todo
@@ -614,7 +617,7 @@ export async function create(input: CreateMeqsInput): Promise<MutationResponse> 
 
         const meqs_supplier_items = meqSupplier.meqs_supplier_items.map(item => {
 
-            if(!item.notes) {
+            if (!item.notes) {
                 item.notes = ''
             }
 
@@ -658,34 +661,34 @@ export async function create(input: CreateMeqsInput): Promise<MutationResponse> 
             }
         }`;
 
-        try {
-            const response = await sendRequest(mutation);
-            console.log('response', response);
-    
-            if(response.data && response.data.data && response.data.data.createMeqs) {
-                return {
-                    success: true,
-                    msg: 'MEQS created successfully!',
-                    data: response.data.data.createMeqs 
-                };
-            }
-    
-            throw new Error(JSON.stringify(response.data.errors));
-    
-        } catch (error) {
-            console.error(error);
-            
+    try {
+        const response = await sendRequest(mutation);
+        console.log('response', response);
+
+        if (response.data && response.data.data && response.data.data.createMeqs) {
             return {
-                success: false,
-                msg: 'Failed to create MEQS. Please contact system administrator'
+                success: true,
+                msg: 'MEQS created successfully!',
+                data: response.data.data.createMeqs
             };
         }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+    } catch (error) {
+        console.error(error);
+
+        return {
+            success: false,
+            msg: 'Failed to create MEQS. Please contact system administrator'
+        };
+    }
 
 }
 
 export async function update(id: string, input: UpdateMeqsInput): Promise<MutationResponse> {
 
-    
+
     const mutation = `
         mutation {
             updateMeqs(
@@ -702,11 +705,11 @@ export async function update(id: string, input: UpdateMeqsInput): Promise<Mutati
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.updateMeqs) {
+        if (response.data && response.data.data && response.data.data.updateMeqs) {
             return {
                 success: true,
                 msg: 'MEQS updated successfully!',
-                data: response.data.data.updateMeqs 
+                data: response.data.data.updateMeqs
             };
         }
 
@@ -714,7 +717,7 @@ export async function update(id: string, input: UpdateMeqsInput): Promise<Mutati
 
     } catch (error) {
         console.error(error);
-        
+
         return {
             success: false,
             msg: 'Failed to update MEQS. Please contact system administrator'
@@ -726,7 +729,7 @@ export async function cancel(id: string): Promise<MutationResponse> {
 
     const authUserJson = localStorage.getItem('authUser')
 
-    if(!authUserJson) {
+    if (!authUserJson) {
         throw console.error('authUser in localstorage not found');
     }
 
@@ -749,10 +752,10 @@ export async function cancel(id: string): Promise<MutationResponse> {
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.updateMeqs) {
+        if (response.data && response.data.data && response.data.data.updateMeqs) {
             return {
                 success: true,
-                msg: 'MEQS cancelled!' 
+                msg: 'MEQS cancelled!'
             };
         }
 
@@ -760,7 +763,7 @@ export async function cancel(id: string): Promise<MutationResponse> {
 
     } catch (error) {
         console.error(error);
-        
+
         return {
             success: false,
             msg: 'Failed to cancel MEQS. Please contact system administrator'

@@ -8,12 +8,6 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col">
-                <small class="text-secondary fst-italic">2. If the supplier has no item, set the value to -1 </small>
-            </div>
-        </div>
-
         <table class="table table-hover table-sm mt-3">
 
             <thead>

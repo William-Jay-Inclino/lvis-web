@@ -125,8 +125,8 @@
                                         <tr v-for="i, count in item.canvass_items">
                                             <td> {{ count + 1 }} </td>
                                             <td> {{ i.description }} </td>
-                                            <td> {{ i.brand ? i.brand.name : '' }} </td>
-                                            <td> {{ i.unit ? i.unit.name : '' }} </td>
+                                            <td> {{ i.brand ? i.brand.name : 'N/A' }} </td>
+                                            <td> {{ i.unit ? i.unit.name : 'N/A' }} </td>
                                             <td> {{ i.quantity }} </td>
                                         </tr>
                                     </tbody>
@@ -158,11 +158,11 @@
                                         </tr>
                                         <tr>
                                             <td class="text-muted"> Brand </td>
-                                            <td> {{ i.brand ? i.brand.name : '' }} </td>
+                                            <td> {{ i.brand ? i.brand.name : 'N/A' }} </td>
                                         </tr>
                                         <tr>
                                             <td class="text-muted"> Unit </td>
-                                            <td> {{ i.unit ? i.unit.name : '' }} </td>
+                                            <td> {{ i.unit ? i.unit.name : 'N/A' }} </td>
                                         </tr>
                                         <tr>
                                             <td class="text-muted"> Quantity </td>
@@ -188,7 +188,7 @@
                                     <i class="fas fa-chevron-left"></i> Back to Search
                                 </nuxt-link>
                             </div>
-                            <div>
+                            <div v-if="!item.is_deleted && isAdminOrOwner(item.created_by, authUser)">
                                 <nuxt-link class="btn btn-success me-2" :to="`/warehouse/purchasing/canvass/${item.id}`">
                                     <i class="fas fa-sync"></i> Update
                                 </nuxt-link>
@@ -218,6 +218,7 @@
     import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
     import { MOBILE_WIDTH } from '~/utils/config';
 
+    const authUser = ref<AuthUser>({} as AuthUser)
     const route = useRoute()
     const item = ref<Canvass | undefined>()
     const isMobile = ref(false)
@@ -227,6 +228,8 @@
         isMobile.value = window.innerWidth < MOBILE_WIDTH
 
         window.addEventListener('resize', checkMobile);
+
+        authUser.value = getAuthUser()
 
         item.value = await api.findOne(route.params.id as string)
 
@@ -255,6 +258,8 @@
         }
 
     })
+
+    
 
 
 </script>

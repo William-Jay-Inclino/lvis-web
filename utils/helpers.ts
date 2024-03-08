@@ -13,6 +13,25 @@ export function getAuthUser(): AuthUser {
     return authUser
 }
 
+export function isAdmin(authUser: AuthUser): boolean {
+
+    return authUser.user.role === ROLE.ADMIN
+
+}
+
+export function isAdminOrOwner(createdBy: string, authUser: AuthUser) {
+
+    const isOwner = authUser.user.username === createdBy
+
+    if (isAdmin(authUser) || isOwner) {
+        return true
+    }
+
+    return false
+
+}
+
+
 export function getFullname(firstname: string, middlename: string | null, lastname: string) {
     if (middlename) {
         return lastname + ', ' + firstname + ' ' + convertMiddleNameToInitial(middlename)

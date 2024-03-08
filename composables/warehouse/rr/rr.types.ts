@@ -5,28 +5,29 @@ import type { APPROVAL_STATUS } from "~/composables/common.types";
 import type { RrItem } from "./rr-item.types";
 
 export interface RR {
-  id: string;
-  po_id: string;
-  rr_number: string;
-  rr_date: Date;
-  received_by_id: string;
-  canceller_id: string;
-  date_cancelled: Date;
-  invoice_number: string;
-  delivery_number: string;
-  notes: string;
-  delivery_charge: number;
-  created_at: Date;
-  updated_at: Date;
-  po: PO;
-  is_deleted: boolean;
-  is_cancelled: boolean;
-  status: APPROVAL_STATUS;
+    id: string;
+    po_id: string;
+    rr_number: string;
+    rr_date: Date;
+    received_by_id: string;
+    canceller_id: string;
+    date_cancelled: Date;
+    invoice_number: string;
+    delivery_number: string;
+    notes: string;
+    delivery_charge: number;
+    created_at: Date;
+    updated_at: Date;
+    po: PO;
+    is_deleted: boolean;
+    is_cancelled: boolean;
+    status: APPROVAL_STATUS;
 
-  rr_approvers: Approver[];
-  rr_items: RrItem[]
+    rr_approvers: Approver[];
+    rr_items: RrItem[]
 
-  received_by: Employee;
+    received_by: Employee;
+    created_by: string
 }
 
 
@@ -70,8 +71,8 @@ export interface UpdateRrInput {
 
 
 export interface MutationResponse {
-    success: boolean 
-    msg: string 
+    success: boolean
+    msg: string
     data?: RR
 }
 

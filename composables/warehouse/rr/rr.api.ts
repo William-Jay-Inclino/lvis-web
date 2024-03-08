@@ -10,10 +10,10 @@ export async function findByRefNumber(payload: { po_number?: string, rr_number?:
     let referenceField = 'rr_number'
     let referenceValue = null
 
-    if(payload.po_number) {
+    if (payload.po_number) {
         referenceField = 'po_number'
         referenceValue = payload.po_number
-    }else {
+    } else {
         referenceValue = payload.rr_number
     }
 
@@ -24,6 +24,7 @@ export async function findByRefNumber(payload: { po_number?: string, rr_number?:
                 rr_number
                 status
                 rr_date
+                is_cancelled
                 po {
                     id
                     po_number
@@ -45,7 +46,7 @@ export async function findByRefNumber(payload: { po_number?: string, rr_number?:
                         }
                     }
                 }
-                canceller_id
+                
             }
         }
     `;
@@ -54,7 +55,7 @@ export async function findByRefNumber(payload: { po_number?: string, rr_number?:
         const response = await sendRequest(query);
         console.log('response', response)
 
-        if(response.data && response.data.data && response.data.data.rr) {
+        if (response.data && response.data.data && response.data.data.rr) {
             return response.data.data.rr;
         }
 
@@ -66,18 +67,18 @@ export async function findByRefNumber(payload: { po_number?: string, rr_number?:
     }
 }
 
-export async function findAll(payload: {page: number, pageSize: number, date_requested: string | null, requested_by_id: string | null}): Promise<FindAllResponse> {
-    
+export async function findAll(payload: { page: number, pageSize: number, date_requested: string | null, requested_by_id: string | null }): Promise<FindAllResponse> {
+
     const { page, pageSize, date_requested, requested_by_id } = payload;
 
     let date_requested2 = null
     let requested_by_id2 = null
 
-    if(date_requested) {
+    if (date_requested) {
         date_requested2 = `"${date_requested}"`
-    } 
+    }
 
-    if(requested_by_id) {
+    if (requested_by_id) {
         requested_by_id2 = `"${requested_by_id}"`
     }
 
@@ -94,6 +95,7 @@ export async function findAll(payload: {page: number, pageSize: number, date_req
                     rr_number
                     status
                     rr_date
+                    is_cancelled
                     po {
                       id
                       po_number
@@ -170,21 +172,21 @@ export async function fetchDataInSearchFilters(): Promise<{
         let employees = []
         let rrs = []
 
-        if(!response.data || !response.data.data) {
+        if (!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
         }
 
         const data = response.data.data
 
-        if(data.employees && data.employees.data) {
+        if (data.employees && data.employees.data) {
             employees = response.data.data.employees.data
         }
 
-        if(data.pos && data.pos.data) { 
+        if (data.pos && data.pos.data) {
             pos = data.pos.data
         }
 
-        if(data.rrs && data.rrs.data) { 
+        if (data.rrs && data.rrs.data) {
             rrs = data.rrs.data
         }
 
@@ -310,33 +312,33 @@ export async function fetchFormDataInCreate(): Promise<{
         let employees = []
         let items = []
 
-        if(!response.data || !response.data.data) {
+        if (!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
         }
 
         const data = response.data.data
 
-        if(data.pos && data.pos.data) {
+        if (data.pos && data.pos.data) {
             pos = data.pos.data
         }
 
-        if(data.rrApproverSettings) {
+        if (data.rrApproverSettings) {
             approvers = data.rrApproverSettings
         }
 
-        if(data.brands) { // temp
+        if (data.brands) { // temp
             brands = data.brands
         }
 
-        if(data.items && data.items.data) {
+        if (data.items && data.items.data) {
             items = response.data.data.items.data
         }
 
-        if(data.units && data.units.data) {
+        if (data.units && data.units.data) {
             units = response.data.data.units.data
         }
 
-        if(data.employees && data.employees.data) {
+        if (data.employees && data.employees.data) {
             employees = response.data.data.employees.data
         }
 
@@ -360,7 +362,7 @@ export async function fetchFormDataInCreate(): Promise<{
             items: []
         }
     }
-    
+
 
 }
 
@@ -423,17 +425,17 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
 
         let employees: Employee[] = []
 
-        if(!response.data || !response.data.data) {
+        if (!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
         }
 
         const data = response.data.data
 
-        if(!data.rr) {
+        if (!data.rr) {
             throw new Error(JSON.stringify(response.data.errors));
         }
 
-        if(data.employees && data.employees.data) {
+        if (data.employees && data.employees.data) {
             employees = response.data.data.employees.data
         }
 
@@ -449,7 +451,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
             employees: []
         }
     }
-    
+
 
 }
 
@@ -487,6 +489,8 @@ export async function findOne(id: string): Promise<RR | undefined> {
                     status
                     label
                     order
+                    notes
+                    date_approval
                 }
                 po {
                     id
@@ -537,7 +541,7 @@ export async function findOne(id: string): Promise<RR | undefined> {
         const response = await sendRequest(query);
         console.log('response', response)
 
-        if(response.data && response.data.data && response.data.data.rr) {
+        if (response.data && response.data.data && response.data.data.rr) {
             return response.data.data.rr;
         }
 
@@ -562,19 +566,19 @@ export async function create(input: CreateRrInput): Promise<MutationResponse> {
 
     const rrItems = input.rr_items.map(item => {
 
-        let item_brand_id = null 
-        let unit_id = null 
+        let item_brand_id = null
+        let unit_id = null
         let item_id = null
 
-        if(item.item_brand) {
+        if (item.item_brand) {
             item_brand_id = `"${item.item_brand.id}"`
         }
 
-        if(item.unit) {
+        if (item.unit) {
             unit_id = `"${item.unit.id}"`
         }
 
-        if(item.item) {
+        if (item.item) {
             item_id = `"${item.item.id}"`
         }
 
@@ -615,11 +619,11 @@ export async function create(input: CreateRrInput): Promise<MutationResponse> {
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.createRr) {
+        if (response.data && response.data.data && response.data.data.createRr) {
             return {
                 success: true,
                 msg: 'RR created successfully!',
-                data: response.data.data.createRr 
+                data: response.data.data.createRr
             };
         }
 
@@ -627,7 +631,7 @@ export async function create(input: CreateRrInput): Promise<MutationResponse> {
 
     } catch (error) {
         console.error(error);
-        
+
         return {
             success: false,
             msg: 'Failed to create RR. Please contact system administrator'
@@ -637,7 +641,7 @@ export async function create(input: CreateRrInput): Promise<MutationResponse> {
 
 export async function update(id: string, input: UpdateRrInput): Promise<MutationResponse> {
 
-    
+
     const mutation = `
         mutation {
             updateRr(
@@ -658,11 +662,11 @@ export async function update(id: string, input: UpdateRrInput): Promise<Mutation
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.updateRr) {
+        if (response.data && response.data.data && response.data.data.updateRr) {
             return {
                 success: true,
                 msg: 'RR updated successfully!',
-                data: response.data.data.updateRr 
+                data: response.data.data.updateRr
             };
         }
 
@@ -670,7 +674,7 @@ export async function update(id: string, input: UpdateRrInput): Promise<Mutation
 
     } catch (error) {
         console.error(error);
-        
+
         return {
             success: false,
             msg: 'Failed to update RR. Please contact system administrator'
@@ -683,7 +687,7 @@ export async function cancel(id: string): Promise<MutationResponse> {
 
     const authUserJson = localStorage.getItem('authUser')
 
-    if(!authUserJson) {
+    if (!authUserJson) {
         throw console.error('authUser in localstorage not found');
     }
 
@@ -706,10 +710,10 @@ export async function cancel(id: string): Promise<MutationResponse> {
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.updateRr) {
+        if (response.data && response.data.data && response.data.data.updateRr) {
             return {
                 success: true,
-                msg: 'RR cancelled!' 
+                msg: 'RR cancelled!'
             };
         }
 
@@ -717,7 +721,7 @@ export async function cancel(id: string): Promise<MutationResponse> {
 
     } catch (error) {
         console.error(error);
-        
+
         return {
             success: false,
             msg: 'Failed to cancel RR. Please contact system administrator'

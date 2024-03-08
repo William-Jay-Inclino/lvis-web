@@ -114,17 +114,24 @@
                                     <th class="bg-secondary text-white"> Label </th>
                                     <th class="bg-secondary text-white"> Approver </th>
                                     <th class="bg-secondary text-white"> Status </th>
+                                    <th class="bg-secondary text-white"> Notes </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="i, count in item.meqs_approvers">
-                                    <td class="text-muted"> {{ i.order }} </td>
-                                    <td class="text-muted"> {{ i.label }} </td>
-                                    <td class="text-muted"> {{ getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname) }} </td>
-                                    <td>
-                                        <span :class="{[`badge bg-${approvalStatus[i.status].color}`]: true}"> 
+                                    <td class="align-middle"> {{ i.order }} </td>
+                                    <td class="align-middle"> {{ i.label }} </td>
+                                    <td class="align-middle"> {{ getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname) }} </td>
+                                    <td class="text-muted text-center align-middle">
+                                        <div :class="{[`badge bg-${approvalStatus[i.status].color}`]: true}"> 
                                             {{ approvalStatus[i.status].label }} 
-                                        </span> 
+                                        </div>
+                                        <div class="fst-italic" v-if="i.date_approval">
+                                            <small> {{ formatDate(i.date_approval) }} </small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <textarea rows="3" class="form-control" disabled :value="i.notes"></textarea>
                                     </td>
                                 </tr>
                             </tbody>
@@ -246,14 +253,14 @@
                                 <i class="fas fa-chevron-left"></i> Back to Search
                             </nuxt-link>
                         </div>
-                        <div>
-                            <nuxt-link class="btn btn-success me-2" :to="`/warehouse/purchasing/meqs/${item.id}`">
-                                <i class="fas fa-sync"></i> Update
-                            </nuxt-link>
-                            <nuxt-link class="btn btn-primary" to="/warehouse/purchasing/meqs/create">
-                                <i class="fas fa-plus"></i> Add New
-                            </nuxt-link>
-                        </div>
+                        <div v-if="!item.is_deleted && !item.is_cancelled && isAdminOrOwner(item.created_by, authUser)">
+                                <nuxt-link class="btn btn-success me-2" :to="`/warehouse/purchasing/meqs/${item.id}`">
+                                    <i class="fas fa-sync"></i> Update
+                                </nuxt-link>
+                                <nuxt-link class="btn btn-primary" to="/warehouse/purchasing/meqs/create">
+                                    <i class="fas fa-plus"></i> Add New
+                                </nuxt-link>
+                            </div>
                     </div>
                 </div>
             </div>
@@ -298,6 +305,7 @@
     import type { MEQS } from '~/composables/warehouse/meqs/meqs.types';
 
 
+    const authUser = ref<AuthUser>({} as AuthUser)
     const route = useRoute()
     const item = ref<MEQS | undefined>()
     const isMobile = ref(false)
@@ -313,6 +321,8 @@
         isMobile.value = window.innerWidth < MOBILE_WIDTH
 
         window.addEventListener('resize', checkMobile);
+
+        authUser.value = getAuthUser()
 
         item.value = await meqsApi.findOne(route.params.id as string)
 

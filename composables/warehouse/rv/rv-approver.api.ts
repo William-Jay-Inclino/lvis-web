@@ -1,6 +1,6 @@
 import type { CreateApproverInput, RvApproverMutationResponse, UpdateApproverOrderResponse, UpdateApproverInput } from "./rv-approver.types";
 
-export async function updateApproverOrder(inputs: {id: string, order: number}[]): Promise<UpdateApproverOrderResponse> {
+export async function updateApproverOrder(inputs: { id: string, order: number }[]): Promise<UpdateApproverOrderResponse> {
     const inputsString = inputs.map(({ id, order }) => `{ id: "${id}", order: ${order} }`).join('\n');
     const mutation = `
         mutation {
@@ -41,13 +41,13 @@ export async function updateApproverOrder(inputs: {id: string, order: number}[])
 
         if (response.data && response.data.data && response.data.data.updateRVApproverOrder) {
 
-            if(response.data.data.updateRVApproverOrder.success) {
+            if (response.data.data.updateRVApproverOrder.success) {
                 return {
                     success: true,
                     msg: 'Order updated successfully!',
                     approvers: response.data.data.updateRVApproverOrder.approvers
                 };
-            }else{
+            } else {
                 return {
                     success: false,
                     msg: 'Failed to update RV Approver Order. Please contact system administrator',
@@ -107,11 +107,11 @@ export async function create(rvId: string, input: CreateApproverInput): Promise<
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.createRvApprover) {
+        if (response.data && response.data.data && response.data.data.createRvApprover) {
             return {
                 success: true,
                 msg: 'Approver added!',
-                data: response.data.data.createRvApprover 
+                data: response.data.data.createRvApprover
             };
         }
 
@@ -119,7 +119,7 @@ export async function create(rvId: string, input: CreateApproverInput): Promise<
 
     } catch (error) {
         console.error(error);
-        
+
         return {
             success: false,
             msg: 'Failed to create RV Approver. Please contact system administrator'
@@ -127,7 +127,7 @@ export async function create(rvId: string, input: CreateApproverInput): Promise<
     }
 }
 
-export async function remove(id: string): Promise<{success: boolean, msg: string}> {
+export async function remove(id: string): Promise<{ success: boolean, msg: string }> {
 
     const mutation = `
         mutation {
@@ -143,7 +143,7 @@ export async function remove(id: string): Promise<{success: boolean, msg: string
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.removeRvApprover) {
+        if (response.data && response.data.data && response.data.data.removeRvApprover) {
             return {
                 success: response.data.data.removeRvApprover.success,
                 msg: response.data.data.removeRvApprover.msg
@@ -154,7 +154,7 @@ export async function remove(id: string): Promise<{success: boolean, msg: string
 
     } catch (error) {
         console.error(error);
-        
+
         return {
             success: false,
             msg: 'Failed to remove RV Approver. Please contact system administrator'
@@ -164,16 +164,16 @@ export async function remove(id: string): Promise<{success: boolean, msg: string
 
 export async function update(input: UpdateApproverInput): Promise<RvApproverMutationResponse> {
 
-    let notes = null 
+    let notes = null
     let date_approval = null
 
-    if(input.notes) {
+    if (input.notes) {
         notes = `"${input.notes}"`
-    }else{
+    } else {
         notes = `""`
     }
 
-    if(input.date_approval) {
+    if (input.date_approval) {
         date_approval = `"${input.date_approval}"`
     }
 
@@ -216,11 +216,11 @@ export async function update(input: UpdateApproverInput): Promise<RvApproverMuta
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.updateRvApprover) {
+        if (response.data && response.data.data && response.data.data.updateRvApprover) {
             return {
                 success: true,
                 msg: 'Approver updated!',
-                data: response.data.data.updateRvApprover 
+                data: response.data.data.updateRvApprover
             };
         }
 
@@ -228,7 +228,7 @@ export async function update(input: UpdateApproverInput): Promise<RvApproverMuta
 
     } catch (error) {
         console.error(error);
-        
+
         return {
             success: false,
             msg: 'Failed to update RV Approver. Please contact system administrator'

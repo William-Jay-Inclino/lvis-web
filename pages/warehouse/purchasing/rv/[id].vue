@@ -79,9 +79,6 @@
                         <v-select :options="employees" label="fullname" v-model="rvData.supervisor" :clearable="false"></v-select>
                     </client-only>
                     <small class="text-danger fst-italic" v-if="rvDataErrors.supervisor"> This field is required </small>
-                    <small class="text-muted fst-italic">
-                        Note: Updating the supervisor will also update the designated approver
-                    </small>
                 </div>
 
                 <div class="mb-3">

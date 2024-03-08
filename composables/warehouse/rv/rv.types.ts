@@ -25,6 +25,7 @@ export interface RV {
 
   meqs?: MEQS
 
+  created_by: string
 }
 
 
@@ -37,8 +38,8 @@ export interface FindAllResponse {
 
 
 export interface MutationResponse {
-  success: boolean 
-  msg: string 
+  success: boolean
+  msg: string
   data?: RV
 }
 

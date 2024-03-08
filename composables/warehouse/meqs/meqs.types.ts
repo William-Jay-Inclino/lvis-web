@@ -5,19 +5,20 @@ import type { MeqsSupplier, Supplier } from "./meqs-supplier";
 
 
 export interface MEQS {
-    id: string;
-    rv: RV | null;
-    meqs_number: string;
-    meqs_date: string;
-    notes: string;
-    meqs_approvers: Approver[];
-    meqs_suppliers: MeqsSupplier[];
-    is_deleted: boolean;
-    is_cancelled: boolean;
-    status: APPROVAL_STATUS
+  id: string;
+  rv: RV | null;
+  meqs_number: string;
+  meqs_date: string;
+  notes: string;
+  meqs_approvers: Approver[];
+  meqs_suppliers: MeqsSupplier[];
+  is_deleted: boolean;
+  is_cancelled: boolean;
+  status: APPROVAL_STATUS
 
-    // set programmatically
-    hasAvailableSupplier?: boolean
+  // set programmatically
+  hasAvailableSupplier?: boolean
+  created_by: string
 }
 
 export interface FindAllResponse {
@@ -39,8 +40,8 @@ export interface CreateMeqsInput {
 export interface CreateMeqsSupplierSubInput {
   supplier: Supplier | null;
   payment_terms: string;
-  meqs_supplier_items: CreateMeqsSupplierItemSubInput[]; 
-  attachments: any[]; 
+  meqs_supplier_items: CreateMeqsSupplierItemSubInput[];
+  attachments: any[];
 }
 
 export interface CreateMeqsSupplierItemSubInput {
@@ -54,7 +55,7 @@ export interface CreateMeqsSupplierItemSubInput {
   is_awarded: boolean;
 
   // these fields are used in forms
-  invalidPrice?: boolean 
+  invalidPrice?: boolean
   meqsSupplier?: CreateMeqsSupplierSubInput
 }
 
@@ -78,8 +79,8 @@ export interface MeqsApproverSettings {
 }
 
 export interface MutationResponse {
-  success: boolean 
-  msg: string 
+  success: boolean
+  msg: string
   data?: MEQS
 }
 

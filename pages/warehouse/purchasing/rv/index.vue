@@ -99,7 +99,7 @@
                                                 <nuxt-link class="btn btn-light w-50" :to="'/warehouse/purchasing/rv/view/' + i.id">
                                                     <i class="fas fa-info-circle text-info"></i>
                                                 </nuxt-link>
-                                                <button v-if="i.status !== APPROVAL_STATUS.CANCELLED" @click="onClickEdit(i.id)" class="btn btn-light w-50">
+                                                <button v-if="isAdminOrOwner(i.created_by, authUser)" @click="onClickEdit(i.id)" class="btn btn-light w-50">
                                                     <i class="fas fa-edit text-primary"></i>
                                                 </button>
                                             </td>
@@ -141,9 +141,15 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td colspan="2" class="text-center">
+                                            <td class="text-center" :colspan="isAdminOrOwner(i.created_by, authUser) ? 1 : 2">
+                                                <nuxt-link class="btn btn-sm btn-light text-info w-100" :to="'/warehouse/purchasing/rv/view/' + i.id">
+                                                    <i class="fas fa-info-circle text-info"></i> View Details
+                                                </nuxt-link>
+                                            </td>
+                                            <td v-if="isAdminOrOwner(i.created_by, authUser)" class="text-center">
                                                 <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light text-primary w-100">
-                                                    View Details
+                                                    <i class="fas fa-edit"></i>
+                                                    Edit RV
                                                 </button>
                                             </td>
                                         </tr>
@@ -188,6 +194,11 @@
 
 
 <script setup lang="ts">
+
+    definePageMeta({
+        layout: "layout-admin"
+    })
+
     import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
     import { type RV } from '~/composables/warehouse/rv/rv.types';
     import * as rvApi from '~/composables/warehouse/rv/rv.api'
@@ -197,10 +208,7 @@
     import { approvalStatus } from '~/utils/constants';
 
 
-    definePageMeta({
-        layout: "layout-admin"
-    })
-
+    const authUser = ref<AuthUser>({} as AuthUser)
     const router = useRouter()
 
     // flags
@@ -241,6 +249,8 @@
         isMobile.value = window.innerWidth < MOBILE_WIDTH
 
         window.addEventListener('resize', checkMobile);
+
+        authUser.value = getAuthUser()
 
         const response = await rvApi.fetchDataInSearchFilters()
 

@@ -7,10 +7,10 @@ export async function findByRefNumber(payload: { po_number?: string, meqs_number
     let referenceField = 'po_number'
     let referenceValue = null
 
-    if(payload.meqs_number) {
+    if (payload.meqs_number) {
         referenceField = 'meqs_number'
         referenceValue = payload.meqs_number
-    }else {
+    } else {
         referenceValue = payload.po_number
     }
 
@@ -47,7 +47,7 @@ export async function findByRefNumber(payload: { po_number?: string, meqs_number
         const response = await sendRequest(query);
         console.log('response', response)
 
-        if(response.data && response.data.data && response.data.data.po) {
+        if (response.data && response.data.data && response.data.data.po) {
             return response.data.data.po;
         }
 
@@ -59,18 +59,18 @@ export async function findByRefNumber(payload: { po_number?: string, meqs_number
     }
 }
 
-export async function findAll(payload: {page: number, pageSize: number, date_requested: string | null, requested_by_id: string | null}): Promise<FindAllResponse> {
-    
+export async function findAll(payload: { page: number, pageSize: number, date_requested: string | null, requested_by_id: string | null }): Promise<FindAllResponse> {
+
     const { page, pageSize, date_requested, requested_by_id } = payload;
 
     let date_requested2 = null
     let requested_by_id2 = null
 
-    if(date_requested) {
+    if (date_requested) {
         date_requested2 = `"${date_requested}"`
-    } 
+    }
 
-    if(requested_by_id) {
+    if (requested_by_id) {
         requested_by_id2 = `"${requested_by_id}"`
     }
 
@@ -159,21 +159,21 @@ export async function fetchDataInSearchFilters(): Promise<{
         let employees = []
         let meqs = []
 
-        if(!response.data || !response.data.data) {
+        if (!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
         }
 
         const data = response.data.data
 
-        if(data.employees && data.employees.data) {
+        if (data.employees && data.employees.data) {
             employees = response.data.data.employees.data
         }
 
-        if(data.pos && data.pos.data) { 
+        if (data.pos && data.pos.data) {
             pos = data.pos.data
         }
 
-        if(data.meqs && data.meqs.data) { 
+        if (data.meqs && data.meqs.data) {
             meqs = data.meqs.data
         }
 
@@ -265,17 +265,17 @@ export async function fetchFormDataInCreate(): Promise<{
         let meqs = []
         let approvers = []
 
-        if(!response.data || !response.data.data) {
+        if (!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
         }
 
         const data = response.data.data
 
-        if(data.meqs && data.meqs.data) {
+        if (data.meqs && data.meqs.data) {
             meqs = data.meqs.data
         }
 
-        if(data.poApproverSettings) {
+        if (data.poApproverSettings) {
             approvers = data.poApproverSettings
         }
 
@@ -291,7 +291,7 @@ export async function fetchFormDataInCreate(): Promise<{
             approvers: []
         }
     }
-    
+
 
 }
 
@@ -367,17 +367,17 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
 
         let employees: Employee[] = []
 
-        if(!response.data || !response.data.data) {
+        if (!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
         }
 
         const data = response.data.data
 
-        if(!data.po) {
+        if (!data.po) {
             throw new Error(JSON.stringify(response.data.errors));
         }
 
-        if(data.employees && data.employees.data) {
+        if (data.employees && data.employees.data) {
             employees = response.data.data.employees.data
         }
 
@@ -393,7 +393,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
             employees: []
         }
     }
-    
+
 
 }
 
@@ -425,11 +425,11 @@ export async function create(input: CreatePoInput): Promise<MutationResponse> {
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.createPo) {
+        if (response.data && response.data.data && response.data.data.createPo) {
             return {
                 success: true,
                 msg: 'PO created successfully!',
-                data: response.data.data.createPo 
+                data: response.data.data.createPo
             };
         }
 
@@ -437,7 +437,7 @@ export async function create(input: CreatePoInput): Promise<MutationResponse> {
 
     } catch (error) {
         console.error(error);
-        
+
         return {
             success: false,
             msg: 'Failed to create PO. Please contact system administrator'
@@ -475,6 +475,8 @@ export async function findOne(id: string): Promise<PO | undefined> {
                     status
                     label
                     order
+                    notes
+                    date_approval
                 }
                 rr {
                     id
@@ -537,7 +539,7 @@ export async function findOne(id: string): Promise<PO | undefined> {
         const response = await sendRequest(query);
         console.log('response', response)
 
-        if(response.data && response.data.data && response.data.data.po) {
+        if (response.data && response.data.data && response.data.data.po) {
             return response.data.data.po;
         }
 
@@ -551,7 +553,7 @@ export async function findOne(id: string): Promise<PO | undefined> {
 
 export async function update(id: string, input: UpdatePoInput): Promise<MutationResponse> {
 
-    
+
     const mutation = `
         mutation {
             updatePo(
@@ -568,11 +570,11 @@ export async function update(id: string, input: UpdatePoInput): Promise<Mutation
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.updatePo) {
+        if (response.data && response.data.data && response.data.data.updatePo) {
             return {
                 success: true,
                 msg: 'PO updated successfully!',
-                data: response.data.data.updatePo 
+                data: response.data.data.updatePo
             };
         }
 
@@ -580,7 +582,7 @@ export async function update(id: string, input: UpdatePoInput): Promise<Mutation
 
     } catch (error) {
         console.error(error);
-        
+
         return {
             success: false,
             msg: 'Failed to update PO. Please contact system administrator'
@@ -592,7 +594,7 @@ export async function cancel(id: string): Promise<MutationResponse> {
 
     const authUserJson = localStorage.getItem('authUser')
 
-    if(!authUserJson) {
+    if (!authUserJson) {
         throw console.error('authUser in localstorage not found');
     }
 
@@ -615,10 +617,10 @@ export async function cancel(id: string): Promise<MutationResponse> {
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.updatePo) {
+        if (response.data && response.data.data && response.data.data.updatePo) {
             return {
                 success: true,
-                msg: 'PO cancelled!' 
+                msg: 'PO cancelled!'
             };
         }
 
@@ -626,7 +628,7 @@ export async function cancel(id: string): Promise<MutationResponse> {
 
     } catch (error) {
         console.error(error);
-        
+
         return {
             success: false,
             msg: 'Failed to cancel PO. Please contact system administrator'
