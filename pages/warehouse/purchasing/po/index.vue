@@ -158,7 +158,7 @@
                                             <td v-if="isAdminOrOwner(i.created_by, authUser)" class="text-center">
                                                 <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light text-primary w-100">
                                                     <i class="fas fa-edit"></i>
-                                                    Edit Canvass
+                                                    Edit PO
                                                 </button>
                                             </td>
                                         </tr>

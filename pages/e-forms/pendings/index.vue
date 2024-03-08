@@ -71,9 +71,14 @@
     onMounted( async() => {
         const authUser = getAuthUser()
         console.log('authUser', authUser)
-        const response = await pendingsApi.getPendingsByEmployeeId(authUser.user.user_employee.employee.id)
 
-        pendings.value = response.pendings
+        if(authUser.user.user_employee) {
+
+            const response = await pendingsApi.getPendingsByEmployeeId(authUser.user.user_employee.employee.id)
+    
+            pendings.value = response.pendings
+        }
+
 
     })
 

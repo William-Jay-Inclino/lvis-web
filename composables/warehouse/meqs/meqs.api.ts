@@ -245,6 +245,7 @@ export async function findOne(id: string): Promise<MEQS | undefined> {
             meq(id: "${id}") {
                 id
                 meqs_number
+                notes
                 rv{
                     id
                     rv_number

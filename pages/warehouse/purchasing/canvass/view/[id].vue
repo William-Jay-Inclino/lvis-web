@@ -125,8 +125,8 @@
                                         <tr v-for="i, count in item.canvass_items">
                                             <td> {{ count + 1 }} </td>
                                             <td> {{ i.description }} </td>
-                                            <td> {{ i.brand ? i.brand.name : '' }} </td>
-                                            <td> {{ i.unit ? i.unit.name : '' }} </td>
+                                            <td> {{ i.brand ? i.brand.name : 'N/A' }} </td>
+                                            <td> {{ i.unit ? i.unit.name : 'N/A' }} </td>
                                             <td> {{ i.quantity }} </td>
                                         </tr>
                                     </tbody>
@@ -158,11 +158,11 @@
                                         </tr>
                                         <tr>
                                             <td class="text-muted"> Brand </td>
-                                            <td> {{ i.brand ? i.brand.name : '' }} </td>
+                                            <td> {{ i.brand ? i.brand.name : 'N/A' }} </td>
                                         </tr>
                                         <tr>
                                             <td class="text-muted"> Unit </td>
-                                            <td> {{ i.unit ? i.unit.name : '' }} </td>
+                                            <td> {{ i.unit ? i.unit.name : 'N/A' }} </td>
                                         </tr>
                                         <tr>
                                             <td class="text-muted"> Quantity </td>

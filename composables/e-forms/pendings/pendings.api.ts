@@ -1,4 +1,5 @@
 import { APPROVAL_STATUS } from "#imports";
+import moment from "moment";
 import type { PENDING_APPROVAL_TYPE, PendingApproval } from "./pendings.types";
 
 
@@ -50,6 +51,8 @@ export async function updateRvStatus(payload: {
 
     const { id, status, notes } = payload
 
+    const today = moment().format('MM/DD/YYYY')
+
     const mutation = `
         mutation {
             updateRvApprover(
@@ -57,6 +60,7 @@ export async function updateRvStatus(payload: {
                 input: {
                     notes: "${notes}"
                     status: ${status}
+                    date_approval: "${today}"
                 }
             ) {
                 id
@@ -104,6 +108,8 @@ export async function updateMeqsStatus(payload: {
 
     const { id, status, notes } = payload
 
+    const today = moment().format('MM/DD/YYYY')
+
     const mutation = `
         mutation {
             updateMeqsApprover(
@@ -111,6 +117,7 @@ export async function updateMeqsStatus(payload: {
                 input: {
                     notes: "${notes}"
                     status: ${status}
+                    date_approval: "${today}"
                 }
             ) {
                 id
