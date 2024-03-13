@@ -417,7 +417,6 @@
 
 <script setup lang="ts">
     import { VAT_TYPE } from '#imports';
-    import type { Brand, Unit } from '~/composables/warehouse/canvass/canvass.types';
     import type { RrItem } from '~/composables/warehouse/rr/rr-item.types';
     import { getTotalNetPrice, getVatAmount, getNetPrice, getGrossTotal, getVatTotal } from '~/utils/helpers';
     

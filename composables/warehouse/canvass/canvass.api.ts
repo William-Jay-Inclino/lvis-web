@@ -1,4 +1,4 @@
-import type { Brand, Canvass, CreateCanvassInput, FindAllResponse, MutationResponse, Unit, UpdateCanvassInput } from "./canvass.types";
+import type { Canvass, CreateCanvassInput, FindAllResponse, MutationResponse, UpdateCanvassInput } from "./canvass.types";
 import { sendRequest } from "~/utils/api"
 
 export async function findAll(payload: { page: number, pageSize: number, date_requested: string | null, requested_by_id: string | null }): Promise<FindAllResponse> {
@@ -29,7 +29,7 @@ export async function findAll(payload: { page: number, pageSize: number, date_re
                     rc_number
                     date_requested
                     created_by
-                    is_deleted
+                    deleted_at
                     requested_by {
                         id
                         firstname
@@ -62,7 +62,7 @@ export async function findByRcNumber(rcNumber: string): Promise<Canvass | undefi
                 rc_number
                 date_requested
                 created_by
-                is_deleted
+                deleted_at
                 requested_by {
                     id
                     firstname
@@ -99,7 +99,7 @@ export async function findOne(id: string): Promise<Canvass | undefined> {
                 purpose 
                 notes
                 created_by
-                is_deleted
+                deleted_at
                 requested_by {
                     id
                     firstname
@@ -158,6 +158,7 @@ export async function fetchFormDataInCreate(): Promise<{
     employees: Employee[],
     brands: Brand[],
     units: Unit[],
+    items: Item[],
 }> {
 
 
@@ -176,10 +177,22 @@ export async function fetchFormDataInCreate(): Promise<{
                 name
             }
             units(page: 1, pageSize: 10){
-            data {
-                id
-                name
+                data {
+                    id
+                    name
+                }
             }
+            items(page: 1, pageSize: 10){
+                data {
+                    id
+                    code
+                    name
+                    description
+                    unit {
+                        id 
+                        name
+                    }
+                }
             }
         }
     `;
@@ -191,6 +204,7 @@ export async function fetchFormDataInCreate(): Promise<{
         let employees = []
         let brands = []
         let units = []
+        let items = []
 
         if (!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
@@ -210,10 +224,15 @@ export async function fetchFormDataInCreate(): Promise<{
             units = response.data.data.units.data
         }
 
+        if (data.items && data.items.data) {
+            items = response.data.data.items.data
+        }
+
         return {
             employees,
             brands,
-            units
+            units,
+            items
         }
 
     } catch (error) {
@@ -221,7 +240,8 @@ export async function fetchFormDataInCreate(): Promise<{
         return {
             employees: [],
             brands: [],
-            units: []
+            units: [],
+            items: []
         }
     }
 
@@ -242,7 +262,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 date_requested
                 purpose
                 notes
-                is_deleted
+                deleted_at
                 requested_by {
                     id
                     firstname

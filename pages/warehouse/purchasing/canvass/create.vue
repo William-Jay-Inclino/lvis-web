@@ -13,222 +13,81 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col">
-                <div class="row justify-content-center pt-5">
-        
-                    <div v-show="currentStep === 1" class="col-lg-6">
-
-                        <div class="mb-3">
-                            <label class="form-label">
-                                Requisitioner <span class="text-danger">*</span>
-                            </label>
-                            <client-only>
-                                <v-select :options="employees" label="fullname" v-model="formData.requested_by"></v-select>
-                            </client-only>
-                            <small class="text-danger fst-italic" v-show="formDataErrors.requested_by"> This field is required </small>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">
-                                Purpose <span class="text-danger">*</span>
-                            </label>
-                            <textarea v-model="formData.purpose" class="form-control" rows="3"></textarea>
-                            <small class="text-danger fst-italic" v-show="formDataErrors.purpose"> This field is required </small>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Notes</label>
-                            <textarea v-model="formData.notes" class="form-control" rows="3"></textarea>
-                        </div>
-                
-                        <div class="d-flex justify-content-between">
-                            <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">
-                                <i class="fas fa-chevron-left"></i> Back to Search
-                            </nuxt-link>
-                            <button @click="onClickNextStep1()" type="button" class="btn btn-primary">
-                                <i class="fas fa-chevron-right"></i> Next
-                            </button>
-                        </div>
-
-                    </div>
-
-                    <div v-show="currentStep === 2" class="col-lg-10 col-md-10 col-sm-12">
-
-                        <div class="row">
-                            <div class="col">
-
-                                <div v-if="!isMobile">
-                                    <div class="table-responsive">
-            
-                                        <table class="table table-hover">
-            
-                                            <thead>
-                                                <tr>
-                                                    <th class="bg-secondary text-white">No.</th>
-                                                    <th class="bg-secondary text-white">Description</th>
-                                                    <th class="bg-secondary text-white">Brand</th>
-                                                    <th class="bg-secondary text-white">Unit</th>
-                                                    <th class="bg-secondary text-white">Quantity </th>
-                                                    <th class="bg-secondary text-white text-center">
-                                                        <i class="fas fa-cog"></i>
-                                                    </th>
-                                                </tr>
-                                            </thead>
-            
-                                            <tbody>
-                                                <tr v-for="item, i in formData.canvass_items">
-                                                    <td class="text-muted"> {{ i + 1 }} </td>
-                                                    <td class="text-muted"> {{ item.description }} </td>
-                                                    <td> {{ item.brand ? item.brand.name : '' }} </td>
-                                                    <td> {{ item.unit ? item.unit.name : '' }} </td>
-                                                    <td class="text-muted"> {{ item.quantity }} </td>
-                                                    <td class="text-center">
-                                                        <button @click="removeCanvassItem(i)" class="btn btn-sm btn-light">
-                                                            <i class="fas fa-trash text-danger"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-    
-                                            <tfoot>
-                                                <tr>
-                                                    <td colspan="6" class="text-center">
-                                                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addItemModal">
-                                                            <i class="fas fa-plus-circle"></i> Add Item
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            </tfoot>
-            
-                                        </table>
-            
-                                    </div>
-                                </div>
-
-                                <div v-else>
-
-                                    <div class="row">
-                                        <div class="col">
-                                            <div v-for="item, i in formData.canvass_items" class="table-responsive">
-                                                <table class="table table-hover table-bordered">
-                                                    <tbody>
-                                                        <tr>
-                                                            <td width="50%" class="text-white bg-secondary">No.</td>
-                                                            <td class="text-white bg-secondary"> {{ i + 1 }} </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="text-muted">Description</td>
-                                                            <td> {{ item.description }} </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="text-muted">Brand</td>
-                                                            <td> {{ item.brand ? item.brand.name : 'N/A' }} </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="text-muted">Unit</td>
-                                                            <td> {{ item.unit ? item.unit.name : 'N/A' }} </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="text-muted">Quantity</td>
-                                                            <td> {{ item.quantity }} </td>
-                                                        </tr>
-                                                        <tr class="text-center">
-                                                            <td colspan="2">
-                                                                <button @click="removeCanvassItem(i)" class="btn btn-sm btn-light w-100">
-                                                                <i class="fas fa-trash text-danger"></i>
-                                                        </button>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col d-flex justify-content-center">
-                                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addItemModal">
-                                                <i class="fas fa-plus-circle"></i> Add Item
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <hr>
-
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <div class="d-flex justify-content-between mb-3">
-                            <button @click="currentStep--" type="button" class="btn btn-secondary">
-                                <i class="fas fa-chevron-left"></i> Back
-                            </button>
-                            <button @click="save()" :disabled="formData.canvass_items.length === 0 || isSaving" type="button" class="btn btn-primary">
-                                <i class="fas fa-save"></i> {{ isSaving ? 'Saving...' : 'Save' }}
-                            </button>
-                        </div>
-
-                    </div>
-
+        <div v-show="currentStep === 1" class="row justify-content-center pt-5">
+            <div class="col-lg-6">
+                <div class="mb-3">
+                    <label class="form-label">
+                        Requisitioner <span class="text-danger">*</span>
+                    </label>
+                    <client-only>
+                        <v-select :options="employees" label="fullname" v-model="formData.requested_by"></v-select>
+                    </client-only>
+                    <small class="text-danger fst-italic" v-show="formDataErrors.requested_by"> This field is required </small>
                 </div>
+
+                <div class="mb-3">
+                    <label class="form-label">
+                        Purpose <span class="text-danger">*</span>
+                    </label>
+                    <textarea v-model="formData.purpose" class="form-control" rows="3"></textarea>
+                    <small class="text-danger fst-italic" v-show="formDataErrors.purpose"> This field is required </small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Notes</label>
+                    <textarea v-model="formData.notes" class="form-control" rows="3"></textarea>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div v-show="currentStep === 2" class="row justify-content-center pt-5">
+            <div class="col-lg-10 col-md-10 col-sm-12">
+
+                <WarehouseCanvassItems 
+                    :canvass-items="formData.canvass_items"
+                    :brands="brands"
+                    :units="units"
+                    :items="items"
+                    @add-item="addCanvassItem"
+                    @edit-item="editCanvassItem"
+                    @remove-item="removeCanvassItem"
+                />
+
+            </div>
+        </div>
+
+
+
+        <div class="row justify-content-center pt-5">
+            <div :class="{'col-lg-6': currentStep === 1, 'col-lg-10 col-md-10 col-sm-12': currentStep === 2}">
+
+                <div v-if="currentStep === 1" class="d-flex justify-content-between">
+                    <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">
+                        <i class="fas fa-chevron-left"></i> Back to Search
+                    </nuxt-link>
+                    <button @click="onClickNextStep1()" type="button" class="btn btn-primary">
+                        <i class="fas fa-chevron-right"></i> Next
+                    </button>
+                </div>
+
+                <div v-else class="d-flex justify-content-between">
+                    <button @click="currentStep--" type="button" class="btn btn-secondary">
+                        <i class="fas fa-chevron-left"></i> Back
+                    </button>
+                    <button @click="save()" :disabled="formData.canvass_items.length === 0 || isSaving" type="button" class="btn btn-primary">
+                        <i class="fas fa-save"></i> {{ isSaving ? 'Saving...' : 'Save' }}
+                    </button>
+                </div>
+
+
             </div>
         </div>
         
 
 
-        <!-- Modal -->
-        <div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-warning" id="exampleModalLabel">Add Item</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Description <span class="text-danger">*</span>
-                        </label>
-                        <textarea v-model="addCanvassItemData.description" class="form-control" rows="3"></textarea>
-                        <small class="text-danger fst-italic" v-show="addCanvassItemDataErrors.description">
-                            This field is required
-                        </small>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Brand</label>
-                        <client-only>
-                            <v-select :options="brands" label="name" v-model="addCanvassItemData.brand"></v-select>
-                        </client-only>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Unit</label>
-                        <client-only>
-                            <v-select :options="units" label="name" v-model="addCanvassItemData.unit"></v-select>
-                        </client-only>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Quantity <span class="text-danger">*</span>
-                        </label>
-                        <input v-model="addCanvassItemData.quantity" type="number" class="form-control">
-                        <small class="text-danger fst-italic" v-show="addCanvassItemDataErrors.quantity">
-                            This field is required and quantity must be greater than 0
-                        </small>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button ref="closeItemModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-close"></i> Close
-                    </button>
-                    <button @click="addCanvassItem()" type="button" class="btn btn-primary">
-                        <i class="fas fa-plus-circle"></i> Add Item
-                    </button>
-                </div>
-                </div>
-            </div>
-        </div>
+
 
 
 
@@ -246,7 +105,7 @@
     import * as api from '~/composables/warehouse/canvass/canvass.api'
     import type { Unit } from '~/composables/warehouse/unit/unit.types';
     import Swal from 'sweetalert2'
-    import type { Brand, CreateCanvassInput, CreateCanvassItemSubInput } from '~/composables/warehouse/canvass/canvass.types';
+    import type { CreateCanvassInput } from '~/composables/warehouse/canvass/canvass.types';
     import { getFullname } from '~/utils/helpers'
     import { useToast } from "vue-toastification";
     import { MOBILE_WIDTH } from '~/utils/config';
@@ -260,25 +119,10 @@
     const isMobile = ref(false)
     const isSaving = ref(false)
 
-    // HTML ELEMENTS
-    const closeItemModal = ref<HTMLButtonElement>()
-
     // INITIAL DATA
     const _formDataErrorsInitial = {
         requested_by: false,
         purpose: false,
-    }
-
-    const _addCanvassItemDataErrorsInitial = {
-        description: false,
-        quantity: false,
-    }
-
-    const _addCanvassItemDataInitial: CreateCanvassItemSubInput = {
-        description: '',
-        brand: null,
-        unit: null,
-        quantity: 0
     }
 
 
@@ -293,14 +137,11 @@
     })
     const formDataErrors = ref({..._formDataErrorsInitial})
 
-    // CANVASS ITEM DATA
-    const addCanvassItemData = ref<CreateCanvassItemSubInput>({..._addCanvassItemDataInitial})
-    const addCanvassItemDataErrors = ref({..._addCanvassItemDataErrorsInitial})
-
     // DROPDOWNS
     const employees = ref<Employee[]>([])
     const brands = ref<Brand[]>([])
     const units = ref<Unit[]>([])
+    const items = ref<Item[]>([])
 
 
 
@@ -320,6 +161,7 @@
         })
         brands.value = response.brands
         units.value = response.units
+        items.value = response.items.map(i => ({...i, label: `${i.code} - ${i.name}`}))
 
     })
 
@@ -383,30 +225,14 @@
 
     async function addCanvassItem() {
 
-        addCanvassItemDataErrors.value = {..._addCanvassItemDataErrorsInitial}
+        console.log('addCanvassItem')
+        
+    }
 
-        if(addCanvassItemData.value.description.trim() === '') {
-            addCanvassItemDataErrors.value.description = true
-        }
+    async function editCanvassItem() {
 
-        if(!addCanvassItemData.value.quantity) {
-            addCanvassItemDataErrors.value.quantity = true
-        }else if(addCanvassItemData.value.quantity <= 0) {
-            addCanvassItemDataErrors.value.quantity = true
-        }
+        console.log('editCanvassItem')
 
-        const hasError = Object.values(addCanvassItemDataErrors.value).includes(true);
-
-        if(hasError) {
-            return 
-        }
-
-        formData.value.canvass_items.push({...addCanvassItemData.value})
-        addCanvassItemData.value = {..._addCanvassItemDataInitial}
-
-        closeItemModal.value?.click()
-
-        toast.success('Item added!')
     }
 
     async function removeCanvassItem(indx: number) {
@@ -447,5 +273,3 @@
 
 
 </script>
-
-~/composables/config

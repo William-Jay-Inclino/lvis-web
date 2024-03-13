@@ -1,4 +1,3 @@
-import type { Brand, Unit } from "./warehouse/canvass/canvass.types"
 import type { RrItem } from "./warehouse/rr/rr-item.types"
 import type { RR } from "./warehouse/rr/rr.types"
 
@@ -138,4 +137,17 @@ export interface ItemTransaction {
 }
 
 
+export interface Brand {
+    id: string
+    name: string
+}
 
+export interface Unit {
+    id: string
+    name: string
+}
+
+export interface Classification {
+    id: string
+    name: string
+}

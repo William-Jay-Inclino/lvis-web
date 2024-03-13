@@ -1,4 +1,4 @@
-import type { Employee } from "~/composables/common.types";
+import type { Brand, Employee, Unit } from "~/composables/common.types";
 import type { CanvassItem } from "./canvass-item.types"
 import type { RV } from "../rv/rv.types";
 
@@ -10,21 +10,36 @@ export interface Canvass {
     purpose: string;
     notes: string;
     requested_by_id: string;
-    requested_by: Employee | null;
-    is_referenced: boolean;
-    disabled: boolean
-    canvass_items: CanvassItem[]
-    rv?: RV
+
+
+    // =============== audit fields =============== 
 
     created_by: string
-    is_deleted: boolean
+    updated_by: string
+    deleted_by: string
+    created_at: Date
+    updated_at: Date
+    deleted_at: Date
+
+
+    // =============== derived / resolvers =============== 
+
+    canvass_items: CanvassItem[]
+    rv?: RV
+    requested_by: Employee | null;
+
+
+    // =============== set programmatically =============== 
+    disabled: boolean
+    is_referenced: boolean;
 }
+
 
 export interface CreateCanvassInput {
     purpose: string
     notes: string
     requested_by: Employee | null
-    canvass_items: CreateCanvassItemSubInput[]
+    canvass_items: CanvassItem[]
 }
 
 export interface UpdateCanvassInput {
@@ -34,9 +49,10 @@ export interface UpdateCanvassInput {
 }
 
 export interface CreateCanvassItemSubInput {
-    description: string
     brand: Brand | null
     unit: Unit | null
+    item: Item | null
+    description: string
     quantity: number
 }
 
@@ -55,17 +71,3 @@ export interface MutationResponse {
 }
 
 
-export interface Brand {
-    id: string
-    name: string
-}
-
-export interface Unit {
-    id: string
-    name: string
-}
-
-export interface Classification {
-    id: string
-    name: string
-}
