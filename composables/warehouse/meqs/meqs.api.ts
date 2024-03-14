@@ -404,13 +404,6 @@ export async function fetchFormDataInCreate(): Promise<{
                   middlename
                   lastname
                 }
-                approver_proxy_id
-                approver_proxy{
-                  id
-                  firstname
-                  middlename
-                  lastname
-                }
                 label
                 order
             },

@@ -72,8 +72,6 @@ export interface CanvassItemWithSuppliers {
 export interface MeqsApproverSettings {
   approver_id: string,
   approver: Employee | null
-  approver_proxy_id?: string | null
-  approver_proxy?: Employee | null
   label: string
   order: number
 }

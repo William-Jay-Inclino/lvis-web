@@ -34,7 +34,6 @@ export interface UpdatePoInput {
 
 export interface CreatePoApproverSubInput {
     approver_id: string;
-    approver_proxy_id?: string | null;
     label: string;
     order: number;
 

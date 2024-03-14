@@ -151,3 +151,12 @@ export interface Classification {
     id: string
     name: string
 }
+
+
+
+export interface CancelResponse {
+    success: boolean
+    msg: string
+    cancelled_at?: Date
+    cancelled_by?: string
+}

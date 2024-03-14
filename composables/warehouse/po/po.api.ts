@@ -245,13 +245,6 @@ export async function fetchFormDataInCreate(): Promise<{
                   middlename
                   lastname
                 }
-                approver_proxy_id
-                approver_proxy{
-                  id
-                  firstname
-                  middlename
-                  lastname
-                }
                 label
                 order
             },
@@ -463,11 +456,6 @@ export async function findOne(id: string): Promise<PO | undefined> {
                 }
                 po_approvers{
                     approver {
-                        firstname
-                        middlename
-                        lastname
-                    }
-                    approver_proxy {
                         firstname
                         middlename
                         lastname

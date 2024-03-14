@@ -349,7 +349,7 @@
         
         const approvers = rv.rv_approvers
         
-        if(rv.is_cancelled) {
+        if(rv.cancelled_at) {
 
             return approvalStatus[APPROVAL_STATUS.CANCELLED]
 

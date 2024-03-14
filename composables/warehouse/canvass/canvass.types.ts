@@ -27,11 +27,9 @@ export interface Canvass {
     canvass_items: CanvassItem[]
     rv?: RV
     requested_by: Employee | null;
-
-
-    // =============== set programmatically =============== 
-    disabled: boolean
     is_referenced: boolean;
+
+
 }
 
 

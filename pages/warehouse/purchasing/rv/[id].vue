@@ -1,5 +1,5 @@
 <template>
-    <div v-if="rvData && rvData.canvass && !rvData.is_deleted && !rvData.is_cancelled" class="mb-3">
+    <div v-if="rvData && rvData.canvass && !rvData.cancelled_at" class="mb-3">
         <h2 class="text-warning">Update RV</h2>
         <hr>
 
@@ -177,7 +177,6 @@
     import { useToast } from "vue-toastification";
     import * as rvApi from '~/composables/warehouse/rv/rv.api'
     import * as rvApproverApi from '~/composables/warehouse/rv/rv-approver.api'
-    import type { Classification } from '~/composables/warehouse/canvass/canvass.types';
     import { type RV } from '~/composables/warehouse/rv/rv.types';
     import { MOBILE_WIDTH } from '~/utils/config';
     import { approvalStatus } from '~/utils/constants';
@@ -244,7 +243,7 @@
 
         const approvers = rvData.value.rv_approvers
         
-        if(rvData.value.is_cancelled) {
+        if(rvData.value.cancelled_at) {
 
             return approvalStatus[APPROVAL_STATUS.CANCELLED]
 
@@ -334,11 +333,12 @@
 
     async function cancelRv() {
 
+        console.log('cancelRv')
         const response = await rvApi.cancel(rvData.value.id)
 
         if(response.success) {
             toast.success(response.msg)
-            rvData.value.is_cancelled = true 
+            rvData.value.cancelled_at = response.cancelled_at!
 
             router.push('/warehouse/purchasing/rv')
 

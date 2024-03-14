@@ -1,5 +1,5 @@
 import { APPROVER_SUPERVISOR_LABEL } from "~/utils/config";
-import type { Canvass, Classification } from "../canvass/canvass.types";
+import type { Canvass } from "../canvass/canvass.types";
 import type { CreateRvInput, FindAllResponse, MutationResponse, RV, UpdateRvInput } from "./rv.types";
 import { sendRequest } from "~/utils/api"
 import type { RvApproverSettings } from "./rv-approver.types";
@@ -92,7 +92,7 @@ export async function findByRcNumber(rcNumber: string): Promise<RV | undefined> 
                     }
                 }
                 date_requested
-                is_cancelled
+                cancelled_at
             }
         }
     `;
@@ -130,7 +130,7 @@ export async function findByRvNumber(rvNumber: string): Promise<RV | undefined> 
                     }
                 }
                 date_requested
-                is_cancelled
+                cancelled_at
             }
         }
     `;
@@ -162,8 +162,7 @@ export async function findOne(id: string): Promise<RV | undefined> {
                 work_order_no
                 work_order_date
                 notes
-                is_cancelled
-                is_deleted
+                cancelled_at
                 canvass {
                     id
                     rc_number
@@ -184,11 +183,6 @@ export async function findOne(id: string): Promise<RV | undefined> {
                 }
                 rv_approvers{
                     approver {
-                        firstname
-                        middlename
-                        lastname
-                    }
-                    approver_proxy {
                         firstname
                         middlename
                         lastname
@@ -270,7 +264,7 @@ export async function findAll(payload: { page: number, pageSize: number, date_re
                         }
                     }
                     date_requested
-                    is_cancelled
+                    cancelled_at
                 }
                 totalItems
                 currentPage
@@ -324,13 +318,6 @@ export async function fetchFormDataInCreate(): Promise<{
             rvApproverSettings{
                 approver_id
                 approver{
-                  id
-                  firstname
-                  middlename
-                  lastname
-                }
-                approver_proxy_id
-                approver_proxy{
                   id
                   firstname
                   middlename
@@ -434,17 +421,10 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 work_order_no
                 work_order_date
                 notes
-                is_cancelled
-                is_deleted
+                cancelled_at
                 rv_approvers {
                     id
                     approver {
-                        id
-                        firstname
-                        middlename
-                        lastname
-                    }
-                    approver_proxy {
                         id
                         firstname
                         middlename
@@ -544,17 +524,9 @@ export async function create(input: CreateRvInput): Promise<MutationResponse> {
     })
 
     const approvers = input.approvers.map(item => {
-
-        let approver_proxy_id = null
-
-        if (item.approver_proxy) {
-            approver_proxy_id = `"${item.approver_proxy.id}"`
-        }
-
         return `
         {
           approver_id: "${item.approver?.id}"
-          approver_proxy_id: ${approver_proxy_id}
           label: "${item.label}"
           order: ${item.order}
         }`;
@@ -640,12 +612,6 @@ export async function update(id: string, input: UpdateRvInput): Promise<Mutation
                         middlename
                         lastname
                     }
-                    approver_proxy {
-                        id
-                        firstname
-                        middlename
-                        lastname
-                    }
                     date_approval 
                     notes
                     status
@@ -680,26 +646,17 @@ export async function update(id: string, input: UpdateRvInput): Promise<Mutation
 }
 
 
-export async function cancel(id: string): Promise<MutationResponse> {
-
-    const authUserJson = localStorage.getItem('authUser')
-
-    if (!authUserJson) {
-        throw console.error('authUser in localstorage not found');
-    }
-
-    const authUser = JSON.parse(authUserJson) as AuthUser
+export async function cancel(id: string): Promise<CancelResponse> {
 
     const mutation = `
         mutation {
-            updateRv(
-                id: "${id}",
-                input: {
-                    canceller_id: "${authUser.user.id}"
-                }
+            cancelRv(
+                id: "${id}"
             ) {
-                id
-                is_cancelled
+                msg
+                success
+                cancelled_at
+                cancelled_by
             }
     }`;
 
@@ -707,11 +664,8 @@ export async function cancel(id: string): Promise<MutationResponse> {
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if (response.data && response.data.data && response.data.data.updateRv) {
-            return {
-                success: true,
-                msg: 'RV cancelled!'
-            };
+        if (response.data && response.data.data && response.data.data.cancelRv) {
+            return response.data.data.cancelRv
         }
 
         throw new Error(JSON.stringify(response.data.errors));

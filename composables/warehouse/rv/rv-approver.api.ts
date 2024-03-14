@@ -19,12 +19,6 @@ export async function updateApproverOrder(inputs: { id: string, order: number }[
                         middlename
                         lastname
                     }
-                    approver_proxy {
-                        id
-                        firstname
-                        middlename
-                        lastname
-                    }
                     date_approval 
                     notes
                     status
@@ -84,12 +78,6 @@ export async function create(rvId: string, input: CreateApproverInput): Promise<
                 id
                 rv_id
                 approver {
-                    id
-                    firstname
-                    middlename
-                    lastname
-                }
-                approver_proxy {
                     id
                     firstname
                     middlename
@@ -193,12 +181,6 @@ export async function update(input: UpdateApproverInput): Promise<RvApproverMuta
                 id
                 rv_id
                 approver {
-                    id
-                    firstname
-                    middlename
-                    lastname
-                }
-                approver_proxy {
                     id
                     firstname
                     middlename

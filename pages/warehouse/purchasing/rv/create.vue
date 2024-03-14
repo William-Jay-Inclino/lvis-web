@@ -141,7 +141,7 @@
     import Swal from 'sweetalert2'
     import { getFullname } from '~/utils/helpers'
     import * as rvApi from '~/composables/warehouse/rv/rv.api'
-    import type { Canvass, Classification } from '~/composables/warehouse/canvass/canvass.types';
+    import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
     import type { CreateRvInput } from '~/composables/warehouse/rv/rv.types';
     import { MOBILE_WIDTH } from '~/utils/config';
 
