@@ -109,6 +109,7 @@
     import { getFullname } from '~/utils/helpers'
     import { useToast } from "vue-toastification";
     import { MOBILE_WIDTH } from '~/utils/config';
+import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
 
 
     // CONSTANTS
@@ -223,37 +224,53 @@
 
     // ======================== CANVASSS ITEM FUNCTIONS ======================== 
 
-    async function addCanvassItem() {
+    async function addCanvassItem(data: CanvassItem, closeBtnModal: HTMLInputElement) {
 
         console.log('addCanvassItem')
+        console.log('data', data)
+        console.log('closeBtnModal', closeBtnModal)
+
+        formData.value.canvass_items.push(data)
+
+        toast.success('Item added!')
+
+        closeBtnModal.click()
         
     }
 
-    async function editCanvassItem() {
+    async function editCanvassItem(data: CanvassItem, closeBtnModal: HTMLInputElement, indx: number) {
 
         console.log('editCanvassItem')
+        console.log('data', data)
+        console.log('closeBtnModal', closeBtnModal)
+        console.log('indx', indx)
+
+        formData.value.canvass_items[indx] = {...data}
+
+        toast.success('Item updated!')
+
+        closeBtnModal.click()
 
     }
 
     async function removeCanvassItem(indx: number) {
 
-        const item = formData.value.canvass_items[indx]
+        const canvassItem = formData.value.canvass_items[indx]
 
         Swal.fire({
             title: "Are you sure?",
-            text: `Item with description "${item.description}" will be removed!`,
+            text: `Item no. ${indx + 1} with description "${canvassItem.description}" will be removed!`,
             position: "top",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#e74a3b",
             cancelButtonColor: "#6c757d",
-            confirmButtonText: "Yes, delete it!",
+            confirmButtonText: "Yes, remove it!",
             reverseButtons: true,
             }).then( async(result) => {
             if (result.isConfirmed) {
                 
-                formData.value.canvass_items.splice(indx)
-
+                formData.value.canvass_items.splice(indx, 1)
                 toast.success(`Item removed!`)
 
             }

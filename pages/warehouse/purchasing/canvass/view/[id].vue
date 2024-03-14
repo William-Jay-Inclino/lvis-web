@@ -116,6 +116,7 @@
                                         <tr>
                                             <th class="bg-secondary text-white"> No. </th>
                                             <th class="bg-secondary text-white"> Description </th>
+                                            <th class="bg-secondary text-white"> Item Class </th>
                                             <th class="bg-secondary text-white"> Brand </th>
                                             <th class="bg-secondary text-white"> Unit </th>
                                             <th class="bg-secondary text-white"> Quantity </th>
@@ -124,7 +125,8 @@
                                     <tbody>
                                         <tr v-for="i, count in item.canvass_items">
                                             <td> {{ count + 1 }} </td>
-                                            <td> {{ i.description }} </td>
+                                            <td> {{ i.item ? `${i.item.code} - ${i.item.name}` : i.description }} </td>
+                                            <td> {{ i.item ? 'Stock' : 'Non-Stock' }} </td>
                                             <td> {{ i.brand ? i.brand.name : 'N/A' }} </td>
                                             <td> {{ i.unit ? i.unit.name : 'N/A' }} </td>
                                             <td> {{ i.quantity }} </td>
@@ -182,18 +184,18 @@
 
                 <div class="row mb-3 pt-3">
                     <div class="col">
-                        <div class="d-flex justify-content-between">
-                            <div>
+                        <div class="d-flex justify-content-end">
+                            <div class="me-2">
                                 <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">
-                                    <i class="fas fa-chevron-left"></i> Back to Search
+                                    <i class="fas fa-search"></i> Search Canvass
                                 </nuxt-link>
                             </div>
-                            <div v-if="!item.is_deleted && isAdminOrOwner(item.created_by, authUser)">
+                            <div v-if="!item.deleted_at && isAdminOrOwner(item.created_by, authUser)">
                                 <nuxt-link class="btn btn-success me-2" :to="`/warehouse/purchasing/canvass/${item.id}`">
-                                    <i class="fas fa-sync"></i> Update
+                                    <i class="fas fa-sync"></i> Update Canvass
                                 </nuxt-link>
                                 <nuxt-link class="btn btn-primary" to="/warehouse/purchasing/canvass/create">
-                                    <i class="fas fa-plus"></i> Add New
+                                    <i class="fas fa-plus"></i> Add New Canvass
                                 </nuxt-link>
                             </div>
                         </div>

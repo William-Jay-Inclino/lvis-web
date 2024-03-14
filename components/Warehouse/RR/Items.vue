@@ -399,7 +399,7 @@
                         <i class="fas fa-plus-circle"></i> {{ isAdding ? 'Adding Item...' : 'Add Item' }}
                     </button>
                     <button v-else @click="editItem" type="button" class="btn btn-primary" :disabled="isEditing">
-                        <i class="fas fa-plus-circle"></i> {{ isEditing ? 'Editing Item...' : 'Edit Item' }}
+                        <i class="fas fa-edit"></i> {{ isEditing ? 'Editing Item...' : 'Edit Item' }}
                     </button>
                 </div>
                 </div>

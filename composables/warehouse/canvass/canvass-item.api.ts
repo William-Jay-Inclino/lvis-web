@@ -5,6 +5,7 @@ export async function create(input: CreateCanvassItemInput): Promise<MutationRes
 
     let brandId = null
     let unitId = null
+    let itemId = null
 
     if (input.brand) {
         brandId = `"${input.brand.id}"`
@@ -12,6 +13,10 @@ export async function create(input: CreateCanvassItemInput): Promise<MutationRes
 
     if (input.unit) {
         unitId = `"${input.unit.id}"`
+    }
+
+    if (input.item) {
+        itemId = `"${input.item.id}"`
     }
 
     const mutation = `
@@ -22,6 +27,7 @@ export async function create(input: CreateCanvassItemInput): Promise<MutationRes
                     description: "${input.description}"
                     brand_id: ${brandId}
                     unit_id: ${unitId}
+                    item_id: ${itemId}
                     quantity: ${input.quantity}
                 }
             ) {
@@ -35,6 +41,12 @@ export async function create(input: CreateCanvassItemInput): Promise<MutationRes
                 unit {
                     id
                     name
+                }
+                item {
+                    id 
+                    code 
+                    name 
+                    description
                 }
                 quantity
             }
@@ -71,6 +83,7 @@ export async function update(id: string, input: UpdateCanvassItemInput): Promise
 
     let brandId = null
     let unitId = null
+    let itemId = null
 
     if (input.brand) {
         brandId = `"${input.brand.id}"`
@@ -78,6 +91,10 @@ export async function update(id: string, input: UpdateCanvassItemInput): Promise
 
     if (input.unit) {
         unitId = `"${input.unit.id}"`
+    }
+
+    if (input.item) {
+        itemId = `"${input.item.id}"`
     }
 
     const mutation = `
@@ -88,6 +105,7 @@ export async function update(id: string, input: UpdateCanvassItemInput): Promise
                     description: "${input.description}"
                     brand_id: ${brandId}
                     unit_id: ${unitId}
+                    item_id: ${itemId}
                     quantity: ${input.quantity}
                 }
             ) {
@@ -101,6 +119,12 @@ export async function update(id: string, input: UpdateCanvassItemInput): Promise
                 unit {
                     id
                     name
+                }
+                item {
+                    id 
+                    code 
+                    name 
+                    description
                 }
                 quantity
             }
