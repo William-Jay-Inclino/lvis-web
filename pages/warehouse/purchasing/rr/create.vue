@@ -37,16 +37,6 @@
                                         </small>
                                     </div>
                                 </div>
-                                <div v-else-if="option.is_referenced" class="row">
-                                    <div class="col">
-                                        <span class="text-danger">{{ option.po_number }}</span>
-                                    </div>
-                                    <div class="col text-end">
-                                        <small class="text-muted fst-italic">
-                                            Referenced
-                                        </small>
-                                    </div>
-                                </div>
                                 <div v-else class="row">
                                     <div class="col">
                                         <span>{{ option.po_number }}</span>
@@ -58,7 +48,19 @@
                             </template>
                         </v-select>
                     </client-only>
-                    <nuxt-link v-if="rrData.po" class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/po/view/' + rrData.po.id" target="_blank">View PO details</nuxt-link>
+                    <div>
+                        <nuxt-link v-if="rrData.po" class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/po/view/' + rrData.po.id" target="_blank">View PO details</nuxt-link>
+                    </div>
+                    <div v-if="rrData.po && rrData.po.rrs.length > 0">
+                        <small class="text-muted fst-italic"> Other assigned RR: </small>
+                        <ul>
+                            <li v-for="rr in rrData.po.rrs">
+                                <nuxt-link :to="'/warehouse/purchasing/rr/view/' + rr.id" target="_blank">
+                                    {{ rr.rr_number }}
+                                </nuxt-link>
+                            </li>
+                        </ul>
+                    </div>
                     <small class="text-danger fst-italic" v-if="rrDataErrors.po"> This field is required </small>
                 </div>
 
@@ -111,13 +113,7 @@
                 <div v-if="!isMobile">
 
                     <WarehouseRRItems 
-                        :items="items"
-                        :brands="brands"
-                        :units="units"
                         :rr-items="rrData.rr_items"
-                        @add-item="addItem"
-                        @remove-item="removeItem"
-                        @edit-item="editItem"
                     />
 
                 </div>
@@ -134,7 +130,9 @@
                         <tbody>
                             <tr>
                                 <td class="fst-italic"> Summary (Gross Total) </td>
-                                <td class="fw-bold"> {{ formatToPhpCurrency(grossTotalSummary) }} </td>
+                                <td class="fw-bold"> 
+                                    {{ formatToPhpCurrency(grossTotalSummary) }} 
+                                </td>
                             </tr>
                             <tr>
                                 <td class="fst-italic"> Delivery Charge </td>
@@ -142,7 +140,9 @@
                             </tr>
                             <tr>
                                 <td class="fst-italic"> Total </td>
-                                <td class="fw-bold"> {{ formatToPhpCurrency(totalPriceSummary) }} </td>
+                                <td class="fw-bold"> 
+                                    {{ formatToPhpCurrency(totalPriceSummary) }} 
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -186,12 +186,10 @@
         layout: "layout-admin"
     })
         
-    import type { Brand, Unit } from '~/composables/warehouse/canvass/canvass.types';
     import type { PO } from '~/composables/warehouse/po/po.types';
     import type { CreateRrInput } from '~/composables/warehouse/rr/rr.types';
     import * as rrApi from '~/composables/warehouse/rr/rr.api';
     import type { MeqsSupplierItem } from '~/composables/warehouse/meqs/meqs-supplier-item';
-    import { itemClass } from '~/utils/constants';
     import type { RrItem } from '~/composables/warehouse/rr/rr-item.types';
     import Swal from 'sweetalert2'
     import { useToast } from "vue-toastification";
@@ -274,7 +272,7 @@
         let ctr = 0
 
         for(let item of rrData.value.rr_items) {
-            ctr += item.gross_price * item.quantity_accepted
+            ctr += item.meqs_supplier_item.price * item.quantity_accepted
         }
 
         return ctr
@@ -323,26 +321,10 @@
 
             const rrItem: RrItem = {
                 id: '',
-                item: null,
-                item_class: ITEM_CLASS.NON_STOCK,
-                item_brand: item.canvass_item.brand || null,
-                unit: item.canvass_item.unit || null,
-                itemClassObject: {
-                    value: ITEM_CLASS.NON_STOCK,
-                    label: itemClass[ITEM_CLASS.NON_STOCK].label
-                },
-                quantity_delivered: item.canvass_item.quantity,
-                quantity_accepted: item.canvass_item.quantity,
-                description: item.canvass_item.description,
-                name: '',
-                vat: {
-                    value: item.vat_type,
-                    label: VAT[item.vat_type].label
-                },
-                vat_type: item.vat_type,
-                gross_price: item.price,
-                net_price: netPrice,
-                vat_amount: vatAmount
+                rr_id: '',
+                meqs_supplier_item_id: item.id,
+                meqs_supplier_item: item,
+                quantity_accepted: 0
             }
 
             rrItems.push(rrItem)
@@ -416,59 +398,59 @@
 
     // ======================== CHILD FUNCTIONS <Items.vue> ======================== 
     
-    function addItem(data: RrItem, modalCloseBtn: HTMLButtonElement) {
+    // function addItem(data: RrItem, modalCloseBtn: HTMLButtonElement) {
         
-        console.log('addItem', data)
+    //     console.log('addItem', data)
 
-        rrData.value.rr_items.push(data)
+    //     rrData.value.rr_items.push(data)
 
-        modalCloseBtn.click()
+    //     modalCloseBtn.click()
 
-        toast.success('Item added!')
+    //     toast.success('Item added!')
 
-    }
+    // }
 
-    function removeItem(indx: number) {
+    // function removeItem(indx: number) {
 
-        console.log('removeItem', indx)
+    //     console.log('removeItem', indx)
 
-        const rrItem = rrData.value.rr_items[indx]
+    //     const rrItem = rrData.value.rr_items[indx]
         
-        Swal.fire({
-            title: "Are you sure?",
-            text:  `Item with description of ${rrItem.description}  will be removed!`,
-            position: "top",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#e74a3b",
-            cancelButtonColor: "#6c757d",
-            confirmButtonText: "Yes, remove it!",
-            reverseButtons: true,
-            }).then( async(result) => {
-            if (result.isConfirmed) {
+    //     Swal.fire({
+    //         title: "Are you sure?",
+    //         text:  `Item no. ${ indx + 1 } with description of ${rrItem.meqs_supplier_item.canvass_item.description}  will be removed!`,
+    //         position: "top",
+    //         icon: "warning",
+    //         showCancelButton: true,
+    //         confirmButtonColor: "#e74a3b",
+    //         cancelButtonColor: "#6c757d",
+    //         confirmButtonText: "Yes, remove it!",
+    //         reverseButtons: true,
+    //         }).then( async(result) => {
+    //         if (result.isConfirmed) {
                 
-                rrData.value.rr_items.splice(indx, 1)
+    //             rrData.value.rr_items.splice(indx, 1)
 
-                toast.success('Item removed!')
+    //             toast.success('Item removed!')
 
-            }
-        });
+    //         }
+    //     });
         
         
 
-    }
+    // }
 
-    function editItem(indx: number, data: RrItem, modalCloseBtn: HTMLButtonElement) {
-        console.log('editItem', indx, data)
-        console.log('modalCloseBtn', modalCloseBtn)
+    // function editItem(indx: number, data: RrItem, modalCloseBtn: HTMLButtonElement) {
+    //     console.log('editItem', indx, data)
+    //     console.log('modalCloseBtn', modalCloseBtn)
 
-        rrData.value.rr_items[indx] = {...data}
+    //     rrData.value.rr_items[indx] = {...data}
 
-        modalCloseBtn.click()
+    //     modalCloseBtn.click()
 
-        toast.success('Item edited!')
+    //     toast.success('Item edited!')
 
-    }
+    // }
 
     // ======================== UTILS ======================== 
 

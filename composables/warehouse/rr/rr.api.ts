@@ -1,4 +1,3 @@
-import type { Brand } from "../canvass/canvass.types"
 import type { PO } from "../po/po.types"
 import type { Unit } from "../unit/unit.types"
 import type { RrApproverSettings } from "./rr-approver.types"
@@ -24,7 +23,7 @@ export async function findByRefNumber(payload: { po_number?: string, rr_number?:
                 rr_number
                 status
                 rr_date
-                is_cancelled
+                cancelled_at
                 po {
                     id
                     po_number
@@ -95,11 +94,11 @@ export async function findAll(payload: { page: number, pageSize: number, date_re
                     rr_number
                     status
                     rr_date
-                    is_cancelled
+                    cancelled_at
                     po {
                       id
                       po_number
-                      is_cancelled
+                      cancelled_at
                       meqs_supplier {
                         meqs {
                           meqs_number
@@ -222,7 +221,6 @@ export async function fetchFormDataInCreate(): Promise<{
                     id
                     po_number
                     status
-                    is_referenced
                     meqs_supplier {
                         id
                         payment_terms
@@ -252,6 +250,10 @@ export async function fetchFormDataInCreate(): Promise<{
                                 quantity
                             }
                         }
+                    }
+                    rrs {
+                        id 
+                        rr_number
                     }
                 }
             },
@@ -374,8 +376,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 delivery_number
                 notes
                 delivery_charge
-                is_cancelled
-                is_deleted
+                cancelled_at
                 received_by {
                     id
                     firstname
@@ -460,8 +461,7 @@ export async function findOne(id: string): Promise<RR | undefined> {
                 notes
                 delivery_charge
                 status
-                is_deleted
-                is_cancelled
+                cancelled_at
                 received_by {
                     id
                     firstname
@@ -499,27 +499,24 @@ export async function findOne(id: string): Promise<RR | undefined> {
                     }
                 }
                 rr_items {
-                    item {
-                        id 
-                        code 
-                        name
-                    }
-                    item_brand {
-                        id 
-                        name
-                    }
-                    unit {
-                        id
-                        name
-                    }
-                    item_class
-                    quantity_delivered
+                    id
                     quantity_accepted
-                    description
-                    vat_type
-                    gross_price
-                    net_price
-                    vat_amount
+                    meqs_supplier_item {
+                        price
+                        vat_type
+                        canvass_item {
+                            brand {
+                                id 
+                                name
+                            }
+                            unit {
+                                id 
+                                name 
+                            }
+                            description
+                            quantity
+                        }
+                    }
                 }
             }
         }
@@ -554,34 +551,10 @@ export async function create(input: CreateRrInput): Promise<MutationResponse> {
 
     const rrItems = input.rr_items.map(item => {
 
-        let item_brand_id = null
-        let unit_id = null
-        let item_id = null
-
-        if (item.item_brand) {
-            item_brand_id = `"${item.item_brand.id}"`
-        }
-
-        if (item.unit) {
-            unit_id = `"${item.unit.id}"`
-        }
-
-        if (item.item) {
-            item_id = `"${item.item.id}"`
-        }
-
         return `
         {
-          item_id: ${item_id}
-          item_brand_id: ${item_brand_id}
-          unit_id: ${unit_id}
-          item_class: ${item.itemClassObject.value}
-          quantity_delivered: ${item.quantity_delivered}
           quantity_accepted: ${item.quantity_accepted}
-          description: "${item.description}"
-          vat_type: ${item.vat.value}
-          gross_price: ${item.gross_price}
-          net_price: ${item.net_price}
+          meqs_supplier_item_id: "${item.meqs_supplier_item_id}"
         }`;
     }).join(', ');
 
@@ -671,26 +644,17 @@ export async function update(id: string, input: UpdateRrInput): Promise<Mutation
 }
 
 
-export async function cancel(id: string): Promise<MutationResponse> {
-
-    const authUserJson = localStorage.getItem('authUser')
-
-    if (!authUserJson) {
-        throw console.error('authUser in localstorage not found');
-    }
-
-    const authUser = JSON.parse(authUserJson) as AuthUser
+export async function cancel(id: string): Promise<CancelResponse> {
 
     const mutation = `
         mutation {
-            updateRr(
-                id: "${id}",
-                input: {
-                    canceller_id: "${authUser.user.id}"
-                }
+            cancelRr(
+                id: "${id}"
             ) {
-                id
-                is_cancelled
+                msg
+                success
+                cancelled_at
+                cancelled_by
             }
     }`;
 
@@ -698,11 +662,8 @@ export async function cancel(id: string): Promise<MutationResponse> {
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if (response.data && response.data.data && response.data.data.updateRr) {
-            return {
-                success: true,
-                msg: 'RR cancelled!'
-            };
+        if (response.data && response.data.data && response.data.data.cancelRr) {
+            return response.data.data.cancelRr
         }
 
         throw new Error(JSON.stringify(response.data.errors));

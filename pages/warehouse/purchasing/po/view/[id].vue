@@ -48,8 +48,10 @@
                             <tr>
                                 <td class="text-muted">RR Number</td>
                                 <td>
-                                    <nuxt-link v-if="item.rr" :to="'/warehouse/purchasing/rr/view/' + item.rr.id">{{ item.rr.rr_number }}</nuxt-link>
-                                    <div v-else> N/A </div>
+                                    <div v-if="item.rrs.length === 0"> N/A </div>
+                                    <div v-else>
+                                        <nuxt-link v-for="rr in item.rrs" :to="'/warehouse/purchasing/rr/view/' + rr.id">{{ rr.rr_number }}</nuxt-link>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -200,7 +202,7 @@
                             <i class="fas fa-chevron-left"></i> Back to Search
                         </nuxt-link>
                     </div>
-                    <div v-if="!item.is_deleted && !item.canceller_id && isAdminOrOwner(item.created_by, authUser)">
+                    <div v-if="!item.cancelled_at && isAdminOrOwner(item.created_by, authUser)">
                         <nuxt-link class="btn btn-success me-2" :to="`/warehouse/purchasing/po/${item.id}`">
                             <i class="fas fa-sync"></i> Update
                         </nuxt-link>

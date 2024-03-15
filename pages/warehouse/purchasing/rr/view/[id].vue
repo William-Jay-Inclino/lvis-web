@@ -249,8 +249,8 @@
                                         <th v-show="showClass" class="bg-secondary text-white">Class</th>
                                         <th v-show="showBrand" class="bg-secondary text-white">Brand</th>
                                         <th v-show="showUnit" class="bg-secondary text-white">Unit</th>
-                                        <th v-show="showDelivered" class="bg-secondary text-white">Delivered</th>
-                                        <th v-show="showAccepted" class="bg-secondary text-white">Accepted</th>
+                                        <th v-show="showDelivered" class="bg-secondary text-white">Qty Request</th>
+                                        <th v-show="showAccepted" class="bg-secondary text-white">Qty Accepted</th>
                                         <th v-show="showVat" class="bg-secondary text-white">VAT</th>
                                         <th v-show="showGrossPrice" class="bg-secondary text-white">Gross Price</th>
                                         <th v-show="showNetPrice" class="bg-secondary text-white">Net Price</th>
@@ -261,44 +261,40 @@
                                 </thead>
                                 <tbody>
                                     <tr v-for="rrItem, i in item.rr_items" :key="i">
+                                        <td class="text-muted"> {{ i + 1 }} </td>
                                         <td v-show="showDescription" class="text-muted">
                                             <div class="input-group input-group-sm">
                                                 {{ i + 1 }}.
-                                                <textarea class="form-control ms-2" rows="3" :value="rrItem.description" disabled></textarea>
-                                            </div>
-                                        </td>
-                                        <td v-show="showItemCode" class="text-muted align-middle">
-                                            <div class="input-group input-group-sm">
-                                                <textarea class="form-control ms-2" rows="3" :value="rrItem.item ? rrItem.item.label : ''" disabled></textarea>
+                                                <textarea class="form-control ms-2" rows="3" :value="rrItem.meqs_supplier_item.canvass_item.description" disabled></textarea>
                                             </div>
                                         </td>
                                         <td v-show="showClass" class="text-muted align-middle">
-                                            {{ itemClass[rrItem.item_class].label }}
+                                            {{ rrItem.meqs_supplier_item.canvass_item.item ? 'Stock' : 'Non-Stock' }}
                                         </td>
                                         <td v-show="showBrand" class="text-muted align-middle">
-                                            {{ rrItem.item_brand ? rrItem.item_brand.name : '' }}
+                                            {{ rrItem.meqs_supplier_item.canvass_item.brand ? rrItem.meqs_supplier_item.canvass_item.brand.name : 'N/A' }}
                                         </td>
                                         <td v-show="showUnit" class="text-muted align-middle">
-                                            {{ rrItem.unit ? rrItem.unit.name : '' }}
+                                            {{ rrItem.meqs_supplier_item.canvass_item.unit ? rrItem.meqs_supplier_item.canvass_item.unit.name : 'N/A' }}
                                         </td>
                                         <td v-show="showDelivered" class="text-muted text-center align-middle">
-                                            {{ rrItem.quantity_delivered }}
+                                            {{ rrItem.meqs_supplier_item.canvass_item.quantity }}
                                         </td>
                                         <td v-show="showAccepted" class="text-muted text-center align-middle">
                                             {{ rrItem.quantity_accepted }}
                                         </td>
                                         <td v-show="showVat" class="text-muted text-center align-middle">
-                                            {{ VAT[rrItem.vat_type].label }}
+                                            {{ VAT[rrItem.meqs_supplier_item.vat_type].label }}
                                         </td>
                                         <td v-show="showGrossPrice" class="text-muted text-center align-middle">
-                                            {{ formatToPhpCurrency(rrItem.gross_price) }}
+                                            {{ formatToPhpCurrency(rrItem.meqs_supplier_item.price) }}
                                         </td>
                                         <td v-show="showNetPrice" class="text-muted text-center align-middle">
                                             {{ 
                                                 formatToPhpCurrency(
                                                     getNetPrice({
-                                                        grossPrice: rrItem.gross_price,
-                                                        vatAmount: getVatAmount(rrItem.gross_price, rrItem.vat_type)
+                                                        grossPrice: rrItem.meqs_supplier_item.price,
+                                                        vatAmount: getVatAmount(rrItem.meqs_supplier_item.price, rrItem.meqs_supplier_item.vat_type)
                                                     })
                                                 ) 
                                             }}
@@ -307,7 +303,7 @@
                                             {{ 
                                                 formatToPhpCurrency(
                                                     getGrossTotal({
-                                                        price: rrItem.gross_price,
+                                                        price: rrItem.meqs_supplier_item.price,
                                                         quantity: rrItem.quantity_accepted
                                                     })
                                                 ) 
@@ -317,9 +313,9 @@
                                             {{ 
                                                 formatToPhpCurrency(
                                                     getVatTotal({
-                                                        price: rrItem.gross_price,
+                                                        price: rrItem.meqs_supplier_item.price,
                                                         quantity: rrItem.quantity_accepted,
-                                                        vatType: rrItem.vat_type
+                                                        vatType: rrItem.meqs_supplier_item.vat_type
                                                     })
                                                 )
                                             }}
@@ -328,8 +324,8 @@
                                             {{ 
                                                 formatToPhpCurrency(
                                                     getTotalNetPrice({
-                                                        pricePerUnit: rrItem.gross_price,
-                                                        vatPerUnit: getVatAmount(rrItem.gross_price, rrItem.vat_type),
+                                                        pricePerUnit: rrItem.meqs_supplier_item.price,
+                                                        vatPerUnit: getVatAmount(rrItem.meqs_supplier_item.price, rrItem.meqs_supplier_item.vat_type),
                                                         quantity: rrItem.quantity_accepted
                                                     })
                                                 ) 
@@ -377,7 +373,7 @@
                             <i class="fas fa-chevron-left"></i> Back to Search
                         </nuxt-link>
                     </div>
-                    <div v-if="!item.is_deleted && !item.canceller_id && isAdminOrOwner(item.created_by, authUser)">
+                    <div v-if="!item.cancelled_at && isAdminOrOwner(item.created_by, authUser)">
                         <nuxt-link class="btn btn-success me-2" :to="`/warehouse/purchasing/rr/${item.id}`">
                             <i class="fas fa-sync"></i> Update
                         </nuxt-link>
@@ -412,14 +408,14 @@
 
     const showDescription = ref(true)
     const showItemCode = ref(true)
-    const showClass = ref(false)
+    const showClass = ref(true)
     const showBrand = ref(false)
     const showUnit = ref(false)
     const showDelivered = ref(true)
     const showAccepted = ref(true)
     const showVat = ref(true)
     const showGrossPrice = ref(true)
-    const showNetPrice = ref(false)
+    const showNetPrice = ref(true)
     const showGrossTotal = ref(true)
     const showVatTotal = ref(true)
     const showNetTotal = ref(true)
@@ -429,17 +425,6 @@
         window.addEventListener('resize', checkMobile);
         authUser.value = getAuthUser()
         const rr = await rrApi.findOne(route.params.id as string)
-        
-        rr?.rr_items.map(i => {
-
-            if(i.item) {
-                i.item.label = `${i.item.code} - ${i.item.name}`
-            }
-
-            return i
-
-        })
-
         item.value = rr
     })
 
@@ -462,7 +447,7 @@
         let ctr = 0
 
         for(let rrItem of item.value!.rr_items) {
-            ctr += rrItem.gross_price * rrItem.quantity_accepted
+            ctr += rrItem.meqs_supplier_item.price * rrItem.quantity_accepted
         }
 
         return ctr

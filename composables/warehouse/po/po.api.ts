@@ -21,6 +21,7 @@ export async function findByRefNumber(payload: { po_number?: string, meqs_number
                 po_number
                 status
                 po_date
+                cancelled_at
                 meqs_supplier {
                     meqs {
                         meqs_number
@@ -38,7 +39,6 @@ export async function findByRefNumber(payload: { po_number?: string, meqs_number
                         }
                     }
                 }
-                canceller_id
             }
         }
     `;
@@ -87,6 +87,7 @@ export async function findAll(payload: { page: number, pageSize: number, date_re
                     po_number
                     status
                     po_date
+                    cancelled_at
                     meqs_supplier {
                         meqs {
                             meqs_number
@@ -104,7 +105,6 @@ export async function findAll(payload: { page: number, pageSize: number, date_re
                             }
                         }
                     }
-                    canceller_id
                 }
                 totalItems
                 currentPage
@@ -299,7 +299,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 id 
                 po_number 
                 po_date
-                is_cancelled
+                cancelled_at
                 notes
                 meqs_supplier{
                     id
@@ -447,13 +447,7 @@ export async function findOne(id: string): Promise<PO | undefined> {
                 status
                 po_date
                 notes
-                is_deleted
-                canceller{
-                    id
-                    firstname
-                    middlename
-                    lastname
-                }
+                cancelled_at
                 po_approvers{
                     approver {
                         firstname
@@ -466,7 +460,7 @@ export async function findOne(id: string): Promise<PO | undefined> {
                     notes
                     date_approval
                 }
-                rr {
+                rrs {
                     id
                     rr_number
                 }
@@ -578,26 +572,17 @@ export async function update(id: string, input: UpdatePoInput): Promise<Mutation
     }
 }
 
-export async function cancel(id: string): Promise<MutationResponse> {
-
-    const authUserJson = localStorage.getItem('authUser')
-
-    if (!authUserJson) {
-        throw console.error('authUser in localstorage not found');
-    }
-
-    const authUser = JSON.parse(authUserJson) as AuthUser
+export async function cancel(id: string): Promise<CancelResponse> {
 
     const mutation = `
         mutation {
-            updatePo(
-                id: "${id}",
-                input: {
-                    canceller_id: "${authUser.user.id}"
-                }
+            cancelPo(
+                id: "${id}"
             ) {
-                id
-                is_cancelled
+                msg
+                success
+                cancelled_at
+                cancelled_by
             }
     }`;
 
@@ -605,11 +590,8 @@ export async function cancel(id: string): Promise<MutationResponse> {
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if (response.data && response.data.data && response.data.data.updatePo) {
-            return {
-                success: true,
-                msg: 'PO cancelled!'
-            };
+        if (response.data && response.data.data && response.data.data.cancelPo) {
+            return response.data.data.cancelPo
         }
 
         throw new Error(JSON.stringify(response.data.errors));

@@ -1,32 +1,14 @@
-import type { Brand, Unit } from "../canvass/canvass.types"
-import { ITEM_CLASS, VAT_TYPE } from '~/composables/common.types'
 import type { RR } from "./rr.types"
+import type { MeqsSupplierItem } from '../meqs/meqs-supplier-item'
 
 export interface RrItem {
 	id: string
-	item: Item | null
-	item_brand: Brand | null
-	unit: Unit | null
-	item_class: ITEM_CLASS
-	quantity_delivered: number
+	rr_id: string
+	meqs_supplier_item_id: string
 	quantity_accepted: number
-	name: string
-	description: string
-	vat_type: VAT_TYPE,
-	gross_price: number
-	net_price: number
-	vat_amount: number
 
-	rr: RR
+	// =============== derived / resolvers =============== 
 
-	// props that are set programmatically
+	meqs_supplier_item: MeqsSupplierItem
 
-	itemClassObject: {
-		value: ITEM_CLASS,
-		label: string
-	}
-	vat: {
-        value: VAT_TYPE,
-        label: string
-    }
-  }
+}

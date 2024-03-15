@@ -10,24 +10,34 @@ export interface RR {
     rr_number: string;
     rr_date: Date;
     received_by_id: string;
-    canceller_id: string;
-    date_cancelled: Date;
     invoice_number: string;
     delivery_number: string;
     notes: string;
     delivery_charge: number;
-    created_at: Date;
-    updated_at: Date;
-    po: PO;
-    is_deleted: boolean;
-    is_cancelled: boolean;
-    status: APPROVAL_STATUS;
+    is_completed: boolean
 
+
+
+
+    // =============== audit fields =============== 
+
+    cancelled_by: string
+    created_by: string
+    updated_by: string
+    cancelled_at: Date
+    created_at: Date
+    updated_at: Date
+
+
+
+    // =============== derived / resolvers =============== 
+
+
+    po: PO;
     rr_approvers: Approver[];
     rr_items: RrItem[]
-
+    status: APPROVAL_STATUS;
     received_by: Employee;
-    created_by: string
 }
 
 
@@ -50,24 +60,6 @@ export interface UpdateRrInput {
     notes: string;
     delivery_charge: number;
 }
-
-// export interface CreateRRItemSubInput {
-//     item: Item | null;
-//     item_brand: Brand | null;
-//     unit: Unit | null;
-//     item_class: ITEM_CLASS
-//     quantity_delivered: number;
-//     quantity_accepted: number;
-//     description: string;
-//     vat: {
-//         value: VAT_TYPE,
-//         label: string
-//     }
-//     gross_price: number
-//     net_price: number
-
-// }
-
 
 
 export interface MutationResponse {

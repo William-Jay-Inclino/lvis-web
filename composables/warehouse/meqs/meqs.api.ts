@@ -279,7 +279,7 @@ export async function findOne(id: string): Promise<MEQS | undefined> {
                 }
                 meqs_date
                 status
-                canceller_id
+                cancelled_at
                 meqs_approvers{
                     approver_id
                     approver{

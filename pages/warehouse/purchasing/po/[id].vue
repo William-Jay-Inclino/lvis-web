@@ -1,6 +1,6 @@
 <template>
 
-<div v-if="poData && poData.meqs_supplier && !poData.is_cancelled && !poData.is_deleted">
+<div v-if="poData && poData.meqs_supplier && !poData.cancelled_at">
         <h2 class="text-warning">Update PO</h2>
         <hr>
 
@@ -172,7 +172,7 @@
 
         const approvers = poData.value.po_approvers
         
-        if(poData.value.is_cancelled) {
+        if(poData.value.cancelled_at) {
 
             return approvalStatus[APPROVAL_STATUS.CANCELLED]
 
@@ -239,7 +239,7 @@
 
         if(response.success) {
             toast.success(response.msg)
-            poData.value.is_cancelled = true 
+            poData.value.cancelled_at = response.cancelled_at! 
 
             router.push('/warehouse/purchasing/po')
 

@@ -53,7 +53,7 @@
                                     </div>
                                     <div class="col-6">
                                         <div class="form-check form-switch">
-                                            <input v-model="showAccepted" class="form-check-input" type="checkbox">
+                                            <input v-model="showAccepted" class="form-check-input" type="checkbox" disabled>
                                             <label class="form-check-label">Accepted</label>
                                         </div>
                                     </div>
@@ -108,64 +108,60 @@
                     <table class="table table-hover table-bordered">
                         <thead>
                             <tr>
+                                <th class="bg-secondary text-white">No</th>
                                 <th v-show="showDescription" class="bg-secondary text-white">Description</th>
-                                <th v-show="showItemCode" class="bg-secondary text-white">Item Code</th>
-                                <th v-show="showClass" class="bg-secondary text-white">Class</th>
+                                <th v-show="showClass" class="bg-secondary text-white">Item Class</th>
                                 <th v-show="showBrand" class="bg-secondary text-white">Brand</th>
                                 <th v-show="showUnit" class="bg-secondary text-white">Unit</th>
-                                <th v-show="showDelivered" class="bg-secondary text-white">Delivered</th>
-                                <th v-show="showAccepted" class="bg-secondary text-white">Accepted</th>
+                                <th v-show="showDelivered" class="bg-secondary text-white">Qty Request</th>
+                                <th v-show="showAccepted" class="bg-secondary text-white">Qty Accepted</th>
                                 <th v-show="showVat" class="bg-secondary text-white">VAT</th>
                                 <th v-show="showGrossPrice" class="bg-secondary text-white">Gross Price</th>
                                 <th v-show="showNetPrice" class="bg-secondary text-white">Net Price</th>
                                 <th v-show="showGrossTotal" class="bg-secondary text-white">Gross Total</th>
                                 <th v-show="showVatTotal" class="bg-secondary text-white">VAT Total</th>
                                 <th v-show="showNetTotal" class="bg-secondary text-white">Net Total</th>
-                                <th class="bg-secondary text-white text-center">
-                                    <i class="fas fa-cog"></i>
-                                </th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="rrItem, i in rrItems" :key="i">
+                                <td class="text-muted"> {{ i + 1 }} </td>
                                 <td v-show="showDescription" class="text-muted">
                                     <div class="input-group input-group-sm">
                                         {{ i + 1 }}.
-                                        <textarea class="form-control ms-2" rows="3" :value="rrItem.description" disabled></textarea>
-                                    </div>
-                                </td>
-                                <td v-show="showItemCode" class="text-muted align-middle">
-                                    <div class="input-group input-group-sm">
-                                        <textarea class="form-control ms-2" rows="3" :value="rrItem.item ? rrItem.item.label : ''" disabled></textarea>
+                                        <textarea class="form-control ms-2" rows="3" :value="rrItem.meqs_supplier_item.canvass_item.description" disabled></textarea>
                                     </div>
                                 </td>
                                 <td v-show="showClass" class="text-muted align-middle">
-                                    {{ rrItem.itemClassObject.label }}
+                                    {{ rrItem.meqs_supplier_item.canvass_item.item ? 'Stock' : 'Non-Stock' }}
                                 </td>
                                 <td v-show="showBrand" class="text-muted align-middle">
-                                    {{ rrItem.item_brand ? rrItem.item_brand.name : '' }}
+                                    {{ rrItem.meqs_supplier_item.canvass_item.brand ? rrItem.meqs_supplier_item.canvass_item.brand.name : 'N/A' }}
                                 </td>
                                 <td v-show="showUnit" class="text-muted align-middle">
-                                    {{ rrItem.unit ? rrItem.unit.name : '' }}
+                                    {{ rrItem.meqs_supplier_item.canvass_item.unit ? rrItem.meqs_supplier_item.canvass_item.unit.name : 'N/A' }}
                                 </td>
                                 <td v-show="showDelivered" class="text-muted text-center align-middle">
-                                    {{ rrItem.quantity_delivered }}
+                                    {{ rrItem.meqs_supplier_item.canvass_item.quantity }}
                                 </td>
                                 <td v-show="showAccepted" class="text-muted text-center align-middle">
                                     {{ rrItem.quantity_accepted }}
+                                    <button @click="onUpdateQtyAccepted(i)" class="btn btn-light btn-sm">
+                                        <i class="fas fa-edit text-primary"></i>
+                                    </button>
                                 </td>
                                 <td v-show="showVat" class="text-muted text-center align-middle">
-                                    {{ rrItem.vat.label }}
+                                    {{ VAT[rrItem.meqs_supplier_item.vat_type].label }}
                                 </td>
                                 <td v-show="showGrossPrice" class="text-muted text-center align-middle">
-                                    {{ formatToPhpCurrency(rrItem.gross_price) }}
+                                    {{ formatToPhpCurrency(rrItem.meqs_supplier_item.price) }}
                                 </td>
                                 <td v-show="showNetPrice" class="text-muted text-center align-middle">
                                     {{ 
                                         formatToPhpCurrency(
                                             getNetPrice({
-                                                grossPrice: rrItem.gross_price,
-                                                vatAmount: getVatAmount(rrItem.gross_price, rrItem.vat.value)
+                                                grossPrice: rrItem.meqs_supplier_item.price,
+                                                vatAmount: getVatAmount(rrItem.meqs_supplier_item.price, rrItem.meqs_supplier_item.vat_type)
                                             })
                                         ) 
                                     }}
@@ -174,7 +170,7 @@
                                     {{ 
                                         formatToPhpCurrency(
                                             getGrossTotal({
-                                                price: rrItem.gross_price,
+                                                price: rrItem.meqs_supplier_item.price,
                                                 quantity: rrItem.quantity_accepted
                                             })
                                         ) 
@@ -184,9 +180,9 @@
                                     {{ 
                                         formatToPhpCurrency(
                                             getVatTotal({
-                                                price: rrItem.gross_price,
+                                                price: rrItem.meqs_supplier_item.price,
                                                 quantity: rrItem.quantity_accepted,
-                                                vatType: rrItem.vat.value
+                                                vatType: rrItem.meqs_supplier_item.vat_type
                                             })
                                         )
                                     }}
@@ -195,213 +191,16 @@
                                     {{ 
                                         formatToPhpCurrency(
                                             getTotalNetPrice({
-                                                pricePerUnit: rrItem.gross_price,
-                                                vatPerUnit: getVatAmount(rrItem.gross_price, rrItem.vat.value),
+                                                pricePerUnit: rrItem.meqs_supplier_item.price,
+                                                vatPerUnit: getVatAmount(rrItem.meqs_supplier_item.price, rrItem.meqs_supplier_item.vat_type),
                                                 quantity: rrItem.quantity_accepted
                                             })
                                         ) 
                                     }}
                                 </td>
-                                <td class="align-middle">
-                                    <button @click="emits('removeItem', i)" class="btn btn-light btn-sm w-50">
-                                        <i class="fas fa-trash text-danger"></i>
-                                    </button>
-                                    <button @click="onClickEditItem(i)" class="btn btn-light btn-sm w-50" data-bs-toggle="modal" data-bs-target="#addItemModal">
-                                        <i class="fas fa-edit text-info"></i>
-                                    </button>
-                                </td>
                             </tr>
                         </tbody>
                     </table>
-                    <div class="text-center"> 
-                        <button @click="onClickAddItem" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addItemModal">
-                            Add Item
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <!-- Modal -->
-        <div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-warning" id="exampleModalLabel">{{ formIsAdd ? 'Add' : 'Edit' }} Item</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="onCloseModal"></button>
-                </div>
-                <div class="modal-body">
-
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Description <span class="text-danger">*</span>
-                        </label>
-                        <textarea v-model="itemData.description" class="form-control" rows="3"></textarea>
-                        <small class="text-danger fst-italic" v-if="itemDataErrors.description"> This field is required </small>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Class <span class="text-danger">*</span>
-                        </label>
-                        <client-only>
-                            <v-select :options="itemClassArray" label="label"  v-model="itemData.itemClassObject" :clearable="false"></v-select>
-                        </client-only>
-                    </div>
-
-                    <div class="mb-3" v-if="itemData.itemClassObject.value === ITEM_CLASS.STOCK">
-                        <label class="form-label">
-                            Item Code & Description <span class="text-danger">*</span>
-                        </label>
-                        <client-only>
-                            <v-select :options="items" label="label" v-model="itemData.item"></v-select>
-                        </client-only>
-                        <small class="text-danger fst-italic" v-if="itemDataErrors.item"> This field is invalid </small>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Brand <span class="text-danger">*</span>
-                        </label>
-                        <client-only>
-                            <v-select :options="brands" label="name" v-model="itemData.item_brand"></v-select>
-                        </client-only>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Unit <span class="text-danger">*</span>
-                        </label>
-                        <client-only>
-                            <v-select :options="units" label="name" v-model="itemData.unit"></v-select>
-                        </client-only>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Quantity Delivered <span class="text-danger">*</span>
-                        </label>
-                        <input type="number" class="form-control" v-model="itemData.quantity_delivered">
-                        <small class="text-danger fst-italic" v-if="itemDataErrors.quantityDelivered"> This field is invalid </small>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Quantity Accepted <span class="text-danger">*</span>
-                        </label>
-                        <input type="number" class="form-control" v-model="itemData.quantity_accepted">
-                        <small class="text-danger fst-italic" v-if="itemDataErrors.quantityAccepted"> This field is invalid </small>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">
-                            VAT <span class="text-danger">*</span>
-                        </label>
-                        <client-only>
-                            <v-select :options="vatArray" label="label" v-model="itemData.vat" :clearable="false"></v-select>
-                        </client-only>
-                    </div>
-
-                    <div class="mb-3">
-                        <div class="row">
-                            <div class="col">
-                                <label class="form-label">
-                                    Gross Price <span class="text-danger">*</span>
-                                </label>
-                                <input type="number" class="form-control" v-model="itemData.gross_price">
-                                <small class="text-muted fst-italic"> {{ formatToPhpCurrency(itemData.gross_price) }} </small>
-                                <small class="text-danger fst-italic" v-if="itemDataErrors.grossPrice"> This field is invalid </small>
-                            </div>
-                            <div class="col">
-                                <label class="form-label">
-                                    Gross Total 
-                                    <i
-                                        class="fas fa-info-circle text-warning ms-1"
-                                        data-bs-toggle="tooltip"
-                                        data-bs-placement="top"
-                                        title="GT = GP * QA"
-                                    ></i>
-                                </label>
-                                <input type="text" class="form-control" :value="formatToPhpCurrency(grossTotal)" disabled>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <div class="row">
-                            <div class="col">
-                                <label class="form-label">
-                                    VAT Amount
-                                    <i
-                                        class="fas fa-info-circle text-warning ms-1"
-                                        data-bs-toggle="tooltip"
-                                        data-bs-html="true"
-                                        data-bs-placement="top"
-                                        :title="vatPriceToolTip"
-                                    ></i>
-                                </label>
-                                <input type="text" class="form-control" :value="formatToPhpCurrency(getVatAmount(itemData.gross_price, itemData.vat.value))" disabled>
-                            </div>
-                            <div class="col">
-                                <label class="form-label">
-                                    VAT Total
-                                </label>
-                                <i
-                                    class="fas fa-info-circle text-warning ms-1"
-                                    data-bs-toggle="tooltip"
-                                    data-bs-html="true"
-                                    data-bs-placement="top"
-                                    title="VT = VA * QA"
-                                ></i>
-                                <input type="text" class="form-control" :value="formatToPhpCurrency(vatTotal)" disabled>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <div class="row">
-                            <div class="col">
-                                <label class="form-label">
-                                    Net Price
-                                </label>
-                                <i
-                                    class="fas fa-info-circle text-warning ms-1"
-                                    data-bs-toggle="tooltip"
-                                    data-bs-html="true"
-                                    data-bs-placement="top"
-                                    title="NP = GP - VA"
-                                ></i>
-                                <input type="text" class="form-control" :value="formatToPhpCurrency(netPrice)" disabled>
-                            </div>
-                            <div class="col">
-                                <label class="form-label">
-                                    Net Total
-                                    <i
-                                        class="fas fa-info-circle text-warning ms-1"
-                                        data-bs-toggle="tooltip"
-                                        data-bs-html="true"
-                                        data-bs-placement="top"
-                                        title="NT = GT - VT"
-                                    ></i>
-                                </label>
-                                <input type="text" class="form-control" :value="formatToPhpCurrency(netTotal)" disabled>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="modal-footer">
-                    <button @click="onCloseModal" ref="rrCloseItemModalBtn" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-close"></i> Close
-                    </button>
-                    <button v-if="formIsAdd" @click="addItem" type="button" class="btn btn-primary" :disabled="isAdding">
-                        <i class="fas fa-plus-circle"></i> {{ isAdding ? 'Adding Item...' : 'Add Item' }}
-                    </button>
-                    <button v-else @click="editItem" type="button" class="btn btn-primary" :disabled="isEditing">
-                        <i class="fas fa-edit"></i> {{ isEditing ? 'Editing Item...' : 'Edit Item' }}
-                    </button>
-                </div>
                 </div>
             </div>
         </div>
@@ -416,114 +215,37 @@
 
 
 <script setup lang="ts">
-    import { VAT_TYPE } from '#imports';
+    import Swal from 'sweetalert2'
     import type { RrItem } from '~/composables/warehouse/rr/rr-item.types';
     import { getTotalNetPrice, getVatAmount, getNetPrice, getGrossTotal, getVatTotal } from '~/utils/helpers';
+    import { useToast } from "vue-toastification";
     
-
-    const emits = defineEmits(['addItem', 'removeItem', 'editItem']);
 
     const props = defineProps({
         rrItems: {
             type: Array as () => RrItem[],
             default: () => [],
-        },
-        brands: {
-            type: Array as () => Brand[],
-            default: () => [],
-        },
-        units: {
-            type: Array as () => Unit[],
-            default: () => [],
-        },
-        items: {
-            type: Array as () => Item[],
-            default: () => [],
-        },
-        isAdding: {
-            type: Boolean,
-            default: false
-        },
-        isEditing: {
-            type: Boolean,
-            default: false
-        },
+        }
     });
 
-    const itemClassArray = ref([
-        {
-            value: ITEM_CLASS.NON_STOCK,
-            label: itemClass[ITEM_CLASS.NON_STOCK].label
-        },
-        {
-            value: ITEM_CLASS.STOCK,
-            label: itemClass[ITEM_CLASS.STOCK].label
-        }
-    ])
+    const toast = useToast();
 
-    const vatArray = ref([
-        {
-            value: VAT_TYPE.NONE,
-            label: VAT[VAT_TYPE.NONE].label
-        },
-        {
-            value: VAT_TYPE.INC,
-            label: VAT[VAT_TYPE.INC].label
-        },
-        {
-            value: VAT_TYPE.EXC,
-            label: VAT[VAT_TYPE.EXC].label
-        }
-    ])
 
-    const rrCloseItemModalBtn = ref<HTMLButtonElement>()
 
     const showDescription = ref(true)
     const showItemCode = ref(true)
-    const showClass = ref(false)
+    const showClass = ref(true)
     const showBrand = ref(false)
     const showUnit = ref(false)
     const showDelivered = ref(true)
     const showAccepted = ref(true)
     const showVat = ref(true)
     const showGrossPrice = ref(true)
-    const showNetPrice = ref(false)
+    const showNetPrice = ref(true)
     const showGrossTotal = ref(true)
     const showVatTotal = ref(true)
     const showNetTotal = ref(true)
 
-    const formIsAdd = ref(true)
-    // use in editing
-    const indxToEdit = ref()
-    
-    const _itemDataErrorsInitial = {
-        description: false,
-        item: false,
-        quantityDelivered: false,
-        quantityAccepted: false,
-        grossPrice: false,
-    } 
-
-    const _itemDataInitial: RrItem = {
-        id: '',
-        item: null,
-        item_class: ITEM_CLASS.NON_STOCK,
-        item_brand: null, 
-        unit: null,
-        itemClassObject: itemClassArray.value[0],
-        quantity_accepted: 0,
-        quantity_delivered: 0,
-        description: '',
-        name: '',
-        vat: vatArray.value[0],
-        vat_type: VAT_TYPE.NONE,
-        gross_price: 0,
-        net_price: 0,
-        vat_amount: 0,
-    }
-
-    const itemData = ref<RrItem>({..._itemDataInitial})
-    const itemDataErrors = ref({..._itemDataErrorsInitial})
 
     onMounted(() => {
         const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]')) as Element[];
@@ -532,167 +254,47 @@
     })
 
 
-    const vatTotal = computed( () => {
-
-        if(!itemData.value.quantity_accepted || !itemData.value.gross_price) return 0 
-
-        return getVatTotal({
-            price: itemData.value.gross_price,
-            quantity: itemData.value.quantity_accepted,
-            vatType: itemData.value.vat.value
-        })
-
-    })
-
-    const grossTotal = computed( () => {
-
-        if(!itemData.value.quantity_accepted || !itemData.value.gross_price) return 0 
-
-        return getGrossTotal({
-            price: itemData.value.gross_price,
-            quantity: itemData.value.quantity_accepted
-        })
-
-    })
-
-    const netPrice = computed( () => {
-
-        if(!itemData.value.quantity_accepted || !itemData.value.gross_price) return 0 
-
-        const vatPerUnit = getVatAmount(itemData.value.gross_price, itemData.value.vat.value)
-
-        return getNetPrice({
-            grossPrice: itemData.value.gross_price,
-            vatAmount: vatPerUnit
-        })
-
-    })
-
-    const netTotal = computed( () => {
-
-        if(!itemData.value.quantity_accepted || !itemData.value.gross_price) return 0 
-
-        return getTotalNetPrice({
-            pricePerUnit: itemData.value.gross_price,
-            vatPerUnit: getVatAmount(itemData.value.gross_price, itemData.value.vat.value),
-            quantity: itemData.value.quantity_accepted
-        })
-
-    })
-
-    const vatPriceToolTip = computed( () => {
-
-        let t = `let VAT_RATE = <b>${VAT_RATE}</b>`
-        t += '<br>'
-        t += '<br>'
-
-        t += '<em>if VAT = None:</em>'
-        t += '<br>'
-        t += '<b>VA = 0</b>'
-
-        t += '<br>'
-        t += '<br>'
-
-        t += '<em>if VAT = EXC:</em>'
-        t += '<br>'
-        t += '<b>VA = GP * VAT_RATE</b>'
-
-        t += '<br>'
-        t += '<br>'
-
-        t += '<em>if VAT = INC:</em>'
-        t += '<br>'
-        t += '<b>VA = (GP * VAT_RATE) / (1 + VAT_RATE)</b>'
-
-        return t
-
-    })
-
-    function addItem() {
-
-        if(!isValidItemData()) {
-            return 
-        }
-
-        emits("addItem", itemData.value, rrCloseItemModalBtn.value)
-
-    }
-
-    function editItem() {
-
-        if(!isValidItemData()) {
-            return 
-        }
-
-        console.log('rrCloseItemModalBtn.value', rrCloseItemModalBtn.value)
-
-        itemData.value.vat_amount = getVatAmount(itemData.value.gross_price, itemData.value.vat.value)
-        itemData.value.net_price = getNetPrice({
-            grossPrice: itemData.value.gross_price,
-            vatAmount: itemData.value.vat_amount
-        })
-
-        emits("editItem", indxToEdit.value, itemData.value, rrCloseItemModalBtn.value)
-
-    }
-
-    function onClickAddItem() {
-        console.log('onClickAddItem')
-
-        formIsAdd.value = true
-
-    }
-
-    function onClickEditItem(indx: number) {
-        console.log('onClickEditItem')
+    function onUpdateQtyAccepted(indx: number) {
 
         const item = props.rrItems[indx]
 
-        formIsAdd.value = false 
-        indxToEdit.value = indx 
+        Swal.fire({
+            title: "Update Quantity Accepted",
+            text: `Update quantity accepted for item no ${ indx + 1 } with description ${item.meqs_supplier_item.canvass_item.description}`,
+            input: 'number',
+            inputPlaceholder: 'Enter quantity',
+            position: "top",
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonColor: "#198754",
+            cancelButtonColor: "#6c757d",
+            confirmButtonText: "Update",
+            reverseButtons: true,
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'You need to enter quantity!';
+                }
 
-        itemData.value = {...item}
+                const qty = Number(value)
 
-    }
+                if(qty < 0) {
+                    return 'Invalid quantity!'
+                }
 
-    function isValidItemData(): boolean {
+                if(qty > item.meqs_supplier_item.canvass_item.quantity) {
+                    return 'Quantity accepted should not exceed quantity request'
+                }
+            },
+        }).then( (result) => {
 
-        itemDataErrors.value = {..._itemDataErrorsInitial}
+            if(result.isConfirmed) {
+                item.quantity_accepted = result.value
 
-        if(itemData.value.description.trim() === '') {
-            itemDataErrors.value.description = true 
-        }
+                toast.success('Updated quantity accepted')
+            }
 
-        if(itemData.value.quantity_delivered <= 0) {
-            itemDataErrors.value.quantityDelivered = true 
-        }
+        })
 
-        if(itemData.value.quantity_accepted <= 0) {
-            itemDataErrors.value.quantityAccepted = true 
-        }
-
-        if(itemData.value.gross_price <= 0) {
-            itemDataErrors.value.grossPrice = true 
-        }
-
-        if(itemData.value.itemClassObject.value === ITEM_CLASS.STOCK && !itemData.value.item) {
-            itemDataErrors.value.item = true
-        }
-
-        const hasError = Object.values(itemDataErrors.value).includes(true);
-
-        if(hasError) {
-            return false 
-        }
-
-        return true
-
-    }
-
-    function onCloseModal() {
-        itemData.value = {..._itemDataInitial}
-        itemDataErrors.value = {..._itemDataErrorsInitial}
-        indxToEdit.value = undefined
     }
 
 

@@ -8,18 +8,27 @@ export interface PO {
     meqs_supplier_id: string;
     po_number: string;
     po_date: string;
-    status: APPROVAL_STATUS;
-    canceller_id: string;
-    meqs_supplier: MeqsSupplier
     notes: string
-    po_approvers: Approver[];
-    is_deleted: boolean
-    is_cancelled: boolean
-    is_referenced: boolean
 
-    rr?: RR
+
+
+    // =============== audit fields =============== 
+
+    cancelled_by: string
     created_by: string
+    updated_by: string
+    cancelled_at: Date
+    created_at: Date
+    updated_at: Date
 
+
+    // =============== derived / resolvers =============== 
+
+    meqs_supplier: MeqsSupplier
+    rrs: RR[]
+    po_approvers: Approver[];
+    status: APPROVAL_STATUS;
+    is_referenced: boolean
 }
 
 export interface CreatePoInput {
