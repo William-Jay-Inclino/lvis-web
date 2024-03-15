@@ -46,11 +46,13 @@
                                 <td> {{ item.po_number }} </td>
                             </tr>
                             <tr>
-                                <td class="text-muted">RR Number</td>
-                                <td>
+                                <td class="text-muted align-middle">RR Number</td>
+                                <td class="align-middle">
                                     <div v-if="item.rrs.length === 0"> N/A </div>
                                     <div v-else>
-                                        <nuxt-link v-for="rr in item.rrs" :to="'/warehouse/purchasing/rr/view/' + rr.id">{{ rr.rr_number }}</nuxt-link>
+                                        <div v-for="rr in item.rrs">
+                                            <nuxt-link :to="'/warehouse/purchasing/rr/view/' + rr.id">{{ rr.rr_number }}</nuxt-link>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>

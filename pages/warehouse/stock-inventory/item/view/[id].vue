@@ -39,6 +39,10 @@
                                         <td> {{ item.unit.name }} </td>
                                     </tr>
                                     <tr>
+                                        <td class="text-muted">Alert Level</td>
+                                        <td> {{ item.alert_level }}% ({{ item.total_quantity * (item.alert_level / 100) }} Qty) </td>
+                                    </tr>
+                                    <tr>
                                         <td class="text-muted">Total Quantity</td>
                                         <td> {{ item.total_quantity }} </td>
                                     </tr>
@@ -98,11 +102,11 @@
                                     </thead>
                                     <tbody>
                                         <tr v-for="i in item.item_transactions">
-                                            <td class="text-muted"> TXN-{{ formatTxnNumber(i.txn_number) }} </td>
+                                            <td class="text-muted"> TXN-{{ formatTxnNumber(i.id) }} </td>
                                             <td class="text-muted">
                                                 <div v-if="i.rr_item">
-                                                    <nuxt-link :to="'/warehouse/purchasing/rr/view/' + i.rr_item.rr.id" target="_blank">
-                                                        {{ `RR#${i.rr_item.rr.rr_number}` }}
+                                                    <nuxt-link :to="'/warehouse/purchasing/rr/view/' + i.rr_item.rr!.id" target="_blank">
+                                                        {{ `RR#${i.rr_item.rr?.rr_number}` }}
                                                     </nuxt-link>
 
                                                 </div>
@@ -159,6 +163,7 @@
         layout: "layout-admin"
     })
 
+import type { ItemTransaction } from '~/composables/warehouse/item/item-transaction.type';
     import * as itemApi from '~/composables/warehouse/item/item.api'
     import type { Item } from '~/composables/warehouse/item/item.type';
     import { MOBILE_WIDTH } from '~/utils/config';

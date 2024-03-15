@@ -200,7 +200,7 @@ export async function findOne(id: string): Promise<RV | undefined> {
                         po {
                             id
                             po_number
-                            rr {
+                            rrs {
                                 id 
                                 rr_number
                             }

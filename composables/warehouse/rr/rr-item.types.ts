@@ -10,5 +10,7 @@ export interface RrItem {
 	// =============== derived / resolvers =============== 
 
 	meqs_supplier_item: MeqsSupplierItem
+	isInvalidQtyAccepted: boolean
+	rr?: RR
 
 }

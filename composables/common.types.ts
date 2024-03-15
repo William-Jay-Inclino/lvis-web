@@ -96,46 +96,10 @@ export interface Employee {
     fullname?: string
 }
 
-
-export interface Item {
-    id: string;
-    item_type_id: string;
-    unit_id: string;
-    code: string;
-    name: string;
-    description: string;
-    total_quantity: number;
-    initial_quantity: number;
-    item_type: ItemType;
-    item_transactions: ItemTransaction[];
-    rr_items: RrItem[];
-    unit: Unit;
-    GWAPrice: number
-
-    // set programmatically
-    label?: string
-}
-
 export interface ItemType {
     id: string;
     name: string;
 }
-
-export interface ItemTransaction {
-    id: string;
-    item_id: string;
-    txn_number: number;
-    rr_item_id?: string | null;
-    type: ITEM_TRANSACTION_TYPE;
-    quantity: number;
-    price: number;
-    remarks?: string | null;
-    item: Item;
-    rr_item?: RrItem;
-
-    created_at: Date
-}
-
 
 export interface Brand {
     id: string
@@ -151,8 +115,6 @@ export interface Classification {
     id: string
     name: string
 }
-
-
 
 export interface CancelResponse {
     success: boolean

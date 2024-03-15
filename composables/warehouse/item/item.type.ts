@@ -1,5 +1,5 @@
-import type { Unit } from "../canvass/canvass.types";
 import type { RrItem } from "../rr/rr-item.types";
+import type { ItemTransaction } from './item-transaction.type'
 
 export interface Item {
 	id: string;
@@ -15,15 +15,16 @@ export interface Item {
 	rr_items: RrItem[];
 	unit: Unit;
 	GWAPrice: number
+	alert_level: number
 
-    // set programmatically
-    label?: string 
+	// set programmatically
+	label?: string
 }
 
 
 export interface FindAllResponse {
-    data: Item[]
-    totalItems: number
-    currentPage: number
-    totalPages: number
+	data: Item[]
+	totalItems: number
+	currentPage: number
+	totalPages: number
 }

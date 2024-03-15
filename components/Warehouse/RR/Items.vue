@@ -114,7 +114,9 @@
                                 <th v-show="showBrand" class="bg-secondary text-white">Brand</th>
                                 <th v-show="showUnit" class="bg-secondary text-white">Unit</th>
                                 <th v-show="showDelivered" class="bg-secondary text-white">Qty Request</th>
-                                <th v-show="showAccepted" class="bg-secondary text-white">Qty Accepted</th>
+                                <th v-show="showAccepted" class="bg-secondary text-white">
+                                    Qty Accepted <span class="text-danger"> * </span>
+                                </th>
                                 <th v-show="showVat" class="bg-secondary text-white">VAT</th>
                                 <th v-show="showGrossPrice" class="bg-secondary text-white">Gross Price</th>
                                 <th v-show="showNetPrice" class="bg-secondary text-white">Net Price</th>
@@ -144,11 +146,13 @@
                                 <td v-show="showDelivered" class="text-muted text-center align-middle">
                                     {{ rrItem.meqs_supplier_item.canvass_item.quantity }}
                                 </td>
-                                <td v-show="showAccepted" class="text-muted text-center align-middle">
-                                    {{ rrItem.quantity_accepted }}
-                                    <button @click="onUpdateQtyAccepted(i)" class="btn btn-light btn-sm">
-                                        <i class="fas fa-edit text-primary"></i>
-                                    </button>
+                                <td v-show="showAccepted" class="text-muted align-middle">
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <input type="number" class="form-control" v-model="rrItem.quantity_accepted" style="width: 80px">
+                                    </div>
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <small class="text-danger fst-italic" v-if="rrItem.isInvalidQtyAccepted">Invalid Quantity</small>
+                                    </div>
                                 </td>
                                 <td v-show="showVat" class="text-muted text-center align-middle">
                                     {{ VAT[rrItem.meqs_supplier_item.vat_type].label }}
@@ -215,7 +219,6 @@
 
 
 <script setup lang="ts">
-    import Swal from 'sweetalert2'
     import type { RrItem } from '~/composables/warehouse/rr/rr-item.types';
     import { getTotalNetPrice, getVatAmount, getNetPrice, getGrossTotal, getVatTotal } from '~/utils/helpers';
     import { useToast } from "vue-toastification";
@@ -245,57 +248,6 @@
     const showGrossTotal = ref(true)
     const showVatTotal = ref(true)
     const showNetTotal = ref(true)
-
-
-    onMounted(() => {
-        const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]')) as Element[];
-        // @ts-ignore
-        let tooltipList = tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-    })
-
-
-    function onUpdateQtyAccepted(indx: number) {
-
-        const item = props.rrItems[indx]
-
-        Swal.fire({
-            title: "Update Quantity Accepted",
-            text: `Update quantity accepted for item no ${ indx + 1 } with description ${item.meqs_supplier_item.canvass_item.description}`,
-            input: 'number',
-            inputPlaceholder: 'Enter quantity',
-            position: "top",
-            icon: "info",
-            showCancelButton: true,
-            confirmButtonColor: "#198754",
-            cancelButtonColor: "#6c757d",
-            confirmButtonText: "Update",
-            reverseButtons: true,
-            inputValidator: (value) => {
-                if (!value) {
-                    return 'You need to enter quantity!';
-                }
-
-                const qty = Number(value)
-
-                if(qty < 0) {
-                    return 'Invalid quantity!'
-                }
-
-                if(qty > item.meqs_supplier_item.canvass_item.quantity) {
-                    return 'Quantity accepted should not exceed quantity request'
-                }
-            },
-        }).then( (result) => {
-
-            if(result.isConfirmed) {
-                item.quantity_accepted = result.value
-
-                toast.success('Updated quantity accepted')
-            }
-
-        })
-
-    }
 
 
 </script>

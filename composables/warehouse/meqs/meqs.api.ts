@@ -324,7 +324,7 @@ export async function findOne(id: string): Promise<MEQS | undefined> {
                     po {
                         id
                         po_number
-                        rr {
+                        rrs {
                             id
                             rr_number
                         }

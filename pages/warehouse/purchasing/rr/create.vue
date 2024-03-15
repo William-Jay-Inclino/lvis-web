@@ -324,7 +324,8 @@
                 rr_id: '',
                 meqs_supplier_item_id: item.id,
                 meqs_supplier_item: item,
-                quantity_accepted: 0
+                quantity_accepted: -1,
+                isInvalidQtyAccepted: true 
             }
 
             rrItems.push(rrItem)
@@ -338,6 +339,10 @@
 
     async function save() {
         console.log('save', rrData.value)
+
+        if(!isValidStep2()) {
+            return 
+        }
 
         console.log('saving...')
 
@@ -394,7 +399,24 @@
         return true
     }
 
+    function isValidStep2(): boolean {
 
+        let isValid = true 
+
+        for(let item of rrData.value.rr_items) {
+
+            item.isInvalidQtyAccepted = false
+
+            if(!item.quantity_accepted || item.quantity_accepted < 0) {
+                item.isInvalidQtyAccepted = true 
+                isValid = false 
+            }
+
+        }
+
+        return isValid
+
+    }
 
     // ======================== CHILD FUNCTIONS <Items.vue> ======================== 
     

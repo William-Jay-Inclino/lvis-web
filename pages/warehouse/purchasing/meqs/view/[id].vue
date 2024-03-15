@@ -59,7 +59,12 @@
                                         <td>
                                             <div v-if="hasPO">
                                                 <div v-for="meqsSupplier in item.meqs_suppliers">
-                                                    <nuxt-link v-if="meqsSupplier.po && meqsSupplier.po.rr" :to="'/warehouse/purchasing/rr/view/' + meqsSupplier.po.rr.id">{{ meqsSupplier.po.rr.rr_number }}</nuxt-link>
+
+                                                    <div v-if="meqsSupplier.po && meqsSupplier.po.rrs.length > 0">
+                                                        <div v-for="rr in meqsSupplier.po.rrs">
+                                                            <nuxt-link :to="'/warehouse/purchasing/rr/view/' + rr.id">{{ rr.rr_number }}</nuxt-link>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div v-else>
@@ -253,7 +258,7 @@
                                 <i class="fas fa-chevron-left"></i> Back to Search
                             </nuxt-link>
                         </div>
-                        <div v-if="!item.is_deleted && !item.is_cancelled && isAdminOrOwner(item.created_by, authUser)">
+                        <div v-if="!item.cancelled_at && isAdminOrOwner(item.created_by, authUser)">
                                 <nuxt-link class="btn btn-success me-2" :to="`/warehouse/purchasing/meqs/${item.id}`">
                                     <i class="fas fa-sync"></i> Update
                                 </nuxt-link>
@@ -332,7 +337,7 @@
 
         const approvers = item.value!.meqs_approvers
 
-        if(item.value!.is_cancelled) {
+        if(item.value!.cancelled_at) {
 
             return approvalStatus[APPROVAL_STATUS.CANCELLED]
 

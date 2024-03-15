@@ -3,7 +3,7 @@ export const approvalStatus = {
     [APPROVAL_STATUS.PENDING]: {
         value: APPROVAL_STATUS.PENDING,
         label: 'Pending',
-        color: 'primary',
+        color: 'orange',
     },
     [APPROVAL_STATUS.APPROVED]: {
         value: APPROVAL_STATUS.APPROVED,

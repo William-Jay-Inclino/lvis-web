@@ -1,11 +1,11 @@
-import type { FindAllResponse } from "./item.type";
+import type { FindAllResponse, Item } from "./item.type";
 
 
 
 export async function fetchDataInSearchFilters(): Promise<{
     items: Item[],
     itemTypes: ItemType[]
-}>{
+}> {
     const query = `
         query {
             items(page: 1, pageSize: 10) {
@@ -27,17 +27,17 @@ export async function fetchDataInSearchFilters(): Promise<{
         let items = []
         let itemTypes = []
 
-        if(!response.data || !response.data.data) {
+        if (!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
         }
 
         const data = response.data.data
 
-        if(data.item && data.item.data) {
+        if (data.item && data.item.data) {
             items = response.data.data.item.data
         }
 
-        if(data.item_types) { 
+        if (data.item_types) {
             itemTypes = data.item_types
         }
         return {
@@ -54,18 +54,18 @@ export async function fetchDataInSearchFilters(): Promise<{
     }
 }
 
-export async function findAll(payload: {page: number, pageSize: number, name: string | null, item_type_id: string | null}): Promise<FindAllResponse> {
-    
+export async function findAll(payload: { page: number, pageSize: number, name: string | null, item_type_id: string | null }): Promise<FindAllResponse> {
+
     const { page, pageSize, name, item_type_id } = payload;
 
     let name2 = null
     let item_type_id2 = null
 
-    if(name) {
+    if (name) {
         name2 = `"${name}"`
-    } 
+    }
 
-    if(item_type_id) {
+    if (item_type_id) {
         item_type_id2 = `"${item_type_id}"`
     }
 
@@ -128,7 +128,7 @@ export async function findByCode(code: string): Promise<Item | undefined> {
         const response = await sendRequest(query);
         console.log('response', response)
 
-        if(response.data && response.data.data && response.data.data.item) {
+        if (response.data && response.data.data && response.data.data.item) {
             return response.data.data.item;
         }
 
@@ -151,6 +151,7 @@ export async function findOne(id: string): Promise<Item | undefined> {
                 total_quantity
                 initial_quantity
                 GWAPrice
+                alert_level
                 item_type {
                     id 
                     name
@@ -160,7 +161,7 @@ export async function findOne(id: string): Promise<Item | undefined> {
                     name
                 }
                 item_transactions {
-                    txn_number
+                    id
                     type 
                     quantity
                     price 
@@ -181,7 +182,7 @@ export async function findOne(id: string): Promise<Item | undefined> {
         const response = await sendRequest(query);
         console.log('response', response)
 
-        if(response.data && response.data.data && response.data.data.item) {
+        if (response.data && response.data.data && response.data.data.item) {
             return response.data.data.item;
         }
 

@@ -65,7 +65,11 @@
                                         <td>
                                             <div v-if="hasPO">
                                                 <div v-for="meqsSupplier in item.meqs?.meqs_suppliers">
-                                                    <nuxt-link v-if="meqsSupplier.po && meqsSupplier.po.rr" :to="'/warehouse/purchasing/rr/view/' + meqsSupplier.po.rr.id">{{ meqsSupplier.po.rr.rr_number }}</nuxt-link>
+                                                    <div v-if="meqsSupplier.po && meqsSupplier.po.rrs.length > 0">
+                                                        <div v-for="rr in meqsSupplier.po.rrs">
+                                                            <nuxt-link :to="'/warehouse/purchasing/rr/view/' + rr.id">{{ rr.rr_number }}</nuxt-link>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div v-else>
