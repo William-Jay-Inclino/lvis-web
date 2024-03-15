@@ -1,7 +1,12 @@
 <template>
 
     <div>
-        <div class="table-responsive">
+
+        <small class="fst-italic text-muted">
+            Note: Minimum of 3 and Maximum of 5 suppliers
+        </small>
+
+        <div class="table-responsive mt-2">
             <table class="table table-hover">
                 <thead>
                     <tr>
@@ -18,9 +23,14 @@
                         <td class="text-muted align-middle"> {{ item.supplier?.name }} </td>
                         <td class="text-muted align-middle"> {{ item.payment_terms }} </td>
                         <td class="text-muted align-middle">
-                            <ul class="list-group">
-                                <li class="list-group-item" v-for="attachment in item.attachments"> {{ attachment.filename }} </li>
-                            </ul>
+                            <div v-if="item.attachments.length === 0">
+                                N/A
+                            </div>
+                            <div v-else>
+                                <ul class="list-group">
+                                    <li class="list-group-item" v-for="attachment in item.attachments"> {{ attachment.filename }} </li>
+                                </ul>
+                            </div>
                         </td>
                         <td class="align-middle">
                             <button @click="removeSupplier(i)" class="btn btn-sm btn-light w-50">
@@ -76,9 +86,9 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">
-                                    Attachments <i class="text-muted"></i> <span class="text-danger">*</span>
+                                    Attachments <i class="text-muted"></i> 
                                 </label>
-                                <small class="text-muted fst-italic">(Max files: 3 & Max size per file: 5mb)</small>
+                                <small class="text-muted fst-italic">(Max files: {{ maxFileLimit }} & Max size per file: 5mb)</small>
                                 <client-only>
                                     <file-pond
                                         name="test"
@@ -147,7 +157,7 @@
                                                 >
                                             </td>
                                             <td class="text-muted">
-                                                <select class="form-select" v-model="item.vat">
+                                                <select class="form-select" v-model="item.vat" disabled>
                                                     <option :value="item" :key="item.value" v-for="item in vatArray">
                                                         {{ item.label }}
                                                     </option>
@@ -245,7 +255,7 @@ const closeSupplierModal = ref<HTMLButtonElement>()
 const _formDataErrorsInitial = {
     supplier: false,
     paymentTerms: false,
-    attachments: false,
+    // attachments: false,
     vat: false
 }
 
@@ -325,6 +335,8 @@ const vat = computed( () => {
 
 })
 
+const maxFileLimit = computed( () => props.canvass_items.length)
+
 function addSupplier() {
 
     // if(!isValid()){
@@ -366,24 +378,13 @@ function isValid(): boolean {
         formDataErrors.value.paymentTerms = true 
     }
 
-    if(formData.value.attachments.length === 0) {
-        formDataErrors.value.attachments = true
-    }
+    // if(formData.value.attachments.length === 0) {
+    //     formDataErrors.value.attachments = true
+    // }
 
     const hasErrorForm = Object.values(formDataErrors.value).includes(true);
 
     const hasInvalidPrice = formData.value.meqs_supplier_items.find(i => i.invalidPrice) 
-
-    // for(let item of formData.value.meqs_supplier_items) {
-
-    //     if(isInvalidPrice(item.price)) {
-    //         item.invalidPrice = true
-    //         hasInvalidPrice = true
-    //     }else {
-    //         item.invalidPrice = false
-    //     }
-
-    // }
 
     if(hasErrorForm || hasInvalidPrice) {
         return false

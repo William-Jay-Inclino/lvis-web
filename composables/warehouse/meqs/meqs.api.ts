@@ -98,7 +98,7 @@ export async function findByMeqsNumber(meqsNumber: string): Promise<MEQS | undef
                 meqs_approvers {
                     status
                 }
-                is_cancelled
+                cancelled_at
             }
         }
     `;
@@ -157,7 +157,7 @@ export async function findByReferenceNumber(payload: {
                 meqs_approvers {
                     status
                 }
-                is_cancelled
+                cancelled_at
             }
         }
     `;
@@ -220,7 +220,7 @@ export async function findAll(payload: { page: number, pageSize: number, date_re
                     meqs_approvers {
                         status
                     }
-                    is_cancelled
+                    cancelled_at
                 }
                 totalItems
                 currentPage
@@ -465,7 +465,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 id 
                 meqs_number 
                 meqs_date
-                is_cancelled
+                cancelled_at
                 notes
                 rv {
                     id
@@ -718,26 +718,17 @@ export async function update(id: string, input: UpdateMeqsInput): Promise<Mutati
     }
 }
 
-export async function cancel(id: string): Promise<MutationResponse> {
-
-    const authUserJson = localStorage.getItem('authUser')
-
-    if (!authUserJson) {
-        throw console.error('authUser in localstorage not found');
-    }
-
-    const authUser = JSON.parse(authUserJson) as AuthUser
+export async function cancel(id: string): Promise<CancelResponse> {
 
     const mutation = `
         mutation {
-            updateMeqs(
-                id: "${id}",
-                input: {
-                    canceller_id: "${authUser.user.id}"
-                }
+            cancelMeqs(
+                id: "${id}"
             ) {
-                id
-                is_cancelled
+                msg
+                success
+                cancelled_at
+                cancelled_by
             }
     }`;
 
@@ -745,11 +736,8 @@ export async function cancel(id: string): Promise<MutationResponse> {
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if (response.data && response.data.data && response.data.data.updateMeqs) {
-            return {
-                success: true,
-                msg: 'MEQS cancelled!'
-            };
+        if (response.data && response.data.data && response.data.data.cancelMeqs) {
+            return response.data.data.cancelMeqs
         }
 
         throw new Error(JSON.stringify(response.data.errors));

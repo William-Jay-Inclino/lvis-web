@@ -6,19 +6,34 @@ import type { MeqsSupplier, Supplier } from "./meqs-supplier";
 
 export interface MEQS {
   id: string;
-  rv: RV | null;
+  jo_id: string | null
+  rv_id: string | null
+  spr_id: string | null
   meqs_number: string;
   meqs_date: string;
   notes: string;
+
+
+  // =============== audit fields =============== 
+
+  cancelled_by: string
+  created_by: string
+  updated_by: string
+  cancelled_at: Date
+  created_at: Date
+  updated_at: Date
+
+
+  // =============== derived / resolvers =============== 
+
+  rv: RV | null;
   meqs_approvers: Approver[];
   meqs_suppliers: MeqsSupplier[];
-  is_deleted: boolean;
-  is_cancelled: boolean;
   status: APPROVAL_STATUS
 
-  // set programmatically
+
+  // =============== set programmatically =============== 
   hasAvailableSupplier?: boolean
-  created_by: string
 }
 
 export interface FindAllResponse {

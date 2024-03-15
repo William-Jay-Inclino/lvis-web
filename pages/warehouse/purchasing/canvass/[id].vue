@@ -30,7 +30,7 @@
                         RC Number
                     </label>
                     <input type="text" :value="canvass.rc_number" class="form-control" disabled>
-                    <nuxt-link class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/canvass/view/' + canvass.id" target="_blank">View info</nuxt-link>
+                    <nuxt-link class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/canvass/view/' + canvass.id" target="_blank">View canvass details</nuxt-link>
                 </div>
 
                 <div class="mb-3">

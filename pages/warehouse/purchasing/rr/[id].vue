@@ -35,12 +35,13 @@
                 <div class="mb-3">
                     <label class="form-label">RR Number</label>
                     <input type="text" class="form-control" :value="rrData.rr_number" disabled>
+                    <nuxt-link class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/rr/view/' + rrData.id" target="_blank">View RR details</nuxt-link>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">PO Number</label>
                     <input type="text" class="form-control" :value="rrData.po.po_number" disabled>
-                    <nuxt-link class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/po/view/' + rrData.po.id" target="_blank">View info</nuxt-link>
+                    <nuxt-link class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/po/view/' + rrData.po.id" target="_blank">View PO details</nuxt-link>
                 </div>
 
                 <div class="mb-3">

@@ -1,6 +1,6 @@
 <template>
 
-    <div v-if="meqsData && reference && !meqsData.is_cancelled && !meqsData.is_deleted">
+    <div v-if="meqsData && reference && !meqsData.cancelled_at">
         <h2 class="text-warning">Update MEQS</h2>
         <hr>
 
@@ -34,9 +34,15 @@
                 </div>
 
                 <div class="mb-3">
+                    <label class="form-label">Meqs Number</label>
+                    <input type="text" class="form-control" :value="meqsData.meqs_number" disabled>
+                    <nuxt-link class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/meqs/view/' + meqsData.id" target="_blank">View MEQS details</nuxt-link>
+                </div>
+
+                <div class="mb-3">
                     <label class="form-label">Reference</label>
                     <input type="text" class="form-control" :value="referenceNumber" disabled>
-                    <nuxt-link v-if="meqsData.rv" class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/rv/view/' + meqsData.rv.id" target="_blank">View info</nuxt-link>
+                    <nuxt-link v-if="meqsData.rv" class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/rv/view/' + meqsData.rv.id" target="_blank">View RV details</nuxt-link>
                 </div>
 
                 <div class="mb-3">
@@ -173,7 +179,7 @@
 
         const approvers = meqsData.value.meqs_approvers
         
-        if(meqsData.value.is_cancelled) {
+        if(meqsData.value.cancelled_at) {
 
             return approvalStatus[APPROVAL_STATUS.CANCELLED]
 
@@ -256,7 +262,7 @@
 
         if(response.success) {
             toast.success(response.msg)
-            meqsData.value.is_cancelled = true 
+            meqsData.value.cancelled_at = response.cancelled_at! 
 
             router.push('/warehouse/purchasing/meqs')
 

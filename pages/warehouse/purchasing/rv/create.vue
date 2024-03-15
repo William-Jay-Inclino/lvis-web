@@ -37,7 +37,7 @@
                                     </template>
                                 </v-select>
                             </client-only>
-                            <nuxt-link v-if="rvData.canvass" class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/canvass/view/' + rvData.canvass.id" target="_blank">View info</nuxt-link>
+                            <nuxt-link v-if="rvData.canvass" class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/canvass/view/' + rvData.canvass.id" target="_blank">View canvass details</nuxt-link>
                             <small class="text-danger fst-italic" v-if="rvDataErrors.canvass"> This field is required </small>
                         </div>
 

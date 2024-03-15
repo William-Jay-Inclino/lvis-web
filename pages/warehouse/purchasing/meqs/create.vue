@@ -69,7 +69,7 @@
                                         <v-select :options="jos" label="spr_number" v-model="meqsData.spr" v-show="transactionType === 'SPR'"></v-select>
                                         <v-select :options="sprs" label="jo_number" v-model="meqsData.jo" v-show="transactionType === 'JO'"></v-select>
                                     </client-only>
-                                    <nuxt-link v-if="meqsData.rv" class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/rv/view/' + meqsData.rv.id" target="_blank">View info</nuxt-link>
+                                    <nuxt-link v-if="meqsData.rv" class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/rv/view/' + meqsData.rv.id" target="_blank">View RV details</nuxt-link>
                                 </div>
                             </div>
                         </div>
@@ -260,7 +260,7 @@ const referenceIsJo = computed( (): boolean => !!meqsData.value.rv)
 const referenceIsSpr = computed( (): boolean => !!meqsData.value.rv) 
 const hasReference = computed( (): boolean => !!referenceIsRv.value || !!referenceIsJo.value || !!referenceIsSpr.value )
 const canProceedStep2 = computed( (): boolean => !!hasReference.value)
-const canProceedStep3 = computed( (): boolean => meqsData.value.meqs_suppliers.length > 0)
+const canProceedStep3 = computed( (): boolean => meqsData.value.meqs_suppliers.length >= 3 && meqsData.value.meqs_suppliers.length <= 5)
 
 const purpose = computed( () => {
 

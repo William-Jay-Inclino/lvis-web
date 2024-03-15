@@ -33,17 +33,25 @@
 
                 <div class="mb-3">
                     <label class="form-label">
-                        Date
+                        RV Number
                     </label>
-                    <input type="date" class="form-control" :value="rvData.date_requested" disabled>
+                    <input type="text" class="form-control" :value="rvData.rv_number" disabled>
+                    <nuxt-link class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/rv/view/' + rvData.id" target="_blank">View RV details</nuxt-link>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">
-                        RC Number <span class="text-danger">*</span>
+                        RC Number
                     </label>
                     <input type="text" class="form-control" :value="rvData.canvass.rc_number" disabled>
-                    <nuxt-link class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/canvass/view/' + rvData.canvass.id" target="_blank">View info</nuxt-link>
+                    <nuxt-link class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/canvass/view/' + rvData.canvass.id" target="_blank">View canvass details</nuxt-link>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">
+                        Date
+                    </label>
+                    <input type="date" class="form-control" :value="rvData.date_requested" disabled>
                 </div>
 
                 <div class="mb-3">

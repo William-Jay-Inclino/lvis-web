@@ -366,31 +366,6 @@
         isMobile.value = window.innerWidth < MOBILE_WIDTH
     }
 
-    function getStatus(meqs: MEQS) {
-        
-        const approvers = meqs.meqs_approvers
-        
-        if(meqs.is_cancelled) {
-
-            return approvalStatus[APPROVAL_STATUS.CANCELLED]
-
-        }
-
-        const hasDisapproved = approvers.find(i => i.status === APPROVAL_STATUS.DISAPPROVED)
-
-        if(hasDisapproved) {
-            return approvalStatus[APPROVAL_STATUS.DISAPPROVED]
-        }
-
-        const hasPending = approvers.find(i => i.status === APPROVAL_STATUS.PENDING)
-
-        if(hasPending) {
-            return approvalStatus[APPROVAL_STATUS.PENDING]
-        }
-
-        return approvalStatus[APPROVAL_STATUS.APPROVED]
-    }
-
     function onClickEdit(id: string) {
         router.push('/warehouse/purchasing/meqs/' + id)
     }

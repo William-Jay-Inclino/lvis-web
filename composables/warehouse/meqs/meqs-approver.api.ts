@@ -1,6 +1,6 @@
 import type { CreateApproverInput, MeqsApproverMutationResponse, UpdateApproverOrderResponse, UpdateApproverInput } from "./meqs-approver.types";
 
-export async function updateApproverOrder(inputs: {id: string, order: number}[]): Promise<UpdateApproverOrderResponse> {
+export async function updateApproverOrder(inputs: { id: string, order: number }[]): Promise<UpdateApproverOrderResponse> {
     const inputsString = inputs.map(({ id, order }) => `{ id: "${id}", order: ${order} }`).join('\n');
     const mutation = `
         mutation {
@@ -35,13 +35,13 @@ export async function updateApproverOrder(inputs: {id: string, order: number}[])
 
         if (response.data && response.data.data && response.data.data.updateMEQSApproverOrder) {
 
-            if(response.data.data.updateMEQSApproverOrder.success) {
+            if (response.data.data.updateMEQSApproverOrder.success) {
                 return {
                     success: true,
                     msg: 'Order updated successfully!',
                     approvers: response.data.data.updateMEQSApproverOrder.approvers
                 };
-            }else{
+            } else {
                 return {
                     success: false,
                     msg: 'Failed to update MEQS Approver Order. Please contact system administrator',
@@ -95,11 +95,11 @@ export async function create(meqsId: string, input: CreateApproverInput): Promis
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.createMeqsApprover) {
+        if (response.data && response.data.data && response.data.data.createMeqsApprover) {
             return {
                 success: true,
                 msg: 'Approver added!',
-                data: response.data.data.createMeqsApprover 
+                data: response.data.data.createMeqsApprover
             };
         }
 
@@ -107,7 +107,7 @@ export async function create(meqsId: string, input: CreateApproverInput): Promis
 
     } catch (error) {
         console.error(error);
-        
+
         return {
             success: false,
             msg: 'Failed to create MEQS Approver. Please contact system administrator'
@@ -115,7 +115,7 @@ export async function create(meqsId: string, input: CreateApproverInput): Promis
     }
 }
 
-export async function remove(id: string): Promise<{success: boolean, msg: string}> {
+export async function remove(id: string): Promise<{ success: boolean, msg: string }> {
 
     const mutation = `
         mutation {
@@ -131,7 +131,7 @@ export async function remove(id: string): Promise<{success: boolean, msg: string
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.removeMeqsApprover) {
+        if (response.data && response.data.data && response.data.data.removeMeqsApprover) {
             return {
                 success: response.data.data.removeMeqsApprover.success,
                 msg: response.data.data.removeMeqsApprover.msg
@@ -142,7 +142,7 @@ export async function remove(id: string): Promise<{success: boolean, msg: string
 
     } catch (error) {
         console.error(error);
-        
+
         return {
             success: false,
             msg: 'Failed to remove MEQS Approver. Please contact system administrator'
@@ -152,16 +152,16 @@ export async function remove(id: string): Promise<{success: boolean, msg: string
 
 export async function update(input: UpdateApproverInput): Promise<MeqsApproverMutationResponse> {
 
-    let notes = null 
+    let notes = null
     let date_approval = null
 
-    if(input.notes) {
+    if (input.notes) {
         notes = `"${input.notes}"`
-    }else{
+    } else {
         notes = `""`
     }
 
-    if(input.date_approval) {
+    if (input.date_approval) {
         date_approval = `"${input.date_approval}"`
     }
 
@@ -198,11 +198,11 @@ export async function update(input: UpdateApproverInput): Promise<MeqsApproverMu
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if(response.data && response.data.data && response.data.data.updateMeqsApprover) {
+        if (response.data && response.data.data && response.data.data.updateMeqsApprover) {
             return {
                 success: true,
                 msg: 'Approver updated!',
-                data: response.data.data.updateMeqsApprover 
+                data: response.data.data.updateMeqsApprover
             };
         }
 
@@ -210,7 +210,7 @@ export async function update(input: UpdateApproverInput): Promise<MeqsApproverMu
 
     } catch (error) {
         console.error(error);
-        
+
         return {
             success: false,
             msg: 'Failed to update MEQS Approver. Please contact system administrator'

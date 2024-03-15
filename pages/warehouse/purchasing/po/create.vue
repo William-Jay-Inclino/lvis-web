@@ -52,7 +52,7 @@
                                     </template>
                                 </v-select>
                             </client-only>
-                            <nuxt-link v-if="selectedMeqs" class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/meqs/view/' + selectedMeqs.id" target="_blank">View info</nuxt-link>
+                            <nuxt-link v-if="selectedMeqs" class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/meqs/view/' + selectedMeqs.id" target="_blank">View MEQS details</nuxt-link>
                         </div>
 
                         <div v-if="selectedMeqs" class="mb-3">

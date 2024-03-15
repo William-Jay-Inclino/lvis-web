@@ -58,7 +58,7 @@
                             </template>
                         </v-select>
                     </client-only>
-                    <nuxt-link v-if="rrData.po" class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/po/view/' + rrData.po.id" target="_blank">View info</nuxt-link>
+                    <nuxt-link v-if="rrData.po" class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/po/view/' + rrData.po.id" target="_blank">View PO details</nuxt-link>
                     <small class="text-danger fst-italic" v-if="rrDataErrors.po"> This field is required </small>
                 </div>
 

@@ -36,12 +36,13 @@
                 <div class="mb-3">
                     <label class="form-label">PO Number</label>
                     <input type="text" class="form-control" :value="poData.po_number" disabled>
+                    <nuxt-link class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/po/view/' + poData.id" target="_blank">View PO details</nuxt-link>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">MEQS Number</label>
                     <input type="text" class="form-control" :value="poData.meqs_supplier.meqs.meqs_number" disabled>
-                    <nuxt-link class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/meqs/view/' + poData.meqs_supplier.meqs.id" target="_blank">View info</nuxt-link>
+                    <nuxt-link class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/meqs/view/' + poData.meqs_supplier.meqs.id" target="_blank">View MEQS details</nuxt-link>
                 </div>
 
                 <div class="mb-3">
