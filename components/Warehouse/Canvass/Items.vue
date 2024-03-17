@@ -23,7 +23,7 @@
                 <tbody>
                     <tr v-for="item, i in canvassItems">
                         <td class="text-muted"> {{ i + 1 }} </td>
-                        <td class="text-muted"> {{ item.item ? `${item.item.code} - ${item.item.name}` : item.description }} </td>
+                        <td class="text-muted"> {{ item.description }} </td>
                         <td class="text-muted"> {{ item.item ? 'Stock' : 'Non-Stock' }} </td>
                         <td class="text-muted"> {{ item.brand ? item.brand.name : 'N/A' }} </td>
                         <td class="text-muted"> {{ item.unit ? item.unit.name : 'N/A' }} </td>
@@ -153,6 +153,7 @@
 
 <script setup lang="ts">
     import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
+    import type { Item } from '~/composables/warehouse/item/item.type';
     import { MOBILE_WIDTH } from '~/utils/config';
 
 

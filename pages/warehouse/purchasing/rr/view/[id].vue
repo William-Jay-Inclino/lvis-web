@@ -245,7 +245,6 @@
                                 <thead>
                                     <tr>
                                         <th v-show="showDescription" class="bg-secondary text-white">Description</th>
-                                        <th v-show="showItemCode" class="bg-secondary text-white">Item Code</th>
                                         <th v-show="showClass" class="bg-secondary text-white">Class</th>
                                         <th v-show="showBrand" class="bg-secondary text-white">Brand</th>
                                         <th v-show="showUnit" class="bg-secondary text-white">Unit</th>
@@ -261,7 +260,6 @@
                                 </thead>
                                 <tbody>
                                     <tr v-for="rrItem, i in item.rr_items" :key="i">
-                                        <td class="text-muted"> {{ i + 1 }} </td>
                                         <td v-show="showDescription" class="text-muted">
                                             <div class="input-group input-group-sm">
                                                 {{ i + 1 }}.
@@ -367,18 +365,18 @@
         <div class="row mb-3 pt-3 justify-content-center">
             <div class="col-lg-12">
                 <hr>
-                <div class="d-flex justify-content-between">
-                    <div>
+                <div class="d-flex justify-content-end">
+                    <div class="me-2">
                         <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rr">
-                            <i class="fas fa-chevron-left"></i> Back to Search
+                            <i class="fas fa-search"></i> Search RR
                         </nuxt-link>
                     </div>
                     <div v-if="!item.cancelled_at && isAdminOrOwner(item.created_by, authUser)">
                         <nuxt-link class="btn btn-success me-2" :to="`/warehouse/purchasing/rr/${item.id}`">
-                            <i class="fas fa-sync"></i> Update
+                            <i class="fas fa-sync"></i> Update RR
                         </nuxt-link>
                         <nuxt-link class="btn btn-primary" to="/warehouse/purchasing/rr/create">
-                            <i class="fas fa-plus"></i> Add New
+                            <i class="fas fa-plus"></i> Add New RR
                         </nuxt-link>
                     </div>
                 </div>

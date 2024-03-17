@@ -108,7 +108,6 @@
                     <table class="table table-hover table-bordered">
                         <thead>
                             <tr>
-                                <th class="bg-secondary text-white">No</th>
                                 <th v-show="showDescription" class="bg-secondary text-white">Description</th>
                                 <th v-show="showClass" class="bg-secondary text-white">Item Class</th>
                                 <th v-show="showBrand" class="bg-secondary text-white">Brand</th>
@@ -127,7 +126,6 @@
                         </thead>
                         <tbody>
                             <tr v-for="rrItem, i in rrItems" :key="i">
-                                <td class="text-muted"> {{ i + 1 }} </td>
                                 <td v-show="showDescription" class="text-muted">
                                     <div class="input-group input-group-sm">
                                         {{ i + 1 }}.
@@ -148,10 +146,15 @@
                                 </td>
                                 <td v-show="showAccepted" class="text-muted align-middle">
                                     <div class="d-flex justify-content-center align-items-center">
-                                        <input type="number" class="form-control" v-model="rrItem.quantity_accepted" style="width: 80px">
-                                    </div>
-                                    <div class="d-flex justify-content-center align-items-center">
-                                        <small class="text-danger fst-italic" v-if="rrItem.isInvalidQtyAccepted">Invalid Quantity</small>
+                                        <input 
+                                            type="number"
+                                            :class="{
+                                                'border-danger border border-2': rrItem.isInvalidQtyAccepted,
+                                            }" 
+                                            class="form-control" 
+                                            v-model="rrItem.quantity_accepted" 
+                                            style="width: 80px"
+                                        >
                                     </div>
                                 </td>
                                 <td v-show="showVat" class="text-muted text-center align-middle">

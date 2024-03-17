@@ -129,7 +129,7 @@
                                     <tbody>
                                         <tr v-for="i, count in item.canvass_items">
                                             <td> {{ count + 1 }} </td>
-                                            <td> {{ i.item ? `${i.item.code} - ${i.item.name}` : i.description }} </td>
+                                            <td> {{ i.description }} </td>
                                             <td> {{ i.item ? 'Stock' : 'Non-Stock' }} </td>
                                             <td> {{ i.brand ? i.brand.name : 'N/A' }} </td>
                                             <td> {{ i.unit ? i.unit.name : 'N/A' }} </td>

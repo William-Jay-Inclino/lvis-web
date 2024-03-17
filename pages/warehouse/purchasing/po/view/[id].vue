@@ -198,18 +198,18 @@
         <div class="row mb-3 pt-3 justify-content-center">
             <div class="col-lg-11">
                 <hr>
-                <div class="d-flex justify-content-between">
-                    <div>
+                <div class="d-flex justify-content-end">
+                    <div class="me-2">
                         <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/po">
-                            <i class="fas fa-chevron-left"></i> Back to Search
+                            <i class="fas fa-search"></i> Search PO
                         </nuxt-link>
                     </div>
                     <div v-if="!item.cancelled_at && isAdminOrOwner(item.created_by, authUser)">
                         <nuxt-link class="btn btn-success me-2" :to="`/warehouse/purchasing/po/${item.id}`">
-                            <i class="fas fa-sync"></i> Update
+                            <i class="fas fa-sync"></i> Update PO
                         </nuxt-link>
                         <nuxt-link class="btn btn-primary" to="/warehouse/purchasing/po/create">
-                            <i class="fas fa-plus"></i> Add New
+                            <i class="fas fa-plus"></i> Add New PO
                         </nuxt-link>
                     </div>
                 </div>

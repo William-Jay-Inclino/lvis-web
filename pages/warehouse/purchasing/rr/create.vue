@@ -194,6 +194,7 @@
     import Swal from 'sweetalert2'
     import { useToast } from "vue-toastification";
     import { getNetPrice } from '~/utils/helpers';
+    import type { Item } from '~/composables/warehouse/item/item.type';
 
     // CONSTANTS
     const router = useRouter();
@@ -341,6 +342,7 @@
         console.log('save', rrData.value)
 
         if(!isValidStep2()) {
+            toast.error("Unable to save. Form has an invalid quantity")
             return 
         }
 

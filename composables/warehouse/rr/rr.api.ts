@@ -1,3 +1,4 @@
+import type { Item } from "../item/item.type"
 import type { PO } from "../po/po.types"
 import type { Unit } from "../unit/unit.types"
 import type { RrApproverSettings } from "./rr-approver.types"
@@ -248,6 +249,12 @@ export async function fetchFormDataInCreate(): Promise<{
                                     name 
                                 }
                                 quantity
+                                item {
+                                    id 
+                                    code 
+                                    name 
+                                    description
+                                }
                             }
                         }
                     }
@@ -515,6 +522,12 @@ export async function findOne(id: string): Promise<RR | undefined> {
                             }
                             description
                             quantity
+                            item {
+                                id
+                                code 
+                                name
+                                description
+                            }
                         }
                     }
                 }
@@ -642,7 +655,6 @@ export async function update(id: string, input: UpdateRrInput): Promise<Mutation
         };
     }
 }
-
 
 export async function cancel(id: string): Promise<CancelResponse> {
 
