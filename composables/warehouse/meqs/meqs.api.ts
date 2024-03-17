@@ -456,6 +456,7 @@ export async function fetchFormDataInCreate(): Promise<{
 
 export async function fetchFormDataInUpdate(id: string): Promise<{
     employees: Employee[],
+    suppliers: Supplier[],
     meqs: MEQS | undefined
 }> {
 
@@ -480,6 +481,20 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                         }
                         purpose
                         notes
+                        canvass_items{
+                            id
+                            canvass_id
+                            description
+                            brand{
+                                id
+                                name
+                            }
+                            unit{
+                                id
+                                name
+                            }
+                            quantity
+                        }
                     }
                 }
                 meqs_approvers {
@@ -496,6 +511,45 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                     label
                     order
                 }
+                meqs_suppliers {
+                    id
+                    payment_terms 
+                    supplier {
+                        id 
+                        name 
+                        vat_type
+                    }
+                    attachments {
+                        id 
+                        src
+                    }
+                    meqs_supplier_items {
+                        id 
+                        price 
+                        notes 
+                        is_awarded 
+                        vat_type
+                        canvass_item {
+                            id 
+                            brand {
+                                id 
+                                name
+                            }
+                            unit {
+                                id 
+                                name 
+                            }
+                            item {
+                                id
+                                code 
+                                name 
+                                description
+                            }
+                            description
+                            quantity
+                        }
+                    }
+                }
             },
             employees(page: 1, pageSize: 50) {
                 data {
@@ -505,6 +559,11 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                     lastname
                 }
             },
+            suppliers{
+                id 
+                name
+                vat_type
+            }
         }
     `;
 
@@ -513,6 +572,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
         console.log('response', response)
 
         let employees: Employee[] = []
+        let suppliers: Supplier[] = []
 
         if (!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
@@ -528,16 +588,22 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
             employees = response.data.data.employees.data
         }
 
+        if (data.suppliers) {
+            suppliers = data.suppliers
+        }
+
         return {
             meqs: data.meq,
-            employees
+            employees,
+            suppliers,
         }
 
     } catch (error) {
         console.error(error);
         return {
             meqs: undefined,
-            employees: []
+            employees: [],
+            suppliers: []
         }
     }
 
@@ -620,7 +686,7 @@ export async function create(input: CreateMeqsInput): Promise<MutationResponse> 
               price: ${item.price}
               notes: "${item.notes}"
               is_awarded: ${item.is_awarded}
-              vat_type: ${item.vat.value}
+              vat_type: ${item.vat!.value}
             }`;
         }).join(', ');
 

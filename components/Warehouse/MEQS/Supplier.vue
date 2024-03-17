@@ -28,7 +28,7 @@
                             </div>
                             <div v-else>
                                 <ul class="list-group">
-                                    <li class="list-group-item" v-for="attachment in item.attachments"> {{ attachment.filename }} </li>
+                                    <li class="list-group-item" v-for="file in item.files"> {{ file.filename }} </li>
                                 </ul>
                             </div>
                         </td>
@@ -195,7 +195,6 @@
 
 <script setup lang="ts">
 import Swal from 'sweetalert2'
-import type { CreateMeqsSupplierItemSubInput, CreateMeqsSupplierSubInput } from '~/composables/warehouse/meqs/meqs.types';
 import vueFilePond from "vue-filepond"
 import "filepond/dist/filepond.min.css";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css";
@@ -204,8 +203,9 @@ import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
 import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
 import { MAX_FILE_SIZE } from '~/utils/config';
-import type { Supplier } from '~/composables/warehouse/meqs/meqs-supplier';
+import type { MeqsSupplier, Supplier } from '~/composables/warehouse/meqs/meqs-supplier';
 import { VAT } from '~/utils/constants'
+import type { MeqsSupplierItem } from '~/composables/warehouse/meqs/meqs-supplier-item';
 
 const FilePond = vueFilePond(
   FilePondPluginFileValidateType,
@@ -217,7 +217,7 @@ const emits = defineEmits(['addSupplier', 'editSupplier', 'removeSupplier']);
 const props = defineProps({
     // suppliers in the form
     meqs_suppliers: {
-        type: Array as () => CreateMeqsSupplierSubInput[],
+        type: Array as () => MeqsSupplier[],
         default: () => [],
     },
     // supplier options
@@ -259,22 +259,24 @@ const _formDataErrorsInitial = {
     vat: false
 }
 
-const _formDataInitial: CreateMeqsSupplierSubInput = {
+const _formDataInitial: MeqsSupplier = {
+    id: '',
     supplier: null,
     payment_terms: '',
     attachments: [],
     meqs_supplier_items: [],
+    files: []
 }
 
 const formData = ref({..._formDataInitial})
 const formDataErrors = ref({..._formDataErrorsInitial})
 const filepond = ref()
 
-const meqs_supplier_items = computed( (): CreateMeqsSupplierItemSubInput[] => {
+const meqs_supplier_items = computed( (): MeqsSupplierItem[] => {
 
     const clonedCanvassItems = props.canvass_items.map(i => ({ ...i }))
 
-    const items: CreateMeqsSupplierItemSubInput[] = []
+    const items: MeqsSupplierItem[] = []
 
     const vat = {
         value: VAT_TYPE.NONE,
@@ -287,11 +289,13 @@ const meqs_supplier_items = computed( (): CreateMeqsSupplierItemSubInput[] => {
 
     for(let item of clonedCanvassItems) {
         items.push({
+            id: '',
             canvass_item: item,
             price: 0.00,
             notes: '',
             is_awarded: false,
             invalidPrice: true, // default is 2 since default price is 0.00
+            vat_type: VAT_TYPE.NONE,
             vat
         })
     }
@@ -309,10 +313,8 @@ const availableSuppliers = computed( () => {
 })
 
 const unallowedFiles = computed((): File[] => {
-    const _attachments = formData.value.attachments;
-    return _attachments
-        .map(attachment => attachment.file)
-        .filter(file => file.size > MAX_FILE_SIZE)
+    const _files = formData.value.files;
+    return _files!.map(file => file.file).filter(file => file.size > MAX_FILE_SIZE)
 });
 
 const canAddSupplier = computed( () => {
@@ -424,6 +426,7 @@ function onClickEdit(indx: number) {
     const item = props.meqs_suppliers[indx]
 
     formData.value = {
+        id: item.id,
         supplier: item.supplier,
         payment_terms: item.payment_terms,
         attachments: item.attachments,
@@ -445,7 +448,7 @@ function onCloseModal() {
     formData.value.attachments = []
 }
 
-function onUpdatePrice(item: CreateMeqsSupplierItemSubInput) {
+function onUpdatePrice(item: MeqsSupplierItem) {
 
     if(isInvalidPrice(item.price)) {
         item.invalidPrice = true 

@@ -7,13 +7,18 @@
         <div class="row pt-3">
             <div class="col">
                 <ul class="nav nav-tabs justify-content-center">
-                    <li class="nav-item" @click="isMEQSDetailForm = true">
-                        <a class="nav-link" :class="{'active': isMEQSDetailForm}" href="#">
+                    <li class="nav-item" @click="onClickTab(FORM_TYPE.MEQS_INFO)">
+                        <a class="nav-link" :class="{'active': form === FORM_TYPE.MEQS_INFO}" href="#">
                             <i class="fas fa-info-circle"></i> MEQS Info
                         </a>
                     </li>
-                    <li class="nav-item" @click="isMEQSDetailForm = false">
-                        <a class="nav-link" :class="{'active': !isMEQSDetailForm}" href="#">
+                    <li class="nav-item" @click="onClickTab(FORM_TYPE.SUPPLIER)">
+                        <a class="nav-link" :class="{'active': form === FORM_TYPE.SUPPLIER}" href="#">
+                            <i class="fas fa-info-circle"></i> Suppliers
+                        </a>
+                    </li>
+                    <li class="nav-item" @click="onClickTab(FORM_TYPE.APPROVER)">
+                        <a class="nav-link" :class="{'active': form === FORM_TYPE.APPROVER}" href="#">
                             <i class="fas fa-users"></i> Approvers
                         </a>
                     </li>
@@ -22,7 +27,7 @@
         </div>
 
 
-        <div v-show="isMEQSDetailForm" class="row justify-content-center pt-5">
+        <div v-show="form === FORM_TYPE.MEQS_INFO" class="row justify-content-center pt-5">
 
             <div class="col-lg-6">
 
@@ -71,7 +76,7 @@
         </div>
 
 
-        <div v-show="!isMEQSDetailForm" class="row justify-content-center pt-5">
+        <div v-show="form === FORM_TYPE.APPROVER" class="row justify-content-center pt-5">
             
             <div class="col-12">
                 <WarehouseApprover 
@@ -89,9 +94,26 @@
 
         </div>
 
+        <div v-show="form === FORM_TYPE.SUPPLIER" class="row justify-content-center pt-5">
+
+            <div class="12">
+
+                <WarehouseMEQSSupplier
+                    :suppliers="suppliers"
+                    :meqs_suppliers="meqsData.meqs_suppliers"
+                    :canvass_items="reference.canvass.canvass_items" 
+                    @add-supplier="addSupplier"
+                    @edit-supplier="editSupplier"
+                    @remove-supplier="removeSupplier"
+                />
+
+            </div>
+
+        </div>
+
 
         <div class="row justify-content-center pt-3">
-            <div :class="{'col-lg-6': isMEQSDetailForm, 'col-12': !isMEQSDetailForm}">
+            <div :class="{'col-lg-6': form === FORM_TYPE.MEQS_INFO, 'col-12': form !== FORM_TYPE.MEQS_INFO}">
                 <div class="d-flex justify-content-between pt-3">
                     <div>
                         <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/meqs">
@@ -105,7 +127,7 @@
                         <button type="button" class="btn btn-primary me-2">
                             <i class="fas fa-print"></i> Print
                         </button>
-                        <button v-if="isMEQSDetailForm" @click="updateMeqsInfo()" type="button" class="btn btn-success" :disabled="isUpdating">
+                        <button v-if="form === FORM_TYPE.MEQS_INFO" @click="updateMeqsInfo()" type="button" class="btn btn-success" :disabled="isUpdating">
                             <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
                         </button>
                     </div>
@@ -130,9 +152,17 @@
     import { getFullname, formatToValidHtmlDate} from '~/utils/helpers'
     import { MOBILE_WIDTH } from '~/utils/config';
     import { useToast } from "vue-toastification";
-    import type { MEQS } from '~/composables/warehouse/meqs/meqs.types';
+    import type { CreateMeqsSupplierSubInput, MEQS } from '~/composables/warehouse/meqs/meqs.types';
     import * as meqsApi from '~/composables/warehouse/meqs/meqs.api'
     import * as meqsApproverApi from '~/composables/warehouse/meqs/meqs-approver.api'
+    import type { Supplier } from '~/composables/warehouse/meqs/meqs-supplier';
+
+    const enum FORM_TYPE {
+        MEQS_INFO,
+        APPROVER,
+        SUPPLIER,
+        AWARD
+    }
 
     // DEPENDENCIES
     const route = useRoute()
@@ -141,15 +171,17 @@
 
     // FLAGS
     const isMobile = ref(false)
-    const isMEQSDetailForm = ref(true)
     const isUpdating = ref(false)
     const isUpdatingApproverOrder = ref(false)
     const isAddingApprover = ref(false)
     const isEditingApprover = ref(false)
 
+    const form = ref<FORM_TYPE>(FORM_TYPE.MEQS_INFO)
+
     const meqsData = ref<MEQS>({} as MEQS)
 
     const employees = ref<Employee[]>([])
+    const suppliers = ref<Supplier[]>([])
 
     // ======================== LIFECYCLE HOOKS ========================  
 
@@ -169,6 +201,8 @@
             i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
             return i
         })
+
+        suppliers.value = response.suppliers
 
     })
 
@@ -216,6 +250,8 @@
         }
         return ''
     })
+
+
 
 
     // ======================== FUNCTIONS ========================  
@@ -275,6 +311,32 @@
             })
         }
     }
+
+
+
+
+
+    // ======================== CHILD EVENTS: <WarehouseApprover> ========================  
+
+    function addSupplier(data: CreateMeqsSupplierSubInput) {
+        console.log('addSupplier()', data)
+        
+        toast.success('Supplier Added!')
+    }
+
+    function editSupplier(data: CreateMeqsSupplierSubInput, indx: number) {
+        console.log('editSupplier()', data)
+
+
+        toast.success('Supplier Edited!')
+    }
+
+    function removeSupplier(indx: number) {
+        meqsData.value.meqs_suppliers.splice(indx, 1)
+
+        toast.success('Supplier Removed!')
+    }
+
 
 
 
@@ -455,6 +517,10 @@
 
     function checkMobile() {
         isMobile.value = window.innerWidth < MOBILE_WIDTH
+    }
+
+    function onClickTab(formType: FORM_TYPE) {
+        form.value = formType
     }
 
 </script>

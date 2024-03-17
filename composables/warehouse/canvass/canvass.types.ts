@@ -1,6 +1,7 @@
 import type { Brand, Employee, Unit } from "~/composables/common.types";
 import type { CanvassItem } from "./canvass-item.types"
 import type { RV } from "../rv/rv.types";
+import type { Item } from "../item/item.type";
 
 
 export interface Canvass {

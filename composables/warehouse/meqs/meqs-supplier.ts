@@ -6,13 +6,17 @@ import type { VAT_TYPE } from "~/composables/common.types";
 
 export interface MeqsSupplier {
   id: string;
-  meqs: MEQS;
-  supplier: Supplier;
+  meqs?: MEQS;
+  supplier: Supplier | null;
   payment_terms: string;
-  is_referenced: boolean;
   meqs_supplier_items: MeqsSupplierItem[];
   attachments: MeqsSupplierAttachment[];
   po?: PO
+
+
+  // set programmatically 
+  files?: any[]
+  is_referenced?: boolean;
 }
 
 export interface Supplier {

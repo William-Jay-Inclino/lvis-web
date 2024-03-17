@@ -113,14 +113,14 @@
 
 <script setup lang="ts">
 import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
-import type { CreateMeqsSupplierSubInput } from '~/composables/warehouse/meqs/meqs.types';
+import type { MeqsSupplier } from '~/composables/warehouse/meqs/meqs-supplier';
 
 
 const emits = defineEmits(['awardSupplierItem', 'attachNote']);
     
 const props = defineProps({
     meqs_suppliers: {
-        type: Array as () => CreateMeqsSupplierSubInput[],
+        type: Array as () => MeqsSupplier[],
         default: () => [],
     },
     canvass_items: {

@@ -2,6 +2,7 @@ import type { APPROVAL_STATUS, Approver, VAT_TYPE } from "~/composables/common.t
 import type { RV } from "../rv/rv.types";
 import type { CanvassItem } from "../canvass/canvass-item.types";
 import type { MeqsSupplier, Supplier } from "./meqs-supplier";
+import type { MeqsSupplierItem } from "./meqs-supplier-item";
 
 
 export interface MEQS {
@@ -49,7 +50,7 @@ export interface CreateMeqsInput {
   spr: null;
   notes: string;
   approvers: MeqsApproverSettings[];
-  meqs_suppliers: CreateMeqsSupplierSubInput[];
+  meqs_suppliers: MeqsSupplier[];
 }
 
 export interface CreateMeqsSupplierSubInput {
@@ -80,8 +81,8 @@ export interface CreateMeqsSupplierAttachmentSubInput {
 
 export interface CanvassItemWithSuppliers {
   canvassItem: CanvassItem;
-  lowestPriceItem: CreateMeqsSupplierItemSubInput
-  awardedItem: CreateMeqsSupplierItemSubInput
+  lowestPriceItem: MeqsSupplierItem
+  awardedItem: MeqsSupplierItem
 }
 
 export interface MeqsApproverSettings {

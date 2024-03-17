@@ -184,13 +184,14 @@
 
 <script setup lang="ts">
 
-import type { CanvassItemWithSuppliers, CreateMeqsInput, CreateMeqsSupplierItemSubInput, CreateMeqsSupplierSubInput } from '~/composables/warehouse/meqs/meqs.types';
+import type { CanvassItemWithSuppliers, CreateMeqsInput, CreateMeqsSupplierSubInput } from '~/composables/warehouse/meqs/meqs.types';
 import type { RV } from '~/composables/warehouse/rv/rv.types';
 import * as meqsApi from '~/composables/warehouse/meqs/meqs.api'
 import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
 import { useToast } from "vue-toastification";
 import Swal from 'sweetalert2'
-import type { Supplier } from '~/composables/warehouse/meqs/meqs-supplier';
+import type { MeqsSupplier, Supplier } from '~/composables/warehouse/meqs/meqs-supplier';
+import type { MeqsSupplierItem } from '~/composables/warehouse/meqs/meqs-supplier-item';
 
 definePageMeta({
     layout: "layout-admin"
@@ -404,7 +405,7 @@ async function saveMeqs(closeRequiredNotesBtn?: HTMLButtonElement) {
         const attachmentSources = await meqsApi.uploadAttachments(supplier.attachments, API_URL)
         console.log('attachments uploaded', attachmentSources)
         if(attachmentSources) {
-            supplier.attachments = attachmentSources
+            supplier.files = attachmentSources
         }else{
             supplier.attachments = []
         }
@@ -438,7 +439,7 @@ async function saveMeqs(closeRequiredNotesBtn?: HTMLButtonElement) {
 
 }
 
-function getItemsNeedingJustification(canvassItems: CanvassItem[], meqsSuppliers: CreateMeqsSupplierSubInput[]): CanvassItemWithSuppliers[] {
+function getItemsNeedingJustification(canvassItems: CanvassItem[], meqsSuppliers: MeqsSupplier[]): CanvassItemWithSuppliers[] {
     const items: CanvassItemWithSuppliers[] = []
 
     for(let canvassItem of canvassItems) {
@@ -453,7 +454,7 @@ function getItemsNeedingJustification(canvassItems: CanvassItem[], meqsSuppliers
             continue
         }
 
-        const isAwardedNotLowest = lowestPriceItem.meqsSupplier?.supplier?.id !== awardedItem.meqsSupplier?.supplier?.id 
+        const isAwardedNotLowest = lowestPriceItem.meqs_supplier!.supplier?.id !== awardedItem.meqs_supplier?.supplier?.id 
         const hasEmptyNotes = awardedItem.notes.trim() === ''
 
         if(isAwardedNotLowest && hasEmptyNotes) {
@@ -471,15 +472,15 @@ function getItemsNeedingJustification(canvassItems: CanvassItem[], meqsSuppliers
     return items
 }
 
-function getSupplierItemsByCanvassId(canvassId: string, suppliers: CreateMeqsSupplierSubInput[]): CreateMeqsSupplierItemSubInput[] {
+function getSupplierItemsByCanvassId(canvassId: string, suppliers: MeqsSupplier[]): MeqsSupplierItem[] {
 
-    const itemsByCanvassId: CreateMeqsSupplierItemSubInput[] = []
+    const itemsByCanvassId: MeqsSupplierItem[] = []
 
     for(let supplier of suppliers) {
 
         const canvassItem = supplier.meqs_supplier_items.find(i => i.canvass_item.id === canvassId)
         if(canvassItem) {
-            canvassItem.meqsSupplier = supplier 
+            canvassItem.meqs_supplier = supplier 
             itemsByCanvassId.push(canvassItem)
         }
 
@@ -489,7 +490,7 @@ function getSupplierItemsByCanvassId(canvassId: string, suppliers: CreateMeqsSup
 
 }
 
-function getLowestPriceItem(items: CreateMeqsSupplierItemSubInput[]): CreateMeqsSupplierItemSubInput {
+function getLowestPriceItem(items: MeqsSupplierItem[]): MeqsSupplierItem {
 
     const getInitialItemIndx = items.findIndex(i => i.price !== -1)
 
@@ -505,7 +506,7 @@ function getLowestPriceItem(items: CreateMeqsSupplierItemSubInput[]): CreateMeqs
 
 // ======================== CHILD FUNCTIONS: SUPPLIER ======================== 
 
-function addSupplier(data: CreateMeqsSupplierSubInput) {
+function addSupplier(data: MeqsSupplier) {
     console.log('addSupplier()', data)
     
     meqsData.value.meqs_suppliers.push({...data})
@@ -513,7 +514,7 @@ function addSupplier(data: CreateMeqsSupplierSubInput) {
     toast.success('Supplier Added!')
 }
 
-function editSupplier(data: CreateMeqsSupplierSubInput, indx: number) {
+function editSupplier(data: MeqsSupplier, indx: number) {
     console.log('editSupplier()', data)
 
     meqsData.value.meqs_suppliers[indx] = {...data}
@@ -642,7 +643,7 @@ const isInvalidPrice = (price: number): boolean => {
     }
 }
 
-function isValidStep3(meqsSuppliers: CreateMeqsSupplierSubInput[], canvassItems: CanvassItem[]): boolean {
+function isValidStep3(meqsSuppliers: MeqsSupplier[], canvassItems: CanvassItem[]): boolean {
     
     let hasInvalidPrice = false 
 
