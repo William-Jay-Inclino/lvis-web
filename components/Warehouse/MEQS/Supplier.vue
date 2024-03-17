@@ -28,7 +28,7 @@
                             </div>
                             <div v-else>
                                 <ul class="list-group">
-                                    <li class="list-group-item" v-for="file in item.files"> {{ file.filename }} </li>
+                                    <li class="list-group-item" v-for="attachment in item.attachments"> {{ attachment.filename }} </li>
                                 </ul>
                             </div>
                         </td>
@@ -103,6 +103,12 @@
                                         fileSizeBase="1000"
                                     />
                                 </client-only>
+                            </div>
+
+                            <div v-if="filesHasDuplicate" class="mb-1">
+
+                                <small class="text-danger fst-italic"> Attachment has duplicates </small>
+
                             </div>
         
                             <div v-for="file of unallowedFiles" class="mb-1">
@@ -319,11 +325,13 @@ const unallowedFiles = computed((): File[] => {
 
 const canAddSupplier = computed( () => {
 
-    if(!isValid()) return false 
+    if(!isValidForm()) return false 
 
     const hasUnallowedFiles = unallowedFiles.value.length !== 0
 
     if(hasUnallowedFiles) return false 
+
+    if(filesHasDuplicate.value) return false 
 
     return true
 
@@ -339,11 +347,50 @@ const vat = computed( () => {
 
 const maxFileLimit = computed( () => props.canvass_items.length)
 
+
+const filesHasDuplicate = computed( (): boolean => {
+
+    if(!formData.value.files) return false 
+
+    for(let file of formData.value.files) {
+
+        console.log('filename', file.filename)
+
+        console.log('formData.value.files', formData.value.files)
+
+        const x = formData.value.files.filter(i => i.filename === file.filename)
+
+        console.log('x', x)
+
+        if(x.length > 1) {
+            return true
+        }
+
+    }
+
+    return false 
+
+})
+
+
 function addSupplier() {
 
     // if(!isValid()){
     //     return
     // }
+    
+    if(formData.value.files && formData.value.files.length > 0) {
+
+        formData.value.attachments = formData.value.files.map(i => {
+            return {
+                id: '',
+                meqs_supplier_id: '',
+                src: '',
+                filename: i.file.name,
+            }
+        })
+    }
+
     
     console.log('formData', formData.value)
 
@@ -356,7 +403,7 @@ function addSupplier() {
 
 function editSupplier() {
 
-    if(!isValid()) {
+    if(!isValidForm()) {
         return 
     }
 
@@ -368,7 +415,7 @@ function editSupplier() {
 
 }
 
-function isValid(): boolean {
+function isValidForm(): boolean {
 
     formDataErrors.value = {..._formDataErrorsInitial}
 
@@ -462,7 +509,7 @@ function handleFileProcessing(_files: any[]) {
 
     console.log('_files', _files)
 
-    formData.value.attachments = _files
+    formData.value['files'] = _files
 
 }
 

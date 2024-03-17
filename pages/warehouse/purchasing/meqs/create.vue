@@ -261,7 +261,8 @@ const referenceIsJo = computed( (): boolean => !!meqsData.value.rv)
 const referenceIsSpr = computed( (): boolean => !!meqsData.value.rv) 
 const hasReference = computed( (): boolean => !!referenceIsRv.value || !!referenceIsJo.value || !!referenceIsSpr.value )
 const canProceedStep2 = computed( (): boolean => !!hasReference.value)
-const canProceedStep3 = computed( (): boolean => meqsData.value.meqs_suppliers.length >= 3 && meqsData.value.meqs_suppliers.length <= 5)
+// const canProceedStep3 = computed( (): boolean => meqsData.value.meqs_suppliers.length >= 3 && meqsData.value.meqs_suppliers.length <= 5)
+const canProceedStep3 = computed( (): boolean => true)
 
 const purpose = computed( () => {
 
@@ -397,17 +398,30 @@ async function saveMeqs(closeRequiredNotesBtn?: HTMLButtonElement) {
     // upload attachments and update supplier.attachments of the uploaded response which is an array of sources (kung asa naka store ang images sa backend)
     for(let supplier of meqsData.value.meqs_suppliers) {
 
-        if(supplier.attachments.length === 0) {
+        if(!supplier.files) continue
+
+        if(supplier.files.length === 0) {
             continue
         }
 
-        console.log(`uploading attachments of ${supplier.supplier?.name}...`)
-        const attachmentSources = await meqsApi.uploadAttachments(supplier.attachments, API_URL)
-        console.log('attachments uploaded', attachmentSources)
-        if(attachmentSources) {
-            supplier.files = attachmentSources
-        }else{
-            supplier.attachments = []
+        console.log(`uploading files of ${supplier.supplier?.name}...`)
+        const fileSources = await meqsApi.uploadAttachments(supplier.files, API_URL)
+        console.log('files uploaded', fileSources)
+        
+        if(fileSources) {
+
+            for(let fileSrc of fileSources) {
+    
+                const [x, filename] = fileSrc.split('_')
+
+                const attachment = supplier.attachments.find(i => i.filename === filename)
+
+                if(attachment) {
+                    attachment.src = fileSrc
+                }
+    
+            }
+
         }
 
     }

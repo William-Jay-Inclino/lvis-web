@@ -522,6 +522,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                     attachments {
                         id 
                         src
+                        filename
                     }
                     meqs_supplier_items {
                         id 
@@ -693,7 +694,8 @@ export async function create(input: CreateMeqsInput): Promise<MutationResponse> 
         const attachments = meqSupplier.attachments.map(attachment => {
             return `
             {
-              src: "${attachment}"
+              src: "${attachment.src}"
+              filename: "${attachment.filename}"
             }`;
         })
 
