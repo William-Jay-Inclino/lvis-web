@@ -14,7 +14,12 @@
                     </li>
                     <li class="nav-item" @click="onClickTab(FORM_TYPE.SUPPLIER)">
                         <a class="nav-link" :class="{'active': form === FORM_TYPE.SUPPLIER}" href="#">
-                            <i class="fas fa-info-circle"></i> Suppliers
+                            <i class="fas fa-truck"></i> Manage Suppliers
+                        </a>
+                    </li>
+                    <li class="nav-item" @click="onClickTab(FORM_TYPE.AWARD)">
+                        <a class="nav-link" :class="{'active': form === FORM_TYPE.AWARD}" href="#">
+                            <i class="fas fa-medal"></i> Award Suppliers
                         </a>
                     </li>
                     <li class="nav-item" @click="onClickTab(FORM_TYPE.APPROVER)">
@@ -157,8 +162,7 @@
     import * as meqsApproverApi from '~/composables/warehouse/meqs/meqs-approver.api'
     import * as meqsSupplierApi from '~/composables/warehouse/meqs/meqs-supplier.api'
     import type { Supplier } from '~/composables/common.types';
-    import type { MeqsSupplierItem } from '~/composables/warehouse/meqs/meqs-supplier-item';
-    import type { CreateMeqsSupplierAttachmentInput, CreateMeqsSupplierInput, CreateMeqsSupplierItemInput, MeqsSupplier } from '~/composables/warehouse/meqs/meqs-supplier';
+    import type { CreateMeqsSupplierAttachmentInput, CreateMeqsSupplierInput, CreateMeqsSupplierItemInput, MeqsSupplier, UpdateMeqsSupplierInput, UpdateMeqsSupplierItemInput } from '~/composables/warehouse/meqs/meqs-supplier';
 
     const enum FORM_TYPE {
         MEQS_INFO,
@@ -265,13 +269,27 @@
     // ======================== FUNCTIONS ========================  
     function populateForm(data: MEQS) {
         console.log('populateForm', data)
-        meqsData.value = data
 
         data.meqs_approvers.map(i => {
             i.date_approval = i.date_approval ? formatToValidHtmlDate(i.date_approval) : null
             i.approver!['fullname'] = getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname)
             return i
         })
+
+        for(let supplier of data.meqs_suppliers) {
+
+            supplier.meqs_supplier_items.map(i => {
+                i['vat'] = {
+                    value: i.vat_type,
+                    label: VAT[i.vat_type].label
+                }
+                return i
+            })
+
+        }
+
+        meqsData.value = data
+        
     }
 
     async function updateMeqsInfo() {
@@ -369,17 +387,16 @@
             if(fileSources) {
     
                 for(let fileSrc of fileSources) {
-        
+
                     const [x, filename] = fileSrc.split('_')
-    
-                    const attachment = attachments.find(i => i.filename === filename)
-    
-                    if(attachment) {
-                        attachment.src = fileSrc
-                    }
-        
+
+                    attachments.push({
+                        src: fileSrc,
+                        filename
+                    })
+
                 }
-    
+
             }
         }
 
@@ -390,8 +407,17 @@
         isAddingSupplier.value = false
 
         if(response.success && response.data) {
+
+            response.data.meqs_supplier_items.map(i => {
+                i['vat'] = {
+                    value: i.vat_type,
+                    label: VAT[i.vat_type].label
+                }
+                return i
+            })
+
             meqsData.value.meqs_suppliers.push(response.data)
-            toast.success('Supplier Added!')
+            toast.success(response.msg)
         } else {
 
             Swal.fire({
@@ -405,11 +431,91 @@
         
     }
 
-    function editSupplier(data: CreateMeqsSupplierSubInput, indx: number) {
-        console.log('editSupplier()', data)
+    async function editSupplier(payload: MeqsSupplier, indx: number) {
+        console.log('editSupplier()', payload)
 
 
-        toast.success('Supplier Edited!')
+        const meqs_supplier_items: UpdateMeqsSupplierItemInput[] = payload.meqs_supplier_items.map(i => {
+
+            return {
+                id: i.id,
+                price: i.price,
+                notes: i.notes,
+                is_awarded: i.is_awarded,
+                vat_type: i.vat!.value
+            }
+
+        })
+
+        let attachments: CreateMeqsSupplierAttachmentInput[] = payload.attachments.map(i => {
+            return {
+                src: i.src,
+                filename: i.filename
+            }
+        })
+
+
+        // upload files first if there are any
+
+        if(payload.files && payload.files.length > 0) {
+            const fileSources = await meqsApi.uploadAttachments(payload.files, API_URL)
+            console.log('files uploaded', fileSources)
+            
+            if(fileSources) {
+    
+                for(let fileSrc of fileSources) {
+        
+                    const [x, filename] = fileSrc.split('_')
+    
+                    attachments.push({
+                        src: fileSrc,
+                        filename
+                    })
+        
+                }
+    
+            }
+        }
+
+
+        const data: UpdateMeqsSupplierInput = {
+            payment_terms: payload.payment_terms,
+            meqs_supplier_items,
+            attachments
+        }
+
+
+        console.log('data', data)
+
+        isEditingApprover.value = true
+        const response = await meqsSupplierApi.update(payload.id, data)
+        isEditingApprover.value = false
+
+        if(response.success && response.data) {
+
+            response.data.meqs_supplier_items.map(i => {
+                i['vat'] = {
+                    value: i.vat_type,
+                    label: VAT[i.vat_type].label
+                }
+                return i
+            })
+            
+            meqsData.value.meqs_suppliers[indx] = {...response.data}
+
+            toast.success(response.msg)
+        } else {
+
+            Swal.fire({
+                title: 'Error!',
+                text: response.msg,
+                icon: 'error',
+                position: 'top',
+            })
+
+        }
+
+
     }
 
     async function removeSupplier(indx: number) {

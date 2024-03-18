@@ -52,24 +52,6 @@
                             
                         </div>
                     </td>
-                    <!-- <td v-for="meqsSupplier in meqs_suppliers">
-                        <div class="d-flex justify-content-center align-items-center">
-                            <input
-                              type="number"
-                              @input="updatePrice($event, meqsSupplier, item.id)"
-                              class="form-control me-2 border border-2"
-                              :class="{
-                                'border-danger': !isInitial && isPriceInvalid(meqsSupplier, item.id),
-                                'border-success': !isInitial && !isPriceInvalid(meqsSupplier, item.id)
-                                }
-                              "
-                              style="width: 100px">
-                            <i
-                              class="fas fa-star clickable-icon fs-5"
-                              @click="emits('awardSupplierItem', meqsSupplier, item.id)"
-                              :class="{'text-warning': isAwarded(meqsSupplier, item.id)}"></i>
-                        </div>
-                    </td> -->
                     <td class="align-middle text-center">
                         <button @click="onClickAttachNote(item.id)" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#attachNoteModal">
                             Attach

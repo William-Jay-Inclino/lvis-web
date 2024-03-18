@@ -172,7 +172,7 @@
                             </thead>
                             <tbody>
                                 <tr v-for="i, count in item.meqs_suppliers">
-                                    <td class="text-muted align-middle"> {{ i.supplier.name }} </td>
+                                    <td class="text-muted align-middle"> {{ i.supplier!.name }} </td>
                                     <td class="text-muted align-middle"> {{ i.payment_terms }} </td>
                                     <td>
                                         <div class="d-flex flex-wrap">

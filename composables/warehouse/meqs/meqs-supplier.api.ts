@@ -1,4 +1,4 @@
-import type { CreateMeqsSupplierInput } from "./meqs-supplier";
+import type { CreateMeqsSupplierInput, UpdateMeqsSupplierInput } from "./meqs-supplier";
 import type { MutationResponse } from "./meqs-supplier";
 
 
@@ -97,6 +97,105 @@ export async function create(input: CreateMeqsSupplierInput): Promise<MutationRe
         return {
             success: false,
             msg: 'Failed to create Supplier. Please contact system administrator'
+        };
+    }
+
+}
+
+export async function update(id: string, input: UpdateMeqsSupplierInput): Promise<MutationResponse> {
+
+    const meqs_supplier_items = input.meqs_supplier_items.map(item => {
+        return `
+        {
+          id: "${item.id}"
+          price: ${item.price}
+          notes: "${item.notes}"
+          is_awarded: ${item.is_awarded}
+          vat_type: ${item.vat_type}
+        }`;
+    }).join(', ');
+
+
+    const attachments = input.attachments.map(attachment => {
+        return `
+        {
+          src: "${attachment.src}"
+          filename: "${attachment.filename}"
+        }`;
+    })
+
+
+    const mutation = `
+        mutation {
+            updateMeqsSupplier(
+                id: "${id}",
+                input: {
+                    payment_terms: "${input.payment_terms}"
+                    meqs_supplier_items: [${meqs_supplier_items}]
+                    attachments: [${attachments}]
+                }
+            ) {
+                id
+                payment_terms 
+                supplier {
+                    id 
+                    name 
+                    vat_type
+                }
+                attachments {
+                    id 
+                    src
+                    filename
+                }
+                meqs_supplier_items {
+                    id 
+                    price 
+                    notes 
+                    is_awarded 
+                    vat_type
+                    canvass_item {
+                        id 
+                        brand {
+                            id 
+                            name
+                        }
+                        unit {
+                            id 
+                            name 
+                        }
+                        item {
+                            id
+                            code 
+                            name 
+                            description
+                        }
+                        description
+                        quantity
+                    }
+                }
+            }
+        }`;
+
+    try {
+        const response = await sendRequest(mutation);
+        console.log('response', response);
+
+        if (response.data && response.data.data && response.data.data.updateMeqsSupplier) {
+            return {
+                success: true,
+                msg: 'Supplier updated successfully!',
+                data: response.data.data.updateMeqsSupplier
+            };
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+    } catch (error) {
+        console.error(error);
+
+        return {
+            success: false,
+            msg: 'Failed to update Supplier. Please contact system administrator'
         };
     }
 

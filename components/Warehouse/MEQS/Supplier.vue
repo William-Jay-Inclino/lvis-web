@@ -69,10 +69,15 @@
                         <div class="col">
 
                             <div class="mb-3">
-                                <label class="form-label"> Supplier </label> <span class="text-danger">*</span>
-                                <client-only>
-                                    <v-select @option:selected="onChangeSupplier" :options="availableSuppliers" v-model="formData.supplier" label="name"></v-select>
-                                </client-only>
+                                <label class="form-label"> Supplier </label> <span class="text-danger" v-if="formIsAdd">*</span>
+                                <div v-if="formIsAdd">
+                                    <client-only>
+                                        <v-select @option:selected="onChangeSupplier" :options="availableSuppliers" v-model="formData.supplier" label="name"></v-select>
+                                    </client-only>
+                                </div>
+                                <div v-else>
+                                    <input type="text" class="form-control" :value="formData.supplier?.name" disabled>
+                                </div>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label"> Vat </label>
@@ -92,7 +97,7 @@
                                 <client-only>
                                     <file-pond
                                         name="test"
-                                        :files="formData.attachments"
+                                        :files="files"
                                         ref="filepond"
                                         label-idle="Drop files here..."
                                         :allow-multiple="true"
@@ -246,6 +251,9 @@ const props = defineProps({
     },
 });
 
+const config = useRuntimeConfig()
+const API_FILE_ENDPOINT = config.public.apiUrl + '/api/v1/file-upload'
+
 const vatArray = ref([
     {
         value: VAT_TYPE.NONE,
@@ -329,7 +337,13 @@ const availableSuppliers = computed( () => {
 
 const unallowedFiles = computed((): File[] => {
     const _files = formData.value.files;
-    return _files!.map(file => file.file).filter(file => file.size > MAX_FILE_SIZE)
+
+    if(_files && _files.length > 0) {
+        return _files!.map(file => file.file).filter(file => file.size > MAX_FILE_SIZE)
+    }
+
+    return []
+
 });
 
 const canAddSupplier = computed( () => {
@@ -356,7 +370,6 @@ const vat = computed( () => {
 
 const maxFileLimit = computed( () => props.canvass_items.length)
 
-
 const filesHasDuplicate = computed( (): boolean => {
 
     if(!formData.value.files) return false 
@@ -381,6 +394,24 @@ const filesHasDuplicate = computed( (): boolean => {
 
 })
 
+const files = computed( () => {
+
+    if(formData.value.attachments.length === 0) return []
+
+    const fileArray = []
+
+    for(let attachment of formData.value.attachments) {
+
+        fileArray.push({
+            source: getUploadsPath(attachment.src)
+        })
+
+    }
+
+    return fileArray
+
+})
+
 
 function addSupplier() {
 
@@ -388,20 +419,23 @@ function addSupplier() {
     //     return
     // }
     
-    if(formData.value.files && formData.value.files.length > 0) {
+    // if(formData.value.files && formData.value.files.length > 0) {
 
-        formData.value.attachments = formData.value.files.map(i => {
-            return {
-                id: '',
-                meqs_supplier_id: '',
-                src: '',
-                filename: i.file.name,
-            }
-        })
-    }
+    //     formData.value.attachments = formData.value.files.map(i => {
+    //         return {
+    //             id: '',
+    //             meqs_supplier_id: '',
+    //             src: '',
+    //             filename: i.file.name,
+    //         }
+    //     })
+    // }
 
     
     console.log('formData', formData.value)
+
+    // empty attachments since field "files" is the source of truth. We will fill up field "attachments" using the api response
+    formData.value.attachments = []
 
     emits("addSupplier", formData.value)
 
@@ -417,6 +451,9 @@ function editSupplier() {
     }
 
     console.log('formData', formData.value)
+
+    // empty attachments since field "files" is the source of truth. We will fill up field "attachments" using the api response
+    formData.value.attachments = []
 
     emits("editSupplier", formData.value, editingIndx.value)
 
@@ -551,6 +588,16 @@ const isInvalidPrice = (price: number): boolean => {
     } else {
         return false
     }
+}
+
+function getUploadsPath(src: string) {
+
+    const path = src.replace(UPLOADS_PATH, '')
+    console.log('PATH', path)
+
+    const uploadsPath = API_FILE_ENDPOINT + path 
+    return uploadsPath
+
 }
 
 </script>
