@@ -1,7 +1,7 @@
 import axios from "axios";
 import type { RV } from "../rv/rv.types";
 import type { CreateMeqsInput, FindAllResponse, MEQS, MeqsApproverSettings, MutationResponse, UpdateMeqsInput } from "./meqs.types";
-import type { Supplier } from "./meqs-supplier";
+import type { Supplier } from "~/composables/common.types";
 
 
 export async function fetchDataInSearchFilters(): Promise<{

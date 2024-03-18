@@ -110,6 +110,7 @@
     import { useToast } from "vue-toastification";
     import { MOBILE_WIDTH } from '~/utils/config';
 import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
+import type { Item } from '~/composables/warehouse/item/item.type';
 
 
     // CONSTANTS

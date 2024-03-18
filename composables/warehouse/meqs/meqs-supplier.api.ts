@@ -1,0 +1,139 @@
+import type { CreateMeqsSupplierInput } from "./meqs-supplier";
+import type { MutationResponse } from "./meqs-supplier";
+
+
+export async function create(input: CreateMeqsSupplierInput): Promise<MutationResponse> {
+
+    const meqs_supplier_items = input.meqs_supplier_items.map(item => {
+        return `
+        {
+          canvass_item_id: "${item.canvass_item_id}"
+          price: ${item.price}
+          notes: "${item.notes}"
+          is_awarded: ${item.is_awarded}
+          vat_type: ${item.vat_type}
+        }`;
+    }).join(', ');
+
+
+    const attachments = input.attachments.map(attachment => {
+        return `
+        {
+          src: "${attachment.src}"
+          filename: "${attachment.filename}"
+        }`;
+    })
+
+
+    const mutation = `
+        mutation {
+            createMeqsSupplier(
+                input: {
+                    meqs_id: "${input.meqs_id}"
+                    supplier_id: "${input.supplier_id}"
+                    payment_terms: "${input.payment_terms}"
+                    meqs_supplier_items: [${meqs_supplier_items}]
+                    attachments: [${attachments}]
+                }
+            ) {
+                id
+                payment_terms 
+                supplier {
+                    id 
+                    name 
+                    vat_type
+                }
+                attachments {
+                    id 
+                    src
+                    filename
+                }
+                meqs_supplier_items {
+                    id 
+                    price 
+                    notes 
+                    is_awarded 
+                    vat_type
+                    canvass_item {
+                        id 
+                        brand {
+                            id 
+                            name
+                        }
+                        unit {
+                            id 
+                            name 
+                        }
+                        item {
+                            id
+                            code 
+                            name 
+                            description
+                        }
+                        description
+                        quantity
+                    }
+                }
+            }
+        }`;
+
+    try {
+        const response = await sendRequest(mutation);
+        console.log('response', response);
+
+        if (response.data && response.data.data && response.data.data.createMeqsSupplier) {
+            return {
+                success: true,
+                msg: 'Supplier created successfully!',
+                data: response.data.data.createMeqsSupplier
+            };
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+    } catch (error) {
+        console.error(error);
+
+        return {
+            success: false,
+            msg: 'Failed to create Supplier. Please contact system administrator'
+        };
+    }
+
+}
+
+
+export async function remove(id: string): Promise<{ success: boolean, msg: string }> {
+
+    const mutation = `
+        mutation {
+            removeMeqsSupplier(
+                id: "${id}"
+            ) {
+                success
+                msg
+            }
+        }`;
+
+    try {
+        const response = await sendRequest(mutation);
+        console.log('response', response);
+
+        if (response.data && response.data.data && response.data.data.removeMeqsSupplier) {
+            return {
+                success: response.data.data.removeMeqsSupplier.success,
+                msg: response.data.data.removeMeqsSupplier.msg
+            };
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+    } catch (error) {
+        console.error(error);
+
+        return {
+            success: false,
+            msg: 'Failed to remove Supplier. Please contact system administrator'
+        };
+    }
+}

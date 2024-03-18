@@ -115,6 +115,7 @@
     import { useToast } from "vue-toastification";
     import { formatToValidHtmlDate } from '~/utils/helpers'
     import { MOBILE_WIDTH } from '~/utils/config';
+import type { Item } from '~/composables/warehouse/item/item.type';
 
     definePageMeta({
         layout: "layout-admin"

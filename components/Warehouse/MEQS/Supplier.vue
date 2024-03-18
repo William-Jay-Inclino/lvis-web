@@ -181,11 +181,11 @@
                     <button @click="onCloseModal()" ref="closeSupplierModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         <i class="fas fa-close"></i> Close
                     </button>
-                    <button v-if="formIsAdd" @click="addSupplier()" type="button" class="btn btn-primary" :disabled="!canAddSupplier">
-                        <i class="fas fa-plus-circle"></i> Add Supplier
+                    <button v-if="formIsAdd" @click="addSupplier()" type="button" class="btn btn-primary" :disabled="!canAddSupplier || isAddingSupplier">
+                        <i class="fas fa-plus-circle"></i> {{ isAddingSupplier ? 'Adding' : 'Add' }} Supplier
                     </button>
-                    <button v-else @click="editSupplier()" type="button" class="btn btn-primary">
-                        <i class="fas fa-plus-circle"></i> Edit Supplier
+                    <button v-else @click="editSupplier()" type="button" class="btn btn-primary" :disabled="!canAddSupplier || isEditingSupplier">
+                        <i class="fas fa-edit"></i> {{ isEditingSupplier ? 'Editing' : 'Edit' }} Supplier
                     </button>
                 </div>
                 </div>
@@ -209,9 +209,10 @@ import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
 import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
 import { MAX_FILE_SIZE } from '~/utils/config';
-import type { MeqsSupplier, Supplier } from '~/composables/warehouse/meqs/meqs-supplier';
+import type { MeqsSupplier } from '~/composables/warehouse/meqs/meqs-supplier';
 import { VAT } from '~/utils/constants'
 import type { MeqsSupplierItem } from '~/composables/warehouse/meqs/meqs-supplier-item';
+import type { Supplier } from '~/composables/common.types';
 
 const FilePond = vueFilePond(
   FilePondPluginFileValidateType,
@@ -234,7 +235,15 @@ const props = defineProps({
     canvass_items: {
         type: Array as () => CanvassItem[],
         default: () => [],
-    }
+    },
+    isAddingSupplier: {
+        type: Boolean,
+        default: false
+    },
+    isEditingSupplier: {
+        type: Boolean,
+        default: false
+    },
 });
 
 const vatArray = ref([
@@ -444,25 +453,27 @@ function isValidForm(): boolean {
 
 function removeSupplier(indx: number) {
 
-    const item = props.meqs_suppliers[indx]
+    emits('removeSupplier', indx)
 
-    if(!item) return 
+    // const item = props.meqs_suppliers[indx]
 
-    Swal.fire({
-        title: "Confirm Deletion",
-        text: `Are you sure you want to remove ${item.supplier?.name} and its associated items? This action cannot be undone.`,
-        position: "top",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#e74a3b",
-        cancelButtonColor: "#6c757d",
-        confirmButtonText: "Yes, delete it!",
-        reverseButtons: true,
-    }).then((result) => {
-        if (result.isConfirmed) {
-            emits('removeSupplier', indx)
-        }
-    });
+    // if(!item) return 
+
+    // Swal.fire({
+    //     title: "Confirm Deletion",
+    //     text: `Are you sure you want to remove ${item.supplier?.name} and its associated items? This action cannot be undone.`,
+    //     position: "top",
+    //     icon: "warning",
+    //     showCancelButton: true,
+    //     confirmButtonColor: "#e74a3b",
+    //     cancelButtonColor: "#6c757d",
+    //     confirmButtonText: "Yes, delete it!",
+    //     reverseButtons: true,
+    // }).then((result) => {
+    //     if (result.isConfirmed) {
+    //         emits('removeSupplier', indx)
+    //     }
+    // });
 
 }
 

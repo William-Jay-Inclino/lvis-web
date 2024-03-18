@@ -122,3 +122,12 @@ export interface CancelResponse {
     cancelled_at?: Date
     cancelled_by?: string
 }
+
+
+export interface Supplier {
+    id: string;
+    name: string;
+    contact: string;
+    vat_type: VAT_TYPE,
+    is_deleted: boolean;
+}

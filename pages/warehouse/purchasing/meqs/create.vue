@@ -190,8 +190,9 @@ import * as meqsApi from '~/composables/warehouse/meqs/meqs.api'
 import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
 import { useToast } from "vue-toastification";
 import Swal from 'sweetalert2'
-import type { MeqsSupplier, Supplier } from '~/composables/warehouse/meqs/meqs-supplier';
+import type { MeqsSupplier } from '~/composables/warehouse/meqs/meqs-supplier';
 import type { MeqsSupplierItem } from '~/composables/warehouse/meqs/meqs-supplier-item';
+import type { Supplier } from '~/composables/common.types';
 
 definePageMeta({
     layout: "layout-admin"

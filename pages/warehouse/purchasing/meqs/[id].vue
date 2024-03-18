@@ -155,7 +155,10 @@
     import type { CreateMeqsSupplierSubInput, MEQS } from '~/composables/warehouse/meqs/meqs.types';
     import * as meqsApi from '~/composables/warehouse/meqs/meqs.api'
     import * as meqsApproverApi from '~/composables/warehouse/meqs/meqs-approver.api'
-    import type { Supplier } from '~/composables/warehouse/meqs/meqs-supplier';
+    import * as meqsSupplierApi from '~/composables/warehouse/meqs/meqs-supplier.api'
+    import type { Supplier } from '~/composables/common.types';
+    import type { MeqsSupplierItem } from '~/composables/warehouse/meqs/meqs-supplier-item';
+    import type { CreateMeqsSupplierAttachmentInput, CreateMeqsSupplierInput, CreateMeqsSupplierItemInput, MeqsSupplier } from '~/composables/warehouse/meqs/meqs-supplier';
 
     const enum FORM_TYPE {
         MEQS_INFO,
@@ -168,6 +171,9 @@
     const route = useRoute()
     const router = useRouter();
     const toast = useToast();
+    const config = useRuntimeConfig()
+
+    const API_URL = config.public.apiUrl
 
     // FLAGS
     const isMobile = ref(false)
@@ -175,6 +181,8 @@
     const isUpdatingApproverOrder = ref(false)
     const isAddingApprover = ref(false)
     const isEditingApprover = ref(false)
+    const isAddingSupplier = ref(false)
+    const isEditingSupplier = ref(false)
 
     const form = ref<FORM_TYPE>(FORM_TYPE.MEQS_INFO)
 
@@ -318,10 +326,83 @@
 
     // ======================== CHILD EVENTS: <WarehouseApprover> ========================  
 
-    function addSupplier(data: CreateMeqsSupplierSubInput) {
-        console.log('addSupplier()', data)
+    async function addSupplier(payload: MeqsSupplier) {
+        console.log('addSupplier()', payload)
+
+        const meqs_supplier_items: CreateMeqsSupplierItemInput[] = payload.meqs_supplier_items.map(i => {
+
+            return {
+                canvass_item_id: i.canvass_item.id,
+                price: i.price,
+                notes: i.notes,
+                is_awarded: i.is_awarded,
+                vat_type: i.vat!.value
+            }
+
+        })
+
+        const attachments: CreateMeqsSupplierAttachmentInput[] = payload.attachments.map(i => {
+
+            return {
+                src: i.src,
+                filename: i.filename
+            }
+
+        })
+
+        const data: CreateMeqsSupplierInput = {
+            meqs_id: meqsData.value.id,
+            supplier_id: payload.supplier!.id,
+            payment_terms: payload.payment_terms,
+            meqs_supplier_items,
+            attachments
+
+        }
+
+
+        // upload files first if there are any
+
+        if(payload.files && payload.files.length > 0) {
+            const fileSources = await meqsApi.uploadAttachments(payload.files, API_URL)
+            console.log('files uploaded', fileSources)
+            
+            if(fileSources) {
+    
+                for(let fileSrc of fileSources) {
         
-        toast.success('Supplier Added!')
+                    const [x, filename] = fileSrc.split('_')
+    
+                    const attachment = attachments.find(i => i.filename === filename)
+    
+                    if(attachment) {
+                        attachment.src = fileSrc
+                    }
+        
+                }
+    
+            }
+        }
+
+        console.log('data', data)
+
+        isAddingSupplier.value = true
+        const response = await meqsSupplierApi.create(data)
+        isAddingSupplier.value = false
+
+        if(response.success && response.data) {
+            meqsData.value.meqs_suppliers.push(response.data)
+            toast.success('Supplier Added!')
+        } else {
+
+            Swal.fire({
+                title: 'Error!',
+                text: response.msg,
+                icon: 'error',
+                position: 'top',
+            })
+
+        }
+        
     }
 
     function editSupplier(data: CreateMeqsSupplierSubInput, indx: number) {
@@ -331,10 +412,48 @@
         toast.success('Supplier Edited!')
     }
 
-    function removeSupplier(indx: number) {
-        meqsData.value.meqs_suppliers.splice(indx, 1)
+    async function removeSupplier(indx: number) {
 
-        toast.success('Supplier Removed!')
+        const item = meqsData.value.meqs_suppliers[indx]
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: `Supplier "${item.supplier?.name}" will be removed together with it's items!`,
+            position: "top",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#e74a3b",
+            cancelButtonColor: "#6c757d",
+            confirmButtonText: "Yes, remove it!",
+            reverseButtons: true,
+            showLoaderOnConfirm: true,
+            preConfirm: async(remove) => {
+                
+                if(remove) {
+                    const response = await meqsSupplierApi.remove(item.id)
+
+                    if(response.success) {
+                        
+                        meqsData.value.meqs_suppliers.splice(indx, 1)
+                        toast.success('Supplier removed!')
+
+
+                    }else {
+
+                        Swal.fire({
+                            title: 'Error!',
+                            text: response.msg,
+                            icon: 'error',
+                            position: 'top',
+                        })
+
+                    }
+                }
+
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        })
+
     }
 
 
