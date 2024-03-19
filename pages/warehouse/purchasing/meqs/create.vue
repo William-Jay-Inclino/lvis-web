@@ -565,29 +565,37 @@ async function addAttachment(payload: {supplierIndx: number, file: any}, closeMo
 async function removeAttachment(supplierIndx: number, attachmentIndx: number) {
     console.log('removeAttachment', supplierIndx, attachmentIndx)
 
+    const meqsSupplier = meqsData.value.meqs_suppliers[supplierIndx]
+    const attachment = meqsSupplier.attachments[attachmentIndx]
+
+    Swal.fire({
+            title: "Are you sure?",
+            text: `Attachment with filename "${attachment.filename}" will be removed!`,
+            position: "top",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#e74a3b",
+            cancelButtonColor: "#6c757d",
+            confirmButtonText: "Yes, remove it!",
+            reverseButtons: true,
+            showLoaderOnConfirm: true,
+            preConfirm: async(remove) => {
+                
+                if(remove) {
+                    meqsSupplier.attachments.splice(attachmentIndx, 1)
+                    toast.success('Attachment removed!')
+                }
+
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        })
+
 }
 
 
 
 // ======================== CHILD FUNCTIONS: AWARD ======================== 
 
-// function updatePrice(meqsSupplier: CreateMeqsSupplierSubInput, canvass_item_id: string, price: number) {
-
-//     console.log('updatePrice', price)
-    
-//     const item = meqsSupplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
-
-//     if(!item) return
-
-//     item.price = price
-
-//     if(isInvalidPrice(item.price)) {
-//         item['invalidPrice'] = true
-//     } else {
-//         item['invalidPrice'] = false
-//     }
-
-// }
 
 function awardSupplierItem(meqsSupplier: CreateMeqsSupplierSubInput, canvass_item_id: string) {
 

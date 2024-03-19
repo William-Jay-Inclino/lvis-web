@@ -122,6 +122,21 @@
 
         </div>
 
+        <div v-show="form === FORM_TYPE.AWARD" class="row justify-content-center pt-5">
+
+            <div class="12">
+
+                <WarehouseMEQSAward 
+                    :meqs_suppliers="meqsData.meqs_suppliers"
+                    :canvass_items="reference.canvass.canvass_items"
+                    @award-supplier-item="awardSupplierItem"
+                    @attach-note="attachNote"
+                />
+
+            </div>
+
+        </div>
+
 
         <div class="row justify-content-center pt-3">
             <div :class="{'col-lg-6': form === FORM_TYPE.MEQS_INFO, 'col-12': form !== FORM_TYPE.MEQS_INFO}">
@@ -784,6 +799,74 @@
 
 
 
+    // ======================== CHILD EVENTS: <WarehouseApprover> ========================  
+
+
+    async function awardSupplierItem(meqsSupplier: MeqsSupplier, canvass_item_id: string, meqs_supplier_item_id: string) {
+
+        console.log('awardSupplierItem', meqsSupplier, canvass_item_id)
+
+        const item = meqsSupplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
+
+        if(!item) return
+
+        if(isInvalidPrice(item.price)) {
+            toast.error('Supplier cannot be awarded if their price is invalid')
+            return 
+        } else if(item.price === -1) {
+            toast.error('Supplier cannot be awarded if item is unavailable')
+            return 
+        } else {
+            // in order to toggle. Should only award 1 supplier in each canvass item
+            removeAwardForAllSuppliersWith(canvass_item_id)
+            
+            console.log('executed')
+            // set the award
+            item.is_awarded = true
+            
+        }
+
+
+        const response = await meqsSupplierApi.awardSupplierItem(meqs_supplier_item_id, meqsSupplier.id, canvass_item_id)
+
+        console.log('response', response)
+
+        if(response.success) {
+
+            toast.success(response.msg)
+
+        }else {
+            Swal.fire({
+                title: 'Error!',
+                text: response.msg,
+                icon: 'error',
+                position: 'top',
+            })
+        }
+    } 
+
+    async function attachNote(canvass_item_id: string, note: string) {
+
+        console.log('attachNote', canvass_item_id, note)
+
+    } 
+
+    function removeAwardForAllSuppliersWith(canvass_item_id: string) {
+
+        for(let meqsSupplier of meqsData.value.meqs_suppliers) {
+
+            const item = meqsSupplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
+
+            if(item) {
+                item.is_awarded = false
+            }
+
+        }
+
+    }
+
+
+
     // ======================== UTILS ========================  
 
     async function onCancelMeqs() {
@@ -815,6 +898,14 @@
 
     function onClickTab(formType: FORM_TYPE) {
         form.value = formType
+    }
+
+    function isInvalidPrice(price: number): boolean{
+        if(price < -1 || price === 0) {
+            return true 
+        } else {
+            return false
+        }
     }
 
 </script>

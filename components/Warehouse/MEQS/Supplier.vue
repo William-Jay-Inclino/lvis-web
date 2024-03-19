@@ -45,6 +45,9 @@
                                     </button>
                                 </div>
                             </div>
+                            <div v-else>
+                                <small class="text-muted fst-italic">---No attachments---</small>
+                            </div>
                         </td>
                         <td class="align-middle text-center">
                             <div class="row">
