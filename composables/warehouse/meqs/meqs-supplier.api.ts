@@ -116,15 +116,6 @@ export async function update(id: string, input: UpdateMeqsSupplierInput): Promis
     }).join(', ');
 
 
-    const attachments = input.attachments.map(attachment => {
-        return `
-        {
-          src: "${attachment.src}"
-          filename: "${attachment.filename}"
-        }`;
-    })
-
-
     const mutation = `
         mutation {
             updateMeqsSupplier(
@@ -132,7 +123,6 @@ export async function update(id: string, input: UpdateMeqsSupplierInput): Promis
                 input: {
                     payment_terms: "${input.payment_terms}"
                     meqs_supplier_items: [${meqs_supplier_items}]
-                    attachments: [${attachments}]
                 }
             ) {
                 id

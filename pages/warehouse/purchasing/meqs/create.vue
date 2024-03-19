@@ -125,6 +125,8 @@
                                   @add-supplier="addSupplier"
                                   @edit-supplier="editSupplier"
                                   @remove-supplier="removeSupplier"
+                                  @add-attachment="addAttachment"
+                                  @remove-attachment="removeAttachment"
                                 />
                             </div>
                         </div>
@@ -543,6 +545,27 @@ function removeSupplier(indx: number) {
     toast.success('Supplier Removed!')
 }
 
+async function addAttachment(payload: {supplierIndx: number, file: any}, closeModalBtn: HTMLButtonElement) {
+    console.log('addAttachment', payload, closeModalBtn)
+
+    const meqsSupplier = meqsData.value.meqs_suppliers[payload.supplierIndx]
+
+    meqsSupplier.attachments.push({
+        id: '',
+        meqs_supplier_id: meqsSupplier.id,
+        src: '',
+        filename: payload.file.filename
+    })
+
+    toast.success('Attachment added!')
+
+    closeModalBtn.click()
+}
+
+async function removeAttachment(supplierIndx: number, attachmentIndx: number) {
+    console.log('removeAttachment', supplierIndx, attachmentIndx)
+
+}
 
 
 
