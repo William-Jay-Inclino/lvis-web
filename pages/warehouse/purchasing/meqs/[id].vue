@@ -19,7 +19,7 @@
                     </li>
                     <li class="nav-item" @click="onClickTab(FORM_TYPE.AWARD)">
                         <a class="nav-link" :class="{'active': form === FORM_TYPE.AWARD}" href="#">
-                            <i class="fas fa-medal"></i> Award Suppliers
+                            <i class="fas fa-medal"></i> Awarding
                         </a>
                     </li>
                     <li class="nav-item" @click="onClickTab(FORM_TYPE.APPROVER)">
@@ -847,9 +847,34 @@
 
     async function attachNote(canvass_item_id: string, note: string) {
 
-        console.log('attachNote', canvass_item_id, note)
+        for(let supplier of meqsData.value.meqs_suppliers) {
 
-    } 
+            const item = supplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
+
+            if(item) {
+                item.notes = note
+            }
+
+        }
+
+        const response = await meqsSupplierApi.attachNoteSupplierItem(meqsData.value.id, canvass_item_id, note)
+
+        console.log('response', response)
+
+        if(response.success) {
+
+            toast.success(response.msg)
+
+        }else {
+            Swal.fire({
+                title: 'Error!',
+                text: response.msg,
+                icon: 'error',
+                position: 'top',
+            })
+        }
+
+    }
 
     function removeAwardForAllSuppliersWith(canvass_item_id: string) {
 
