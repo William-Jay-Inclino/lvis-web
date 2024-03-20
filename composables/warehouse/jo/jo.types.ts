@@ -1,19 +1,18 @@
-import type { APPROVAL_STATUS } from "~/composables/common.types";
+import type { APPROVAL_STATUS, Department } from "~/composables/common.types";
 import type { Canvass } from "../canvass/canvass.types";
-import type { RVApprover, RvApproverSettings } from "./rv-approver.types";
 import type { MEQS } from "../meqs/meqs.types";
+import type { JOApprover, JoApproverSettings } from "./jo-approver.types";
 
-export interface RV {
+export interface JO {
   id: string;
-  rv_number: string;
-  canvass_id: string;
-  classification_id: string | null;
-  supervisor_id: string;
+  jo_number: string;
   date_requested: string;
-  work_order_no: string;
-  work_order_date: string;
+  canvass_id: string;
+  equipment: string;
+  classification_id: string | null;
+  department_id: string | null;
+  supervisor_id: string;
   notes: string;
-
 
 
 
@@ -32,9 +31,10 @@ export interface RV {
 
   canvass: Canvass;
   meqs?: MEQS
-  rv_approvers: RVApprover[]
+  jo_approvers: JOApprover[]
   status: APPROVAL_STATUS
   classification: Classification | null;
+  department: Department
   supervisor: Employee
   is_referenced: boolean;
 
@@ -42,7 +42,7 @@ export interface RV {
 
 
 export interface FindAllResponse {
-  data: RV[]
+  data: JO[]
   totalItems: number
   currentPage: number
   totalPages: number
@@ -52,25 +52,25 @@ export interface FindAllResponse {
 export interface MutationResponse {
   success: boolean
   msg: string
-  data?: RV
+  data?: JO
 }
 
 
-export interface CreateRvInput {
+export interface CreateJoInput {
   canvass: Canvass | null;
+  equipment: string;
+  department: Department | null;
   classification: Classification | null;
   supervisor: Employee | null;
-  work_order_no: string;
-  work_order_date: string | null;
   notes: string;
-  approvers: RvApproverSettings[];
+  approvers: JoApproverSettings[];
 }
 
-export interface UpdateRvInput {
+export interface UpdateJoInput {
+  department: Department | null;
   classification: Classification | null;
   supervisor: Employee | null;
-  work_order_no: string;
-  work_order_date: string | null;
+  equipment: string;
   notes: string;
 }
 

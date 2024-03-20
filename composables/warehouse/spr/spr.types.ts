@@ -1,19 +1,17 @@
-import type { APPROVAL_STATUS } from "~/composables/common.types";
+import type { APPROVAL_STATUS, Vehicle } from "~/composables/common.types";
 import type { Canvass } from "../canvass/canvass.types";
-import type { RVApprover, RvApproverSettings } from "./rv-approver.types";
 import type { MEQS } from "../meqs/meqs.types";
+import type { SPRApprover, SprApproverSettings } from "./spr-approver.types";
 
-export interface RV {
+export interface SPR {
   id: string;
-  rv_number: string;
+  spr_number: string;
+  date_requested: string;
   canvass_id: string;
+  vehicle_id: string;
   classification_id: string | null;
   supervisor_id: string;
-  date_requested: string;
-  work_order_no: string;
-  work_order_date: string;
   notes: string;
-
 
 
 
@@ -31,8 +29,9 @@ export interface RV {
   // =============== derived / resolvers =============== 
 
   canvass: Canvass;
+  vehicle: Vehicle;
   meqs?: MEQS
-  rv_approvers: RVApprover[]
+  spr_approvers: SPRApprover[]
   status: APPROVAL_STATUS
   classification: Classification | null;
   supervisor: Employee
@@ -42,7 +41,7 @@ export interface RV {
 
 
 export interface FindAllResponse {
-  data: RV[]
+  data: SPR[]
   totalItems: number
   currentPage: number
   totalPages: number
@@ -52,25 +51,23 @@ export interface FindAllResponse {
 export interface MutationResponse {
   success: boolean
   msg: string
-  data?: RV
+  data?: SPR
 }
 
 
-export interface CreateRvInput {
+export interface CreateSprInput {
   canvass: Canvass | null;
+  vehicle: Vehicle | null;
   classification: Classification | null;
   supervisor: Employee | null;
-  work_order_no: string;
-  work_order_date: string | null;
   notes: string;
-  approvers: RvApproverSettings[];
+  approvers: SprApproverSettings[];
 }
 
-export interface UpdateRvInput {
+export interface UpdateSprInput {
+  vehicle: Vehicle | null;
   classification: Classification | null;
   supervisor: Employee | null;
-  work_order_no: string;
-  work_order_date: string | null;
   notes: string;
 }
 

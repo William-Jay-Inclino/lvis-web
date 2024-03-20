@@ -131,3 +131,18 @@ export interface Supplier {
     vat_type: VAT_TYPE,
     is_deleted: boolean;
 }
+
+
+export interface Department {
+    id: string
+    code: string
+    name: string
+    status: number
+}
+
+
+export interface Vehicle {
+    id: string
+    name: string
+    plate_number: string
+}

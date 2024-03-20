@@ -1,25 +1,25 @@
 import { APPROVAL_STATUS } from "#imports"
 
-export interface MeqsApproverSettings {
+export interface SprApproverSettings {
   approver_id: string,
   approver: Employee | null
   label: string
   order: number
 }
 
-export interface MeqsApproverMutationResponse {
+export interface SprApproverMutationResponse {
   success: boolean
   msg: string
-  data?: MEQSApprover
+  data?: SPRApprover
 }
 
 export interface UpdateApproverOrderResponse {
   success: boolean;
   msg: string;
-  approvers: MEQSApprover[];
+  approvers: SPRApprover[];
 }
 
-export interface MEQSApprover {
+export interface SPRApprover {
   id: string
   approver_id: string
   approver: Employee | null

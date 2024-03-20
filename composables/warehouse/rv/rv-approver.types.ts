@@ -7,25 +7,6 @@ export interface RvApproverSettings {
   order: number
 }
 
-export interface CreateApproverInput {
-  approver: Employee
-  label: string
-  order: number
-}
-
-export interface UpdateApproverInput {
-  id: string
-  approver: Employee | null
-  date_approval: string | null
-  notes: string | null
-  status: {
-    id: APPROVAL_STATUS,
-    label: string
-  }
-  label: string
-  order: number
-}
-
 export interface RvApproverMutationResponse {
   success: boolean
   msg: string
