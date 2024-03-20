@@ -24,7 +24,7 @@ export interface CreateMeqsSupplierInput {
   supplier_id: string
   payment_terms: string
   meqs_supplier_items: CreateMeqsSupplierItemInput[]
-  attachments: CreateMeqsSupplierAttachmentInput[]
+  attachments: CreateMeqsSupplierAttachmentSubInput[]
 }
 
 export interface CreateMeqsSupplierItemInput {
@@ -35,7 +35,7 @@ export interface CreateMeqsSupplierItemInput {
   vat_type: VAT_TYPE
 }
 
-export interface CreateMeqsSupplierAttachmentInput {
+export interface CreateMeqsSupplierAttachmentSubInput {
   src: string
   filename: string
 }
@@ -43,7 +43,6 @@ export interface CreateMeqsSupplierAttachmentInput {
 export interface UpdateMeqsSupplierInput {
   payment_terms: string
   meqs_supplier_items: UpdateMeqsSupplierItemInput[]
-  attachments: CreateMeqsSupplierAttachmentInput[]
 }
 
 export interface UpdateMeqsSupplierItemInput {

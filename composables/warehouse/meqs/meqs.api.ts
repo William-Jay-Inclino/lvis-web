@@ -649,6 +649,42 @@ export async function uploadAttachments(attachments: any[], apiUrl: string): Pro
 
 }
 
+export async function uploadSingleAttachment(attachment: any, apiUrl: string): Promise<string | null> {
+
+    console.log('uploadSingleAttachment', attachment)
+
+    const image = attachment.file
+
+    console.log('image', image)
+
+    const formData = new FormData();
+
+    formData.append('file', image)
+
+    const fileUploadApi = apiUrl + '/api/v1/file-upload/warehouse/meqs/single'
+
+    try {
+        const response = await axios.post(fileUploadApi, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+
+        console.log('response', response.data);
+
+        if (response.data && response.data.success && response.data.data) {
+            return response.data.data as string
+        }
+
+        return null
+
+    } catch (error) {
+        console.error('Error uploading images:', error);
+        return null
+    }
+
+}
+
 export async function create(input: CreateMeqsInput): Promise<MutationResponse> {
 
     let jo_id = null

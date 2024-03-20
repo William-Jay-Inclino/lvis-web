@@ -45,7 +45,7 @@
                                       >
                                     <i
                                       class="fas fa-star clickable-icon fs-5"
-                                      @click="emits('awardSupplierItem', meqsSupplier, item.id)"
+                                      @click="onAward(meqsSupplier, item.id, supplierItem)"
                                       :class="{'text-warning': supplierItem.is_awarded}"></i>
                                 </div>
                             </div>
@@ -96,6 +96,7 @@
 <script setup lang="ts">
 import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
 import type { MeqsSupplier } from '~/composables/warehouse/meqs/meqs-supplier';
+import type { MeqsSupplierItem } from '~/composables/warehouse/meqs/meqs-supplier-item';
 
 
 const emits = defineEmits(['awardSupplierItem', 'attachNote']);
@@ -129,36 +130,6 @@ const attachNoteData = ref<AttachNoteData>({..._attachNoteDataInitial})
 const closeattachNoteModal = ref<HTMLButtonElement>()
 
 
-// function updatePrice(event: Event, meqsSupplier: CreateMeqsSupplierSubInput, canvass_item_id: string) {
-
-//     // @ts-ignore
-//     const price = Number(event.target.value)
-
-//     emits('updatePrice', meqsSupplier, canvass_item_id, price)
-// }
-
-// function isAwarded(meqsSupplier: CreateMeqsSupplierSubInput, canvass_item_id: string) {
-
-//     const item = meqsSupplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
-
-//     if(!item) return
-
-//     return item.is_awarded
-
-// }
-
-// function isPriceInvalid(meqsSupplier: CreateMeqsSupplierSubInput, canvass_item_id: string) {
-//     const item = meqsSupplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
-
-//     if(!item) return
-
-//     if(item.invalidPrice) {
-//         return true 
-//     }
-//     return false
-
-// }
-
 function attachNote() {
     console.log('attachNote', attachNoteData)
 
@@ -185,6 +156,15 @@ function onClickAttachNote(canvassItemId: string) {
 
 }
 
+function onAward(meqsSupplier: MeqsSupplier, canvass_item_id: string, meqsSupplierItem: MeqsSupplierItem) {
+
+    console.log('onAward')
+
+    // if(meqsSupplierItem.is_awarded) return 
+
+    emits('awardSupplierItem', meqsSupplier, canvass_item_id, meqsSupplierItem.id)
+
+}
 
 function onCloseAttachModal() {
     attachNoteData.value = { ..._attachNoteDataInitial }

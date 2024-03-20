@@ -2,27 +2,18 @@
 
     <div>
 
-        <div class="alert alert-info" role="alert">
-            <div>
-                <small class="fst-italic">
-                    - Minimum of 3 and Maximum of 5 suppliers
-                </small>
-            </div>
-            <div v-if="!isPageCreate">
-                <small class="fst-italic">
-                    - Click filename under attachments column to view attachment 
-                </small>
-            </div>
-        </div>
+        <small class="fst-italic text-muted">
+            Note: Minimum of 3 and Maximum of 5 suppliers
+        </small>
 
         <div class="table-responsive mt-2">
-            <table class="table">
+            <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th width="25%" class="bg-secondary text-white"> Supplier </th>
-                        <th width="25%" class="bg-secondary text-white"> Payment Terms </th>
+                        <th class="bg-secondary text-white"> Supplier </th>
+                        <th class="bg-secondary text-white"> Payment Terms </th>
                         <th class="bg-secondary text-white"> Attachments </th>
-                        <th width="15%" class="bg-secondary text-white text-center">
+                        <th class="bg-secondary text-white text-center">
                             <i class="fas fa-cog"></i>
                         </th>
                     </tr>
@@ -32,41 +23,22 @@
                         <td class="text-muted align-middle"> {{ item.supplier?.name }} </td>
                         <td class="text-muted align-middle"> {{ item.payment_terms }} </td>
                         <td class="text-muted align-middle">
-                            <div v-if="item.attachments.length > 0">
-                                <div v-for="attachment, j in item.attachments">
-                                    <a v-if="!isPageCreate" class="me-2" @click="onClickViewAttachment(attachment.src)" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#imageModal" style="text-decoration: none">
-                                        {{ attachment.filename }} 
-                                    </a>
-                                    <span v-else class="me-2">
-                                        {{ attachment.filename }}
-                                    </span>
-                                    <button @click="onClickRemoveAttachment(i, j)" class="btn btn-sm btn-light text-danger">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
+                            <div v-if="item.attachments.length === 0">
+                                N/A
                             </div>
                             <div v-else>
-                                <small class="text-muted fst-italic">---No attachments---</small>
+                                <ul class="list-group">
+                                    <li class="list-group-item" v-for="attachment in item.attachments"> {{ attachment.filename }} </li>
+                                </ul>
                             </div>
                         </td>
-                        <td class="align-middle text-center">
-                            <div class="row">
-                                <div class="col">
-                                    <button @click="removeSupplier(i)" class="btn btn-sm btn-light w-100">
-                                        <i class="fas fa-trash text-danger"></i>
-                                    </button>
-                                </div>
-                                <div class="col">
-                                    <button @click="onClickEdit(i)" class="btn btn-sm btn-light w-100" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
-                                        <i class="fas fa-edit text-primary"></i>
-                                    </button>
-                                </div>
-                                <div class="col">
-                                    <button @click="onClickAddAttachment(i)" class="btn btn-sm btn-light w-100" data-bs-toggle="modal" data-bs-target="#addAttachmentModal">
-                                        <i class="fas fa-paperclip text-primary"></i>
-                                    </button>
-                                </div>
-                            </div>
+                        <td class="align-middle">
+                            <button @click="removeSupplier(i)" class="btn btn-sm btn-light w-50">
+                                <i class="fas fa-trash text-danger"></i>
+                            </button>
+                            <button @click="onClickEdit(i)" class="btn btn-sm btn-light w-50" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
+                                <i class="fas fa-edit text-primary"></i>
+                            </button>
                         </td>
                     </tr>
                 </tbody>
@@ -83,7 +55,7 @@
         </div>
 
 
-        <!-- Supplier Modal -->
+        <!-- Modal -->
         <div class="modal fade" id="addSupplierModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -116,6 +88,42 @@
                                     Payment Terms <span class="text-danger">*</span>
                                 </label>
                                 <input type="text" class="form-control" v-model="formData.payment_terms">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    Attachments <i class="text-muted"></i> 
+                                </label>
+                                <small class="text-muted fst-italic">(Max files: {{ maxFileLimit }} & Max size per file: 5mb)</small>
+                                <client-only>
+                                    <file-pond
+                                        name="test"
+                                        :files="files"
+                                        ref="filepond"
+                                        label-idle="Drop files here..."
+                                        :allow-multiple="true"
+                                        accepted-file-types="image/jpeg, image/png"
+                                        :max-files="3"
+                                        @updatefiles="handleFileProcessing"
+                                        @removefile="handleFileRemove"
+                                        fileSizeBase="1000"
+                                    />
+                                </client-only>
+                            </div>
+
+                            <div v-if="filesHasDuplicate" class="mb-1">
+
+                                <small class="text-danger fst-italic"> Attachment has duplicates </small>
+
+                            </div>
+        
+                            <div v-for="file of unallowedFiles" class="mb-1">
+                                <small class="text-muted fst-italic" v-html="
+                                    `The file <b class='text-danger'>${file.name}</b> 
+                                    (<b class='text-danger'>${(file.size / (1024 * 1024)).toFixed(2)} MB</b>) 
+                                    exceeds the maximum allowed size of <b class=text-danger>${MAX_FILE_SIZE / (1024 * 1024)} MB</b>`
+                                ">
+                                </small>
+        
                             </div>
                         </div>
                     </div>
@@ -190,67 +198,6 @@
         </div>
 
 
-        <!-- Attachment Modal -->
-        <div class="modal fade" id="addAttachmentModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-warning" id="exampleModalLabel">Add Attachment</h5>
-                    <button @click="onCloseAttachmentModal" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-
-                    <div class="mb-3" v-if="formAttachment.supplierIndx !== -1">
-
-                        <small class="text-muted fst-italic">(Max files: {{ maxFileLimit }} & Max size per file: 5mb)</small>
-
-                        <client-only>
-                            <file-pond
-                                name="test"
-                                ref="filepond"
-                                label-idle="Drop file here..."
-                                :allow-multiple="false"
-                                accepted-file-types="image/jpeg, image/png"
-                                :max-files="maxFileLimit"
-                                @updatefiles="handleFileProcessing"
-                                fileSizeBase="1000"
-                            />
-                        </client-only>
-                    </div>
-
-
-                </div>
-                <div class="modal-footer">
-                    <button @click="onCloseAttachmentModal" ref="closeAttachmentModal" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-close"></i> Close
-                    </button>
-                    <button @click="addAttachment" class="btn btn-primary" :disabled="!formAttachment.file || isAddingAttachment">
-                        <i class="fas fa-plus-circle"></i> {{ isAddingAttachment ? 'Adding...' : 'Add' }}
-                    </button>
-                </div>
-                </div>
-            </div>
-        </div>
-
-
-
-        <!-- Image Modal -->
-        
-        <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-xl">
-                <div class="modal-content">
-
-                    <div class="modal-header">
-                        <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-
-                    <div class="modal-body d-flex justify-content-center">
-                        <img :src="selectedAttachment" class="img-fluid">
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
 
 
@@ -258,12 +205,13 @@
 
 
 <script setup lang="ts">
+import Swal from 'sweetalert2'
 import vueFilePond from "vue-filepond"
 import "filepond/dist/filepond.min.css";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css";
+
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
-
 import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
 import { MAX_FILE_SIZE } from '~/utils/config';
 import type { MeqsSupplier } from '~/composables/warehouse/meqs/meqs-supplier';
@@ -276,7 +224,7 @@ const FilePond = vueFilePond(
   FilePondPluginImagePreview
 );
 
-const emits = defineEmits(['addSupplier', 'editSupplier', 'removeSupplier', 'addAttachment', 'removeAttachment']);
+const emits = defineEmits(['addSupplier', 'editSupplier', 'removeSupplier']);
     
 const props = defineProps({
     // suppliers in the form
@@ -301,14 +249,6 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
-    isAddingAttachment: {
-        type: Boolean,
-        default: false
-    },
-    isPageCreate: {
-        type: Boolean,
-        default: true
-    },
 });
 
 const config = useRuntimeConfig()
@@ -329,13 +269,11 @@ const vatArray = ref([
     }
 ])
 
+
 const formIsAdd = ref(true)
-const editingIndx = ref()
+const editingIndx = ref(0)
 
 const closeSupplierModal = ref<HTMLButtonElement>()
-const closeAttachmentModal = ref<HTMLButtonElement>()
-
-const selectedAttachment = ref('')
 
 const _formDataErrorsInitial = {
     supplier: false,
@@ -350,15 +288,11 @@ const _formDataInitial: MeqsSupplier = {
     payment_terms: '',
     attachments: [],
     meqs_supplier_items: [],
+    files: []
 }
 
 const formData = ref({..._formDataInitial})
 const formDataErrors = ref({..._formDataErrorsInitial})
-const formAttachment = ref({
-    supplierIndx: -1,
-    file: null
-})
-
 const filepond = ref()
 
 const meqs_supplier_items = computed( (): MeqsSupplierItem[] => {
@@ -401,9 +335,26 @@ const availableSuppliers = computed( () => {
 
 })
 
+const unallowedFiles = computed((): File[] => {
+    const _files = formData.value.files;
+
+    if(_files && _files.length > 0) {
+        return _files!.map(file => file.file).filter(file => file.size > MAX_FILE_SIZE)
+    }
+
+    return []
+
+});
+
 const canAddSupplier = computed( () => {
 
     if(!isValidForm()) return false 
+
+    const hasUnallowedFiles = unallowedFiles.value.length !== 0
+
+    if(hasUnallowedFiles) return false 
+
+    if(filesHasDuplicate.value) return false 
 
     return true
 
@@ -419,14 +370,77 @@ const vat = computed( () => {
 
 const maxFileLimit = computed( () => props.canvass_items.length)
 
+const filesHasDuplicate = computed( (): boolean => {
+
+    if(!formData.value.files) return false 
+
+    for(let file of formData.value.files) {
+
+        console.log('filename', file.filename)
+
+        console.log('formData.value.files', formData.value.files)
+
+        const x = formData.value.files.filter(i => i.filename === file.filename)
+
+        console.log('x', x)
+
+        if(x.length > 1) {
+            return true
+        }
+
+    }
+
+    return false 
+
+})
+
+const files = computed( () => {
+
+    if(formData.value.attachments.length === 0) return []
+
+    const fileArray = []
+
+    for(let attachment of formData.value.attachments) {
+
+        fileArray.push({
+            source: getUploadsPath(attachment.src)
+        })
+
+    }
+
+    return fileArray
+
+})
+
 
 function addSupplier() {
+
+    // if(!isValid()){
+    //     return
+    // }
+    
+    // if(formData.value.files && formData.value.files.length > 0) {
+
+    //     formData.value.attachments = formData.value.files.map(i => {
+    //         return {
+    //             id: '',
+    //             meqs_supplier_id: '',
+    //             src: '',
+    //             filename: i.file.name,
+    //         }
+    //     })
+    // }
+
     
     console.log('formData', formData.value)
+
+    // empty attachments since field "files" is the source of truth. We will fill up field "attachments" using the api response
+    formData.value.attachments = []
 
     emits("addSupplier", formData.value)
 
     closeSupplierModal.value?.click()
+
 
 }
 
@@ -438,22 +452,66 @@ function editSupplier() {
 
     console.log('formData', formData.value)
 
+    // empty attachments since field "files" is the source of truth. We will fill up field "attachments" using the api response
+    formData.value.attachments = []
+
     emits("editSupplier", formData.value, editingIndx.value)
 
     closeSupplierModal.value?.click()
 
 }
 
+function isValidForm(): boolean {
+
+    formDataErrors.value = {..._formDataErrorsInitial}
+
+    if(!formData.value.supplier) {
+        formDataErrors.value.supplier = true
+    }
+
+    if(formData.value.payment_terms.trim() === '') {
+        formDataErrors.value.paymentTerms = true 
+    }
+
+    // if(formData.value.attachments.length === 0) {
+    //     formDataErrors.value.attachments = true
+    // }
+
+    const hasErrorForm = Object.values(formDataErrors.value).includes(true);
+
+    const hasInvalidPrice = formData.value.meqs_supplier_items.find(i => i.invalidPrice) 
+
+    if(hasErrorForm || hasInvalidPrice) {
+        return false
+    }
+
+    return true
+}
+
 function removeSupplier(indx: number) {
 
     emits('removeSupplier', indx)
 
-}
+    // const item = props.meqs_suppliers[indx]
 
-function addAttachment() {
-    console.log('addAttachment', formAttachment.value)
+    // if(!item) return 
 
-    emits("addAttachment", formAttachment.value, closeAttachmentModal.value)
+    // Swal.fire({
+    //     title: "Confirm Deletion",
+    //     text: `Are you sure you want to remove ${item.supplier?.name} and its associated items? This action cannot be undone.`,
+    //     position: "top",
+    //     icon: "warning",
+    //     showCancelButton: true,
+    //     confirmButtonColor: "#e74a3b",
+    //     cancelButtonColor: "#6c757d",
+    //     confirmButtonText: "Yes, delete it!",
+    //     reverseButtons: true,
+    // }).then((result) => {
+    //     if (result.isConfirmed) {
+    //         emits('removeSupplier', indx)
+    //     }
+    // });
+
 }
 
 function onClickEdit(indx: number) {
@@ -482,31 +540,7 @@ function onClickAdd() {
 function onCloseModal() {
     formData.value = {..._formDataInitial}
     formDataErrors.value = {..._formDataErrorsInitial}
-}
-
-function onClickAddAttachment(supplierIndx: number) {
-
-    console.log('onClickAddAttachment')
-
-    formAttachment.value = {
-        supplierIndx,
-        file: null
-    }
-
-}
-
-function onClickRemoveAttachment(supplierIndx: number, attachmentIndx: number) {
-
-    emits('removeAttachment', supplierIndx, attachmentIndx)
-
-}
-
-function onCloseAttachmentModal() {
-    console.log('onCloseAttachmentModal')
-    formAttachment.value = {
-        supplierIndx: -1,
-        file: null
-    }
+    formData.value.attachments = []
 }
 
 function onUpdatePrice(item: MeqsSupplierItem) {
@@ -517,6 +551,18 @@ function onUpdatePrice(item: MeqsSupplierItem) {
         item.invalidPrice = false
     }
 
+}
+
+function handleFileProcessing(_files: any[]) {
+
+    console.log('_files', _files)
+
+    formData.value['files'] = _files
+
+}
+
+function handleFileRemove(_files: any[]) {
+    console.log('handleFileRemove', _files)
 }
 
 function onChangeSupplier() {
@@ -533,16 +579,15 @@ function onChangeSupplier() {
 
 }
 
-function handleFileProcessing(_files: any[]) {
+const isInvalidPrice = (price: number): boolean => {
 
-    console.log('_files', _files)
+    if(!price) return true
 
-    formAttachment.value.file = _files[0]
-
-}
-
-function onClickViewAttachment(src: string) {
-    selectedAttachment.value = getUploadsPath(src)
+    if(price < -1 || price === 0) {
+        return true 
+    } else {
+        return false
+    }
 }
 
 function getUploadsPath(src: string) {
@@ -553,41 +598,6 @@ function getUploadsPath(src: string) {
     const uploadsPath = API_FILE_ENDPOINT + path 
     return uploadsPath
 
-}
-
-// utils 
-
-
-function isInvalidPrice(price: number){
-    if(!price) return true
-    if(price < -1 || price === 0) {
-        return true 
-    } else {
-        return false
-    }
-}
-
-function isValidForm(): boolean {
-
-    formDataErrors.value = {..._formDataErrorsInitial}
-
-    if(!formData.value.supplier) {
-        formDataErrors.value.supplier = true
-    }
-
-    if(formData.value.payment_terms.trim() === '') {
-        formDataErrors.value.paymentTerms = true 
-    }
-
-    const hasErrorForm = Object.values(formDataErrors.value).includes(true);
-
-    const hasInvalidPrice = formData.value.meqs_supplier_items.find(i => i.invalidPrice) 
-
-    if(hasErrorForm || hasInvalidPrice) {
-        return false
-    }
-
-    return true
 }
 
 </script>

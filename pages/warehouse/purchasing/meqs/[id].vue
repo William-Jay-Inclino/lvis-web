@@ -19,7 +19,7 @@
                     </li>
                     <li class="nav-item" @click="onClickTab(FORM_TYPE.AWARD)">
                         <a class="nav-link" :class="{'active': form === FORM_TYPE.AWARD}" href="#">
-                            <i class="fas fa-medal"></i> Award Suppliers
+                            <i class="fas fa-medal"></i> Awarding
                         </a>
                     </li>
                     <li class="nav-item" @click="onClickTab(FORM_TYPE.APPROVER)">
@@ -107,9 +107,30 @@
                     :suppliers="suppliers"
                     :meqs_suppliers="meqsData.meqs_suppliers"
                     :canvass_items="reference.canvass.canvass_items" 
+                    :is-adding-supplier="isAddingSupplier"
+                    :is-editing-supplier="isEditingSupplier"
+                    :is-adding-attachment="isAddingAttachment"
+                    :is-page-create="false"
                     @add-supplier="addSupplier"
                     @edit-supplier="editSupplier"
                     @remove-supplier="removeSupplier"
+                    @add-attachment="addAttachment"
+                    @remove-attachment="removeAttachment"
+                />
+
+            </div>
+
+        </div>
+
+        <div v-show="form === FORM_TYPE.AWARD" class="row justify-content-center pt-5">
+
+            <div class="12">
+
+                <WarehouseMEQSAward 
+                    :meqs_suppliers="meqsData.meqs_suppliers"
+                    :canvass_items="reference.canvass.canvass_items"
+                    @award-supplier-item="awardSupplierItem"
+                    @attach-note="attachNote"
                 />
 
             </div>
@@ -157,12 +178,14 @@
     import { getFullname, formatToValidHtmlDate} from '~/utils/helpers'
     import { MOBILE_WIDTH } from '~/utils/config';
     import { useToast } from "vue-toastification";
-    import type { CreateMeqsSupplierSubInput, MEQS } from '~/composables/warehouse/meqs/meqs.types';
+    import type { MEQS } from '~/composables/warehouse/meqs/meqs.types';
     import * as meqsApi from '~/composables/warehouse/meqs/meqs.api'
     import * as meqsApproverApi from '~/composables/warehouse/meqs/meqs-approver.api'
     import * as meqsSupplierApi from '~/composables/warehouse/meqs/meqs-supplier.api'
+    import * as meqsSupplierAttachmentApi from '~/composables/warehouse/meqs/meqs-supplier-attachment.api'
     import type { Supplier } from '~/composables/common.types';
-    import type { CreateMeqsSupplierAttachmentInput, CreateMeqsSupplierInput, CreateMeqsSupplierItemInput, MeqsSupplier, UpdateMeqsSupplierInput, UpdateMeqsSupplierItemInput } from '~/composables/warehouse/meqs/meqs-supplier';
+    import type { CreateMeqsSupplierAttachmentSubInput, CreateMeqsSupplierInput, CreateMeqsSupplierItemInput, MeqsSupplier, UpdateMeqsSupplierInput, UpdateMeqsSupplierItemInput } from '~/composables/warehouse/meqs/meqs-supplier';
+    import type { CreateMeqsSupplierAttachmentInput } from '~/composables/warehouse/meqs/meqs-supplier-attachment';
 
     const enum FORM_TYPE {
         MEQS_INFO,
@@ -187,6 +210,7 @@
     const isEditingApprover = ref(false)
     const isAddingSupplier = ref(false)
     const isEditingSupplier = ref(false)
+    const isAddingAttachment = ref(false)
 
     const form = ref<FORM_TYPE>(FORM_TYPE.MEQS_INFO)
 
@@ -359,7 +383,7 @@
 
         })
 
-        const attachments: CreateMeqsSupplierAttachmentInput[] = payload.attachments.map(i => {
+        const attachments: CreateMeqsSupplierAttachmentSubInput[] = payload.attachments.map(i => {
 
             return {
                 src: i.src,
@@ -447,41 +471,10 @@
 
         })
 
-        let attachments: CreateMeqsSupplierAttachmentInput[] = payload.attachments.map(i => {
-            return {
-                src: i.src,
-                filename: i.filename
-            }
-        })
-
-
-        // upload files first if there are any
-
-        if(payload.files && payload.files.length > 0) {
-            const fileSources = await meqsApi.uploadAttachments(payload.files, API_URL)
-            console.log('files uploaded', fileSources)
-            
-            if(fileSources) {
-    
-                for(let fileSrc of fileSources) {
-        
-                    const [x, filename] = fileSrc.split('_')
-    
-                    attachments.push({
-                        src: fileSrc,
-                        filename
-                    })
-        
-                }
-    
-            }
-        }
-
 
         const data: UpdateMeqsSupplierInput = {
             payment_terms: payload.payment_terms,
-            meqs_supplier_items,
-            attachments
+            meqs_supplier_items
         }
 
 
@@ -562,8 +555,99 @@
 
     }
 
+    async function addAttachment(payload: {supplierIndx: number, file: any}, closeModalBtn: HTMLButtonElement) {
+        console.log('addAttachment', payload, closeModalBtn)
+
+        const meqsSupplier = meqsData.value.meqs_suppliers[payload.supplierIndx]
+
+        console.log('meqsSupplier', meqsSupplier)
+
+        isAddingAttachment.value = true
+
+        const attachmentPath = await meqsApi.uploadSingleAttachment(payload.file, API_URL)
+
+        if(attachmentPath) {
+            console.log('attachmentPath', attachmentPath)
+
+            const [x, filename] = attachmentPath.split('_')
+
+            const attachmentData: CreateMeqsSupplierAttachmentInput = {
+                meqs_supplier_id: meqsSupplier.id,
+                src: attachmentPath,
+                filename
+            }
+
+            const response = await meqsSupplierAttachmentApi.create(attachmentData)
+
+            isAddingAttachment.value = false 
+
+            if(response.success && response.data) {
+
+                meqsSupplier.attachments.push(response.data)
+                toast.success(response.msg)
+
+            } else {
+
+                Swal.fire({
+                title: 'Error!',
+                text: response.msg,
+                icon: 'error',
+                position: 'top',
+            })
+
+            }
+
+        }
+
+        closeModalBtn.click()
+    }
+
+    async function removeAttachment(supplierIndx: number, attachmentIndx: number) {
+        console.log('removeAttachment', supplierIndx, attachmentIndx)
 
 
+        const meqsSupplier = meqsData.value.meqs_suppliers[supplierIndx]
+
+        const attachment = meqsSupplier.attachments[attachmentIndx]
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: `Attachment with filename "${attachment.filename}" will be removed!`,
+            position: "top",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#e74a3b",
+            cancelButtonColor: "#6c757d",
+            confirmButtonText: "Yes, remove it!",
+            reverseButtons: true,
+            showLoaderOnConfirm: true,
+            preConfirm: async(remove) => {
+                
+                if(remove) {
+                    const response = await meqsSupplierAttachmentApi.remove(attachment.id)
+
+                    if(response.success) {
+                        
+                        meqsSupplier.attachments.splice(attachmentIndx, 1)
+                        toast.success('Attachment removed!')
+
+                    }else {
+
+                        Swal.fire({
+                            title: 'Error!',
+                            text: response.msg,
+                            icon: 'error',
+                            position: 'top',
+                        })
+
+                    }
+                }
+
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        })
+
+    }
 
 
     // ======================== CHILD EVENTS: <WarehouseApprover> ========================  
@@ -715,6 +799,99 @@
 
 
 
+    // ======================== CHILD EVENTS: <WarehouseApprover> ========================  
+
+
+    async function awardSupplierItem(meqsSupplier: MeqsSupplier, canvass_item_id: string, meqs_supplier_item_id: string) {
+
+        console.log('awardSupplierItem', meqsSupplier, canvass_item_id)
+
+        const item = meqsSupplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
+
+        if(!item) return
+
+        if(isInvalidPrice(item.price)) {
+            toast.error('Supplier cannot be awarded if their price is invalid')
+            return 
+        } else if(item.price === -1) {
+            toast.error('Supplier cannot be awarded if item is unavailable')
+            return 
+        } else {
+            // in order to toggle. Should only award 1 supplier in each canvass item
+            removeAwardForAllSuppliersWith(canvass_item_id)
+            
+            console.log('executed')
+            // set the award
+            item.is_awarded = true
+            
+        }
+
+
+        const response = await meqsSupplierApi.awardSupplierItem(meqs_supplier_item_id, meqsSupplier.id, canvass_item_id)
+
+        console.log('response', response)
+
+        if(response.success) {
+
+            toast.success(response.msg)
+
+        }else {
+            Swal.fire({
+                title: 'Error!',
+                text: response.msg,
+                icon: 'error',
+                position: 'top',
+            })
+        }
+    } 
+
+    async function attachNote(canvass_item_id: string, note: string) {
+
+        for(let supplier of meqsData.value.meqs_suppliers) {
+
+            const item = supplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
+
+            if(item) {
+                item.notes = note
+            }
+
+        }
+
+        const response = await meqsSupplierApi.attachNoteSupplierItem(meqsData.value.id, canvass_item_id, note)
+
+        console.log('response', response)
+
+        if(response.success) {
+
+            toast.success(response.msg)
+
+        }else {
+            Swal.fire({
+                title: 'Error!',
+                text: response.msg,
+                icon: 'error',
+                position: 'top',
+            })
+        }
+
+    }
+
+    function removeAwardForAllSuppliersWith(canvass_item_id: string) {
+
+        for(let meqsSupplier of meqsData.value.meqs_suppliers) {
+
+            const item = meqsSupplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
+
+            if(item) {
+                item.is_awarded = false
+            }
+
+        }
+
+    }
+
+
+
     // ======================== UTILS ========================  
 
     async function onCancelMeqs() {
@@ -746,6 +923,14 @@
 
     function onClickTab(formType: FORM_TYPE) {
         form.value = formType
+    }
+
+    function isInvalidPrice(price: number): boolean{
+        if(price < -1 || price === 0) {
+            return true 
+        } else {
+            return false
+        }
     }
 
 </script>

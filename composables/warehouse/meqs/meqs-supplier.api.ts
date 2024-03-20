@@ -116,15 +116,6 @@ export async function update(id: string, input: UpdateMeqsSupplierInput): Promis
     }).join(', ');
 
 
-    const attachments = input.attachments.map(attachment => {
-        return `
-        {
-          src: "${attachment.src}"
-          filename: "${attachment.filename}"
-        }`;
-    })
-
-
     const mutation = `
         mutation {
             updateMeqsSupplier(
@@ -132,7 +123,6 @@ export async function update(id: string, input: UpdateMeqsSupplierInput): Promis
                 input: {
                     payment_terms: "${input.payment_terms}"
                     meqs_supplier_items: [${meqs_supplier_items}]
-                    attachments: [${attachments}]
                 }
             ) {
                 id
@@ -201,7 +191,6 @@ export async function update(id: string, input: UpdateMeqsSupplierInput): Promis
 
 }
 
-
 export async function remove(id: string): Promise<{ success: boolean, msg: string }> {
 
     const mutation = `
@@ -235,4 +224,82 @@ export async function remove(id: string): Promise<{ success: boolean, msg: strin
             msg: 'Failed to remove Supplier. Please contact system administrator'
         };
     }
+}
+
+export async function awardSupplierItem(meqs_supplier_item_id: string, meqs_supplier_id: string, canvass_item_id: string): Promise<MutationResponse> {
+
+    const mutation = `
+        mutation {
+            awardMeqsSupplierItem(
+                id: "${meqs_supplier_item_id}",
+                meqs_supplier_id: "${meqs_supplier_id}",
+                canvass_item_id: "${canvass_item_id}"
+            ) {
+                success
+                msg
+            }
+        }`;
+
+    try {
+        const response = await sendRequest(mutation);
+        console.log('response', response);
+
+        if (response.data && response.data.data && response.data.data.awardMeqsSupplierItem) {
+            return {
+                success: true,
+                msg: 'Supplier awarded successfully!',
+                data: response.data.data.awardMeqsSupplierItem
+            };
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+    } catch (error) {
+        console.error(error);
+
+        return {
+            success: false,
+            msg: 'Failed to award Supplier Item. Please contact system administrator'
+        };
+    }
+
+}
+
+export async function attachNoteSupplierItem(meqs_id: string, canvass_item_id: string, notes: string): Promise<MutationResponse> {
+
+    const mutation = `
+        mutation {
+            attachNoteMeqsSupplierItem(
+                meqs_id: "${meqs_id}",
+                canvass_item_id: "${canvass_item_id}"
+                notes: "${notes}",
+            ) {
+                success
+                msg
+            }
+        }`;
+
+    try {
+        const response = await sendRequest(mutation);
+        console.log('response', response);
+
+        if (response.data && response.data.data && response.data.data.attachNoteMeqsSupplierItem) {
+            return {
+                success: true,
+                msg: 'Remarks Attached!',
+                data: response.data.data.attachNoteMeqsSupplierItem
+            };
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+    } catch (error) {
+        console.error(error);
+
+        return {
+            success: false,
+            msg: 'Failed to attach remark. Please contact system administrator'
+        };
+    }
+
 }
