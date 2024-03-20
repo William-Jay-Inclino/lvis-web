@@ -1,4 +1,4 @@
-import type { CreateApproverInput, RvApproverMutationResponse, UpdateApproverOrderResponse, UpdateApproverInput } from "./rv-approver.types";
+import type { RvApproverMutationResponse, UpdateApproverOrderResponse } from "./rv-approver.types";
 
 export async function updateApproverOrder(inputs: { id: string, order: number }[]): Promise<UpdateApproverOrderResponse> {
     const inputsString = inputs.map(({ id, order }) => `{ id: "${id}", order: ${order} }`).join('\n');

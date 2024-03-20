@@ -562,7 +562,7 @@ export async function create(input: CreateJoInput): Promise<MutationResponse> {
                     canvass_id: "${input.canvass?.id}"
                     supervisor_id: "${input.supervisor?.id}"
                     department_id: "${input.department?.id}"
-                    equipment: ${input.equipment}
+                    equipment: "${input.equipment}"
                     classification_id: ${classification_id}
                     notes: "${input.notes}"
                     approvers: [${approvers}]

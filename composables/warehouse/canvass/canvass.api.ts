@@ -1,3 +1,4 @@
+import type { Item } from "../item/item.type";
 import type { Canvass, CreateCanvassInput, FindAllResponse, MutationResponse, UpdateCanvassInput } from "./canvass.types";
 import { sendRequest } from "~/utils/api"
 

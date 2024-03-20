@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2 class="text-warning">Create RV</h2>
+        <h2 class="text-warning">Create JO</h2>
         <hr>
 
         <div class="row pb-3">
@@ -15,7 +15,7 @@
                             </label>
                             <client-only>
                                 <v-select @option:selected="onRcNumberSelected" :options="canvasses" label="rc_number"
-                                    v-model="rvData.canvass">
+                                    v-model="joData.canvass">
                                     <template v-slot:option="option">
                                         <div v-if="option.is_referenced" class="row">
                                             <div class="col">
@@ -38,10 +38,10 @@
                                     </template>
                                 </v-select>
                             </client-only>
-                            <nuxt-link v-if="rvData.canvass" class="btn btn-sm btn-light text-primary"
-                                :to="'/warehouse/purchasing/canvass/view/' + rvData.canvass.id" target="_blank">View
+                            <nuxt-link v-if="joData.canvass" class="btn btn-sm btn-light text-primary"
+                                :to="'/warehouse/purchasing/canvass/view/' + joData.canvass.id" target="_blank">View
                                 canvass details</nuxt-link>
-                            <small class="text-danger fst-italic" v-if="rvDataErrors.canvass"> This field is required
+                            <small class="text-danger fst-italic" v-if="joDataErrors.canvass"> This field is required
                             </small>
                         </div>
 
@@ -49,8 +49,8 @@
                             <label class="form-label">
                                 Requisitioner
                             </label>
-                            <input v-if="rvData.canvass"
-                                :value="getFullname(rvData.canvass.requested_by!.firstname, rvData.canvass.requested_by!.middlename, rvData.canvass.requested_by!.lastname)"
+                            <input v-if="joData.canvass"
+                                :value="getFullname(joData.canvass.requested_by!.firstname, joData.canvass.requested_by!.middlename, joData.canvass.requested_by!.lastname)"
                                 type="text" class="form-control" disabled>
                             <input v-else type="text" class="form-control" disabled>
                         </div>
@@ -59,7 +59,7 @@
                             <label class="form-label">
                                 Purpose
                             </label>
-                            <textarea v-if="rvData.canvass" :value="rvData.canvass.purpose" class="form-control"
+                            <textarea v-if="joData.canvass" :value="joData.canvass.purpose" class="form-control"
                                 rows="3" disabled> </textarea>
                             <textarea v-else class="form-control" rows="3" disabled> </textarea>
                         </div>
@@ -68,7 +68,7 @@
                             <label class="form-label">
                                 Requisitioner Notes
                             </label>
-                            <textarea v-if="rvData.canvass" :value="rvData.canvass.notes" class="form-control" rows="3"
+                            <textarea v-if="joData.canvass" :value="joData.canvass.notes" class="form-control" rows="3"
                                 disabled> </textarea>
                             <textarea v-else class="form-control" rows="3" disabled> </textarea>
                         </div>
@@ -78,9 +78,9 @@
                                 Imd. Sup. <span class="text-danger">*</span>
                             </label>
                             <client-only>
-                                <v-select :options="employees" label="fullname" v-model="rvData.supervisor"></v-select>
+                                <v-select :options="employees" label="fullname" v-model="joData.supervisor"></v-select>
                             </client-only>
-                            <small class="text-danger fst-italic" v-if="rvDataErrors.supervisor"> This field is required
+                            <small class="text-danger fst-italic" v-if="joDataErrors.supervisor"> This field is required
                             </small>
                         </div>
 
@@ -90,33 +90,39 @@
                             </label>
                             <client-only>
                                 <v-select :options="classifications" label="name"
-                                    v-model="rvData.classification"></v-select>
+                                    v-model="joData.classification"></v-select>
                             </client-only>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">
-                                Work Order No.
+                                Department
                             </label>
-                            <input type="text" class="form-control" v-model="rvData.work_order_no">
+                            <client-only>
+                                <v-select :options="departments" label="code" v-model="joData.department"></v-select>
+                            </client-only>
+                            <small class="text-danger fst-italic" v-if="joDataErrors.department"> This field is required
+                            </small>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">
-                                Work Order Date
+                                Equipment
                             </label>
-                            <input type="date" class="form-control" v-model="rvData.work_order_date">
+                            <input type="text" class="form-control" v-model="joData.equipment">
+                            <small class="text-danger fst-italic" v-if="joDataErrors.equipment"> This field is required
+                            </small>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">
                                 Notes
                             </label>
-                            <textarea class="form-control" rows="3" v-model="rvData.notes"></textarea>
+                            <textarea class="form-control" rows="3" v-model="joData.notes"></textarea>
                         </div>
 
                         <div class="d-flex justify-content-between">
-                            <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rv">
+                            <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/jo">
                                 <i class="fas fa-chevron-left"></i> Back to Search
                             </nuxt-link>
                             <button @click="save()" type="button" class="btn btn-primary" :disabled="isSaving">
@@ -144,9 +150,9 @@ definePageMeta({
 
 import Swal from 'sweetalert2'
 import { getFullname } from '~/utils/helpers'
-import * as rvApi from '~/composables/warehouse/rv/rv.api'
+import * as joApi from '~/composables/warehouse/jo/jo.api'
 import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
-import type { CreateRvInput } from '~/composables/warehouse/rv/rv.types';
+import type { CreateJoInput } from '~/composables/warehouse/jo/jo.types';
 import { MOBILE_WIDTH } from '~/utils/config';
 
 // CONSTANTS
@@ -157,22 +163,24 @@ const isMobile = ref(false)
 const isSaving = ref(false)
 
 // INITIAL DATA
-const _rvDataErrorsInitial = {
+const _joDataErrorsInitial = {
     canvass: false,
     supervisor: false,
+    department: false,
+    equipment: false,
 }
 
 // FORM DATA
-const rvData = ref<CreateRvInput>({
+const joData = ref<CreateJoInput>({
     canvass: null,
     supervisor: null,
     classification: null,
-    work_order_no: '',
-    work_order_date: null,
+    department: null,
+    equipment: '',
     notes: '',
     approvers: []
 })
-const rvDataErrors = ref({ ..._rvDataErrorsInitial })
+const joDataErrors = ref({ ..._joDataErrorsInitial })
 
 let currentCanvass: Canvass | null = null
 
@@ -181,6 +189,7 @@ let currentCanvass: Canvass | null = null
 const canvasses = ref<Canvass[]>([])
 const employees = ref<Employee[]>([])
 const classifications = ref<Classification[]>([])
+const departments = ref<Department[]>([])
 
 
 
@@ -191,7 +200,7 @@ onMounted(async () => {
 
     window.addEventListener('resize', checkMobile);
 
-    const response = await rvApi.fetchFormDataInCreate()
+    const response = await joApi.fetchFormDataInCreate()
 
     canvasses.value = response.canvasses
 
@@ -200,8 +209,9 @@ onMounted(async () => {
         return i
     })
 
-    rvData.value.approvers = response.approvers
+    joData.value.approvers = response.approvers
     classifications.value = response.classifications
+    departments.value = response.departments
 
 })
 
@@ -210,8 +220,8 @@ onMounted(async () => {
 // ======================== COMPUTED ========================  
 
 const canvassId = computed(() => {
-    if (rvData.value.canvass) {
-        return rvData.value.canvass.id
+    if (joData.value.canvass) {
+        return joData.value.canvass.id
     }
     return null
 })
@@ -244,7 +254,7 @@ async function save() {
     console.log('saving...')
 
     isSaving.value = true
-    const response = await rvApi.create(rvData.value)
+    const response = await joApi.create(joData.value)
     isSaving.value = false
 
     if (response.success && response.data) {
@@ -256,7 +266,7 @@ async function save() {
             position: 'top',
         })
 
-        router.push(`/warehouse/purchasing/rv/view/${response.data.id}`);
+        router.push(`/warehouse/purchasing/jo/view/${response.data.id}`);
     } else {
         Swal.fire({
             title: 'Error!',
@@ -273,9 +283,9 @@ function onRcNumberSelected(payload: Canvass) {
     console.log('onRcNumberSelected()', payload)
     if (payload.is_referenced) {
         if (currentCanvass) {
-            rvData.value.canvass = currentCanvass
+            joData.value.canvass = currentCanvass
         } else {
-            rvData.value.canvass = null
+            joData.value.canvass = null
         }
     } else {
         currentCanvass = payload
@@ -288,17 +298,25 @@ function onRcNumberSelected(payload: Canvass) {
 
 function isValid(): boolean {
 
-    rvDataErrors.value = { ..._rvDataErrorsInitial }
+    joDataErrors.value = { ..._joDataErrorsInitial }
 
-    if (!rvData.value.canvass) {
-        rvDataErrors.value.canvass = true
+    if (!joData.value.canvass) {
+        joDataErrors.value.canvass = true
     }
 
-    if (!rvData.value.supervisor) {
-        rvDataErrors.value.supervisor = true
+    if (!joData.value.supervisor) {
+        joDataErrors.value.supervisor = true
     }
 
-    const hasError = Object.values(rvDataErrors.value).includes(true);
+    if (joData.value.equipment.trim() === '') {
+        joDataErrors.value.equipment = true
+    }
+
+    if (!joData.value.department) {
+        joDataErrors.value.department = true
+    }
+
+    const hasError = Object.values(joDataErrors.value).includes(true);
 
     if (hasError) {
         return false

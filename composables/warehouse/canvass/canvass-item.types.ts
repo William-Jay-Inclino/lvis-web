@@ -1,4 +1,4 @@
-import type { Item } from '~/composables/common.types'
+import type { Item } from "../item/item.type"
 
 export interface CanvassItem {
     id: string

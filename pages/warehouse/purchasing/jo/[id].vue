@@ -1,18 +1,18 @@
 <template>
-    <div v-if="rrData && rrData.po && !rrData.cancelled_at">
-        <h2 class="text-warning">Update RR</h2>
+    <div v-if="joData && joData.canvass && !joData.cancelled_at" class="mb-3">
+        <h2 class="text-warning">Update JO</h2>
         <hr>
 
         <div class="row pt-3">
             <div class="col">
                 <ul class="nav nav-tabs justify-content-center">
-                    <li class="nav-item" @click="isRRDetailForm = true">
-                        <a class="nav-link" :class="{ 'active': isRRDetailForm }" href="#">
-                            <i class="fas fa-info-circle"></i> RR Info
+                    <li class="nav-item" @click="isJODetailForm = true">
+                        <a class="nav-link" :class="{ 'active': isJODetailForm }" href="#">
+                            <i class="fas fa-info-circle"></i> JO Info
                         </a>
                     </li>
-                    <li class="nav-item" @click="isRRDetailForm = false">
-                        <a class="nav-link" :class="{ 'active': !isRRDetailForm }" href="#">
+                    <li class="nav-item" @click="isJODetailForm = false">
+                        <a class="nav-link" :class="{ 'active': !isJODetailForm }" href="#">
                             <i class="fas fa-users"></i> Approvers
                         </a>
                     </li>
@@ -20,113 +20,151 @@
             </div>
         </div>
 
-
-        <div v-show="isRRDetailForm" class="row justify-content-center pt-5">
-
+        <div v-show="isJODetailForm" class="row justify-content-center pt-5">
             <div class="col-lg-6">
+
 
                 <div class="mb-3 d-flex align-items-center">
                     <label class="form-label me-2 mb-0">Status:</label>
-                    <div :class="{ [`badge bg-${rrStatus.color}`]: true }">
-                        {{ rrStatus.label }}
+                    <div :class="{ [`badge bg-${joStatus.color}`]: true }">
+                        {{ joStatus.label }}
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">RR Number</label>
-                    <input type="text" class="form-control" :value="rrData.rr_number" disabled>
+                    <label class="form-label">
+                        JO Number
+                    </label>
+                    <input type="text" class="form-control" :value="joData.jo_number" disabled>
                     <nuxt-link class="btn btn-sm btn-light text-primary"
-                        :to="'/warehouse/purchasing/rr/view/' + rrData.id" target="_blank">View RR details</nuxt-link>
+                        :to="'/warehouse/purchasing/jo/view/' + joData.id" target="_blank">View JO details</nuxt-link>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">PO Number</label>
-                    <input type="text" class="form-control" :value="rrData.po.po_number" disabled>
+                    <label class="form-label">
+                        RC Number
+                    </label>
+                    <input type="text" class="form-control" :value="joData.canvass.rc_number" disabled>
                     <nuxt-link class="btn btn-sm btn-light text-primary"
-                        :to="'/warehouse/purchasing/po/view/' + rrData.po.id" target="_blank">View PO
+                        :to="'/warehouse/purchasing/canvass/view/' + joData.canvass.id" target="_blank">View canvass
                         details</nuxt-link>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">
-                        Delivery Number
+                        Date
                     </label>
-                    <input type="text" class="form-control" v-model="rrData.delivery_number">
+                    <input type="date" class="form-control" :value="joData.date_requested" disabled>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">
-                        Delivery Charge
+                        Requisitioner
                     </label>
-                    <input type="number" class="form-control" v-model="rrData.delivery_charge">
-                    <small class="text-danger fst-italic" v-if="rrDataErrors.delivery_charge"> This field is invalid
-                    </small>
+                    <input :value="joData.canvass.requested_by?.fullname" type="text" class="form-control" disabled>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">
-                        Invoice <span class="text-danger">*</span>
+                        Purpose
                     </label>
-                    <input type="text" class="form-control" v-model="rrData.invoice_number">
-                    <small class="text-danger fst-italic" v-if="rrDataErrors.invoice_number"> This field is required
-                    </small>
+                    <textarea :value="joData.canvass.purpose" class="form-control" rows="3" disabled> </textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">
+                        Requisitioner Notes
+                    </label>
+                    <textarea :value="joData.canvass.notes" class="form-control" rows="3" disabled> </textarea>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">
-                        Received By <span class="text-danger">*</span>
+                        Imd. Sup. <span class="text-danger">*</span>
                     </label>
                     <client-only>
-                        <v-select :options="employees" label="fullname" v-model="rrData.received_by"
+                        <v-select :options="employees" label="fullname" v-model="joData.supervisor"
                             :clearable="false"></v-select>
+                    </client-only>
+                    <small class="text-danger fst-italic" v-if="joDataErrors.supervisor"> This field is required
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">
+                        Classification
+                    </label>
+                    <client-only>
+                        <v-select :options="classifications" label="name" v-model="joData.classification"></v-select>
                     </client-only>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Notes</label>
-                    <textarea v-model="rrData.notes" class="form-control" rows="3"></textarea>
+                    <label class="form-label">
+                        Department
+                    </label>
+                    <client-only>
+                        <v-select :options="departments" label="name" v-model="joData.department"></v-select>
+                    </client-only>
+                    <small class="text-danger fst-italic" v-if="joDataErrors.department"> This field is required
+                    </small>
                 </div>
 
-            </div>
+                <div class="mb-3">
+                    <label class="form-label">
+                        Equipment
+                    </label>
+                    <input type="text" class="form-control" v-model="joData.equipment">
+                    <small class="text-danger fst-italic" v-if="joDataErrors.equipment"> This field is required </small>
+                </div>
 
+                <div class="mb-3">
+                    <label class="form-label">
+                        Notes
+                    </label>
+                    <textarea class="form-control" rows="3" v-model="joData.notes"></textarea>
+                </div>
+
+
+            </div>
         </div>
 
-
-        <div v-show="!isRRDetailForm" class="row justify-content-center pt-5">
+        <div v-show="!isJODetailForm" class="row justify-content-center pt-5">
 
             <div class="col-12">
-                <WarehouseApprover :approvers="rrData.rr_approvers" :employees="employees"
-                    :isUpdatingApproverOrder="isUpdatingApproverOrder" :isAddingApprover="isAddingApprover"
-                    :isEditingApprover="isEditingApprover" @changeApproverOrder="changeApproverOrder"
+                <WarehouseApprover :approvers="joData.jo_approvers" :employees="employees"
+                    :isUpdatingApproverOrder="isUpdatingApproverOrder" :isAddingApprover="isAddingJoApprover"
+                    :isEditingApprover="isEditingJoApprover" @changeApproverOrder="changeApproverOrder"
                     @addApprover="addApprover" @editApprover="editApprover" @removeApprover="removeApprover" />
             </div>
+
 
         </div>
 
 
         <div class="row justify-content-center pt-3">
-            <div :class="{ 'col-lg-6': isRRDetailForm, 'col-12': !isRRDetailForm }">
+            <div :class="{ 'col-lg-6': isJODetailForm, 'col-12': !isJODetailForm }">
+
                 <div class="d-flex justify-content-between pt-3">
                     <div>
-                        <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rr">
+                        <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/jo">
                             <i class="fas fa-chevron-left"></i> Back to Search
                         </nuxt-link>
                     </div>
                     <div>
-                        <button v-if="isRRDetailForm" @click="updateRrInfo()" type="button" class="btn btn-success"
+                        <button v-if="isJODetailForm" @click="updateJoInfo()" type="button" class="btn btn-success"
                             :disabled="isUpdating">
                             <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
                         </button>
                     </div>
                 </div>
+
             </div>
         </div>
 
 
     </div>
+
 </template>
-
-
 
 
 <script setup lang="ts">
@@ -137,11 +175,13 @@ definePageMeta({
 
 import Swal from 'sweetalert2'
 import { getFullname, formatToValidHtmlDate } from '~/utils/helpers'
-import { MOBILE_WIDTH } from '~/utils/config';
 import { useToast } from "vue-toastification";
-import type { RR, UpdateRrInput } from '~/composables/warehouse/rr/rr.types';
-import * as rrApi from '~/composables/warehouse/rr/rr.api'
-import * as rrApproverApi from '~/composables/warehouse/rr/rr-approver.api'
+import * as joApi from '~/composables/warehouse/jo/jo.api'
+import * as joApproverApi from '~/composables/warehouse/jo/jo-approver.api'
+import { type JO } from '~/composables/warehouse/jo/jo.types';
+import { MOBILE_WIDTH } from '~/utils/config';
+import { approvalStatus } from '~/utils/constants';
+
 
 // DEPENDENCIES
 const route = useRoute()
@@ -150,21 +190,30 @@ const toast = useToast();
 
 // FLAGS
 const isMobile = ref(false)
-const isRRDetailForm = ref(true)
+const isJODetailForm = ref(true)
 const isUpdating = ref(false)
 const isUpdatingApproverOrder = ref(false)
-const isAddingApprover = ref(false)
-const isEditingApprover = ref(false)
+const isAddingJoApprover = ref(false)
+const isEditingJoApprover = ref(false)
 
-const _rrDataErrorsInitial = {
-    invoice_number: false,
-    delivery_charge: false,
+// INITIAL DATA
+const _joDataErrorsInitial = {
+    supervisor: false,
+    department: false,
+    equipment: false,
 }
 
-const rrData = ref<RR>({} as RR)
-const rrDataErrors = ref({ ..._rrDataErrorsInitial })
-
+// DROPDOWNS
 const employees = ref<Employee[]>([])
+const classifications = ref<Classification[]>([])
+const departments = ref<Department[]>([])
+
+
+// FORM DATA
+const joDataErrors = ref({ ..._joDataErrorsInitial })
+const joData = ref<JO>({} as JO)
+
+
 
 // ======================== LIFECYCLE HOOKS ========================  
 
@@ -174,10 +223,10 @@ onMounted(async () => {
 
     window.addEventListener('resize', checkMobile);
 
-    let response = await rrApi.fetchFormDataInUpdate(route.params.id as string)
+    let response = await joApi.fetchFormDataInUpdate(route.params.id as string)
 
-    if (response && response.rr) {
-        populateForm(response.rr)
+    if (response.jo) {
+        populateForm(response.jo)
     }
 
     employees.value = response.employees.map((i) => {
@@ -185,16 +234,20 @@ onMounted(async () => {
         return i
     })
 
+    classifications.value = response.classifications
+    departments.value = response.departments
+
 })
+
 
 
 // ======================== COMPUTED ========================  
 
-const rrStatus = computed(() => {
+const joStatus = computed(() => {
 
-    const approvers = rrData.value.rr_approvers
+    const approvers = joData.value.jo_approvers
 
-    if (rrData.value.cancelled_at) {
+    if (joData.value.cancelled_at) {
 
         return approvalStatus[APPROVAL_STATUS.CANCELLED]
 
@@ -217,38 +270,40 @@ const rrStatus = computed(() => {
 })
 
 
+
 // ======================== FUNCTIONS ========================  
-function populateForm(data: RR) {
-    console.log('populateForm', data)
 
-    const emp = data.received_by
+function populateForm(data: JO) {
+    data.date_requested = formatToValidHtmlDate(data.date_requested)
 
-    data.received_by.fullname = getFullname(emp.firstname, emp.middlename, emp.lastname)
+    const requestedBy = data.canvass.requested_by
+    requestedBy!['fullname'] = getFullname(requestedBy!.firstname, requestedBy!.middlename, requestedBy!.lastname)
 
-    rrData.value = data
+    const supervisor = data.supervisor
+    supervisor['fullname'] = getFullname(supervisor.firstname, supervisor.middlename, supervisor.lastname)
 
-    data.rr_approvers.map(i => {
+    data.jo_approvers.map(i => {
         i.date_approval = i.date_approval ? formatToValidHtmlDate(i.date_approval) : null
         i.approver!['fullname'] = getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname)
         return i
     })
+
+    joData.value = data
+
 }
 
-async function updateRrInfo() {
-    console.log('updatePoInfo')
+async function updateJoInfo() {
+
+    console.log('update')
+
+    if (!isValidJoInfo()) {
+        return
+    }
 
     console.log('updating...')
 
-    // const data: UpdateRrInput = {
-    //     received_by: rrData.value.received_by,
-    //     invoice_number: rrData.value.invoice_number,
-    //     delivery_number: rrData.value.delivery_number,
-    //     notes: rrData.value.notes,
-    //     delivery_charge: rrData.value.delivery_charge,
-    // }
-
     isUpdating.value = true
-    const response = await rrApi.update(rrData.value.id, rrData.value)
+    const response = await joApi.update(joData.value.id, joData.value)
     isUpdating.value = false
 
     if (response.success && response.data) {
@@ -258,6 +313,13 @@ async function updateRrInfo() {
             icon: 'success',
             position: 'top',
         })
+
+        joData.value.jo_approvers = response.data.jo_approvers.map(i => {
+            i.date_approval = i.date_approval ? formatToValidHtmlDate(i.date_approval) : null
+            i.approver!['fullname'] = getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname)
+            return i
+        })
+
     } else {
         Swal.fire({
             title: 'Error!',
@@ -269,14 +331,16 @@ async function updateRrInfo() {
 
 }
 
-async function cancelRr() {
-    const response = await rrApi.cancel(rrData.value.id)
+async function cancelJo() {
+
+    console.log('cancelJo')
+    const response = await joApi.cancel(joData.value.id)
 
     if (response.success) {
         toast.success(response.msg)
-        rrData.value.cancelled_at = response.cancelled_at!
+        joData.value.cancelled_at = response.cancelled_at!
 
-        router.push('/warehouse/purchasing/rr')
+        router.push('/warehouse/purchasing/jo')
 
     } else {
         Swal.fire({
@@ -286,8 +350,9 @@ async function cancelRr() {
             position: 'top',
         })
     }
-}
 
+
+}
 
 
 
@@ -297,11 +362,12 @@ async function addApprover(
     data: CreateApproverInput,
     modalCloseBtn: HTMLButtonElement
 ) {
+
     console.log('data', data)
 
-    isAddingApprover.value = true
-    const response = await rrApproverApi.create(rrData.value.id, data)
-    isAddingApprover.value = false
+    isAddingJoApprover.value = true
+    const response = await joApproverApi.create(joData.value.id, data)
+    isAddingJoApprover.value = false
 
     if (response.success && response.data) {
         toast.success(response.msg)
@@ -312,7 +378,7 @@ async function addApprover(
 
         response.data.date_approval = response.data.date_approval ? formatToValidHtmlDate(response.data.date_approval) : null
 
-        rrData.value.rr_approvers.push(response.data)
+        joData.value.jo_approvers.push(response.data)
         modalCloseBtn.click()
     } else {
         Swal.fire({
@@ -328,14 +394,14 @@ async function editApprover(
     data: UpdateApproverInput,
     modalCloseBtn: HTMLButtonElement
 ) {
-    isEditingApprover.value = true
-    const response = await rrApproverApi.update(data)
-    isEditingApprover.value = false
+    isEditingJoApprover.value = true
+    const response = await joApproverApi.update(data)
+    isEditingJoApprover.value = false
 
     if (response.success && response.data) {
         toast.success(response.msg)
 
-        const prevApproverItemIndx = rrData.value.rr_approvers.findIndex(i => i.id === data.id)
+        const prevApproverItemIndx = joData.value.jo_approvers.findIndex(i => i.id === data.id)
 
         response.data.date_approval = response.data.date_approval ? formatToValidHtmlDate(response.data.date_approval) : null
 
@@ -343,7 +409,7 @@ async function editApprover(
 
         response.data.approver!['fullname'] = getFullname(a!.firstname, a!.middlename, a!.lastname)
 
-        rrData.value.rr_approvers[prevApproverItemIndx] = { ...response.data }
+        joData.value.jo_approvers[prevApproverItemIndx] = { ...response.data }
 
         modalCloseBtn.click()
 
@@ -358,9 +424,10 @@ async function editApprover(
 }
 
 async function removeApprover(id: string) {
-    const indx = rrData.value.rr_approvers.findIndex(i => i.id === id)
 
-    const item = rrData.value.rr_approvers[indx]
+    const indx = joData.value.jo_approvers.findIndex(i => i.id === id)
+
+    const item = joData.value.jo_approvers[indx]
 
     if (!item) {
         console.error('approver not found with id of: ' + id)
@@ -381,13 +448,13 @@ async function removeApprover(id: string) {
         preConfirm: async (remove) => {
 
             if (remove) {
-                const response = await rrApproverApi.remove(item.id)
+                const response = await joApproverApi.remove(item.id)
 
                 if (response.success) {
 
                     toast.success(`${item.approver?.fullname} removed!`)
 
-                    rrData.value.rr_approvers.splice(indx, 1)
+                    joData.value.jo_approvers.splice(indx, 1)
 
                 } else {
 
@@ -404,23 +471,25 @@ async function removeApprover(id: string) {
         },
         allowOutsideClick: () => !Swal.isLoading()
     })
+
 }
 
 async function changeApproverOrder(
     data: { id: string, order: number }[],
     modalCloseBtn: HTMLButtonElement
 ) {
+
     console.log('data', data)
     console.log('modalCloseBtn', modalCloseBtn)
 
     isUpdatingApproverOrder.value = true
-    const response = await rrApproverApi.updateApproverOrder(data)
+    const response = await joApproverApi.updateApproverOrder(data)
     isUpdatingApproverOrder.value = false
 
     if (response.success && response.approvers) {
         toast.success(response.msg)
 
-        rrData.value.rr_approvers = response.approvers.map(i => {
+        joData.value.jo_approvers = response.approvers.map(i => {
             i.date_approval = i.date_approval ? formatToValidHtmlDate(i.date_approval) : null
             i.approver!['fullname'] = getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname)
             return i
@@ -435,17 +504,16 @@ async function changeApproverOrder(
             position: 'top',
         })
     }
+
 }
-
-
-
 
 // ======================== UTILS ========================  
 
-async function onCancelRr() {
+async function onCancelJo() {
+
     Swal.fire({
         title: "Are you sure?",
-        text: `This RR will be cancelled!`,
+        text: `This JO will be cancelled!`,
         position: "top",
         icon: "warning",
         showCancelButton: true,
@@ -457,16 +525,45 @@ async function onCancelRr() {
         preConfirm: async (remove) => {
 
             if (remove) {
-                await cancelRr()
+                await cancelJo()
             }
 
         },
         allowOutsideClick: () => !Swal.isLoading()
     })
+
 }
 
 function checkMobile() {
     isMobile.value = window.innerWidth < MOBILE_WIDTH
 }
+
+function isValidJoInfo(): boolean {
+
+    joDataErrors.value = { ..._joDataErrorsInitial }
+
+    if (!joData.value.supervisor) {
+        joDataErrors.value.supervisor = true
+    }
+
+    if (!joData.value.department) {
+        joDataErrors.value.department = true
+    }
+
+    if (joData.value.equipment.trim() === '') {
+        joDataErrors.value.equipment = true
+    }
+
+    const hasError = Object.values(joDataErrors.value).includes(true);
+
+    if (hasError) {
+        return false
+    }
+
+    return true
+
+}
+
+
 
 </script>

@@ -1,4 +1,4 @@
-import type { CreateApproverInput, MeqsApproverMutationResponse, UpdateApproverOrderResponse, UpdateApproverInput } from "./meqs-approver.types";
+import type { MeqsApproverMutationResponse, UpdateApproverOrderResponse } from "./meqs-approver.types";
 
 export async function updateApproverOrder(inputs: { id: string, order: number }[]): Promise<UpdateApproverOrderResponse> {
     const inputsString = inputs.map(({ id, order }) => `{ id: "${id}", order: ${order} }`).join('\n');

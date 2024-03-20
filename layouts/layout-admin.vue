@@ -21,8 +21,8 @@
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/canvass">Canvass</nuxt-link></li>
                                     <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/rv">RV</nuxt-link></li>
-                                    <li><a class="dropdown-item" href="#">SPR</a></li>
-                                    <li><a class="dropdown-item" href="#">JO</a></li>
+                                    <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/jo">JO</nuxt-link></li>
+                                    <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/spr">SPR</nuxt-link></li>
                                     <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/meqs">MEQS</nuxt-link></li>
                                     <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/po">PO</nuxt-link></li>
                                     <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/rr">RR</nuxt-link></li>
@@ -101,8 +101,8 @@
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/canvass">Canvass</nuxt-link></li>
                             <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/rv">RV</nuxt-link></li>
-                            <li><a class="dropdown-item" href="#">SPR</a></li>
-                            <li><a class="dropdown-item" href="#">JO</a></li>
+                            <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/jo">JO</nuxt-link></li>
+                            <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/spr">SPR</nuxt-link></li>
                             <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/meqs">MEQS</nuxt-link></li>
                             <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/po">PO</nuxt-link></li>
                             <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/rr">RR</nuxt-link></li>

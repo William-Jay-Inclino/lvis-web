@@ -1,15 +1,15 @@
 <template>
     <div>
-        <h2 class="text-warning">Search RV</h2>
+        <h2 class="text-warning">Search JO</h2>
 
         <hr>
 
         <div class="row pt-3">
             <div class="col-lg-3 col-md-6 col-sm-12">
                 <div class="mb-3">
-                    <label class="form-label">RV Number</label>
+                    <label class="form-label">JO Number</label>
                     <client-only>
-                        <v-select :options="rvs" label="rv_number" v-model="rv"></v-select>
+                        <v-select :options="jos" label="jo_number" v-model="jo"></v-select>
                     </client-only>
                 </div>
             </div>
@@ -41,8 +41,8 @@
             <button @click="search()" class="btn btn-primary" :disabled="isSearching">
                 <i class="fas fa-search"></i> {{ isSearching ? 'Searching...' : 'Search' }}
             </button>
-            <nuxt-link class="btn btn-primary float-end" to="/warehouse/purchasing/rv/create">
-                <i class="fas fa-plus"></i> Create RV
+            <nuxt-link class="btn btn-primary float-end" to="/warehouse/purchasing/jo/create">
+                <i class="fas fa-plus"></i> Create JO
             </nuxt-link>
         </div>
 
@@ -74,7 +74,7 @@
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th class="bg-secondary text-white">RV Number</th>
+                                            <th class="bg-secondary text-white">JO Number</th>
                                             <th class="bg-secondary text-white">RC Number</th>
                                             <th class="bg-secondary text-white">Requisitioner</th>
                                             <th class="bg-secondary text-white">Date</th>
@@ -86,7 +86,7 @@
                                     </thead>
                                     <tbody>
                                         <tr v-for="i in items">
-                                            <td class="text-muted align-middle"> {{ i.rv_number }} </td>
+                                            <td class="text-muted align-middle"> {{ i.jo_number }} </td>
                                             <td class="text-muted align-middle"> {{ i.canvass.rc_number }} </td>
                                             <td class="text-muted align-middle"> {{ getFullname(i.canvass.requested_by!.firstname, i.canvass.requested_by!.middlename, i.canvass.requested_by!.lastname) }} </td>
                                             <td class="text-muted align-middle"> {{ formatDate(i.date_requested) }} </td>
@@ -96,7 +96,7 @@
                                                 </div>
                                             </td>
                                             <td class="text-muted align-middle">
-                                                <nuxt-link class="btn btn-light w-50" :to="'/warehouse/purchasing/rv/view/' + i.id">
+                                                <nuxt-link class="btn btn-light w-50" :to="'/warehouse/purchasing/jo/view/' + i.id">
                                                     <i class="fas fa-info-circle text-info"></i>
                                                 </nuxt-link>
                                                 <button v-if="isAdminOrOwner(i.created_by, authUser)" @click="onClickEdit(i.id)" class="btn btn-light w-50">
@@ -117,8 +117,8 @@
 
                                     <tbody>
                                         <tr>
-                                            <td width="50%" class="bg-secondary text-white"> RV Number </td>
-                                            <td class="bg-secondary text-white"> {{ i.rv_number }} </td>
+                                            <td width="50%" class="bg-secondary text-white"> JO Number </td>
+                                            <td class="bg-secondary text-white"> {{ i.jo_number }} </td>
                                         </tr>
                                         <tr>
                                             <td class="text-muted"> RC Number </td>
@@ -142,14 +142,14 @@
                                         </tr>
                                         <tr>
                                             <td class="text-center" :colspan="isAdminOrOwner(i.created_by, authUser) ? 1 : 2">
-                                                <nuxt-link class="btn btn-sm btn-light text-info w-100" :to="'/warehouse/purchasing/rv/view/' + i.id">
+                                                <nuxt-link class="btn btn-sm btn-light text-info w-100" :to="'/warehouse/purchasing/jo/view/' + i.id">
                                                     <i class="fas fa-info-circle text-info"></i> View Details
                                                 </nuxt-link>
                                             </td>
                                             <td v-if="isAdminOrOwner(i.created_by, authUser)" class="text-center">
                                                 <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light text-primary w-100">
                                                     <i class="fas fa-edit"></i>
-                                                    Edit RV
+                                                    Edit JO
                                                 </button>
                                             </td>
                                         </tr>
@@ -200,8 +200,8 @@
     })
 
     import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
-    import { type RV } from '~/composables/warehouse/rv/rv.types';
-    import * as rvApi from '~/composables/warehouse/rv/rv.api'
+    import { type JO } from '~/composables/warehouse/jo/jo.types';
+    import * as joApi from '~/composables/warehouse/jo/jo.api'
     import moment from 'moment'
     import { getFullname, formatDate } from '~/utils/helpers'
     import { MOBILE_WIDTH, PAGINATION_SIZE } from '~/utils/config'
@@ -229,17 +229,17 @@
 
     // search filters
     const canvass = ref<Canvass | null>(null)
-    const rv = ref<RV | null>(null)
+    const jo = ref<JO | null>(null)
     const date_requested = ref(null)
     const requested_by = ref<Employee | null>(null)
     const canvasses = ref<Canvass[]>([])
-    const rvs = ref<RV[]>([])
+    const jos = ref<JO[]>([])
     const employees = ref<Employee[]>([])
     // ----------------
 
     
     // table data
-    const items = ref<RV[]>([])
+    const items = ref<JO[]>([])
 
 
 
@@ -252,10 +252,10 @@
 
         authUser.value = getAuthUser()
 
-        const response = await rvApi.fetchDataInSearchFilters()
+        const response = await joApi.fetchDataInSearchFilters()
 
         canvasses.value = response.canvasses
-        rvs.value = response.rvs
+        jos.value = response.jos
         employees.value = response.employees.map((i) => {
             i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
             return i
@@ -276,7 +276,7 @@
 
         isPaginating.value = true
 
-        const { data, currentPage, totalItems, totalPages } = await rvApi.findAll({
+        const { data, currentPage, totalItems, totalPages } = await joApi.findAll({
             page,
             pageSize: pagination.value.pageSize,
             date_requested: null,
@@ -298,9 +298,9 @@
 
         items.value = []
 
-        // find by RV NUMBER
-        if(rv.value) {
-            const response = await rvApi.findByRvNumber(rv.value.rv_number)
+        // find by JO NUMBER
+        if(jo.value) {
+            const response = await joApi.findByJoNumber(jo.value.jo_number)
             isSearching.value = false
             if(response) {
                 items.value.push(response)
@@ -311,7 +311,7 @@
 
         // find by RC NUMBER
         if(canvass.value) {
-            const response = await rvApi.findByRcNumber(canvass.value.rc_number)
+            const response = await joApi.findByRcNumber(canvass.value.rc_number)
             isSearching.value = false
             if(response) {
                 items.value.push(response)
@@ -322,7 +322,7 @@
 
 
         // find by DATE REQUESTED and/or REQUISITIONER
-        const { data, currentPage, totalItems, totalPages } = await rvApi.findAll({
+        const { data, currentPage, totalItems, totalPages } = await joApi.findAll({
             page: 1,
             pageSize: pagination.value.pageSize,
             date_requested: date_requested.value,
@@ -345,8 +345,9 @@
         isMobile.value = window.innerWidth < MOBILE_WIDTH
     }
 
+
     function onClickEdit(id: string) {
-        router.push('/warehouse/purchasing/rv/' + id)
+        router.push('/warehouse/purchasing/jo/' + id)
     }
 
 
