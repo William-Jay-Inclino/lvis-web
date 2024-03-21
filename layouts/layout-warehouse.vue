@@ -1,5 +1,7 @@
 <template>
 
+    <NuxtLoadingIndicator />
+
     <div>
         <div class="container px-0 custom-card">
             <nav class="navbar sticky-top navbar-expand-lg navbar-dark" style="background-color: #1877F2;">
@@ -48,7 +50,7 @@
                                             to="/warehouse/stock-inventory/item">Item</nuxt-link>
                                     </li>
                                     <li>
-                                        <nuxt-link class="dropdown-item" to="/warehouse/stock-inventory/item">Item
+                                        <nuxt-link class="dropdown-item" to="/warehouse/stock-inventory/item-type">Item
                                             Type</nuxt-link>
                                     </li>
                                     <li>

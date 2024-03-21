@@ -161,4 +161,4 @@ async function search() {
     pagination.value.totalPages = totalPages
 }
 
-</script>~/composables/config
+</script>
