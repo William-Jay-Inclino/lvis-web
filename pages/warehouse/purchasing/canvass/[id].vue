@@ -67,32 +67,40 @@
                     <textarea class="form-control" rows="3" v-model="canvass.notes"></textarea>
                 </div>
 
-                <div class="d-flex justify-content-between pt-3">
-                    <div>
-                        <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">
-                            <i class="fas fa-chevron-left"></i> Back to Search
-                        </nuxt-link>
-                    </div>
-                    <div>
-                        <button @click="updateCanvassDetail()" class="btn btn-success" :disabled="isUpdating">
-                            <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
-                        </button>
-                    </div>
-                </div>
-
             </div>
         </div>
 
         <div v-show="!isCanvassDetailForm" class="row justify-content-center pt-5">
             <div class="col-lg-10 col-md-10 col-sm-12">
 
-                <WarehouseCanvassItems :canvass-items="canvass.canvass_items" :brands="brands" :units="units"
-                    :items="items" :is-adding="isAddingItem" :is-editing="isEditingItem" @add-item="addCanvassItem"
+                <WarehouseCanvassItems :canvass-is-reference-in-r-r="canvass.is_reference_in_rr"
+                    :canvass-items="canvass.canvass_items" :brands="brands" :units="units" :items="items"
+                    :is-adding="isAddingItem" :is-editing="isEditingItem" @add-item="addCanvassItem"
                     @edit-item="editCanvassItem" @remove-item="removeCanvassItem" />
 
             </div>
 
         </div>
+
+
+        <div class="row justify-content-center">
+            <div
+                :class="{ 'col-lg-6 col-md-8 col-sm-12': isCanvassDetailForm, 'col-lg-10 col-md-10 col-sm-12': !isCanvassDetailForm }">
+                <div class="d-flex justify-content-between pt-3">
+                    <div>
+                        <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">
+                            <i class="fas fa-chevron-left"></i> Back to Search
+                        </nuxt-link>
+                    </div>
+                    <div v-if="isCanvassDetailForm">
+                        <button @click="updateCanvassDetail()" class="btn btn-success" :disabled="isUpdating">
+                            <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
     </div>
 

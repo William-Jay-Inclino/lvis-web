@@ -307,6 +307,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 purpose
                 notes
                 deleted_at
+                is_reference_in_rr
                 requested_by {
                     id
                     firstname
