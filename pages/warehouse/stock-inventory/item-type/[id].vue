@@ -1,11 +1,11 @@
 <template>
-    <div v-if="item">
+    <div v-if="!isLoadingPage">
 
         <h2 class="text-warning">Update Item Type</h2>
 
         <hr>
 
-        <form @submit.prevent="onSubmit">
+        <form v-if="item" @submit.prevent="onSubmit">
 
             <div class="row justify-content-center pt-3">
                 <div class="col-lg-6">
@@ -59,10 +59,12 @@ const router = useRouter()
 const isSaving = ref(false)
 
 const item = ref<ItemType>()
+const isLoadingPage = ref(true)
 
 onMounted(async () => {
 
     const response = await api.findOne(route.params.id as string)
+    isLoadingPage.value = false
 
     if (!response) {
         console.error('Item type not found')

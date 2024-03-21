@@ -42,7 +42,7 @@
 }
 
 .loading-text {
-    font-size: 24px;
+    font-size: 16px;
     margin-top: 16px;
 }
 
