@@ -14,3 +14,17 @@ export interface RrItem {
 	rr?: RR
 
 }
+
+
+export interface UpdateRrItemsInput {
+	id: string
+	quantity_accepted: number
+}
+
+
+
+export interface UpdateRrItemsResponse {
+	success: boolean
+	msg: string
+	// data: RrItem[]
+}

@@ -452,6 +452,32 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                     label
                     order
                 }
+                rr_items {
+                    id
+                    quantity_accepted
+                    meqs_supplier_item {
+                        price
+                        vat_type
+                        canvass_item {
+                            brand {
+                                id 
+                                name
+                            }
+                            unit {
+                                id 
+                                name 
+                            }
+                            description
+                            quantity
+                            item {
+                                id
+                                code 
+                                name
+                                description
+                            }
+                        }
+                    }
+                }
                 po {
                     id
                     po_number

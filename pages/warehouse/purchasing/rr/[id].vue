@@ -6,13 +6,18 @@
         <div class="row pt-3">
             <div class="col">
                 <ul class="nav nav-tabs justify-content-center">
-                    <li class="nav-item" @click="isRRDetailForm = true">
-                        <a class="nav-link" :class="{ 'active': isRRDetailForm }" href="#">
+                    <li class="nav-item" @click="form = FORM_TYPE.RR_INFO">
+                        <a class="nav-link" :class="{ 'active': form === FORM_TYPE.RR_INFO }" href="#">
                             <i class="fas fa-info-circle"></i> RR Info
                         </a>
                     </li>
-                    <li class="nav-item" @click="isRRDetailForm = false">
-                        <a class="nav-link" :class="{ 'active': !isRRDetailForm }" href="#">
+                    <li class="nav-item" @click="form = FORM_TYPE.ITEM">
+                        <a class="nav-link" :class="{ 'active': form === FORM_TYPE.ITEM }" href="#">
+                            <i class="fas fa-shopping-cart"></i> Items
+                        </a>
+                    </li>
+                    <li class="nav-item" @click="form = FORM_TYPE.APPROVER">
+                        <a class="nav-link" :class="{ 'active': form === FORM_TYPE.APPROVER }" href="#">
                             <i class="fas fa-users"></i> Approvers
                         </a>
                     </li>
@@ -21,7 +26,7 @@
         </div>
 
 
-        <div v-show="isRRDetailForm" class="row justify-content-center pt-5">
+        <div v-show="form === FORM_TYPE.RR_INFO" class="row justify-content-center pt-5">
 
             <div class="col-lg-6">
 
@@ -91,8 +96,17 @@
 
         </div>
 
+        <div v-show="form === FORM_TYPE.ITEM" class="row justify-content-center pt-5">
 
-        <div v-show="!isRRDetailForm" class="row justify-content-center pt-5">
+            <div class="col-12">
+
+                <WarehouseRRItems :rr-items="rrData.rr_items" />
+
+            </div>
+
+        </div>
+
+        <div v-show="form === FORM_TYPE.APPROVER" class="row justify-content-center pt-5">
 
             <div class="col-12">
                 <WarehouseApprover :approvers="rrData.rr_approvers" :employees="employees"
@@ -105,7 +119,7 @@
 
 
         <div class="row justify-content-center pt-3">
-            <div :class="{ 'col-lg-6': isRRDetailForm, 'col-12': !isRRDetailForm }">
+            <div :class="{ 'col-lg-6': form === FORM_TYPE.RR_INFO, 'col-12': form !== FORM_TYPE.RR_INFO }">
                 <div class="d-flex justify-content-between pt-3">
                     <div>
                         <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rr">
@@ -113,9 +127,13 @@
                         </nuxt-link>
                     </div>
                     <div>
-                        <button v-if="isRRDetailForm" @click="updateRrInfo()" type="button" class="btn btn-success"
-                            :disabled="isUpdating">
+                        <button v-if="form === FORM_TYPE.RR_INFO" @click="updateRrInfo()" type="button"
+                            class="btn btn-success" :disabled="isUpdating">
                             <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
+                        </button>
+                        <button v-else-if="form === FORM_TYPE.ITEM" type="button" @click="updateRrItems()"
+                            class="btn btn-success" :disabled="isUpdatingRrItems">
+                            <i class="fas fa-sync"></i> {{ isUpdatingRrItems ? 'Updating...' : 'Update' }}
                         </button>
                     </div>
                 </div>
@@ -142,6 +160,14 @@ import { useToast } from "vue-toastification";
 import type { RR, UpdateRrInput } from '~/composables/warehouse/rr/rr.types';
 import * as rrApi from '~/composables/warehouse/rr/rr.api'
 import * as rrApproverApi from '~/composables/warehouse/rr/rr-approver.api'
+import * as rrItemApi from '~/composables/warehouse/rr/rr-item.api'
+import type { UpdateRrItemsInput } from '~/composables/warehouse/rr/rr-item.types';
+
+const enum FORM_TYPE {
+    RR_INFO,
+    ITEM,
+    APPROVER,
+}
 
 // DEPENDENCIES
 const route = useRoute()
@@ -150,8 +176,8 @@ const toast = useToast();
 
 // FLAGS
 const isMobile = ref(false)
-const isRRDetailForm = ref(true)
 const isUpdating = ref(false)
+const isUpdatingRrItems = ref(false)
 const isUpdatingApproverOrder = ref(false)
 const isAddingApprover = ref(false)
 const isEditingApprover = ref(false)
@@ -165,6 +191,7 @@ const rrData = ref<RR>({} as RR)
 const rrDataErrors = ref({ ..._rrDataErrorsInitial })
 
 const employees = ref<Employee[]>([])
+const form = ref<FORM_TYPE>(FORM_TYPE.RR_INFO)
 
 // ======================== LIFECYCLE HOOKS ========================  
 
@@ -288,6 +315,55 @@ async function cancelRr() {
     }
 }
 
+
+// ======================== CHILD EVENTS: <WarehouseRRItems> ========================  
+
+async function updateRrItems() {
+    console.log('updateRrItems')
+
+    console.log('rrData.value.rr_items', rrData.value.rr_items)
+
+    let hasError = false
+
+    for (let item of rrData.value.rr_items) {
+
+        item.isInvalidQtyAccepted = false
+
+        if (!item.quantity_accepted || item.quantity_accepted < 0) {
+            item.isInvalidQtyAccepted = true
+            hasError = true
+
+        }
+
+    }
+
+    if (hasError) return
+
+    console.log('updating rr items...')
+
+    isUpdatingRrItems.value = true
+    const response = await rrItemApi.updateRrItems(rrData.value.rr_items)
+    isUpdatingRrItems.value = false
+
+    if (response.success) {
+
+        Swal.fire({
+            title: 'Success!',
+            text: response.msg,
+            icon: 'success',
+            position: 'top',
+        })
+
+    } else {
+        Swal.fire({
+            title: 'Error!',
+            text: response.msg,
+            icon: 'error',
+            position: 'top',
+        })
+    }
+
+}
 
 
 
