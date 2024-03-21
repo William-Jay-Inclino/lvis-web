@@ -18,7 +18,7 @@
                     <div class="card shadow bg-primary text-white">
                         <div class="card-body">
                             <h5 class="card-title">SYSTEM</h5>
-                            <a href="system.html" class="stretched-link"></a>
+                            <nuxt-link to="/system" class="stretched-link"></nuxt-link>
                         </div>
                     </div>
                 </div>
@@ -100,30 +100,30 @@
 
 <script setup lang="ts">
 
-    definePageMeta({
-        layout: "layout-home"
-    })
+definePageMeta({
+    layout: "layout-home"
+})
 
 </script>
 
 
 
 <style scoped>
-    .container-custom {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        margin: 0;
-    }
+.container-custom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+}
 
-    .card {
-        transition: transform 0.3s, box-shadow 0.3s;
-        cursor: pointer;
-    }
+.card {
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+}
 
-    .card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    }
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
 </style>
