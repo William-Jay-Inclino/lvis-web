@@ -7,7 +7,7 @@
         <div class="row pt-3">
             <div class="col">
                 <span class="text-secondary">
-                    Step {{ currentStep }} of 3: 
+                    Step {{ currentStep }} of 3:
                     <span v-show="currentStep === 1"> Add MEQS info </span>
                     <span v-show="currentStep === 2"> Add Suppliers </span>
                     <span v-show="currentStep === 3"> Award Supplier </span>
@@ -25,13 +25,14 @@
                             <div class="row g-0">
                                 <div class="col-4">
                                     <client-only>
-                                        <v-select :options="transactionTypes" v-model="transactionType" :clearable="false"></v-select>
+                                        <v-select :options="transactionTypes" v-model="transactionType"
+                                            :clearable="false"></v-select>
                                     </client-only>
                                 </div>
-                                <div class="col-8">
+                                <div class="col-8" v-if="transactionType === 'RV'">
                                     <client-only>
-                                        <!-- <v-select :options="rvs" label="rv_number" v-model="meqsData.rv" v-show="transactionType === 'RV'"></v-select> -->
-                                        <v-select @option:selected="onRvNumberSelected" :options="rvs" label="rv_number" v-model="meqsData.rv">
+                                        <v-select @option:selected="onRvNumberSelected" :options="rvs" label="rv_number"
+                                            v-model="meqsData.rv">
                                             <template v-slot:option="option">
                                                 <div v-if="option.status !== APPROVAL_STATUS.APPROVED" class="row">
                                                     <div class="col">
@@ -40,9 +41,9 @@
                                                     <div class="col text-end">
                                                         <small class="text-muted fst-italic">
                                                             {{
-                                                                // @ts-ignore
-                                                                approvalStatus[option.status].label
-                                                            }}
+                        // @ts-ignore
+                        approvalStatus[option.status].label
+                    }}
                                                         </small>
                                                     </div>
                                                 </div>
@@ -66,14 +67,100 @@
                                                 </div>
                                             </template>
                                         </v-select>
-                                        <v-select :options="jos" label="spr_number" v-model="meqsData.spr" v-show="transactionType === 'SPR'"></v-select>
-                                        <v-select :options="sprs" label="jo_number" v-model="meqsData.jo" v-show="transactionType === 'JO'"></v-select>
                                     </client-only>
-                                    <nuxt-link v-if="meqsData.rv" class="btn btn-sm btn-light text-primary" :to="'/warehouse/purchasing/rv/view/' + meqsData.rv.id" target="_blank">View RV details</nuxt-link>
+                                    <nuxt-link v-if="meqsData.rv" class="btn btn-sm btn-light text-primary"
+                                        :to="'/warehouse/purchasing/rv/view/' + meqsData.rv.id" target="_blank">View RV
+                                        details</nuxt-link>
+                                </div>
+                                <div class="col-8" v-else-if="transactionType === 'JO'">
+                                    <client-only>
+                                        <v-select @option:selected="onJoNumberSelected" :options="jos" label="jo_number"
+                                            v-model="meqsData.jo">
+                                            <template v-slot:option="option">
+                                                <div v-if="option.status !== APPROVAL_STATUS.APPROVED" class="row">
+                                                    <div class="col">
+                                                        <span class="text-danger">{{ option.jo_number }}</span>
+                                                    </div>
+                                                    <div class="col text-end">
+                                                        <small class="text-muted fst-italic">
+                                                            {{
+                        // @ts-ignore
+                        approvalStatus[option.status].label
+                    }}
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                                <div v-else-if="option.is_referenced" class="row">
+                                                    <div class="col">
+                                                        <span class="text-danger">{{ option.jo_number }}</span>
+                                                    </div>
+                                                    <div class="col text-end">
+                                                        <small class="text-muted fst-italic">
+                                                            Referenced
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                                <div v-else class="row">
+                                                    <div class="col">
+                                                        <span>{{ option.jo_number }}</span>
+                                                    </div>
+                                                    <div class="col text-end">
+                                                        <small class="text-success fst-italic"> Available </small>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </v-select>
+                                    </client-only>
+                                    <nuxt-link v-if="meqsData.jo" class="btn btn-sm btn-light text-primary"
+                                        :to="'/warehouse/purchasing/jo/view/' + meqsData.jo.id" target="_blank">View JO
+                                        details</nuxt-link>
+                                </div>
+                                <div class="col-8" v-else-if="transactionType === 'SPR'">
+                                    <client-only>
+                                        <v-select @option:selected="onSprNumberSelected" :options="sprs"
+                                            label="spr_number" v-model="meqsData.spr">
+                                            <template v-slot:option="option">
+                                                <div v-if="option.status !== APPROVAL_STATUS.APPROVED" class="row">
+                                                    <div class="col">
+                                                        <span class="text-danger">{{ option.spr_number }}</span>
+                                                    </div>
+                                                    <div class="col text-end">
+                                                        <small class="text-muted fst-italic">
+                                                            {{
+                        // @ts-ignore
+                        approvalStatus[option.status].label
+                    }}
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                                <div v-else-if="option.is_referenced" class="row">
+                                                    <div class="col">
+                                                        <span class="text-danger">{{ option.spr_number }}</span>
+                                                    </div>
+                                                    <div class="col text-end">
+                                                        <small class="text-muted fst-italic">
+                                                            Referenced
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                                <div v-else class="row">
+                                                    <div class="col">
+                                                        <span>{{ option.spr_number }}</span>
+                                                    </div>
+                                                    <div class="col text-end">
+                                                        <small class="text-success fst-italic"> Available </small>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </v-select>
+                                    </client-only>
+                                    <nuxt-link v-if="meqsData.spr" class="btn btn-sm btn-light text-primary"
+                                        :to="'/warehouse/purchasing/spr/view/' + meqsData.spr.id" target="_blank">View
+                                        SPR details</nuxt-link>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label class="form-label">
                                 Requisitioner
@@ -108,7 +195,8 @@
                             <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/meqs">
                                 <i class="fas fa-chevron-left"></i> Back to Search
                             </nuxt-link>
-                            <button @click="goToStep2()" type="button" class="btn btn-primary" :disabled="!canProceedStep2">
+                            <button @click="goToStep2()" type="button" class="btn btn-primary"
+                                :disabled="!canProceedStep2">
                                 <i class="fas fa-chevron-right"></i> Next
                             </button>
                         </div>
@@ -118,24 +206,20 @@
 
                         <div class="row">
                             <div class="col">
-                                <WarehouseMEQSSupplier
-                                  :suppliers="suppliers"
-                                  :meqs_suppliers="meqsData.meqs_suppliers"
-                                  :canvass_items="canvassItems" 
-                                  @add-supplier="addSupplier"
-                                  @edit-supplier="editSupplier"
-                                  @remove-supplier="removeSupplier"
-                                  @add-attachment="addAttachment"
-                                  @remove-attachment="removeAttachment"
-                                />
+                                <WarehouseMEQSSupplier :suppliers="suppliers" :meqs_suppliers="meqsData.meqs_suppliers"
+                                    :canvass_items="canvassItems" @add-supplier="addSupplier"
+                                    @edit-supplier="editSupplier" @remove-supplier="removeSupplier"
+                                    @add-attachment="addAttachment" @remove-attachment="removeAttachment" />
                             </div>
                         </div>
 
                         <div class="d-flex justify-content-between">
-                            <button @click="goToStep1()" type="button" class="btn btn-secondary" :disabled="!hasReference">
+                            <button @click="goToStep1()" type="button" class="btn btn-secondary"
+                                :disabled="!hasReference">
                                 <i class="fas fa-chevron-left"></i> Back
                             </button>
-                            <button @click="goToStep3()" type="button" class="btn btn-primary" :disabled="!canProceedStep3">
+                            <button @click="goToStep3()" type="button" class="btn btn-primary"
+                                :disabled="!canProceedStep3">
                                 <i class="fas fa-chevron-right"></i> Next
                             </button>
                         </div>
@@ -146,21 +230,19 @@
 
                         <div class="row">
                             <div class="col">
-                                <WarehouseMEQSAward 
-                                    :is-initial="isInitialStep3"
-                                    :meqs_suppliers="meqsData.meqs_suppliers"
-                                    :canvass_items="canvassItems"
-                                    @award-supplier-item="awardSupplierItem"
-                                    @attach-note="attachNote"
-                                />
+                                <WarehouseMEQSAward :is-initial="isInitialStep3"
+                                    :meqs_suppliers="meqsData.meqs_suppliers" :canvass_items="canvassItems"
+                                    @award-supplier-item="awardSupplierItem" @attach-note="attachNote" />
                             </div>
                         </div>
 
                         <div class="d-flex justify-content-between mt-3">
-                            <button @click="goToStep2()" type="button" class="btn btn-secondary" :disabled="!hasReference">
+                            <button @click="goToStep2()" type="button" class="btn btn-secondary"
+                                :disabled="!hasReference">
                                 <i class="fas fa-chevron-left"></i> Back
                             </button>
-                            <button @click="onSaveMeqs()" type="button" class="btn btn-primary" :disabled="isSavingMeqs">
+                            <button @click="onSaveMeqs()" type="button" class="btn btn-primary"
+                                :disabled="isSavingMeqs">
                                 <i class="fas fa-save"></i> {{ isSavingMeqs ? 'Saving MEQS...' : 'Save MEQS' }}
                             </button>
                         </div>
@@ -171,14 +253,11 @@
             </div>
         </div>
 
-        <button v-show="false" ref="requiredNotesBtn" data-bs-toggle="modal" data-bs-target="#requiredNotesModal"></button>
+        <button v-show="false" ref="requiredNotesBtn" data-bs-toggle="modal"
+            data-bs-target="#requiredNotesModal"></button>
 
-        <WarehouseMEQSRequiredNotes 
-            :items-needing-justification="itemsNeedingJustification"
-            :is-saving-meqs="isSavingMeqs" 
-            @update-notes="updateNotes"
-            @save="saveMeqs"
-        />
+        <WarehouseMEQSRequiredNotes :items-needing-justification="itemsNeedingJustification"
+            :is-saving-meqs="isSavingMeqs" @update-notes="updateNotes" @save="saveMeqs" />
 
     </div>
 </template>
@@ -195,6 +274,8 @@ import Swal from 'sweetalert2'
 import type { MeqsSupplier } from '~/composables/warehouse/meqs/meqs-supplier';
 import type { MeqsSupplierItem } from '~/composables/warehouse/meqs/meqs-supplier-item';
 import type { Supplier } from '~/composables/common.types';
+import type { JO } from '~/composables/warehouse/jo/jo.types';
+import type { SPR } from '~/composables/warehouse/spr/spr.types';
 
 definePageMeta({
     layout: "layout-admin"
@@ -217,8 +298,8 @@ const isSavingMeqs = ref(false)
 
 // ARRAYS
 const rvs = ref<RV[]>([])
-const jos = ref([])
-const sprs = ref([])
+const jos = ref<JO[]>([])
+const sprs = ref<SPR[]>([])
 const suppliers = ref<Supplier[]>([])
 
 const currentStep = ref(1)
@@ -226,8 +307,9 @@ const transactionType = ref<'RV' | 'SPR' | 'JO'>('RV')
 
 const itemsNeedingJustification = ref<CanvassItemWithSuppliers[]>([])
 
-// Immutable state for rc number field
 let currentRv: RV | null = null
+let currentJo: JO | null = null
+let currentSpr: SPR | null = null
 
 // FORM DATA
 const meqsData = ref<CreateMeqsInput>({
@@ -240,7 +322,7 @@ const meqsData = ref<CreateMeqsInput>({
 })
 
 
-onMounted( async() => {
+onMounted(async () => {
 
     isMobile.value = window.innerWidth < MOBILE_WIDTH
 
@@ -249,6 +331,8 @@ onMounted( async() => {
     const response = await meqsApi.fetchFormDataInCreate()
 
     rvs.value = response.rvs
+    jos.value = response.jos
+    sprs.value = response.sprs
     suppliers.value = response.suppliers
     meqsData.value.approvers = response.approvers
 
@@ -259,71 +343,102 @@ onMounted( async() => {
 
 // ======================== COMPUTED ======================== 
 
-const referenceIsRv = computed( (): boolean => !!meqsData.value.rv) 
-const referenceIsJo = computed( (): boolean => !!meqsData.value.rv) 
-const referenceIsSpr = computed( (): boolean => !!meqsData.value.rv) 
-const hasReference = computed( (): boolean => !!referenceIsRv.value || !!referenceIsJo.value || !!referenceIsSpr.value )
-const canProceedStep2 = computed( (): boolean => !!hasReference.value)
+const referenceIsRv = computed((): boolean => !!meqsData.value.rv)
+const referenceIsJo = computed((): boolean => !!meqsData.value.jo)
+const referenceIsSpr = computed((): boolean => !!meqsData.value.spr)
+const hasReference = computed((): boolean => !!referenceIsRv.value || !!referenceIsJo.value || !!referenceIsSpr.value)
+const canProceedStep2 = computed((): boolean => !!hasReference.value)
 // const canProceedStep3 = computed( (): boolean => meqsData.value.meqs_suppliers.length >= 3 && meqsData.value.meqs_suppliers.length <= 5)
-const canProceedStep3 = computed( (): boolean => true)
+const canProceedStep3 = computed((): boolean => true)
 
-const purpose = computed( () => {
+const purpose = computed(() => {
 
-    if(!hasReference.value) {
+    if (!hasReference.value) {
         return ''
     }
 
-    if(referenceIsRv.value) return meqsData.value.rv!.canvass.purpose
+    if (referenceIsRv.value) return meqsData.value.rv!.canvass.purpose
+    if (referenceIsJo.value) return meqsData.value.jo!.canvass.purpose
+    if (referenceIsSpr.value) return meqsData.value.spr!.canvass.purpose
 
     // todo: get purpose for jo and spr
     return ''
 
 })
-const requisitionerNotes = computed( () => {
+const requisitionerNotes = computed(() => {
 
-    if(!hasReference.value) {
+    if (!hasReference.value) {
         return ''
     }
 
-    if(referenceIsRv.value) return meqsData.value.rv!.canvass.notes
+    if (referenceIsRv.value) return meqsData.value.rv!.canvass.notes
+    if (referenceIsJo.value) return meqsData.value.jo!.canvass.notes
+    if (referenceIsSpr.value) return meqsData.value.spr!.canvass.notes
 
     // todo: get purpose for jo and spr
     return ''
 
 })
-const requisitioner = computed( () => {
-    if(!hasReference.value) {
+const requisitioner = computed(() => {
+    if (!hasReference.value) {
         return ''
     }
 
     let employee
 
-    if(referenceIsRv.value){
+    if (referenceIsRv.value) {
         employee = meqsData.value.rv?.canvass.requested_by
+    } else if (referenceIsJo.value) {
+        employee = meqsData.value.jo?.canvass.requested_by
+    } else if (referenceIsSpr.value) {
+        employee = meqsData.value.spr?.canvass.requested_by
     }
 
     // todo: get employee data for jo and spr
 
     return getFullname(employee!.firstname, employee!.middlename, employee!.lastname)
 })
-const canvassItems = computed( (): CanvassItem[] => {
 
-    if(referenceIsRv.value) {
+const canvassItems = computed((): CanvassItem[] => {
 
+    if (referenceIsRv.value) {
         return meqsData.value.rv!.canvass.canvass_items
-
     }
+
+    if (referenceIsJo.value) {
+        return meqsData.value.jo!.canvass.canvass_items
+    }
+
+    if (referenceIsSpr.value) {
+        return meqsData.value.spr!.canvass.canvass_items
+    }
+
+
 
     return []
 
 })
-const rvId = computed( () => {
-    if(meqsData.value.rv) {
+
+const rvId = computed(() => {
+    if (meqsData.value.rv) {
         return meqsData.value.rv.id
     }
     return null
 })
 
+const joId = computed(() => {
+    if (meqsData.value.jo) {
+        return meqsData.value.jo.id
+    }
+    return null
+})
+
+const sprId = computed(() => {
+    if (meqsData.value.spr) {
+        return meqsData.value.spr.id
+    }
+    return null
+})
 
 
 
@@ -331,9 +446,27 @@ const rvId = computed( () => {
 // set currentCanvass to null if rc number field is deselected
 watch(rvId, (val) => {
 
-    if(!val) {
+    if (!val) {
         console.log('rv number deselected')
         currentRv = null
+    }
+
+})
+
+watch(joId, (val) => {
+
+    if (!val) {
+        console.log('jo number deselected')
+        currentJo = null
+    }
+
+})
+
+watch(sprId, (val) => {
+
+    if (!val) {
+        console.log('spr number deselected')
+        currentSpr = null
     }
 
 })
@@ -346,13 +479,43 @@ watch(rvId, (val) => {
 function onRvNumberSelected(payload: RV) {
     console.log('onRvNumberSelected()', payload)
 
-    if(payload.status === APPROVAL_STATUS.APPROVED && !payload.is_referenced) {
+    if (payload.status === APPROVAL_STATUS.APPROVED && !payload.is_referenced) {
         currentRv = payload
-    }else {
-        if(currentRv) {
+    } else {
+        if (currentRv) {
             meqsData.value.rv = currentRv
-        }else{
+        } else {
             meqsData.value.rv = null
+        }
+    }
+}
+
+// check if rv is approved. If true then rollback to previous rv else set new current rv
+function onJoNumberSelected(payload: JO) {
+    console.log('onJoNumberSelected()', payload)
+
+    if (payload.status === APPROVAL_STATUS.APPROVED && !payload.is_referenced) {
+        currentJo = payload
+    } else {
+        if (currentJo) {
+            meqsData.value.jo = currentJo
+        } else {
+            meqsData.value.jo = null
+        }
+    }
+}
+
+// check if rv is approved. If true then rollback to previous rv else set new current rv
+function onSprNumberSelected(payload: SPR) {
+    console.log('onSprNumberSelected()', payload)
+
+    if (payload.status === APPROVAL_STATUS.APPROVED && !payload.is_referenced) {
+        currentSpr = payload
+    } else {
+        if (currentSpr) {
+            meqsData.value.spr = currentSpr
+        } else {
+            meqsData.value.spr = null
         }
     }
 }
@@ -363,7 +526,7 @@ function onSaveMeqs() {
 
     const isValid = isValidStep3(meqsData.value.meqs_suppliers, canvassItems.value)
 
-    if(!isValid) {
+    if (!isValid) {
 
         Swal.fire({
             title: 'The form contains errors',
@@ -372,13 +535,13 @@ function onSaveMeqs() {
             position: 'top',
         })
 
-        return 
+        return
 
     }
 
     const items = getItemsNeedingJustification(canvassItems.value, meqsData.value.meqs_suppliers)
 
-    if(items.length > 0) {
+    if (items.length > 0) {
         itemsNeedingJustification.value = items
         requiredNotesBtn.value?.click()
         return
@@ -392,37 +555,37 @@ async function saveMeqs(closeRequiredNotesBtn?: HTMLButtonElement) {
     console.log('saving MEQS...')
 
     // if saving meqs is from Notes component, needs to close the modal
-    if(closeRequiredNotesBtn) {
+    if (closeRequiredNotesBtn) {
         closeRequiredNotesBtn.click()
     }
 
     console.log('meqsData.value', meqsData.value)
 
     // upload attachments and update supplier.attachments of the uploaded response which is an array of sources (kung asa naka store ang images sa backend)
-    for(let supplier of meqsData.value.meqs_suppliers) {
+    for (let supplier of meqsData.value.meqs_suppliers) {
 
-        if(!supplier.files) continue
+        if (!supplier.files) continue
 
-        if(supplier.files.length === 0) {
+        if (supplier.files.length === 0) {
             continue
         }
 
         console.log(`uploading files of ${supplier.supplier?.name}...`)
         const fileSources = await meqsApi.uploadAttachments(supplier.files, API_URL)
         console.log('files uploaded', fileSources)
-        
-        if(fileSources) {
 
-            for(let fileSrc of fileSources) {
-    
+        if (fileSources) {
+
+            for (let fileSrc of fileSources) {
+
                 const [x, filename] = fileSrc.split('_')
 
                 const attachment = supplier.attachments.find(i => i.filename === filename)
 
-                if(attachment) {
+                if (attachment) {
                     attachment.src = fileSrc
                 }
-    
+
             }
 
         }
@@ -435,7 +598,7 @@ async function saveMeqs(closeRequiredNotesBtn?: HTMLButtonElement) {
     const response = await meqsApi.create(meqsData.value)
     isSavingMeqs.value = false
 
-    if(response.success && response.data) {
+    if (response.success && response.data) {
 
         Swal.fire({
             title: 'Success!',
@@ -445,7 +608,7 @@ async function saveMeqs(closeRequiredNotesBtn?: HTMLButtonElement) {
         })
 
         router.push(`/warehouse/purchasing/meqs/view/${response.data.id}`);
-    }else {
+    } else {
         Swal.fire({
             title: 'Error!',
             text: response.msg,
@@ -459,22 +622,22 @@ async function saveMeqs(closeRequiredNotesBtn?: HTMLButtonElement) {
 function getItemsNeedingJustification(canvassItems: CanvassItem[], meqsSuppliers: MeqsSupplier[]): CanvassItemWithSuppliers[] {
     const items: CanvassItemWithSuppliers[] = []
 
-    for(let canvassItem of canvassItems) {
-        
+    for (let canvassItem of canvassItems) {
+
         const itemsByCanvassId = getSupplierItemsByCanvassId(canvassItem.id, meqsSuppliers)
 
         const lowestPriceItem = getLowestPriceItem(itemsByCanvassId)
         const awardedItem = itemsByCanvassId.find(i => i.is_awarded)
 
-        if(!awardedItem) {
+        if (!awardedItem) {
             console.error('No awardedItem')
             continue
         }
 
-        const isAwardedNotLowest = lowestPriceItem.meqs_supplier!.supplier?.id !== awardedItem.meqs_supplier?.supplier?.id 
+        const isAwardedNotLowest = lowestPriceItem.meqs_supplier!.supplier?.id !== awardedItem.meqs_supplier?.supplier?.id
         const hasEmptyNotes = awardedItem.notes.trim() === ''
 
-        if(isAwardedNotLowest && hasEmptyNotes) {
+        if (isAwardedNotLowest && hasEmptyNotes) {
 
             items.push({
                 canvassItem,
@@ -493,11 +656,11 @@ function getSupplierItemsByCanvassId(canvassId: string, suppliers: MeqsSupplier[
 
     const itemsByCanvassId: MeqsSupplierItem[] = []
 
-    for(let supplier of suppliers) {
+    for (let supplier of suppliers) {
 
         const canvassItem = supplier.meqs_supplier_items.find(i => i.canvass_item.id === canvassId)
-        if(canvassItem) {
-            canvassItem.meqs_supplier = supplier 
+        if (canvassItem) {
+            canvassItem.meqs_supplier = supplier
             itemsByCanvassId.push(canvassItem)
         }
 
@@ -525,8 +688,8 @@ function getLowestPriceItem(items: MeqsSupplierItem[]): MeqsSupplierItem {
 
 function addSupplier(data: MeqsSupplier) {
     console.log('addSupplier()', data)
-    
-    meqsData.value.meqs_suppliers.push({...data})
+
+    meqsData.value.meqs_suppliers.push({ ...data })
 
     toast.success('Supplier Added!')
 }
@@ -534,30 +697,62 @@ function addSupplier(data: MeqsSupplier) {
 function editSupplier(data: MeqsSupplier, indx: number) {
     console.log('editSupplier()', data)
 
-    meqsData.value.meqs_suppliers[indx] = {...data}
+    meqsData.value.meqs_suppliers[indx] = { ...data }
 
     toast.success('Supplier Edited!')
 }
 
 function removeSupplier(indx: number) {
-    meqsData.value.meqs_suppliers.splice(indx, 1)
+    const item = meqsData.value.meqs_suppliers[indx]
 
-    toast.success('Supplier Removed!')
+    Swal.fire({
+        title: "Are you sure?",
+        text: `Supplier "${item.supplier?.name}" will be removed together with it's items!`,
+        position: "top",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#e74a3b",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Yes, remove it!",
+        reverseButtons: true
+    }).then(confirm => {
+
+        if (confirm) {
+            meqsData.value.meqs_suppliers.splice(indx, 1)
+            toast.success('Supplier removed!')
+        }
+
+    })
 }
 
-async function addAttachment(payload: {supplierIndx: number, file: any}, closeModalBtn: HTMLButtonElement) {
+async function addAttachment(payload: { supplierIndx: number, file: any }, closeModalBtn: HTMLButtonElement) {
     console.log('addAttachment', payload, closeModalBtn)
 
-    const meqsSupplier = meqsData.value.meqs_suppliers[payload.supplierIndx]
+    const meqsSupplier = { ...meqsData.value.meqs_suppliers[payload.supplierIndx] }
 
-    meqsSupplier.attachments.push({
+    console.log('meqsSupplier', meqsSupplier)
+
+    const attachment = {
         id: '',
         meqs_supplier_id: meqsSupplier.id,
         src: '',
         filename: payload.file.filename
-    })
+    }
+
+    const updatedSupplier = {
+        ...meqsSupplier,
+        attachments: meqsSupplier.attachments ? [...meqsSupplier.attachments, attachment] : [attachment],
+        files: meqsSupplier.files ? [...meqsSupplier.files, payload.file] : [payload.file]
+    }
+
+    // Replace the old meqsSupplier object with the updated one
+    const updatedSuppliers = [...meqsData.value.meqs_suppliers]
+    updatedSuppliers.splice(payload.supplierIndx, 1, updatedSupplier)
+    meqsData.value.meqs_suppliers = updatedSuppliers
 
     toast.success('Attachment added!')
+
+    console.log('meqsData.value.meqs_suppliers', meqsData.value.meqs_suppliers)
 
     closeModalBtn.click()
 }
@@ -569,26 +764,26 @@ async function removeAttachment(supplierIndx: number, attachmentIndx: number) {
     const attachment = meqsSupplier.attachments[attachmentIndx]
 
     Swal.fire({
-            title: "Are you sure?",
-            text: `Attachment with filename "${attachment.filename}" will be removed!`,
-            position: "top",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#e74a3b",
-            cancelButtonColor: "#6c757d",
-            confirmButtonText: "Yes, remove it!",
-            reverseButtons: true,
-            showLoaderOnConfirm: true,
-            preConfirm: async(remove) => {
-                
-                if(remove) {
-                    meqsSupplier.attachments.splice(attachmentIndx, 1)
-                    toast.success('Attachment removed!')
-                }
+        title: "Are you sure?",
+        text: `Attachment with filename "${attachment.filename}" will be removed!`,
+        position: "top",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#e74a3b",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Yes, remove it!",
+        reverseButtons: true,
+        showLoaderOnConfirm: true,
+        preConfirm: async (remove) => {
 
-            },
-            allowOutsideClick: () => !Swal.isLoading()
-        })
+            if (remove) {
+                meqsSupplier.attachments.splice(attachmentIndx, 1)
+                toast.success('Attachment removed!')
+            }
+
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    })
 
 }
 
@@ -603,18 +798,18 @@ function awardSupplierItem(meqsSupplier: CreateMeqsSupplierSubInput, canvass_ite
 
     const item = meqsSupplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
 
-    if(!item) return
+    if (!item) return
 
-    if(isInvalidPrice(item.price)) {
+    if (isInvalidPrice(item.price)) {
         toast.error('Supplier cannot be awarded if their price is invalid')
-        return 
-    } else if(item.price === -1) {
+        return
+    } else if (item.price === -1) {
         toast.error('Supplier cannot be awarded if item is unavailable')
-        return 
+        return
     } else {
         // in order to toggle. Should only award 1 supplier in each canvass item
         removeAwardForAllSuppliersWith(canvass_item_id)
-        
+
         console.log('executed')
         // set the award
         item.is_awarded = true
@@ -625,11 +820,11 @@ function awardSupplierItem(meqsSupplier: CreateMeqsSupplierSubInput, canvass_ite
 
 function removeAwardForAllSuppliersWith(canvass_item_id: string) {
 
-    for(let meqsSupplier of meqsData.value.meqs_suppliers) {
+    for (let meqsSupplier of meqsData.value.meqs_suppliers) {
 
         const item = meqsSupplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
 
-        if(item) {
+        if (item) {
             item.is_awarded = false
         }
 
@@ -639,11 +834,11 @@ function removeAwardForAllSuppliersWith(canvass_item_id: string) {
 
 function attachNote(canvass_item_id: string, note: string) {
 
-    for(let supplier of meqsData.value.meqs_suppliers) {
+    for (let supplier of meqsData.value.meqs_suppliers) {
 
         const item = supplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
 
-        if(item) {
+        if (item) {
             item.notes = note
         }
 
@@ -662,11 +857,11 @@ function updateNotes(canvass_item_id: string, note: string) {
 
     console.log('updateNotes', canvass_item_id, note)
 
-    for(let supplier of meqsData.value.meqs_suppliers) {
+    for (let supplier of meqsData.value.meqs_suppliers) {
 
         const item = supplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
 
-        if(item) {
+        if (item) {
             item.notes = note
         }
     }
@@ -682,26 +877,26 @@ const goToStep2 = () => currentStep.value = 2
 const goToStep3 = () => currentStep.value = 3
 
 const isInvalidPrice = (price: number): boolean => {
-    if(price < -1 || price === 0) {
-        return true 
+    if (price < -1 || price === 0) {
+        return true
     } else {
         return false
     }
 }
 
 function isValidStep3(meqsSuppliers: MeqsSupplier[], canvassItems: CanvassItem[]): boolean {
-    
-    let hasInvalidPrice = false 
 
-    for(let supplier of meqsSuppliers) {
+    let hasInvalidPrice = false
 
-        for(let item of supplier.meqs_supplier_items) {
+    for (let supplier of meqsSuppliers) {
 
-            if(isInvalidPrice(item.price)) {
-                item['invalidPrice'] = true 
-                hasInvalidPrice = true 
-            }else {
-                item['invalidPrice'] = false 
+        for (let item of supplier.meqs_supplier_items) {
+
+            if (isInvalidPrice(item.price)) {
+                item['invalidPrice'] = true
+                hasInvalidPrice = true
+            } else {
+                item['invalidPrice'] = false
             }
 
         }
@@ -709,24 +904,24 @@ function isValidStep3(meqsSuppliers: MeqsSupplier[], canvassItems: CanvassItem[]
     }
 
     // validate if item has no awarded supplier 
-    
-    let hasErrorCanvassItem = false 
 
-    for(let item of canvassItems) {
+    let hasErrorCanvassItem = false
+
+    for (let item of canvassItems) {
 
         const hasAwardedSupplier = meqsSuppliers.find(i => i.meqs_supplier_items.find(j => j.canvass_item.id === item.id && j.is_awarded))
-        if(hasAwardedSupplier) {
-            item['hasAwardedSupplier'] = true 
-        }else {
+        if (hasAwardedSupplier) {
+            item['hasAwardedSupplier'] = true
+        } else {
             item['hasAwardedSupplier'] = false
-            hasErrorCanvassItem = true 
+            hasErrorCanvassItem = true
         }
 
 
     }
 
-    if(hasErrorCanvassItem || hasInvalidPrice) {
-        return false 
+    if (hasErrorCanvassItem || hasInvalidPrice) {
+        return false
     }
 
     return true

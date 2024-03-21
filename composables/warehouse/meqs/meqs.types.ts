@@ -3,6 +3,8 @@ import type { RV } from "../rv/rv.types";
 import type { CanvassItem } from "../canvass/canvass-item.types";
 import type { MeqsSupplier } from "./meqs-supplier";
 import type { MeqsSupplierItem } from "./meqs-supplier-item";
+import type { SPR } from "../spr/spr.types";
+import type { JO } from "../jo/jo.types";
 
 
 export interface MEQS {
@@ -28,6 +30,8 @@ export interface MEQS {
   // =============== derived / resolvers =============== 
 
   rv: RV | null;
+  jo: RV | null;
+  spr: RV | null;
   meqs_approvers: Approver[];
   meqs_suppliers: MeqsSupplier[];
   status: APPROVAL_STATUS
@@ -45,9 +49,9 @@ export interface FindAllResponse {
 }
 
 export interface CreateMeqsInput {
-  jo: null;
   rv: RV | null;
-  spr: null;
+  jo: JO | null;
+  spr: SPR | null;
   notes: string;
   approvers: MeqsApproverSettings[];
   meqs_suppliers: MeqsSupplier[];

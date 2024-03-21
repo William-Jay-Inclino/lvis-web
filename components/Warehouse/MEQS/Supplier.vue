@@ -10,7 +10,7 @@
             </div>
             <div v-if="!isPageCreate">
                 <small class="fst-italic">
-                    - Click filename under attachments column to view attachment 
+                    - Click filename under attachments column to view attachment
                 </small>
             </div>
         </div>
@@ -34,13 +34,16 @@
                         <td class="text-muted align-middle">
                             <div v-if="item.attachments.length > 0">
                                 <div v-for="attachment, j in item.attachments">
-                                    <a v-if="!isPageCreate" class="me-2" @click="onClickViewAttachment(attachment.src)" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#imageModal" style="text-decoration: none">
-                                        {{ attachment.filename }} 
+                                    <a v-if="!isPageCreate" class="me-2" @click="onClickViewAttachment(attachment.src)"
+                                        href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#imageModal"
+                                        style="text-decoration: none">
+                                        {{ attachment.filename }}
                                     </a>
                                     <span v-else class="me-2">
                                         {{ attachment.filename }}
                                     </span>
-                                    <button @click="onClickRemoveAttachment(i, j)" class="btn btn-sm btn-light text-danger">
+                                    <button @click="onClickRemoveAttachment(i, j)"
+                                        class="btn btn-sm btn-light text-danger">
                                         <i class="fas fa-times"></i>
                                     </button>
                                 </div>
@@ -57,12 +60,14 @@
                                     </button>
                                 </div>
                                 <div class="col">
-                                    <button @click="onClickEdit(i)" class="btn btn-sm btn-light w-100" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
+                                    <button @click="onClickEdit(i)" class="btn btn-sm btn-light w-100"
+                                        data-bs-toggle="modal" data-bs-target="#addSupplierModal">
                                         <i class="fas fa-edit text-primary"></i>
                                     </button>
                                 </div>
                                 <div class="col">
-                                    <button @click="onClickAddAttachment(i)" class="btn btn-sm btn-light w-100" data-bs-toggle="modal" data-bs-target="#addAttachmentModal">
+                                    <button @click="onClickAddAttachment(i)" class="btn btn-sm btn-light w-100"
+                                        data-bs-toggle="modal" data-bs-target="#addAttachmentModal">
                                         <i class="fas fa-paperclip text-primary"></i>
                                     </button>
                                 </div>
@@ -73,7 +78,8 @@
                 <tfoot>
                     <tr>
                         <td colspan="5" class="text-center">
-                            <button @click="onClickAdd()" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
+                            <button @click="onClickAdd()" type="button" class="btn btn-primary btn-sm"
+                                data-bs-toggle="modal" data-bs-target="#addSupplierModal">
                                 <i class="fas fa-plus-circle"></i> Add Supplier
                             </button>
                         </td>
@@ -84,150 +90,155 @@
 
 
         <!-- Supplier Modal -->
-        <div class="modal fade" id="addSupplierModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal fade" id="addSupplierModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
             <div class="modal-dialog">
                 <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-warning" id="exampleModalLabel">{{ formIsAdd ? 'Add' : 'Edit' }} Supplier</h5>
-                    <button @click="onCloseModal" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-warning" id="exampleModalLabel">{{ formIsAdd ? 'Add' : 'Edit' }}
+                            Supplier</h5>
+                        <button @click="onCloseModal" type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
 
-                    <div class="row">
-                        <div class="col">
+                        <div class="row">
+                            <div class="col">
 
-                            <div class="mb-3">
-                                <label class="form-label"> Supplier </label> <span class="text-danger" v-if="formIsAdd">*</span>
-                                <div v-if="formIsAdd">
-                                    <client-only>
-                                        <v-select @option:selected="onChangeSupplier" :options="availableSuppliers" v-model="formData.supplier" label="name"></v-select>
-                                    </client-only>
+                                <div class="mb-3">
+                                    <label class="form-label"> Supplier </label> <span class="text-danger"
+                                        v-if="formIsAdd">*</span>
+                                    <div v-if="formIsAdd">
+                                        <client-only>
+                                            <v-select @option:selected="onChangeSupplier" :options="availableSuppliers"
+                                                v-model="formData.supplier" label="name"></v-select>
+                                        </client-only>
+                                    </div>
+                                    <div v-else>
+                                        <input type="text" class="form-control" :value="formData.supplier?.name"
+                                            disabled>
+                                    </div>
                                 </div>
-                                <div v-else>
-                                    <input type="text" class="form-control" :value="formData.supplier?.name" disabled>
+                                <div class="mb-3">
+                                    <label class="form-label"> Vat </label>
+                                    <input type="text" class="form-control" :value="vat" disabled>
                                 </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label"> Vat </label>
-                                <input type="text" class="form-control" :value="vat" disabled>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">
-                                    Payment Terms <span class="text-danger">*</span>
-                                </label>
-                                <input type="text" class="form-control" v-model="formData.payment_terms">
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        Payment Terms <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" v-model="formData.payment_terms">
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="h5wrapper mb-3 mt-3" v-show="formData.supplier">
-                        <hr class="result">
+                        <div class="h5wrapper mb-3 mt-3" v-show="formData.supplier">
+                            <hr class="result">
                             <h6 class="text-warning fst-italic">
                                 <i class="fas fa-shopping-cart"></i> Items
                             </h6>
-                        <hr class="result">
-                    </div>
+                            <hr class="result">
+                        </div>
 
-                    <div class="row" v-show="formData.supplier">
-                        <div class="col">
+                        <div class="row" v-show="formData.supplier">
+                            <div class="col">
 
-                            <div class="alert alert-info" role="alert">
-                                <i class="fas fa-info-circle"></i> 
-                                <small class="fst-italic"> If the item is unavailable set the price to -1</small>
-                            </div>
+                                <div class="alert alert-info" role="alert">
+                                    <i class="fas fa-info-circle"></i>
+                                    <small class="fst-italic"> If the item is unavailable set the price to -1</small>
+                                </div>
 
-                            <div class="table-responsive">
-                                <table class="table table-hover table-sm">
-                                    <thead>
-                                        <tr>
-                                            <th width="40%" class="bg-secondary text-white">Item</th>
-                                            <th width="30%" class="bg-secondary text-white">
-                                                Price <span class="text-danger"> * </span>
-                                            </th>
-                                            <th width="30%" class="bg-secondary text-white">Vat</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="item in formData.meqs_supplier_items">
-                                            <td class="text-muted"> {{ item.canvass_item.description }} </td>
-                                            <td class="text-muted">
-                                                <input 
-                                                    type="number" 
-                                                    class="form-control border border-2"
-                                                    @input="onUpdatePrice(item)"
-                                                    :class="{ 'border-danger': item.invalidPrice, 'border-success': !item.invalidPrice }"
-                                                    v-model="item.price"
-                                                >
-                                            </td>
-                                            <td class="text-muted">
-                                                <select class="form-select" v-model="item.vat" disabled>
-                                                    <option :value="item" :key="item.value" v-for="item in vatArray">
-                                                        {{ item.label }}
-                                                    </option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th width="40%" class="bg-secondary text-white">Item</th>
+                                                <th width="30%" class="bg-secondary text-white">
+                                                    Price <span class="text-danger"> * </span>
+                                                </th>
+                                                <th width="30%" class="bg-secondary text-white">Vat</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="item in formData.meqs_supplier_items">
+                                                <td class="text-muted"> {{ item.canvass_item.description }} </td>
+                                                <td class="text-muted">
+                                                    <input type="number" class="form-control border border-2"
+                                                        @input="onUpdatePrice(item)"
+                                                        :class="{ 'border-danger': item.invalidPrice, 'border-success': !item.invalidPrice }"
+                                                        v-model="item.price">
+                                                </td>
+                                                <td class="text-muted">
+                                                    <select class="form-select" v-model="item.vat" disabled>
+                                                        <option :value="item" :key="item.value"
+                                                            v-for="item in vatArray">
+                                                            {{ item.label }}
+                                                        </option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                </div>
-                <div class="modal-footer">
-                    <button @click="onCloseModal()" ref="closeSupplierModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-close"></i> Close
-                    </button>
-                    <button v-if="formIsAdd" @click="addSupplier()" type="button" class="btn btn-primary" :disabled="!canAddSupplier || isAddingSupplier">
-                        <i class="fas fa-plus-circle"></i> {{ isAddingSupplier ? 'Adding' : 'Add' }} Supplier
-                    </button>
-                    <button v-else @click="editSupplier()" type="button" class="btn btn-primary" :disabled="!canAddSupplier || isEditingSupplier">
-                        <i class="fas fa-edit"></i> {{ isEditingSupplier ? 'Editing' : 'Edit' }} Supplier
-                    </button>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button @click="onCloseModal()" ref="closeSupplierModal" type="button" class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                            <i class="fas fa-close"></i> Close
+                        </button>
+                        <button v-if="formIsAdd" @click="addSupplier()" type="button" class="btn btn-primary"
+                            :disabled="!canAddSupplier || isAddingSupplier">
+                            <i class="fas fa-plus-circle"></i> {{ isAddingSupplier ? 'Adding' : 'Add' }} Supplier
+                        </button>
+                        <button v-else @click="editSupplier()" type="button" class="btn btn-primary"
+                            :disabled="!canAddSupplier || isEditingSupplier">
+                            <i class="fas fa-edit"></i> {{ isEditingSupplier ? 'Editing' : 'Edit' }} Supplier
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
 
         <!-- Attachment Modal -->
-        <div class="modal fade" id="addAttachmentModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal fade" id="addAttachmentModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
             <div class="modal-dialog">
                 <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-warning" id="exampleModalLabel">Add Attachment</h5>
-                    <button @click="onCloseAttachmentModal" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-
-                    <div class="mb-3" v-if="formAttachment.supplierIndx !== -1">
-
-                        <small class="text-muted fst-italic">(Max files: {{ maxFileLimit }} & Max size per file: 5mb)</small>
-
-                        <client-only>
-                            <file-pond
-                                name="test"
-                                ref="filepond"
-                                label-idle="Drop file here..."
-                                :allow-multiple="false"
-                                accepted-file-types="image/jpeg, image/png"
-                                :max-files="maxFileLimit"
-                                @updatefiles="handleFileProcessing"
-                                fileSizeBase="1000"
-                            />
-                        </client-only>
+                    <div class="modal-header">
+                        <h5 class="modal-title text-warning" id="exampleModalLabel">Add Attachment</h5>
+                        <button @click="onCloseAttachmentModal" type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
                     </div>
+                    <div class="modal-body">
+
+                        <div class="mb-3" v-if="formAttachment.supplierIndx !== -1">
+
+                            <small class="text-muted fst-italic">(Max files: {{ maxFileLimit }} & Max size per file:
+                                5mb)</small>
+
+                            <client-only>
+                                <file-pond name="test" ref="filepond" label-idle="Drop file here..."
+                                    :allow-multiple="false" accepted-file-types="image/jpeg, image/png"
+                                    :max-files="maxFileLimit" @updatefiles="handleFileProcessing" fileSizeBase="1000" />
+                            </client-only>
+                        </div>
 
 
-                </div>
-                <div class="modal-footer">
-                    <button @click="onCloseAttachmentModal" ref="closeAttachmentModal" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-close"></i> Close
-                    </button>
-                    <button @click="addAttachment" class="btn btn-primary" :disabled="!formAttachment.file || isAddingAttachment">
-                        <i class="fas fa-plus-circle"></i> {{ isAddingAttachment ? 'Adding...' : 'Add' }}
-                    </button>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button @click="onCloseAttachmentModal" ref="closeAttachmentModal" class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                            <i class="fas fa-close"></i> Close
+                        </button>
+                        <button @click="addAttachment" class="btn btn-primary"
+                            :disabled="!formAttachment.file || isAddingAttachment">
+                            <i class="fas fa-plus-circle"></i> {{ isAddingAttachment ? 'Adding...' : 'Add' }}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -235,7 +246,7 @@
 
 
         <!-- Image Modal -->
-        
+
         <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-xl">
                 <div class="modal-content">
@@ -272,12 +283,12 @@ import type { MeqsSupplierItem } from '~/composables/warehouse/meqs/meqs-supplie
 import type { Supplier } from '~/composables/common.types';
 
 const FilePond = vueFilePond(
-  FilePondPluginFileValidateType,
-  FilePondPluginImagePreview
+    FilePondPluginFileValidateType,
+    FilePondPluginImagePreview
 );
 
 const emits = defineEmits(['addSupplier', 'editSupplier', 'removeSupplier', 'addAttachment', 'removeAttachment']);
-    
+
 const props = defineProps({
     // suppliers in the form
     meqs_suppliers: {
@@ -352,8 +363,8 @@ const _formDataInitial: MeqsSupplier = {
     meqs_supplier_items: [],
 }
 
-const formData = ref({..._formDataInitial})
-const formDataErrors = ref({..._formDataErrorsInitial})
+const formData = ref({ ..._formDataInitial })
+const formDataErrors = ref({ ..._formDataErrorsInitial })
 const formAttachment = ref({
     supplierIndx: -1,
     file: null
@@ -361,7 +372,7 @@ const formAttachment = ref({
 
 const filepond = ref()
 
-const meqs_supplier_items = computed( (): MeqsSupplierItem[] => {
+const meqs_supplier_items = computed((): MeqsSupplierItem[] => {
 
     const clonedCanvassItems = props.canvass_items.map(i => ({ ...i }))
 
@@ -371,12 +382,12 @@ const meqs_supplier_items = computed( (): MeqsSupplierItem[] => {
         value: VAT_TYPE.NONE,
         label: VAT[VAT_TYPE.NONE].label
     }
-    if(formData.value.supplier) {
+    if (formData.value.supplier) {
         vat.value = formData.value.supplier.vat_type
         vat.label = VAT[formData.value.supplier.vat_type].label
     }
 
-    for(let item of clonedCanvassItems) {
+    for (let item of clonedCanvassItems) {
         items.push({
             id: '',
             canvass_item: item,
@@ -393,7 +404,7 @@ const meqs_supplier_items = computed( (): MeqsSupplierItem[] => {
 
 })
 
-const availableSuppliers = computed( () => {
+const availableSuppliers = computed(() => {
 
     const uniqueSuppliers = props.suppliers.filter(supplier1 => !props.meqs_suppliers.some(supplier2 => supplier1.id === supplier2.supplier?.id));
 
@@ -401,27 +412,27 @@ const availableSuppliers = computed( () => {
 
 })
 
-const canAddSupplier = computed( () => {
+const canAddSupplier = computed(() => {
 
-    if(!isValidForm()) return false 
+    if (!isValidForm()) return false
 
     return true
 
 })
 
-const vat = computed( () => {
+const vat = computed(() => {
 
-    if(!formData.value.supplier) return ''
+    if (!formData.value.supplier) return ''
 
     return VAT[formData.value.supplier.vat_type].label
 
 })
 
-const maxFileLimit = computed( () => props.canvass_items.length)
+const maxFileLimit = computed(() => props.canvass_items.length)
 
 
 function addSupplier() {
-    
+
     console.log('formData', formData.value)
 
     emits("addSupplier", formData.value)
@@ -432,8 +443,8 @@ function addSupplier() {
 
 function editSupplier() {
 
-    if(!isValidForm()) {
-        return 
+    if (!isValidForm()) {
+        return
     }
 
     console.log('formData', formData.value)
@@ -451,9 +462,8 @@ function removeSupplier(indx: number) {
 }
 
 function addAttachment() {
-    console.log('addAttachment', formAttachment.value)
 
-    emits("addAttachment", formAttachment.value, closeAttachmentModal.value)
+    emits("addAttachment", { ...formAttachment.value }, closeAttachmentModal.value)
 }
 
 function onClickEdit(indx: number) {
@@ -480,8 +490,8 @@ function onClickAdd() {
 }
 
 function onCloseModal() {
-    formData.value = {..._formDataInitial}
-    formDataErrors.value = {..._formDataErrorsInitial}
+    formData.value = { ..._formDataInitial }
+    formDataErrors.value = { ..._formDataErrorsInitial }
 }
 
 function onClickAddAttachment(supplierIndx: number) {
@@ -511,9 +521,9 @@ function onCloseAttachmentModal() {
 
 function onUpdatePrice(item: MeqsSupplierItem) {
 
-    if(isInvalidPrice(item.price)) {
-        item.invalidPrice = true 
-    }else {
+    if (isInvalidPrice(item.price)) {
+        item.invalidPrice = true
+    } else {
         item.invalidPrice = false
     }
 
@@ -524,7 +534,7 @@ function onChangeSupplier() {
 
     const supplier = formData.value.supplier
 
-    for(let item of formData.value.meqs_supplier_items) {
+    for (let item of formData.value.meqs_supplier_items) {
         item.vat = {
             value: supplier!.vat_type,
             label: VAT[supplier!.vat_type].label
@@ -550,7 +560,7 @@ function getUploadsPath(src: string) {
     const path = src.replace(UPLOADS_PATH, '')
     console.log('PATH', path)
 
-    const uploadsPath = API_FILE_ENDPOINT + path 
+    const uploadsPath = API_FILE_ENDPOINT + path
     return uploadsPath
 
 }
@@ -558,10 +568,10 @@ function getUploadsPath(src: string) {
 // utils 
 
 
-function isInvalidPrice(price: number){
-    if(!price) return true
-    if(price < -1 || price === 0) {
-        return true 
+function isInvalidPrice(price: number) {
+    if (!price) return true
+    if (price < -1 || price === 0) {
+        return true
     } else {
         return false
     }
@@ -569,21 +579,21 @@ function isInvalidPrice(price: number){
 
 function isValidForm(): boolean {
 
-    formDataErrors.value = {..._formDataErrorsInitial}
+    formDataErrors.value = { ..._formDataErrorsInitial }
 
-    if(!formData.value.supplier) {
+    if (!formData.value.supplier) {
         formDataErrors.value.supplier = true
     }
 
-    if(formData.value.payment_terms.trim() === '') {
-        formDataErrors.value.paymentTerms = true 
+    if (formData.value.payment_terms.trim() === '') {
+        formDataErrors.value.paymentTerms = true
     }
 
     const hasErrorForm = Object.values(formDataErrors.value).includes(true);
 
-    const hasInvalidPrice = formData.value.meqs_supplier_items.find(i => i.invalidPrice) 
+    const hasInvalidPrice = formData.value.meqs_supplier_items.find(i => i.invalidPrice)
 
-    if(hasErrorForm || hasInvalidPrice) {
+    if (hasErrorForm || hasInvalidPrice) {
         return false
     }
 

@@ -141,6 +141,42 @@ export async function findOne(id: string): Promise<Canvass | undefined> {
                         }
                     }
                 }
+                jo{
+                    id
+                    jo_number
+                    meqs {
+                        id
+                        meqs_number
+                        meqs_suppliers {
+                            po {
+                                id
+                                po_number
+                                rrs {
+                                    id
+                                    rr_number
+                                }
+                            }
+                        }
+                    }
+                }
+                spr{
+                    id
+                    spr_number
+                    meqs {
+                        id
+                        meqs_number
+                        meqs_suppliers {
+                            po {
+                                id
+                                po_number
+                                rrs {
+                                    id
+                                    rr_number
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     `;

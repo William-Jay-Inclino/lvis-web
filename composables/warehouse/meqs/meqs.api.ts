@@ -2,6 +2,8 @@ import axios from "axios";
 import type { RV } from "../rv/rv.types";
 import type { CreateMeqsInput, FindAllResponse, MEQS, MeqsApproverSettings, MutationResponse, UpdateMeqsInput } from "./meqs.types";
 import type { Supplier } from "~/composables/common.types";
+import type { SPR } from "../spr/spr.types";
+import type { JO } from "../jo/jo.types";
 
 
 export async function fetchDataInSearchFilters(): Promise<{
@@ -277,6 +279,68 @@ export async function findOne(id: string): Promise<MEQS | undefined> {
 
                     }
                 }
+                jo{
+                    id
+                    jo_number
+                    canvass {
+                        id
+                        rc_number
+                        requested_by {
+                            id
+                            firstname
+                            middlename
+                            lastname
+                        }
+                        purpose
+                        notes
+                        canvass_items{
+                            id
+                            canvass_id
+                            description
+                            brand{
+                                id
+                                name
+                            }
+                            unit{
+                                id
+                                name
+                            }
+                            quantity
+                        }
+
+                    }
+                }
+                spr{
+                    id
+                    spr_number
+                    canvass {
+                        id
+                        rc_number
+                        requested_by {
+                            id
+                            firstname
+                            middlename
+                            lastname
+                        }
+                        purpose
+                        notes
+                        canvass_items{
+                            id
+                            canvass_id
+                            description
+                            brand{
+                                id
+                                name
+                            }
+                            unit{
+                                id
+                                name
+                            }
+                            quantity
+                        }
+
+                    }
+                }
                 meqs_date
                 status
                 cancelled_at
@@ -352,6 +416,8 @@ export async function findOne(id: string): Promise<MEQS | undefined> {
 
 export async function fetchFormDataInCreate(): Promise<{
     rvs: RV[],
+    sprs: SPR[],
+    jos: JO[],
     suppliers: Supplier[],
     approvers: MeqsApproverSettings[]
 }> {
@@ -362,6 +428,72 @@ export async function fetchFormDataInCreate(): Promise<{
                 data{
                     id
                     rv_number
+                    status
+                    is_referenced
+                    canvass {
+                        rc_number
+                        requested_by {
+                            id
+                            firstname
+                            middlename
+                            lastname
+                        }
+                        purpose
+                        notes
+                        canvass_items{
+                            id
+                            canvass_id
+                            description
+                            brand{
+                                id
+                                name
+                            }
+                            unit{
+                                id
+                                name
+                            }
+                            quantity
+                        }
+                    }
+                }
+            },
+            jos(page: 1, pageSize: 10) {
+                data{
+                    id
+                    jo_number
+                    status
+                    is_referenced
+                    canvass {
+                        rc_number
+                        requested_by {
+                            id
+                            firstname
+                            middlename
+                            lastname
+                        }
+                        purpose
+                        notes
+                        canvass_items{
+                            id
+                            canvass_id
+                            description
+                            brand{
+                                id
+                                name
+                            }
+                            unit{
+                                id
+                                name
+                            }
+                            quantity
+                        }
+                    }
+                }
+            },
+            sprs(page: 1, pageSize: 10) {
+                data{
+                    id
+                    spr_number
                     status
                     is_referenced
                     canvass {
@@ -415,6 +547,8 @@ export async function fetchFormDataInCreate(): Promise<{
         console.log('response', response)
 
         let rvs = []
+        let jos = []
+        let sprs = []
         let suppliers = []
         let approvers = []
 
@@ -428,6 +562,14 @@ export async function fetchFormDataInCreate(): Promise<{
             rvs = response.data.data.rvs.data
         }
 
+        if (data.jos && data.jos.data) {
+            jos = response.data.data.jos.data
+        }
+
+        if (data.sprs && data.sprs.data) {
+            sprs = response.data.data.sprs.data
+        }
+
         if (data.suppliers) {
             suppliers = data.suppliers
         }
@@ -438,6 +580,8 @@ export async function fetchFormDataInCreate(): Promise<{
 
         return {
             rvs,
+            jos,
+            sprs,
             suppliers,
             approvers
         }
@@ -446,6 +590,8 @@ export async function fetchFormDataInCreate(): Promise<{
         console.error(error);
         return {
             rvs: [],
+            jos: [],
+            sprs: [],
             suppliers: [],
             approvers: []
         }
@@ -471,6 +617,64 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 rv {
                     id
                     rv_number 
+                    canvass {
+                        rc_number
+                        requested_by {
+                            id
+                            firstname
+                            middlename
+                            lastname
+                        }
+                        purpose
+                        notes
+                        canvass_items{
+                            id
+                            canvass_id
+                            description
+                            brand{
+                                id
+                                name
+                            }
+                            unit{
+                                id
+                                name
+                            }
+                            quantity
+                        }
+                    }
+                }
+                jo {
+                    id
+                    jo_number 
+                    canvass {
+                        rc_number
+                        requested_by {
+                            id
+                            firstname
+                            middlename
+                            lastname
+                        }
+                        purpose
+                        notes
+                        canvass_items{
+                            id
+                            canvass_id
+                            description
+                            brand{
+                                id
+                                name
+                            }
+                            unit{
+                                id
+                                name
+                            }
+                            quantity
+                        }
+                    }
+                }
+                spr {
+                    id
+                    spr_number 
                     canvass {
                         rc_number
                         requested_by {
@@ -694,9 +898,9 @@ export async function create(input: CreateMeqsInput): Promise<MutationResponse> 
     if (input.rv) {
         rv_id = `"${input.rv.id}"`
     } else if (input.jo) {
-        // todo
-    } else {
-        // todo
+        jo_id = `"${input.jo.id}"`
+    } else if (input.spr) {
+        spr_id = `"${input.spr.id}"`
     }
 
     const approvers = input.approvers.map(item => {
@@ -749,6 +953,8 @@ export async function create(input: CreateMeqsInput): Promise<MutationResponse> 
             createMeqs(
                 input: {
                     rv_id: ${rv_id}
+                    jo_id: ${jo_id}
+                    spr_id: ${spr_id}
                     notes: "${input.notes}"
                     approvers: [${approvers}]
                     meqs_suppliers: [${meqs_suppliers}]

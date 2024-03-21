@@ -2,6 +2,8 @@ import type { Brand, Employee, Unit } from "~/composables/common.types";
 import type { CanvassItem } from "./canvass-item.types"
 import type { RV } from "../rv/rv.types";
 import type { Item } from "../item/item.type";
+import type { JO } from "../jo/jo.types";
+import type { SPR } from "../spr/spr.types";
 
 
 export interface Canvass {
@@ -27,6 +29,8 @@ export interface Canvass {
 
     canvass_items: CanvassItem[]
     rv?: RV
+    jo?: JO
+    spr?: SPR
     requested_by: Employee | null;
     is_referenced: boolean;
 
