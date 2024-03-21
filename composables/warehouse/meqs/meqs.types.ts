@@ -35,6 +35,7 @@ export interface MEQS {
   meqs_approvers: Approver[];
   meqs_suppliers: MeqsSupplier[];
   status: APPROVAL_STATUS
+  is_rr_completed?: boolean
 
 
   // =============== set programmatically =============== 

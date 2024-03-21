@@ -144,8 +144,12 @@
                             <div class="col">
 
                                 <div class="alert alert-info" role="alert">
-                                    <i class="fas fa-info-circle"></i>
-                                    <small class="fst-italic"> If the item is unavailable set the price to -1</small>
+                                    <small v-if="!isRrCompleted" class="fst-italic">
+                                        If the item is unavailable set the price to -1
+                                    </small>
+                                    <small v-else class="fst-italic">
+                                        Unable to update the price as the receiving report has already been approved.
+                                    </small>
                                 </div>
 
                                 <div class="table-responsive">
@@ -163,10 +167,13 @@
                                             <tr v-for="item in formData.meqs_supplier_items">
                                                 <td class="text-muted"> {{ item.canvass_item.description }} </td>
                                                 <td class="text-muted">
-                                                    <input type="number" class="form-control border border-2"
+                                                    <input v-if="!isRrCompleted" type="number"
+                                                        class="form-control border border-2"
                                                         @input="onUpdatePrice(item)"
                                                         :class="{ 'border-danger': item.invalidPrice, 'border-success': !item.invalidPrice }"
                                                         v-model="item.price">
+                                                    <input v-else type="number" class="form-control" :value="item.price"
+                                                        disabled>
                                                 </td>
                                                 <td class="text-muted">
                                                     <select class="form-select" v-model="item.vat" disabled>
@@ -319,6 +326,10 @@ const props = defineProps({
     isPageCreate: {
         type: Boolean,
         default: true
+    },
+    isRrCompleted: {
+        type: Boolean,
+        default: false
     },
 });
 

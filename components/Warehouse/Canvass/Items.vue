@@ -4,7 +4,7 @@
 
         <div v-if="canvassIsReferenceInRR" class="alert alert-info" role="alert">
             <small class="fst-italic">
-                Note: Changes to items, including adding or deleting items or modifying quantity, are not permitted if
+                Note: Adding/removing items and modifying quantity, are not permitted if
                 the canvass has already been referenced in the receiving report
             </small>
         </div>

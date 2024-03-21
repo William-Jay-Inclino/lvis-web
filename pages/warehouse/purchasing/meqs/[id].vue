@@ -115,8 +115,8 @@
                     :canvass_items="reference.canvass.canvass_items" :is-adding-supplier="isAddingSupplier"
                     :is-editing-supplier="isEditingSupplier" :is-page-create="false" @add-supplier="addSupplier"
                     :is-adding-attachment="isAddingAttachment" @edit-supplier="editSupplier"
-                    @remove-supplier="removeSupplier" @add-attachment="addAttachment"
-                    @remove-attachment="removeAttachment" />
+                    :is-rr-completed="meqsData.is_rr_completed" @remove-supplier="removeSupplier"
+                    @add-attachment="addAttachment" @remove-attachment="removeAttachment" />
 
             </div>
 

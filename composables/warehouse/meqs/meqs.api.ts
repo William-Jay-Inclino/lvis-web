@@ -706,6 +706,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 meqs_date
                 cancelled_at
                 notes
+                is_rr_completed
                 rv {
                     id
                     rv_number 
