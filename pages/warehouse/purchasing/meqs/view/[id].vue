@@ -36,9 +36,13 @@
                                 <tr>
                                     <td class="text-muted"> {{ referenceLabel }} Number</td>
                                     <td>
-                                        <nuxt-link v-if="item?.rv"
-                                            :to="'/warehouse/purchasing/rv/view/' + item.rv.id">{{ item.rv.rv_number
-                                            }}</nuxt-link>
+                                        <nuxt-link v-if="item.rv" :to="'/warehouse/purchasing/rv/view/' + item.rv.id">
+                                            {{ item.rv.rv_number }} </nuxt-link>
+                                        <nuxt-link v-if="item.spr"
+                                            :to="'/warehouse/purchasing/spr/view/' + item.spr.id"> {{
+        item.spr.spr_number }} </nuxt-link>
+                                        <nuxt-link v-if="item.jo" :to="'/warehouse/purchasing/jo/view/' + item.jo.id">
+                                            {{ item.jo.jo_number }} </nuxt-link>
                                     </td>
                                 </tr>
                                 <tr>
@@ -350,18 +354,18 @@ onMounted(async () => {
 
 const referenceData = computed(() => {
 
-    if (item.value?.rv) {
-        return item.value?.rv
-    }
+    if (item.value?.rv) return item.value?.rv
+    if (item.value?.jo) return item.value?.jo
+    if (item.value?.spr) return item.value?.spr
 
     // todos
 })
 
 const referenceLabel = computed(() => {
 
-    if (item.value?.rv) {
-        return 'RV'
-    }
+    if (item.value?.rv) return 'RV'
+    if (item.value?.jo) return 'JO'
+    if (item.value?.spr) return 'SPR'
 
     // todos
 

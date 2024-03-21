@@ -10,6 +10,8 @@ export async function fetchDataInSearchFilters(): Promise<{
     meqs: MEQS[],
     employees: Employee[],
     rvs: RV[],
+    sprs: SPR[],
+    jos: JO[],
 }> {
     const query = `
         query {
@@ -21,6 +23,16 @@ export async function fetchDataInSearchFilters(): Promise<{
             rvs(page: 1, pageSize: 10) {
                 data{
                     rv_number
+                }
+            }
+            sprs(page: 1, pageSize: 10) {
+                data{
+                    spr_number
+                }
+            }
+            jos(page: 1, pageSize: 10) {
+                data{
+                    jo_number
                 }
             }
             employees(page: 1, pageSize: 50) {
@@ -40,6 +52,8 @@ export async function fetchDataInSearchFilters(): Promise<{
 
         let meqs = []
         let rvs = []
+        let sprs = []
+        let jos = []
         let employees = []
 
         if (!response.data || !response.data.data) {
@@ -62,10 +76,20 @@ export async function fetchDataInSearchFilters(): Promise<{
             rvs = data.rvs.data
         }
 
+        if (data.sprs && data.sprs.data) {
+            sprs = data.sprs.data
+        }
+
+        if (data.jos && data.jos.data) {
+            jos = data.jos.data
+        }
+
         return {
             meqs,
             employees,
-            rvs
+            rvs,
+            sprs,
+            jos,
         }
 
     } catch (error) {
@@ -73,7 +97,9 @@ export async function fetchDataInSearchFilters(): Promise<{
         return {
             meqs: [],
             employees: [],
-            rvs: []
+            rvs: [],
+            sprs: [],
+            jos: [],
         }
     }
 }
@@ -87,6 +113,28 @@ export async function findByMeqsNumber(meqsNumber: string): Promise<MEQS | undef
                 status
                 rv {
                     rv_number
+                    canvass {
+                        requested_by {
+                            id
+                            firstname
+                            middlename
+                            lastname
+                        }
+                    }
+                }
+                jo {
+                    jo_number
+                    canvass {
+                        requested_by {
+                            id
+                            firstname
+                            middlename
+                            lastname
+                        }
+                    }
+                }
+                spr {
+                    spr_number
                     canvass {
                         requested_by {
                             id
@@ -155,6 +203,28 @@ export async function findByReferenceNumber(payload: {
                         }
                     }
                 }
+                jo {
+                    jo_number
+                    canvass {
+                        requested_by {
+                            id
+                            firstname
+                            middlename
+                            lastname
+                        }
+                    }
+                }
+                spr {
+                    spr_number
+                    canvass {
+                        requested_by {
+                            id
+                            firstname
+                            middlename
+                            lastname
+                        }
+                    }
+                }
                 meqs_date
                 meqs_approvers {
                     status
@@ -209,6 +279,28 @@ export async function findAll(payload: { page: number, pageSize: number, date_re
                     status
                     rv {
                         rv_number
+                        canvass {
+                            requested_by {
+                                id
+                                firstname
+                                middlename
+                                lastname
+                            }
+                        }
+                    }
+                    jo {
+                        jo_number
+                        canvass {
+                            requested_by {
+                                id
+                                firstname
+                                middlename
+                                lastname
+                            }
+                        }
+                    }
+                    spr {
+                        spr_number
                         canvass {
                             requested_by {
                                 id

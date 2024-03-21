@@ -30,8 +30,8 @@ export interface MEQS {
   // =============== derived / resolvers =============== 
 
   rv: RV | null;
-  jo: RV | null;
-  spr: RV | null;
+  jo: JO | null;
+  spr: SPR | null;
   meqs_approvers: Approver[];
   meqs_suppliers: MeqsSupplier[];
   status: APPROVAL_STATUS

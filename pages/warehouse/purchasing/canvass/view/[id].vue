@@ -62,8 +62,19 @@
                                         <td class="text-muted">MEQS Number</td>
                                         <td>
                                             <div v-if="item.rv && item.rv.meqs">
-                                                <nuxt-link :to="'/warehouse/purchasing/meqs/view/' + item.rv.meqs.id">{{
-                item.rv.meqs.meqs_number }}</nuxt-link>
+                                                <nuxt-link :to="'/warehouse/purchasing/meqs/view/' + item.rv.meqs.id">
+                                                    {{ item.rv.meqs.meqs_number }}
+                                                </nuxt-link>
+                                            </div>
+                                            <div v-if="item.jo && item.jo.meqs">
+                                                <nuxt-link :to="'/warehouse/purchasing/meqs/view/' + item.jo.meqs.id">
+                                                    {{ item.jo.meqs.meqs_number }}
+                                                </nuxt-link>
+                                            </div>
+                                            <div v-if="item.spr && item.spr.meqs">
+                                                <nuxt-link :to="'/warehouse/purchasing/meqs/view/' + item.spr.meqs.id">
+                                                    {{ item.spr.meqs.meqs_number }}
+                                                </nuxt-link>
                                             </div>
                                             <div v-else>
                                                 N/A
@@ -74,10 +85,26 @@
                                         <td class="text-muted">PO Number/s</td>
                                         <td>
                                             <div v-if="hasPO">
-                                                <div v-for="meqsSupplier in item.rv!.meqs!.meqs_suppliers">
+                                                <div v-if="item.rv"
+                                                    v-for="meqsSupplier in item.rv.meqs!.meqs_suppliers">
                                                     <nuxt-link v-if="meqsSupplier.po"
-                                                        :to="'/warehouse/purchasing/po/view/' + meqsSupplier.po.id">{{
-                meqsSupplier.po.po_number }}</nuxt-link>
+                                                        :to="'/warehouse/purchasing/po/view/' + meqsSupplier.po.id">
+                                                        {{ meqsSupplier.po.po_number }}
+                                                    </nuxt-link>
+                                                </div>
+                                                <div v-else-if="item.jo"
+                                                    v-for="meqsSupplier in item.jo.meqs!.meqs_suppliers">
+                                                    <nuxt-link v-if="meqsSupplier.po"
+                                                        :to="'/warehouse/purchasing/po/view/' + meqsSupplier.po.id">
+                                                        {{ meqsSupplier.po.po_number }}
+                                                    </nuxt-link>
+                                                </div>
+                                                <div v-if="item.spr"
+                                                    v-for="meqsSupplier in item.spr.meqs!.meqs_suppliers">
+                                                    <nuxt-link v-if="meqsSupplier.po"
+                                                        :to="'/warehouse/purchasing/po/view/' + meqsSupplier.po.id">
+                                                        {{ meqsSupplier.po.po_number }}
+                                                    </nuxt-link>
                                                 </div>
                                             </div>
                                             <div v-else>
@@ -89,11 +116,33 @@
                                         <td class="text-muted">RR Number/s</td>
                                         <td>
                                             <div v-if="hasPO">
-                                                <div v-for="meqsSupplier in item.rv!.meqs!.meqs_suppliers">
+                                                <div v-if="item.rv"
+                                                    v-for="meqsSupplier in item.rv.meqs!.meqs_suppliers">
                                                     <div v-if="meqsSupplier.po && meqsSupplier.po.rrs.length > 0">
                                                         <div v-for="rr in meqsSupplier.po.rrs">
-                                                            <nuxt-link :to="'/warehouse/purchasing/rr/view/' + rr.id">{{
-                rr.rr_number }}</nuxt-link>
+                                                            <nuxt-link :to="'/warehouse/purchasing/rr/view/' + rr.id">
+                                                                {{ rr.rr_number }}
+                                                            </nuxt-link>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div v-if="item.jo"
+                                                    v-for="meqsSupplier in item.jo.meqs!.meqs_suppliers">
+                                                    <div v-if="meqsSupplier.po && meqsSupplier.po.rrs.length > 0">
+                                                        <div v-for="rr in meqsSupplier.po.rrs">
+                                                            <nuxt-link :to="'/warehouse/purchasing/rr/view/' + rr.id">
+                                                                {{ rr.rr_number }}
+                                                            </nuxt-link>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div v-if="item.spr"
+                                                    v-for="meqsSupplier in item.spr.meqs!.meqs_suppliers">
+                                                    <div v-if="meqsSupplier.po && meqsSupplier.po.rrs.length > 0">
+                                                        <div v-for="rr in meqsSupplier.po.rrs">
+                                                            <nuxt-link :to="'/warehouse/purchasing/rr/view/' + rr.id">
+                                                                {{ rr.rr_number }}
+                                                            </nuxt-link>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -290,8 +339,30 @@ const hasPO = computed(() => {
 
         return false
 
-    } else {
+    }
+
+    if (item.value.spr && item.value.spr.meqs && item.value.spr.meqs.meqs_suppliers) {
+
+        const po = item.value.spr.meqs.meqs_suppliers.find(i => !!i.po)
+
+        if (po) {
+            return true
+        }
+
         return false
+
+    }
+
+    if (item.value.jo && item.value.jo.meqs && item.value.jo.meqs.meqs_suppliers) {
+
+        const po = item.value.jo.meqs.meqs_suppliers.find(i => !!i.po)
+
+        if (po) {
+            return true
+        }
+
+        return false
+
     }
 
 })
