@@ -1,49 +1,75 @@
 <template>
-    <div v-if="item">
-        
+    <div v-if="item && meqs">
+
         <div class="row pt-3 justify-content-center">
             <div class="col-lg-12">
                 <div class="h5wrapper mb-3">
                     <hr class="result">
-                        <h5 class="text-warning fst-italic">
-                            <i class="fas fa-info-circle"></i> RR Info
-                        </h5>
+                    <h5 class="text-warning fst-italic">
+                        <i class="fas fa-info-circle"></i> RR Info
+                    </h5>
                     <hr class="result">
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table table-bordered table-hover"> 
+                    <table class="table table-bordered table-hover">
                         <tbody>
                             <tr>
                                 <td class="text-muted">Status</td>
                                 <td>
-                                    <div :class="{[`badge bg-${approvalStatus[item.status].color}`]: true}"> 
-                                        {{ approvalStatus[item.status].label }} 
+                                    <div :class="{ [`badge bg-${approvalStatus[item.status].color}`]: true }">
+                                        {{ approvalStatus[item.status].label }}
                                     </div>
                                 </td>
                             </tr>
-                            <tr v-if="isRV">
+                            <tr>
                                 <td class="text-muted"> RC Number </td>
                                 <td>
-                                    <nuxt-link :to="'/warehouse/purchasing/canvass/view/' + meqsReference?.canvass.id">{{ meqsReference?.canvass.rc_number }}</nuxt-link>
+                                    <nuxt-link v-if="meqs.rv"
+                                        :to="'/warehouse/purchasing/canvass/view/' + meqs.rv.canvass.id">{{
+        meqs.rv.canvass.rc_number }}</nuxt-link>
+                                    <nuxt-link v-else-if="meqs.jo"
+                                        :to="'/warehouse/purchasing/canvass/view/' + meqs.jo.canvass.id">{{
+        meqs.jo.canvass.rc_number }}</nuxt-link>
+                                    <nuxt-link v-else-if="meqs.spr"
+                                        :to="'/warehouse/purchasing/canvass/view/' + meqs.spr.canvass.id">{{
+        meqs.spr.canvass.rc_number }}</nuxt-link>
                                 </td>
                             </tr>
-                            <tr v-if="isRV">
+                            <tr v-if="meqs.rv">
                                 <td class="text-muted"> RV Number </td>
                                 <td>
-                                    <nuxt-link :to="'/warehouse/purchasing/rv/view/' + meqsReference?.id">{{ meqsReference?.rv_number }}</nuxt-link>
+                                    <nuxt-link :to="'/warehouse/purchasing/rv/view/' + meqs.rv.id">{{ meqs.rv.rv_number
+                                        }}</nuxt-link>
+                                </td>
+                            </tr>
+                            <tr v-else-if="meqs.jo">
+                                <td class="text-muted"> JO Number </td>
+                                <td>
+                                    <nuxt-link :to="'/warehouse/purchasing/jo/view/' + meqs.jo.id">{{ meqs.jo.jo_number
+                                        }}</nuxt-link>
+                                </td>
+                            </tr>
+                            <tr v-if="meqs.spr">
+                                <td class="text-muted"> SPR Number </td>
+                                <td>
+                                    <nuxt-link :to="'/warehouse/purchasing/spr/view/' + meqs.spr.id">{{
+        meqs.spr.spr_number }}</nuxt-link>
                                 </td>
                             </tr>
                             <tr>
                                 <td class="text-muted">MEQS Number</td>
                                 <td>
-                                    <nuxt-link :to="'/warehouse/purchasing/meqs/view/' + item.po.meqs_supplier.meqs.id">{{ item.po.meqs_supplier.meqs.meqs_number }}</nuxt-link>
+                                    <nuxt-link
+                                        :to="'/warehouse/purchasing/meqs/view/' + item.po.meqs_supplier.meqs!.id">{{
+        item.po.meqs_supplier.meqs!.meqs_number }}</nuxt-link>
                                 </td>
                             </tr>
                             <tr>
                                 <td class="text-muted">PO Number</td>
                                 <td>
-                                    <nuxt-link :to="'/warehouse/purchasing/po/view/' + item.po.id">{{ item.po.po_number }}</nuxt-link>
+                                    <nuxt-link :to="'/warehouse/purchasing/po/view/' + item.po.id">{{ item.po.po_number
+                                        }}</nuxt-link>
                                 </td>
                             </tr>
                             <tr>
@@ -68,7 +94,8 @@
                             </tr>
                             <tr>
                                 <td class="text-muted">Received By</td>
-                                <td> {{ getFullname(item.received_by.firstname, item.received_by.middlename, item.received_by.lastname) }} </td>
+                                <td> {{ getFullname(item.received_by.firstname, item.received_by.middlename,
+        item.received_by.lastname) }} </td>
                             </tr>
                             <tr>
                                 <td class="text-muted">Notes</td>
@@ -86,9 +113,9 @@
 
                 <div class="h5wrapper mb-3">
                     <hr class="result">
-                        <h5 class="text-warning fst-italic">
-                            <i class="fas fa-users"></i> Approvers
-                        </h5>
+                    <h5 class="text-warning fst-italic">
+                        <i class="fas fa-users"></i> Approvers
+                    </h5>
                     <hr class="result">
                 </div>
 
@@ -107,10 +134,11 @@
                             <tr v-for="i, count in item.rr_approvers">
                                 <td class="align-middle"> {{ i.order }} </td>
                                 <td class="align-middle"> {{ i.label }} </td>
-                                <td class="align-middle"> {{ getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname) }} </td>
+                                <td class="align-middle"> {{ getFullname(i.approver!.firstname, i.approver!.middlename,
+        i.approver!.lastname) }} </td>
                                 <td class="text-muted text-center align-middle">
-                                    <div :class="{[`badge bg-${approvalStatus[i.status].color}`]: true}"> 
-                                        {{ approvalStatus[i.status].label }} 
+                                    <div :class="{ [`badge bg-${approvalStatus[i.status].color}`]: true }">
+                                        {{ approvalStatus[i.status].label }}
                                     </div>
                                     <div class="fst-italic" v-if="i.date_approval">
                                         <small> {{ formatDate(i.date_approval) }} </small>
@@ -133,9 +161,9 @@
 
                 <div class="h5wrapper mb-3">
                     <hr class="result">
-                        <h5 class="text-warning fst-italic">
-                            <i class="fas fa-shopping-cart"></i> RR Items
-                        </h5>
+                    <h5 class="text-warning fst-italic">
+                        <i class="fas fa-shopping-cart"></i> RR Items
+                    </h5>
                     <hr class="result">
                 </div>
 
@@ -144,22 +172,27 @@
                         <div class="accordion" id="accordionFlushExample">
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="flush-headingOne">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                                    Table Filters
-                                </button>
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#flush-collapseOne" aria-expanded="false"
+                                        aria-controls="flush-collapseOne">
+                                        Table Filters
+                                    </button>
                                 </h2>
-                                <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                                <div id="flush-collapseOne" class="accordion-collapse collapse"
+                                    aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
                                     <div class="accordion-body">
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="form-check form-switch">
-                                                    <input v-model="showDescription" class="form-check-input" type="checkbox">
+                                                    <input v-model="showDescription" class="form-check-input"
+                                                        type="checkbox">
                                                     <label class="form-check-label">Description</label>
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="form-check form-switch">
-                                                    <input v-model="showItemCode" class="form-check-input" type="checkbox">
+                                                    <input v-model="showItemCode" class="form-check-input"
+                                                        type="checkbox">
                                                     <label class="form-check-label">Item Code</label>
                                                 </div>
                                             </div>
@@ -183,13 +216,15 @@
                                             </div>
                                             <div class="col-6">
                                                 <div class="form-check form-switch">
-                                                    <input v-model="showDelivered" class="form-check-input" type="checkbox">
+                                                    <input v-model="showDelivered" class="form-check-input"
+                                                        type="checkbox">
                                                     <label class="form-check-label">Delivered</label>
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="form-check form-switch">
-                                                    <input v-model="showAccepted" class="form-check-input" type="checkbox">
+                                                    <input v-model="showAccepted" class="form-check-input"
+                                                        type="checkbox">
                                                     <label class="form-check-label">Accepted</label>
                                                 </div>
                                             </div>
@@ -201,31 +236,36 @@
                                             </div>
                                             <div class="col-6">
                                                 <div class="form-check form-switch">
-                                                    <input v-model="showGrossPrice" class="form-check-input" type="checkbox">
+                                                    <input v-model="showGrossPrice" class="form-check-input"
+                                                        type="checkbox">
                                                     <label class="form-check-label">Gross Price</label>
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="form-check form-switch">
-                                                    <input v-model="showNetPrice" class="form-check-input" type="checkbox">
+                                                    <input v-model="showNetPrice" class="form-check-input"
+                                                        type="checkbox">
                                                     <label class="form-check-label">Net Price</label>
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="form-check form-switch">
-                                                    <input v-model="showGrossTotal" class="form-check-input" type="checkbox">
+                                                    <input v-model="showGrossTotal" class="form-check-input"
+                                                        type="checkbox">
                                                     <label class="form-check-label">Gross Total</label>
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="form-check form-switch">
-                                                    <input v-model="showVatTotal" class="form-check-input" type="checkbox">
+                                                    <input v-model="showVatTotal" class="form-check-input"
+                                                        type="checkbox">
                                                     <label class="form-check-label">VAT Total</label>
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="form-check form-switch">
-                                                    <input v-model="showNetTotal" class="form-check-input" type="checkbox">
+                                                    <input v-model="showNetTotal" class="form-check-input"
+                                                        type="checkbox">
                                                     <label class="form-check-label">Net Total</label>
                                                 </div>
                                             </div>
@@ -236,7 +276,7 @@
                         </div>
                     </div>
 
-                    </div>
+                </div>
 
                 <div class="row mt-3">
                     <div class="col">
@@ -263,17 +303,21 @@
                                         <td v-show="showDescription" class="text-muted">
                                             <div class="input-group input-group-sm">
                                                 {{ i + 1 }}.
-                                                <textarea class="form-control ms-2" rows="3" :value="rrItem.meqs_supplier_item.canvass_item.description" disabled></textarea>
+                                                <textarea class="form-control ms-2" rows="3"
+                                                    :value="rrItem.meqs_supplier_item.canvass_item.description"
+                                                    disabled></textarea>
                                             </div>
                                         </td>
                                         <td v-show="showClass" class="text-muted align-middle">
                                             {{ rrItem.meqs_supplier_item.canvass_item.item ? 'Stock' : 'Non-Stock' }}
                                         </td>
                                         <td v-show="showBrand" class="text-muted align-middle">
-                                            {{ rrItem.meqs_supplier_item.canvass_item.brand ? rrItem.meqs_supplier_item.canvass_item.brand.name : 'N/A' }}
+                                            {{ rrItem.meqs_supplier_item.canvass_item.brand ?
+        rrItem.meqs_supplier_item.canvass_item.brand.name : 'N/A' }}
                                         </td>
                                         <td v-show="showUnit" class="text-muted align-middle">
-                                            {{ rrItem.meqs_supplier_item.canvass_item.unit ? rrItem.meqs_supplier_item.canvass_item.unit.name : 'N/A' }}
+                                            {{ rrItem.meqs_supplier_item.canvass_item.unit ?
+        rrItem.meqs_supplier_item.canvass_item.unit.name : 'N/A' }}
                                         </td>
                                         <td v-show="showDelivered" class="text-muted text-center align-middle">
                                             {{ rrItem.meqs_supplier_item.canvass_item.quantity }}
@@ -288,45 +332,47 @@
                                             {{ formatToPhpCurrency(rrItem.meqs_supplier_item.price) }}
                                         </td>
                                         <td v-show="showNetPrice" class="text-muted text-center align-middle">
-                                            {{ 
-                                                formatToPhpCurrency(
-                                                    getNetPrice({
-                                                        grossPrice: rrItem.meqs_supplier_item.price,
-                                                        vatAmount: getVatAmount(rrItem.meqs_supplier_item.price, rrItem.meqs_supplier_item.vat_type)
-                                                    })
-                                                ) 
-                                            }}
+                                            {{
+        formatToPhpCurrency(
+            getNetPrice({
+                grossPrice: rrItem.meqs_supplier_item.price,
+                vatAmount: getVatAmount(rrItem.meqs_supplier_item.price,
+                    rrItem.meqs_supplier_item.vat_type)
+            })
+        )
+    }}
                                         </td>
                                         <td v-show="showGrossTotal" class="text-muted text-center align-middle">
-                                            {{ 
-                                                formatToPhpCurrency(
-                                                    getGrossTotal({
-                                                        price: rrItem.meqs_supplier_item.price,
-                                                        quantity: rrItem.quantity_accepted
-                                                    })
-                                                ) 
-                                            }}
+                                            {{
+        formatToPhpCurrency(
+            getGrossTotal({
+                price: rrItem.meqs_supplier_item.price,
+                quantity: rrItem.quantity_accepted
+            })
+        )
+    }}
                                         </td>
                                         <td v-show="showVatTotal" class="text-muted text-center align-middle">
-                                            {{ 
-                                                formatToPhpCurrency(
-                                                    getVatTotal({
-                                                        price: rrItem.meqs_supplier_item.price,
-                                                        quantity: rrItem.quantity_accepted,
-                                                        vatType: rrItem.meqs_supplier_item.vat_type
-                                                    })
-                                                )
-                                            }}
+                                            {{
+        formatToPhpCurrency(
+            getVatTotal({
+                price: rrItem.meqs_supplier_item.price,
+                quantity: rrItem.quantity_accepted,
+                vatType: rrItem.meqs_supplier_item.vat_type
+            })
+        )
+    }}
                                         </td>
                                         <td v-show="showNetTotal" class="text-muted text-center align-middle">
-                                            {{ 
-                                                formatToPhpCurrency(
-                                                    getTotalNetPrice({
-                                                        pricePerUnit: rrItem.meqs_supplier_item.price,
-                                                        vatPerUnit: getVatAmount(rrItem.meqs_supplier_item.price, rrItem.meqs_supplier_item.vat_type),
-                                                        quantity: rrItem.quantity_accepted
-                                                    })
-                                                ) 
+                                            {{
+        formatToPhpCurrency(
+            getTotalNetPrice({
+                pricePerUnit: rrItem.meqs_supplier_item.price,
+                vatPerUnit: getVatAmount(rrItem.meqs_supplier_item.price,
+                    rrItem.meqs_supplier_item.vat_type),
+                quantity: rrItem.quantity_accepted
+            })
+        )
                                             }}
                                         </td>
                                     </tr>
@@ -389,81 +435,78 @@
 
 <script setup lang="ts">
 
-    definePageMeta({
-        layout: "layout-admin"
-    })
+definePageMeta({
+    layout: "layout-admin"
+})
 
-    import * as rrApi from '~/composables/warehouse/rr/rr.api'
-    import type { RR } from '~/composables/warehouse/rr/rr.types';
-    import { MOBILE_WIDTH } from '~/utils/config';
-    import { approvalStatus } from '~/utils/constants'
-    import { getTotalNetPrice, getVatAmount, getNetPrice, getGrossTotal, getVatTotal } from '~/utils/helpers';
+import * as rrApi from '~/composables/warehouse/rr/rr.api'
+import type { RR } from '~/composables/warehouse/rr/rr.types';
+import { MOBILE_WIDTH } from '~/utils/config';
+import { approvalStatus } from '~/utils/constants'
+import { getTotalNetPrice, getVatAmount, getNetPrice, getGrossTotal, getVatTotal } from '~/utils/helpers';
 
-    const authUser = ref<AuthUser>({} as AuthUser)
-    const route = useRoute()
-    const item = ref<RR | undefined>()
-    const isMobile = ref(false)
+const authUser = ref<AuthUser>({} as AuthUser)
+const route = useRoute()
+const item = ref<RR | undefined>()
+const isMobile = ref(false)
 
-    const showDescription = ref(true)
-    const showItemCode = ref(true)
-    const showClass = ref(true)
-    const showBrand = ref(false)
-    const showUnit = ref(false)
-    const showDelivered = ref(true)
-    const showAccepted = ref(true)
-    const showVat = ref(true)
-    const showGrossPrice = ref(true)
-    const showNetPrice = ref(true)
-    const showGrossTotal = ref(true)
-    const showVatTotal = ref(true)
-    const showNetTotal = ref(true)
+const showDescription = ref(true)
+const showItemCode = ref(true)
+const showClass = ref(true)
+const showBrand = ref(false)
+const showUnit = ref(false)
+const showDelivered = ref(true)
+const showAccepted = ref(true)
+const showVat = ref(true)
+const showGrossPrice = ref(true)
+const showNetPrice = ref(true)
+const showGrossTotal = ref(true)
+const showVatTotal = ref(true)
+const showNetTotal = ref(true)
 
-    onMounted( async() => {
-        isMobile.value = window.innerWidth < MOBILE_WIDTH
-        window.addEventListener('resize', checkMobile);
-        authUser.value = getAuthUser()
-        const rr = await rrApi.findOne(route.params.id as string)
-        item.value = rr
-    })
+onMounted(async () => {
+    isMobile.value = window.innerWidth < MOBILE_WIDTH
+    window.addEventListener('resize', checkMobile);
+    authUser.value = getAuthUser()
+    const rr = await rrApi.findOne(route.params.id as string)
+    item.value = rr
+})
 
-    function checkMobile() {
-        isMobile.value = window.innerWidth < MOBILE_WIDTH
+function checkMobile() {
+    isMobile.value = window.innerWidth < MOBILE_WIDTH
+}
+
+// const isRV = computed( () => {
+//     const meqs = item.value?.po.meqs_supplier.meqs
+
+//     if(meqs?.rv) {
+//         return true 
+//     }
+//     return false 
+
+// })
+
+const grossTotalSummary = computed(() => {
+
+    let ctr = 0
+
+    for (let rrItem of item.value!.rr_items) {
+        ctr += rrItem.meqs_supplier_item.price * rrItem.quantity_accepted
     }
 
-    const isRV = computed( () => {
-        const meqs = item.value?.po.meqs_supplier.meqs
+    return ctr
 
-        if(meqs?.rv) {
-            return true 
-        }
-        return false 
+})
 
-    })
-
-    const grossTotalSummary = computed( () => {
-
-        let ctr = 0
-
-        for(let rrItem of item.value!.rr_items) {
-            ctr += rrItem.meqs_supplier_item.price * rrItem.quantity_accepted
-        }
-
-        return ctr
-
-    })
-
-    const totalPriceSummary = computed( () => grossTotalSummary.value - item.value!.delivery_charge) 
+const totalPriceSummary = computed(() => grossTotalSummary.value - item.value!.delivery_charge)
 
 
-    const meqsReference = computed( () => {
+const meqs = computed(() => {
 
-        const meqs = item.value?.po.meqs_supplier.meqs
+    const meqs = item.value!.po.meqs_supplier.meqs
+    return meqs
 
-        if(isRV.value) {
-            return meqs?.rv
-        }
-
-    })
+})
 
 
 

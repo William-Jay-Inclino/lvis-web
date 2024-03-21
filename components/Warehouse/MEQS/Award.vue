@@ -25,7 +25,8 @@
             </thead>
 
             <tbody>
-                <tr v-for="item, i in canvass_items" :class="{'table-danger': !item.hasAwardedSupplier && !isInitial}">
+                <tr v-for="item, i in canvass_items"
+                    :class="{ 'table-danger': !item.hasAwardedSupplier && !isInitial }">
                     <td class="text-muted align-middle"> {{ i + 1 }} </td>
                     <td class="text-muted align-middle nowrap">{{ item.description }}</td>
                     <td class="text-muted align-middle nowrap">{{ item.brand ? item.brand.name : 'N/A' }}</td>
@@ -36,24 +37,20 @@
 
                             <div v-for="supplierItem in meqsSupplier.meqs_supplier_items">
                                 <div v-if="supplierItem.canvass_item.id === item.id" class="d-flex align-items-center">
-                                    <input
-                                      type="text"
-                                      :value="(supplierItem.price === -1) ? 'N/A' : formatToPhpCurrency(supplierItem.price)"
-                                      class="form-control me-2"
-                                      style="width: 100px"
-                                      disabled
-                                      >
-                                    <i
-                                      class="fas fa-star clickable-icon fs-5"
-                                      @click="onAward(meqsSupplier, item.id, supplierItem)"
-                                      :class="{'text-warning': supplierItem.is_awarded}"></i>
+                                    <input type="text"
+                                        :value="(supplierItem.price === -1) ? 'N/A' : formatToPhpCurrency(supplierItem.price)"
+                                        class="form-control me-2" style="width: 100px" disabled>
+                                    <i class="fas fa-star clickable-icon fs-5"
+                                        @click="onAward(meqsSupplier, item.id, supplierItem)"
+                                        :class="{ 'text-warning': supplierItem.is_awarded }"></i>
                                 </div>
                             </div>
-                            
+
                         </div>
                     </td>
                     <td class="align-middle text-center">
-                        <button @click="onClickAttachNote(item.id)" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#attachNoteModal">
+                        <button @click="onClickAttachNote(item.id)" class="btn btn-secondary btn-sm"
+                            data-bs-toggle="modal" data-bs-target="#attachNoteModal">
                             Attach
                             <i class="fas fa-book"></i>
                         </button>
@@ -63,26 +60,29 @@
 
         </table>
 
-        <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="attachNoteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="attachNoteModal" tabindex="-1"
+            aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-warning" id="exampleModalLabel">
-                        Attach Remark
-                    </h5>
-                    <button @click="onCloseAttachModal" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <textarea rows="3" class="form-control" v-model="attachNoteData.note"></textarea>
-                </div>
-                <div class="modal-footer">
-                    <button @click="onCloseAttachModal" ref="closeattachNoteModal" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-close"></i> Close
-                    </button>
-                    <button @click="attachNote" class="btn btn-primary">
-                        <i class="fas fa-paperclip"></i> Attach
-                    </button>
-                </div>
+                    <div class="modal-header">
+                        <h5 class="modal-title text-warning" id="exampleModalLabel">
+                            Attach Remark
+                        </h5>
+                        <button @click="onCloseAttachModal" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <textarea rows="3" class="form-control" v-model="attachNoteData.note"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button @click="onCloseAttachModal" ref="closeattachNoteModal" class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                            <i class="fas fa-close"></i> Close
+                        </button>
+                        <button @click="attachNote" class="btn btn-primary" :disabled="isAttachingRemark">
+                            <i class="fas fa-paperclip"></i> {{ isAttachingRemark ? 'Attaching...' : 'Attach' }}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -100,7 +100,7 @@ import type { MeqsSupplierItem } from '~/composables/warehouse/meqs/meqs-supplie
 
 
 const emits = defineEmits(['awardSupplierItem', 'attachNote']);
-    
+
 const props = defineProps({
     meqs_suppliers: {
         type: Array as () => MeqsSupplier[],
@@ -111,6 +111,10 @@ const props = defineProps({
         default: () => [],
     },
     isInitial: {
+        type: Boolean,
+        default: () => true
+    },
+    isAttachingRemark: {
         type: Boolean,
         default: () => true
     }
@@ -126,7 +130,7 @@ const _attachNoteDataInitial = {
     note: ''
 }
 
-const attachNoteData = ref<AttachNoteData>({..._attachNoteDataInitial})
+const attachNoteData = ref<AttachNoteData>({ ..._attachNoteDataInitial })
 const closeattachNoteModal = ref<HTMLButtonElement>()
 
 
@@ -139,13 +143,13 @@ function attachNote() {
 
 function onClickAttachNote(canvassItemId: string) {
     attachNoteData.value.canvass_item_id = canvassItemId
-    
+
     let note = ''
-    for(let supplier of props.meqs_suppliers) {
+    for (let supplier of props.meqs_suppliers) {
 
         const item = supplier.meqs_supplier_items.find(i => i.canvass_item.id === canvassItemId)
 
-        if(item) {
+        if (item) {
             note = item.notes
             break
         }
@@ -174,15 +178,17 @@ function onCloseAttachModal() {
 
 
 <style scoped>
-
 .clickable-icon {
     cursor: pointer;
-    color: #6c757d; /* Default color similar to text-muted */
-    transition: color 0.3s; /* Add transition for smooth color change */
+    color: #6c757d;
+    /* Default color similar to text-muted */
+    transition: color 0.3s;
+    /* Add transition for smooth color change */
 }
 
 .clickable-icon:hover {
-    color: #ffc107; /* Hover color similar to text-warning */
+    color: #ffc107;
+    /* Hover color similar to text-warning */
 }
 
 .nowrap {
@@ -193,5 +199,4 @@ function onCloseAttachModal() {
     max-width: 100%;
     width: auto;
 }
-
 </style>

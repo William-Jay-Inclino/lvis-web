@@ -37,6 +37,30 @@ export async function findByRefNumber(payload: { po_number?: string, meqs_number
                                 }
                             }
                         }
+                        spr {
+                            spr_number
+                            canvass {
+                                rc_number 
+                                requested_by {
+                                    id 
+                                    firstname
+                                    middlename
+                                    lastname
+                                }
+                            }
+                        }
+                        jo {
+                            jo_number
+                            canvass {
+                                rc_number 
+                                requested_by {
+                                    id 
+                                    firstname
+                                    middlename
+                                    lastname
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -93,6 +117,30 @@ export async function findAll(payload: { page: number, pageSize: number, date_re
                             meqs_number
                             rv {
                                 rv_number
+                                canvass {
+                                    rc_number 
+                                    requested_by {
+                                        id 
+                                        firstname
+                                        middlename
+                                        lastname
+                                    }
+                                }
+                            }
+                            spr {
+                                spr_number
+                                canvass {
+                                    rc_number 
+                                    requested_by {
+                                        id 
+                                        firstname
+                                        middlename
+                                        lastname
+                                    }
+                                }
+                            }
+                            jo {
+                                jo_number
                                 canvass {
                                     rc_number 
                                     requested_by {
@@ -326,6 +374,36 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                                 notes
                             }
                         }
+                        spr {
+                            id
+                            spr_number 
+                            canvass {
+                                rc_number
+                                requested_by {
+                                    id
+                                    firstname
+                                    middlename
+                                    lastname
+                                }
+                                purpose
+                                notes
+                            }
+                        }
+                        jo {
+                            id
+                            jo_number 
+                            canvass {
+                                rc_number
+                                requested_by {
+                                    id
+                                    firstname
+                                    middlename
+                                    lastname
+                                }
+                                purpose
+                                notes
+                            }
+                        }
                     }
                 }
                 po_approvers {
@@ -478,6 +556,38 @@ export async function findOne(id: string): Promise<PO | undefined> {
                         rv {
                             id
                             rv_number
+                            canvass {
+                                id
+                                rc_number
+                                purpose 
+                                notes
+                                requested_by {
+                                    id
+                                    firstname
+                                    middlename
+                                    lastname
+                                }
+                            }
+                        }
+                        spr {
+                            id
+                            spr_number
+                            canvass {
+                                id
+                                rc_number
+                                purpose 
+                                notes
+                                requested_by {
+                                    id
+                                    firstname
+                                    middlename
+                                    lastname
+                                }
+                            }
+                        }
+                        jo {
+                            id
+                            jo_number
                             canvass {
                                 id
                                 rc_number

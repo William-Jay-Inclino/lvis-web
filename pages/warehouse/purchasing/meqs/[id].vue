@@ -55,8 +55,17 @@
                     <label class="form-label">Reference</label>
                     <input type="text" class="form-control" :value="referenceNumber" disabled>
                     <nuxt-link v-if="meqsData.rv" class="btn btn-sm btn-light text-primary"
-                        :to="'/warehouse/purchasing/rv/view/' + meqsData.rv.id" target="_blank">View RV
-                        details</nuxt-link>
+                        :to="'/warehouse/purchasing/rv/view/' + meqsData.rv.id" target="_blank">
+                        View RV details
+                    </nuxt-link>
+                    <nuxt-link v-if="meqsData.spr" class="btn btn-sm btn-light text-primary"
+                        :to="'/warehouse/purchasing/spr/view/' + meqsData.spr.id" target="_blank">
+                        View SPR details
+                    </nuxt-link>
+                    <nuxt-link v-if="meqsData.jo" class="btn btn-sm btn-light text-primary"
+                        :to="'/warehouse/purchasing/jo/view/' + meqsData.jo.id" target="_blank">
+                        View JO details
+                    </nuxt-link>
                 </div>
 
                 <div class="mb-3">
@@ -104,8 +113,8 @@
 
                 <WarehouseMEQSSupplier :suppliers="suppliers" :meqs_suppliers="meqsData.meqs_suppliers"
                     :canvass_items="reference.canvass.canvass_items" :is-adding-supplier="isAddingSupplier"
-                    :is-editing-supplier="isEditingSupplier" :is-adding-attachment="isAddingAttachment"
-                    :is-page-create="false" @add-supplier="addSupplier" @edit-supplier="editSupplier"
+                    :is-editing-supplier="isEditingSupplier" :is-page-create="false" @add-supplier="addSupplier"
+                    :is-adding-attachment="isAddingAttachment" @edit-supplier="editSupplier"
                     @remove-supplier="removeSupplier" @add-attachment="addAttachment"
                     @remove-attachment="removeAttachment" />
 
@@ -119,7 +128,7 @@
 
                 <WarehouseMEQSAward :meqs_suppliers="meqsData.meqs_suppliers"
                     :canvass_items="reference.canvass.canvass_items" @award-supplier-item="awardSupplierItem"
-                    @attach-note="attachNote" />
+                    :is-attaching-remark="isAttachingRemark" @attach-note="attachNote" />
 
             </div>
 
@@ -194,6 +203,7 @@ const isEditingApprover = ref(false)
 const isAddingSupplier = ref(false)
 const isEditingSupplier = ref(false)
 const isAddingAttachment = ref(false)
+const isAttachingRemark = ref(false)
 
 const form = ref<FORM_TYPE>(FORM_TYPE.MEQS_INFO)
 
@@ -257,16 +267,16 @@ const meqsStatus = computed(() => {
 
 const reference = computed(() => {
 
-    if (meqsData.value.rv) {
-        return meqsData.value.rv
-    }
+    if (meqsData.value.rv) return meqsData.value.rv
+    if (meqsData.value.spr) return meqsData.value.spr
+    if (meqsData.value.jo) return meqsData.value.jo
 
 })
 
 const referenceNumber = computed(() => {
-    if (meqsData.value.rv) {
-        return 'RV#' + meqsData.value.rv.rv_number
-    }
+    if (meqsData.value.rv) return 'RV#' + meqsData.value.rv.rv_number
+    if (meqsData.value.spr) return 'SPR#' + meqsData.value.spr.spr_number
+    if (meqsData.value.jo) return 'JO#' + meqsData.value.jo.jo_number
     return ''
 })
 
@@ -354,6 +364,8 @@ async function cancelMeqs() {
 async function addSupplier(payload: MeqsSupplier) {
     console.log('addSupplier()', payload)
 
+    isAddingSupplier.value = true
+
     const meqs_supplier_items: CreateMeqsSupplierItemInput[] = payload.meqs_supplier_items.map(i => {
 
         return {
@@ -409,7 +421,6 @@ async function addSupplier(payload: MeqsSupplier) {
 
     console.log('data', data)
 
-    isAddingSupplier.value = true
     const response = await meqsSupplierApi.create(data)
     isAddingSupplier.value = false
 
@@ -463,9 +474,9 @@ async function editSupplier(payload: MeqsSupplier, indx: number) {
 
     console.log('data', data)
 
-    isEditingApprover.value = true
+    isEditingSupplier.value = true
     const response = await meqsSupplierApi.update(payload.id, data)
-    isEditingApprover.value = false
+    isEditingSupplier.value = false
 
     if (response.success && response.data) {
 
@@ -816,7 +827,7 @@ async function awardSupplierItem(meqsSupplier: MeqsSupplier, canvass_item_id: st
 
     if (response.success) {
 
-        toast.success(response.msg)
+        toast.success('Supplier awarded!')
 
     } else {
         Swal.fire({
@@ -840,7 +851,9 @@ async function attachNote(canvass_item_id: string, note: string) {
 
     }
 
+    isAttachingRemark.value = true
     const response = await meqsSupplierApi.attachNoteSupplierItem(meqsData.value.id, canvass_item_id, note)
+    isAttachingRemark.value = false
 
     console.log('response', response)
 

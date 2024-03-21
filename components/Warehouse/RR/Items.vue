@@ -8,11 +8,14 @@
                 <div class="accordion" id="accordionFlushExample">
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="flush-headingOne">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                            Table Filters
-                        </button>
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#flush-collapseOne" aria-expanded="false"
+                                aria-controls="flush-collapseOne">
+                                Table Filters
+                            </button>
                         </h2>
-                        <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                        <div id="flush-collapseOne" class="accordion-collapse collapse"
+                            aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
                             <div class="accordion-body">
                                 <div class="row">
                                     <div class="col-6">
@@ -21,12 +24,12 @@
                                             <label class="form-check-label">Description</label>
                                         </div>
                                     </div>
-                                    <div class="col-6">
+                                    <!-- <div class="col-6">
                                         <div class="form-check form-switch">
                                             <input v-model="showItemCode" class="form-check-input" type="checkbox">
                                             <label class="form-check-label">Item Code</label>
                                         </div>
-                                    </div>
+                                    </div> -->
                                     <div class="col-6">
                                         <div class="form-check form-switch">
                                             <input v-model="showClass" class="form-check-input" type="checkbox">
@@ -53,7 +56,8 @@
                                     </div>
                                     <div class="col-6">
                                         <div class="form-check form-switch">
-                                            <input v-model="showAccepted" class="form-check-input" type="checkbox" disabled>
+                                            <input v-model="showAccepted" class="form-check-input" type="checkbox"
+                                                disabled>
                                             <label class="form-check-label">Accepted</label>
                                         </div>
                                     </div>
@@ -129,32 +133,31 @@
                                 <td v-show="showDescription" class="text-muted">
                                     <div class="input-group input-group-sm">
                                         {{ i + 1 }}.
-                                        <textarea class="form-control ms-2" rows="3" :value="rrItem.meqs_supplier_item.canvass_item.description" disabled></textarea>
+                                        <textarea class="form-control ms-2" rows="3"
+                                            :value="rrItem.meqs_supplier_item.canvass_item.description"
+                                            disabled></textarea>
                                     </div>
                                 </td>
                                 <td v-show="showClass" class="text-muted align-middle">
                                     {{ rrItem.meqs_supplier_item.canvass_item.item ? 'Stock' : 'Non-Stock' }}
                                 </td>
                                 <td v-show="showBrand" class="text-muted align-middle">
-                                    {{ rrItem.meqs_supplier_item.canvass_item.brand ? rrItem.meqs_supplier_item.canvass_item.brand.name : 'N/A' }}
+                                    {{ rrItem.meqs_supplier_item.canvass_item.brand ?
+                                                rrItem.meqs_supplier_item.canvass_item.brand.name : 'N/A' }}
                                 </td>
                                 <td v-show="showUnit" class="text-muted align-middle">
-                                    {{ rrItem.meqs_supplier_item.canvass_item.unit ? rrItem.meqs_supplier_item.canvass_item.unit.name : 'N/A' }}
+                                    {{ rrItem.meqs_supplier_item.canvass_item.unit ?
+                                                rrItem.meqs_supplier_item.canvass_item.unit.name : 'N/A' }}
                                 </td>
                                 <td v-show="showDelivered" class="text-muted text-center align-middle">
                                     {{ rrItem.meqs_supplier_item.canvass_item.quantity }}
                                 </td>
                                 <td v-show="showAccepted" class="text-muted align-middle">
                                     <div class="d-flex justify-content-center align-items-center">
-                                        <input 
-                                            type="number"
-                                            :class="{
+                                        <input type="number" :class="{
                                                 'border-danger border border-2': rrItem.isInvalidQtyAccepted,
-                                            }" 
-                                            class="form-control" 
-                                            v-model="rrItem.quantity_accepted" 
-                                            style="width: 80px"
-                                        >
+                                            }" class="form-control" v-model="rrItem.quantity_accepted"
+                                            style="width: 80px">
                                     </div>
                                 </td>
                                 <td v-show="showVat" class="text-muted text-center align-middle">
@@ -164,46 +167,48 @@
                                     {{ formatToPhpCurrency(rrItem.meqs_supplier_item.price) }}
                                 </td>
                                 <td v-show="showNetPrice" class="text-muted text-center align-middle">
-                                    {{ 
-                                        formatToPhpCurrency(
-                                            getNetPrice({
-                                                grossPrice: rrItem.meqs_supplier_item.price,
-                                                vatAmount: getVatAmount(rrItem.meqs_supplier_item.price, rrItem.meqs_supplier_item.vat_type)
-                                            })
-                                        ) 
-                                    }}
+                                    {{
+                                                formatToPhpCurrency(
+                                                    getNetPrice({
+                                                        grossPrice: rrItem.meqs_supplier_item.price,
+                                                        vatAmount: getVatAmount(rrItem.meqs_supplier_item.price,
+                                                            rrItem.meqs_supplier_item.vat_type)
+                                                    })
+                                                )
+                                            }}
                                 </td>
                                 <td v-show="showGrossTotal" class="text-muted text-center align-middle">
-                                    {{ 
-                                        formatToPhpCurrency(
-                                            getGrossTotal({
-                                                price: rrItem.meqs_supplier_item.price,
-                                                quantity: rrItem.quantity_accepted
-                                            })
-                                        ) 
-                                    }}
+                                    {{
+                                                formatToPhpCurrency(
+                                                    getGrossTotal({
+                                                        price: rrItem.meqs_supplier_item.price,
+                                                        quantity: rrItem.quantity_accepted
+                                                    })
+                                                )
+                                            }}
                                 </td>
                                 <td v-show="showVatTotal" class="text-muted text-center align-middle">
-                                    {{ 
-                                        formatToPhpCurrency(
-                                            getVatTotal({
-                                                price: rrItem.meqs_supplier_item.price,
-                                                quantity: rrItem.quantity_accepted,
-                                                vatType: rrItem.meqs_supplier_item.vat_type
-                                            })
-                                        )
-                                    }}
+                                    {{
+                                                formatToPhpCurrency(
+                                                    getVatTotal({
+                                                        price: rrItem.meqs_supplier_item.price,
+                                                        quantity: rrItem.quantity_accepted,
+                                                        vatType: rrItem.meqs_supplier_item.vat_type
+                                                    })
+                                                )
+                                            }}
                                 </td>
                                 <td v-show="showNetTotal" class="text-muted text-center align-middle">
-                                    {{ 
-                                        formatToPhpCurrency(
-                                            getTotalNetPrice({
-                                                pricePerUnit: rrItem.meqs_supplier_item.price,
-                                                vatPerUnit: getVatAmount(rrItem.meqs_supplier_item.price, rrItem.meqs_supplier_item.vat_type),
-                                                quantity: rrItem.quantity_accepted
-                                            })
-                                        ) 
-                                    }}
+                                    {{
+                                                formatToPhpCurrency(
+                                                    getTotalNetPrice({
+                                                        pricePerUnit: rrItem.meqs_supplier_item.price,
+                                                        vatPerUnit: getVatAmount(rrItem.meqs_supplier_item.price,
+                                                            rrItem.meqs_supplier_item.vat_type),
+                                                        quantity: rrItem.quantity_accepted
+                                                    })
+                                                )
+                                            }}
                                 </td>
                             </tr>
                         </tbody>
@@ -222,35 +227,35 @@
 
 
 <script setup lang="ts">
-    import type { RrItem } from '~/composables/warehouse/rr/rr-item.types';
-    import { getTotalNetPrice, getVatAmount, getNetPrice, getGrossTotal, getVatTotal } from '~/utils/helpers';
-    import { useToast } from "vue-toastification";
-    
-
-    const props = defineProps({
-        rrItems: {
-            type: Array as () => RrItem[],
-            default: () => [],
-        }
-    });
-
-    const toast = useToast();
+import type { RrItem } from '~/composables/warehouse/rr/rr-item.types';
+import { getTotalNetPrice, getVatAmount, getNetPrice, getGrossTotal, getVatTotal } from '~/utils/helpers';
+import { useToast } from "vue-toastification";
 
 
+const props = defineProps({
+    rrItems: {
+        type: Array as () => RrItem[],
+        default: () => [],
+    }
+});
 
-    const showDescription = ref(true)
-    const showItemCode = ref(true)
-    const showClass = ref(true)
-    const showBrand = ref(false)
-    const showUnit = ref(false)
-    const showDelivered = ref(true)
-    const showAccepted = ref(true)
-    const showVat = ref(true)
-    const showGrossPrice = ref(true)
-    const showNetPrice = ref(true)
-    const showGrossTotal = ref(true)
-    const showVatTotal = ref(true)
-    const showNetTotal = ref(true)
+const toast = useToast();
+
+
+
+const showDescription = ref(true)
+const showItemCode = ref(true)
+const showClass = ref(true)
+const showBrand = ref(false)
+const showUnit = ref(false)
+const showDelivered = ref(true)
+const showAccepted = ref(true)
+const showVat = ref(true)
+const showGrossPrice = ref(true)
+const showNetPrice = ref(true)
+const showGrossTotal = ref(true)
+const showVatTotal = ref(true)
+const showNetTotal = ref(true)
 
 
 </script>
@@ -259,7 +264,7 @@
 
 
 <style scoped>
-    th {
-        white-space: nowrap;
-    }
+th {
+    white-space: nowrap;
+}
 </style>
