@@ -199,12 +199,12 @@
                                         <tr>
                                             <td class="text-muted"> Approver </td>
                                             <td> {{ getFullname(i.approver!.firstname, i.approver!.middlename,
-                                                i.approver!.lastname) }} </td>
+                i.approver!.lastname) }} </td>
                                         </tr>
                                         <tr>
                                             <td class="text-muted"> Status </td>
                                             <td>
-                                                <span :class="{[`badge bg-${approvalStatus[i.status].color}`]: true}">
+                                                <span :class="{ [`badge bg-${approvalStatus[i.status].color}`]: true}">
                                                     {{ approvalStatus[i.status].label }}
                                                 </span>
                                             </td>
@@ -252,7 +252,7 @@
 <script setup lang="ts">
 
 definePageMeta({
-    layout: "layout-admin"
+    layout: "layout-warehouse"
 })
 
 import * as api from '~/composables/warehouse/rv/rv.api'

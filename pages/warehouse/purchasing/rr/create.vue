@@ -187,7 +187,7 @@
 <script script setup lang="ts">
 
 definePageMeta({
-    layout: "layout-admin"
+    layout: "layout-warehouse"
 })
 
 import type { PO } from '~/composables/warehouse/po/po.types';

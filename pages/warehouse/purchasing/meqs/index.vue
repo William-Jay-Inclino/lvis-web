@@ -261,7 +261,7 @@ import type { SPR } from '~/composables/warehouse/spr/spr.types';
 
 
 definePageMeta({
-    layout: "layout-admin"
+    layout: "layout-warehouse"
 })
 
 const authUser = ref<AuthUser>({} as AuthUser)

@@ -278,7 +278,7 @@ import type { JO } from '~/composables/warehouse/jo/jo.types';
 import type { SPR } from '~/composables/warehouse/spr/spr.types';
 
 definePageMeta({
-    layout: "layout-admin"
+    layout: "layout-warehouse"
 })
 
 // DEPENDENCIES

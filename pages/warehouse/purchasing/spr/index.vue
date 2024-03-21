@@ -213,7 +213,7 @@
 <script setup lang="ts">
 
 definePageMeta({
-    layout: "layout-admin"
+    layout: "layout-warehouse"
 })
 
 import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';

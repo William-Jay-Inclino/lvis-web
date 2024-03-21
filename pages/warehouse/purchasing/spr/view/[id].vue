@@ -240,7 +240,7 @@
 <script setup lang="ts">
 
 definePageMeta({
-    layout: "layout-admin"
+    layout: "layout-warehouse"
 })
 
 import * as api from '~/composables/warehouse/spr/spr.api'

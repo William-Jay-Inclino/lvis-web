@@ -356,23 +356,23 @@
                                             {{
         formatToPhpCurrency(
             getVatTotal({
-                price: rrItem.meqs_supplier_item.price,
-                quantity: rrItem.quantity_accepted,
-                vatType: rrItem.meqs_supplier_item.vat_type
-            })
-        )
-    }}
+                                            price: rrItem.meqs_supplier_item.price,
+                                            quantity: rrItem.quantity_accepted,
+                                            vatType: rrItem.meqs_supplier_item.vat_type
+                                            })
+                                            )
+                                            }}
                                         </td>
                                         <td v-show="showNetTotal" class="text-muted text-center align-middle">
                                             {{
-        formatToPhpCurrency(
-            getTotalNetPrice({
-                pricePerUnit: rrItem.meqs_supplier_item.price,
-                vatPerUnit: getVatAmount(rrItem.meqs_supplier_item.price,
-                    rrItem.meqs_supplier_item.vat_type),
-                quantity: rrItem.quantity_accepted
-            })
-        )
+                                            formatToPhpCurrency(
+                                            getTotalNetPrice({
+                                            pricePerUnit: rrItem.meqs_supplier_item.price,
+                                            vatPerUnit: getVatAmount(rrItem.meqs_supplier_item.price,
+                                            rrItem.meqs_supplier_item.vat_type),
+                                            quantity: rrItem.quantity_accepted
+                                            })
+                                            )
                                             }}
                                         </td>
                                     </tr>
@@ -436,7 +436,7 @@
 <script setup lang="ts">
 
 definePageMeta({
-    layout: "layout-admin"
+    layout: "layout-warehouse"
 })
 
 import * as rrApi from '~/composables/warehouse/rr/rr.api'

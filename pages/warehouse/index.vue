@@ -6,8 +6,8 @@
 
 <script setup lang="ts">
 
-    definePageMeta({
-        layout: "layout-admin"
-    })
+definePageMeta({
+    layout: "layout-warehouse"
+})
 
 </script>

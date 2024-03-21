@@ -64,25 +64,29 @@
                     <div class="col">
                         <nav>
                             <ul class="pagination justify-content-center">
-                            <li class="page-item" :class="{ disabled: pagination.currentPage === 1 }">
-                                <a class="page-link" @click="changePage(pagination.currentPage - 1)" href="#">Previous</a>
-                            </li>
-                            <li v-for="page in pagination.totalPages" :key="page" class="page-item" :class="{ active: pagination.currentPage === page }">
-                                <a class="page-link" @click="changePage(page)" href="#">{{ page }}</a>
-                            </li>
-                            <li class="page-item" :class="{ disabled: pagination.currentPage === pagination.totalPages }">
-                                <a class="page-link" @click="changePage(pagination.currentPage + 1)" href="#">Next</a>
-                            </li>
+                                <li class="page-item" :class="{ disabled: pagination.currentPage === 1 }">
+                                    <a class="page-link" @click="changePage(pagination.currentPage - 1)"
+                                        href="#">Previous</a>
+                                </li>
+                                <li v-for="page in pagination.totalPages" :key="page" class="page-item"
+                                    :class="{ active: pagination.currentPage === page }">
+                                    <a class="page-link" @click="changePage(page)" href="#">{{ page }}</a>
+                                </li>
+                                <li class="page-item"
+                                    :class="{ disabled: pagination.currentPage === pagination.totalPages }">
+                                    <a class="page-link" @click="changePage(pagination.currentPage + 1)"
+                                        href="#">Next</a>
+                                </li>
                             </ul>
                         </nav>
                     </div>
                 </div>
-                
+
 
             </div>
         </div>
 
-        
+
     </div>
 
 </template>
@@ -90,71 +94,71 @@
 
 <script setup lang="ts">
 
-    definePageMeta({
-        layout: "layout-admin"
+definePageMeta({
+    layout: "layout-warehouse"
+})
+
+import * as api from '~/composables/warehouse/unit/unit.api'
+import type { Unit } from '~/composables/warehouse/unit/unit.types';
+import { PAGINATION_SIZE } from '~/utils/config'
+
+
+const router = useRouter()
+const items = ref<Unit[]>([])
+const _paginationInitial = {
+    currentPage: 0,
+    totalPages: 0,
+    totalItems: 0,
+    pageSize: PAGINATION_SIZE,
+}
+const searchField = ref('name')
+const searchValue = ref(null)
+
+const pagination = ref({ ..._paginationInitial })
+
+onMounted(async () => {
+    const { data, currentPage, totalItems, totalPages } = await api.findAll({
+        page: 1,
+        pageSize: pagination.value.pageSize,
+        searchField: searchField.value,
+        searchValue: searchValue.value
     })
+    items.value = data
+    pagination.value.totalItems = totalItems
+    pagination.value.currentPage = currentPage
+    pagination.value.totalPages = totalPages
+})
 
-    import * as api from '~/composables/warehouse/unit/unit.api'
-    import type { Unit } from '~/composables/warehouse/unit/unit.types';
-    import { PAGINATION_SIZE } from '~/utils/config'
+function onClickEdit(id: string) {
+    router.push('/warehouse/data-management/unit/' + id)
+}
 
+async function changePage(page: number) {
+    const { data, currentPage, totalItems, totalPages } = await api.findAll({
+        page,
+        pageSize: pagination.value.pageSize,
+        searchField: null,
+        searchValue: null
 
-    const router = useRouter()
-    const items = ref<Unit[]>([])
-    const _paginationInitial = {
-        currentPage: 0,
-        totalPages: 0,
-        totalItems: 0,
-        pageSize: PAGINATION_SIZE,
-    }
-    const searchField = ref('name') 
-    const searchValue = ref(null) 
-
-    const pagination = ref({..._paginationInitial}) 
-
-    onMounted( async() => {
-        const { data, currentPage, totalItems, totalPages } = await api.findAll({
-            page: 1,
-            pageSize: pagination.value.pageSize,
-            searchField: searchField.value,
-            searchValue: searchValue.value
-        })
-        items.value = data
-        pagination.value.totalItems = totalItems
-        pagination.value.currentPage = currentPage
-        pagination.value.totalPages = totalPages
     })
+    items.value = data
+    pagination.value.totalItems = totalItems
+    pagination.value.currentPage = currentPage
+    pagination.value.totalPages = totalPages
+}
 
-    function onClickEdit(id: string) {
-        router.push('/warehouse/data-management/unit/' + id)
-    }
+async function search() {
+    const { data, currentPage, totalItems, totalPages } = await api.findAll({
+        page: 1,
+        pageSize: pagination.value.pageSize,
+        searchField: searchField.value,
+        searchValue: searchValue.value
 
-    async function changePage(page: number) {
-        const { data, currentPage, totalItems, totalPages } = await api.findAll({
-            page,
-            pageSize: pagination.value.pageSize,
-            searchField: null,
-            searchValue: null
-            
-        })
-        items.value = data
-        pagination.value.totalItems = totalItems
-        pagination.value.currentPage = currentPage
-        pagination.value.totalPages = totalPages
-    }
-
-    async function search() {
-        const { data, currentPage, totalItems, totalPages } = await api.findAll({
-            page: 1,
-            pageSize: pagination.value.pageSize,
-            searchField: searchField.value,
-            searchValue: searchValue.value
-            
-        })
-        items.value = data
-        pagination.value.totalItems = totalItems
-        pagination.value.currentPage = currentPage
-        pagination.value.totalPages = totalPages  
-    }
+    })
+    items.value = data
+    pagination.value.totalItems = totalItems
+    pagination.value.currentPage = currentPage
+    pagination.value.totalPages = totalPages
+}
 
 </script>~/composables/config

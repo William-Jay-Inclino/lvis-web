@@ -40,7 +40,7 @@
 
         <div class="h5wrapper mb-3 mt-3" v-show="!isInitialLoad && !isSearching && !isPaginating">
             <hr class="result">
-                <h6 class="text-warning"><i>Search results...</i></h6>
+            <h6 class="text-warning"><i>Search results...</i></h6>
             <hr class="result">
         </div>
 
@@ -50,7 +50,8 @@
                 Please wait...
             </div>
 
-            <div class="text-center text-muted fst-italic" v-show="items.length === 0 && (!isInitialLoad && !isSearching)">
+            <div class="text-center text-muted fst-italic"
+                v-show="items.length === 0 && (!isInitialLoad && !isSearching)">
                 No results found
             </div>
 
@@ -76,13 +77,18 @@
                                     <tbody>
                                         <tr v-for="i in items">
                                             <td class="text-muted align-middle"> {{ i.rc_number }} </td>
-                                            <td class="text-muted align-middle"> {{ getFullname(i.requested_by!.firstname, i.requested_by!.middlename, i.requested_by!.lastname) }} </td>
-                                            <td class="text-muted align-middle"> {{ formatDate(i.date_requested) }} </td>
+                                            <td class="text-muted align-middle"> {{
+                            getFullname(i.requested_by!.firstname, i.requested_by!.middlename,
+                                i.requested_by!.lastname) }} </td>
+                                            <td class="text-muted align-middle"> {{ formatDate(i.date_requested) }}
+                                            </td>
                                             <td class="text-muted align-middle">
-                                                <nuxt-link class="btn btn-light w-50" :to="'/warehouse/purchasing/canvass/view/' + i.id">
+                                                <nuxt-link class="btn btn-light w-50"
+                                                    :to="'/warehouse/purchasing/canvass/view/' + i.id">
                                                     <i class="fas fa-info-circle text-info"></i>
                                                 </nuxt-link>
-                                                <button v-if="isAdminOrOwner(i.created_by, authUser)" @click="onClickEdit(i.id)" class="btn btn-light w-50">
+                                                <button v-if="isAdminOrOwner(i.created_by, authUser)"
+                                                    @click="onClickEdit(i.id)" class="btn btn-light w-50">
                                                     <i class="fas fa-edit text-primary"></i>
                                                 </button>
                                             </td>
@@ -105,20 +111,24 @@
                                         </tr>
                                         <tr>
                                             <td class="text-muted"> Requisitioner </td>
-                                            <td> {{ getFullname(i.requested_by!.firstname, i.requested_by!.middlename, i.requested_by!.lastname) }} </td>
+                                            <td> {{ getFullname(i.requested_by!.firstname, i.requested_by!.middlename,
+                            i.requested_by!.lastname) }} </td>
                                         </tr>
                                         <tr>
                                             <td class="text-muted"> Date </td>
                                             <td> {{ moment(i.date_requested).format('YYYY-MM-DD') }} </td>
                                         </tr>
                                         <tr>
-                                            <td class="text-center" :colspan="isAdminOrOwner(i.created_by, authUser) ? 1 : 2">
-                                                <nuxt-link class="btn btn-sm btn-light text-info w-100" :to="'/warehouse/purchasing/canvass/view/' + i.id">
+                                            <td class="text-center"
+                                                :colspan="isAdminOrOwner(i.created_by, authUser) ? 1 : 2">
+                                                <nuxt-link class="btn btn-sm btn-light text-info w-100"
+                                                    :to="'/warehouse/purchasing/canvass/view/' + i.id">
                                                     <i class="fas fa-info-circle text-info"></i> View Details
                                                 </nuxt-link>
                                             </td>
                                             <td v-if="isAdminOrOwner(i.created_by, authUser)" class="text-center">
-                                                <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light text-primary w-100">
+                                                <button @click="onClickEdit(i.id)"
+                                                    class="btn btn-sm btn-light text-primary w-100">
                                                     <i class="fas fa-edit"></i>
                                                     Edit Canvass
                                                 </button>
@@ -141,20 +151,24 @@
                     <div class="col">
                         <nav>
                             <ul class="pagination justify-content-center">
-                            <li class="page-item" :class="{ disabled: pagination.currentPage === 1 }">
-                                <a class="page-link" @click="changePage(pagination.currentPage - 1)" href="#">Previous</a>
-                            </li>
-                            <li v-for="page in pagination.totalPages" :key="page" class="page-item" :class="{ active: pagination.currentPage === page }">
-                                <a class="page-link" @click="changePage(page)" href="#">{{ page }}</a>
-                            </li>
-                            <li class="page-item" :class="{ disabled: pagination.currentPage === pagination.totalPages }">
-                                <a class="page-link" @click="changePage(pagination.currentPage + 1)" href="#">Next</a>
-                            </li>
+                                <li class="page-item" :class="{ disabled: pagination.currentPage === 1 }">
+                                    <a class="page-link" @click="changePage(pagination.currentPage - 1)"
+                                        href="#">Previous</a>
+                                </li>
+                                <li v-for="page in pagination.totalPages" :key="page" class="page-item"
+                                    :class="{ active: pagination.currentPage === page }">
+                                    <a class="page-link" @click="changePage(page)" href="#">{{ page }}</a>
+                                </li>
+                                <li class="page-item"
+                                    :class="{ disabled: pagination.currentPage === pagination.totalPages }">
+                                    <a class="page-link" @click="changePage(pagination.currentPage + 1)"
+                                        href="#">Next</a>
+                                </li>
                             </ul>
                         </nav>
                     </div>
                 </div>
-                
+
 
             </div>
         </div>
@@ -166,140 +180,139 @@
 
 <script setup lang="ts">
 
-    definePageMeta({
-        layout: "layout-admin"
+definePageMeta({
+    layout: "layout-warehouse"
+})
+
+import * as api from '~/composables/warehouse/canvass/canvass.api'
+import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
+import { getFullname, formatDate, isAdminOrOwner } from '~/utils/helpers'
+import moment from 'moment'
+import { MOBILE_WIDTH, PAGINATION_SIZE } from '~/utils/config'
+
+
+const authUser = ref<AuthUser>({} as AuthUser)
+
+const router = useRouter()
+
+// flags
+const isMobile = ref(false)
+const isInitialLoad = ref(true)
+const isSearching = ref(false)
+const isPaginating = ref(false)
+
+// pagination
+const _paginationInitial = {
+    currentPage: 0,
+    totalPages: 0,
+    totalItems: 0,
+    pageSize: PAGINATION_SIZE,
+}
+const pagination = ref({ ..._paginationInitial })
+
+// search filters
+const canvass = ref<Canvass | null>(null)
+const date_requested = ref(null)
+const requested_by = ref<Employee | null>(null)
+const canvasses = ref<Canvass[]>([])
+const employees = ref<Employee[]>([])
+// ----------------
+
+
+// container for search result
+const items = ref<Canvass[]>([])
+
+
+// ======================== LIFECYCLE HOOKS ======================== 
+
+onMounted(async () => {
+    isMobile.value = window.innerWidth < MOBILE_WIDTH
+
+    window.addEventListener('resize', checkMobile);
+
+    authUser.value = getAuthUser()
+
+    const response = await api.fetchDataInSearchFilters()
+
+    canvasses.value = response.canvasses
+    employees.value = response.employees.map((i) => {
+        i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
+        return i
     })
 
-    import * as api from '~/composables/warehouse/canvass/canvass.api'
-    import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
-    import { getFullname, formatDate, isAdminOrOwner } from '~/utils/helpers'
-    import moment from 'moment'
-    import { MOBILE_WIDTH, PAGINATION_SIZE } from '~/utils/config'
-    
-
-    const authUser = ref<AuthUser>({} as AuthUser)
-
-    const router = useRouter()
-
-    // flags
-    const isMobile = ref(false)
-    const isInitialLoad = ref(true)
-    const isSearching = ref(false)
-    const isPaginating = ref(false)
-    
-    // pagination
-    const _paginationInitial = {
-        currentPage: 0,
-        totalPages: 0,
-        totalItems: 0,
-        pageSize: PAGINATION_SIZE,
-    }
-    const pagination = ref({..._paginationInitial})
-    
-    // search filters
-    const canvass = ref<Canvass | null>(null)
-    const date_requested = ref(null)
-    const requested_by = ref<Employee | null>(null)
-    const canvasses = ref<Canvass[]>([])
-    const employees = ref<Employee[]>([])
-    // ----------------
+})
 
 
-    // container for search result
-    const items = ref<Canvass[]>([])
-     
+// ======================== FUNCTIONS ======================== 
 
-    // ======================== LIFECYCLE HOOKS ======================== 
+function onClickEdit(id: string) {
+    router.push('/warehouse/purchasing/canvass/' + id)
+}
 
-    onMounted( async() => {
-        isMobile.value = window.innerWidth < MOBILE_WIDTH
+async function changePage(page: number) {
 
-        window.addEventListener('resize', checkMobile);
+    isPaginating.value = true
 
-        authUser.value = getAuthUser()
-
-        const response = await api.fetchDataInSearchFilters()
-
-        canvasses.value = response.canvasses
-        employees.value = response.employees.map((i) => {
-            i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
-            return i
-        })
+    const { data, currentPage, totalItems, totalPages } = await api.findAll({
+        page,
+        pageSize: pagination.value.pageSize,
+        date_requested: date_requested.value,
+        requested_by_id: requested_by.value ? requested_by.value.id : null
 
     })
 
+    isPaginating.value = false
+    items.value = data
+    pagination.value.totalItems = totalItems
+    pagination.value.currentPage = currentPage
+    pagination.value.totalPages = totalPages
+}
 
-    // ======================== FUNCTIONS ======================== 
+async function search() {
 
-    function onClickEdit(id: string) {
-        router.push('/warehouse/purchasing/canvass/' + id)
-    }
+    isInitialLoad.value = false
+    isSearching.value = true
 
-    async function changePage(page: number) {
+    items.value = []
 
-        isPaginating.value = true
+    if (canvass.value) {
 
-        const { data, currentPage, totalItems, totalPages } = await api.findAll({
-            page,
-            pageSize: pagination.value.pageSize,
-            date_requested: date_requested.value,
-            requested_by_id: requested_by.value ? requested_by.value.id : null
-            
-        })
-
-        isPaginating.value = false
-        items.value = data
-        pagination.value.totalItems = totalItems
-        pagination.value.currentPage = currentPage
-        pagination.value.totalPages = totalPages
-    }
-
-    async function search() {
-
-        isInitialLoad.value = false
-        isSearching.value = true
-
-        items.value = []
-
-        if(canvass.value) {
-
-            const response = await api.findByRcNumber(canvass.value.rc_number)
-            isSearching.value = false
-
-            console.log('response', response)
-
-            if(response) {
-                items.value.push(response)
-                return
-            }
-
-            return
-
-        }
-
-        const { data, currentPage, totalItems, totalPages } = await api.findAll({
-            page: 1,
-            pageSize: pagination.value.pageSize,
-            date_requested: date_requested.value,
-            requested_by_id: requested_by.value ? requested_by.value.id : null
-            
-        })
-
+        const response = await api.findByRcNumber(canvass.value.rc_number)
         isSearching.value = false
 
-        items.value = data
-        pagination.value.totalItems = totalItems
-        pagination.value.currentPage = currentPage
-        pagination.value.totalPages = totalPages  
+        console.log('response', response)
+
+        if (response) {
+            items.value.push(response)
+            return
+        }
+
+        return
+
     }
 
+    const { data, currentPage, totalItems, totalPages } = await api.findAll({
+        page: 1,
+        pageSize: pagination.value.pageSize,
+        date_requested: date_requested.value,
+        requested_by_id: requested_by.value ? requested_by.value.id : null
+
+    })
+
+    isSearching.value = false
+
+    items.value = data
+    pagination.value.totalItems = totalItems
+    pagination.value.currentPage = currentPage
+    pagination.value.totalPages = totalPages
+}
 
 
-    // ======================== UTILS ======================== 
 
-    function checkMobile() {
-        isMobile.value = window.innerWidth < MOBILE_WIDTH
-    }
+// ======================== UTILS ======================== 
+
+function checkMobile() {
+    isMobile.value = window.innerWidth < MOBILE_WIDTH
+}
 
 </script>
-

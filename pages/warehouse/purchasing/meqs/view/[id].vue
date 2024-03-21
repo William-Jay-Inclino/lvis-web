@@ -320,7 +320,7 @@
 <script setup lang="ts">
 
 definePageMeta({
-    layout: "layout-admin"
+    layout: "layout-warehouse"
 })
 
 import { MOBILE_WIDTH, UPLOADS_PATH } from '~/utils/config';

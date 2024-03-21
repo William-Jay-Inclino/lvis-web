@@ -196,7 +196,7 @@
     import { getTotalNetPrice, getVatAmount } from '~/utils/helpers';
 
     definePageMeta({
-        layout: "layout-admin"
+        layout: "layout-warehouse"
     })
 
     const router = useRouter();

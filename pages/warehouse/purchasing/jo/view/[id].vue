@@ -244,7 +244,7 @@
 <script setup lang="ts">
 
 definePageMeta({
-    layout: "layout-admin"
+    layout: "layout-warehouse"
 })
 
 import * as api from '~/composables/warehouse/jo/jo.api'

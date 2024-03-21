@@ -5,14 +5,14 @@
         <div class="col-lg-9">
 
             <div v-if="item">
-                
+
                 <div class="row pt-3">
                     <div class="col">
                         <div class="h5wrapper mb-3">
                             <hr class="result">
-                                <h5 class="text-warning fst-italic">
-                                    <i class="fas fa-info-circle"></i> Item Info
-                                </h5>
+                            <h5 class="text-warning fst-italic">
+                                <i class="fas fa-info-circle"></i> Item Info
+                            </h5>
                             <hr class="result">
                         </div>
                         <div class="table-responsive">
@@ -40,7 +40,8 @@
                                     </tr>
                                     <tr>
                                         <td class="text-muted">Alert Level</td>
-                                        <td> {{ item.alert_level }}% ({{ item.total_quantity * (item.alert_level / 100) }} Qty) </td>
+                                        <td> {{ item.alert_level }}% ({{ item.total_quantity * (item.alert_level / 100)
+                                            }} Qty) </td>
                                     </tr>
                                     <tr>
                                         <td class="text-muted">Total Quantity</td>
@@ -79,12 +80,12 @@
                     <div class="col">
 
                         <div v-if="!isMobile">
-                            
+
                             <div class="h5wrapper mb-3">
                                 <hr class="result">
-                                    <h5 class="text-warning fst-italic">
-                                        <i class="fas fa-history"></i> Item Transactions
-                                    </h5>
+                                <h5 class="text-warning fst-italic">
+                                    <i class="fas fa-history"></i> Item Transactions
+                                </h5>
                                 <hr class="result">
                             </div>
 
@@ -105,7 +106,8 @@
                                             <td class="text-muted"> TXN-{{ formatTxnNumber(i.id) }} </td>
                                             <td class="text-muted">
                                                 <div v-if="i.rr_item">
-                                                    <nuxt-link :to="'/warehouse/purchasing/rr/view/' + i.rr_item.rr!.id" target="_blank">
+                                                    <nuxt-link :to="'/warehouse/purchasing/rr/view/' + i.rr_item.rr!.id"
+                                                        target="_blank">
                                                         {{ `RR#${i.rr_item.rr?.rr_number}` }}
                                                     </nuxt-link>
 
@@ -138,7 +140,8 @@
                                 </nuxt-link>
                             </div>
                             <div>
-                                <nuxt-link class="btn btn-success me-2" :to="`/warehouse/stock-inventory/item/${item.id}`">
+                                <nuxt-link class="btn btn-success me-2"
+                                    :to="`/warehouse/stock-inventory/item/${item.id}`">
                                     <i class="fas fa-sync"></i> Update
                                 </nuxt-link>
                                 <nuxt-link class="btn btn-primary" to="/warehouse/stock-inventory/item/create">
@@ -148,9 +151,9 @@
                         </div>
                     </div>
                 </div>
-    
+
             </div>
-            
+
         </div>
     </div>
 
@@ -159,55 +162,55 @@
 
 <script setup lang="ts">
 
-    definePageMeta({
-        layout: "layout-admin"
-    })
+definePageMeta({
+    layout: "layout-warehouse"
+})
 
 import type { ItemTransaction } from '~/composables/warehouse/item/item-transaction.type';
-    import * as itemApi from '~/composables/warehouse/item/item.api'
-    import type { Item } from '~/composables/warehouse/item/item.type';
-    import { MOBILE_WIDTH } from '~/utils/config';
-    import { itemTransaction } from '~/utils/constants'; 
+import * as itemApi from '~/composables/warehouse/item/item.api'
+import type { Item } from '~/composables/warehouse/item/item.type';
+import { MOBILE_WIDTH } from '~/utils/config';
+import { itemTransaction } from '~/utils/constants';
 
-    const route = useRoute()
-    const item = ref<Item | undefined>()
-    const isMobile = ref(false)
+const route = useRoute()
+const item = ref<Item | undefined>()
+const isMobile = ref(false)
 
-    onMounted( async() => {
+onMounted(async () => {
 
-        isMobile.value = window.innerWidth < MOBILE_WIDTH
+    isMobile.value = window.innerWidth < MOBILE_WIDTH
 
-        window.addEventListener('resize', checkMobile);
+    window.addEventListener('resize', checkMobile);
 
-        item.value = await itemApi.findOne(route.params.id as string)
+    item.value = await itemApi.findOne(route.params.id as string)
 
-    })
+})
 
-    const initialPrice = computed( () => {
-        const indx = item.value!.item_transactions.length - 1
-        const initialTransaction = item.value!.item_transactions[indx]
-        return formatToPhpCurrency(initialTransaction.price)
-    })
+const initialPrice = computed(() => {
+    const indx = item.value!.item_transactions.length - 1
+    const initialTransaction = item.value!.item_transactions[indx]
+    return formatToPhpCurrency(initialTransaction.price)
+})
 
-    const highestPrice = computed( () => {
-        const largestNumber = item.value!.item_transactions.reduce((max: number, obj: ItemTransaction) => obj.price > max ? obj.price : max, item.value!.item_transactions[0].price);
+const highestPrice = computed(() => {
+    const largestNumber = item.value!.item_transactions.reduce((max: number, obj: ItemTransaction) => obj.price > max ? obj.price : max, item.value!.item_transactions[0].price);
 
-        return formatToPhpCurrency(largestNumber)
-    })
+    return formatToPhpCurrency(largestNumber)
+})
 
-    const lowestPrice = computed( () => {
-        const smallesNumber = item.value!.item_transactions.reduce((max: number, obj: ItemTransaction) => obj.price < max ? obj.price : max, item.value!.item_transactions[0].price);
+const lowestPrice = computed(() => {
+    const smallesNumber = item.value!.item_transactions.reduce((max: number, obj: ItemTransaction) => obj.price < max ? obj.price : max, item.value!.item_transactions[0].price);
 
-        return formatToPhpCurrency(smallesNumber)
-    })
+    return formatToPhpCurrency(smallesNumber)
+})
 
-    function checkMobile() {
-        isMobile.value = window.innerWidth < MOBILE_WIDTH
-    }
+function checkMobile() {
+    isMobile.value = window.innerWidth < MOBILE_WIDTH
+}
 
-    function formatTxnNumber(n: number) {
-        return n.toString().padStart(5, '0');
-    }
+function formatTxnNumber(n: number) {
+    return n.toString().padStart(5, '0');
+}
 
 
 </script>

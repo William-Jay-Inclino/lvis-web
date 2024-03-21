@@ -256,7 +256,7 @@
 <script setup lang="ts">
 
 definePageMeta({
-    layout: "layout-admin"
+    layout: "layout-warehouse"
 })
 
 import * as poApi from '~/composables/warehouse/po/po.api'

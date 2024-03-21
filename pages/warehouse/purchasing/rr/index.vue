@@ -171,7 +171,7 @@
                                         <tr>
                                             <td class="text-muted"> Status </td>
                                             <td>
-                                                <div :class="{ [`badge bg-${approvalStatus[i.status].color}`]: true}">
+                                                <div :class="{ [`badge bg-${approvalStatus[i.status].color}`]: true }">
                                                     {{ approvalStatus[i.status].label }}
                                                 </div>
                                             </td>
@@ -239,7 +239,7 @@
 <script setup lang="ts">
 
 definePageMeta({
-    layout: "layout-admin"
+    layout: "layout-warehouse"
 })
 
 import * as rrApi from '~/composables/warehouse/rr/rr.api'
