@@ -11,7 +11,7 @@
                         <div class="h5wrapper mb-3">
                             <hr class="result">
                             <h5 class="text-warning fst-italic">
-                                <i class="fas fa-info-circle"></i> RV Info
+                                <i class="fas fa-info-circle"></i> SPR Info
                             </h5>
                             <hr class="result">
                         </div>
@@ -34,8 +34,8 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="text-muted">RV Number</td>
-                                        <td> {{ item.rv_number }} </td>
+                                        <td class="text-muted">SPR Number</td>
+                                        <td> {{ item.spr_number }} </td>
                                     </tr>
                                     <tr>
                                         <td class="text-muted">MEQS Number</td>
@@ -86,30 +86,18 @@
                                         <td class="text-muted">Date</td>
                                         <td> {{ formatDate(item.date_requested) }} </td>
                                     </tr>
-                                    <!-- <tr>
-                                        <td class="text-muted">Requisitioner</td>
-                                        <td> {{ getFullname(item.canvass.requested_by!.firstname, item.canvass.requested_by!.middlename, item.canvass.requested_by!.lastname) }} </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-muted">Purpose</td>
-                                        <td> {{ item.canvass.purpose }} </td>
-                                    </tr> -->
                                     <tr>
                                         <td class="text-muted">Imd. Sup.</td>
                                         <td> {{ getFullname(item.supervisor.firstname, item.supervisor.middlename,
                 item.supervisor.lastname) }} </td>
                                     </tr>
                                     <tr>
+                                        <td class="text-muted">Vehicle</td>
+                                        <td> {{ item.vehicle.name }} </td>
+                                    </tr>
+                                    <tr>
                                         <td class="text-muted">Classification</td>
                                         <td> {{ item.classification?.name }} </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-muted">Work Order No.</td>
-                                        <td> {{ item.work_order_no }} </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-muted">Work Order Date</td>
-                                        <td> {{ formatDate(item.work_order_date) }} </td>
                                     </tr>
                                     <tr>
                                         <td class="text-muted">Notes</td>
@@ -151,7 +139,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="i, count in item.rv_approvers">
+                                        <tr v-for="i, count in item.spr_approvers">
                                             <td class="align-middle"> {{ i.order }} </td>
                                             <td class="align-middle"> {{ i.label }} </td>
                                             <td class="align-middle"> {{ getFullname(i.approver!.firstname,
@@ -184,7 +172,7 @@
                                 <hr class="result">
                             </div>
 
-                            <div v-for="i, count in item.rv_approvers" class="table-responsive">
+                            <div v-for="i, count in item.spr_approvers" class="table-responsive">
 
                                 <table class="table table-hover table-bordered">
                                     <tbody>
@@ -225,16 +213,16 @@
                     <div class="col">
                         <div class="d-flex justify-content-end">
                             <div class="me-2">
-                                <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rv">
-                                    <i class="fas fa-search"></i> Search RV
+                                <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/spr">
+                                    <i class="fas fa-search"></i> Search SPR
                                 </nuxt-link>
                             </div>
                             <div v-if="!item.cancelled_at && isAdminOrOwner(item.created_by, authUser)">
-                                <nuxt-link class="btn btn-success me-2" :to="`/warehouse/purchasing/rv/${item.id}`">
-                                    <i class="fas fa-sync"></i> Update RV
+                                <nuxt-link class="btn btn-success me-2" :to="`/warehouse/purchasing/spr/${item.id}`">
+                                    <i class="fas fa-sync"></i> Update SPR
                                 </nuxt-link>
-                                <nuxt-link class="btn btn-primary" to="/warehouse/purchasing/rv/create">
-                                    <i class="fas fa-plus"></i> Add New RV
+                                <nuxt-link class="btn btn-primary" to="/warehouse/purchasing/spr/create">
+                                    <i class="fas fa-plus"></i> Add New SPR
                                 </nuxt-link>
                             </div>
                         </div>
@@ -255,14 +243,14 @@ definePageMeta({
     layout: "layout-admin"
 })
 
-import * as api from '~/composables/warehouse/rv/rv.api'
-import type { RV } from '~/composables/warehouse/rv/rv.types';
+import * as api from '~/composables/warehouse/spr/spr.api'
+import type { SPR } from '~/composables/warehouse/spr/spr.types';
 import { MOBILE_WIDTH } from '~/utils/config';
 import { approvalStatus } from '~/utils/constants'
 
 const authUser = ref<AuthUser>({} as AuthUser)
 const route = useRoute()
-const item = ref<RV | undefined>()
+const item = ref<SPR | undefined>()
 const isMobile = ref(false)
 
 onMounted(async () => {
