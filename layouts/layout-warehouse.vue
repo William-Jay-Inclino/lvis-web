@@ -71,7 +71,10 @@
                                         <nuxt-link class="dropdown-item"
                                             to="/warehouse/data-management/vehicle">Vehicle</nuxt-link>
                                     </li>
-                                    <li><a class="dropdown-item" href="#">Supplier</a></li>
+                                    <li>
+                                        <nuxt-link class="dropdown-item"
+                                            to="/warehouse/data-management/supplier">Supplier</nuxt-link>
+                                    </li>
                                 </ul>
                             </li>
                             <li v-if="authUser" class="nav-item dropdown">
@@ -169,7 +172,10 @@
                                 <nuxt-link class="dropdown-item"
                                     to="/warehouse/data-management/vehicle">Vehicle</nuxt-link>
                             </li>
-                            <li><a class="dropdown-item" href="#">Supplier</a></li>
+                            <li>
+                                <nuxt-link class="dropdown-item"
+                                    to="/warehouse/data-management/supplier">Supplier</nuxt-link>
+                            </li>
                         </ul>
                     </li>
                 </ul>

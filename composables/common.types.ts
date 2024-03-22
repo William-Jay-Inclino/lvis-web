@@ -124,13 +124,12 @@ export interface CancelResponse {
 }
 
 
-export interface Supplier {
-    id: string;
-    name: string;
-    contact: string;
-    vat_type: VAT_TYPE,
-    is_deleted: boolean;
-}
+// export interface Supplier {
+//     id: string;
+//     name: string;
+//     contact: string;
+//     vat_type: VAT_TYPE,
+// }
 
 
 export interface Department {
