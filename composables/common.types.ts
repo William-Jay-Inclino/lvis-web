@@ -1,8 +1,10 @@
-import type { RrItem } from "./warehouse/rr/rr-item.types"
-import type { RR } from "./warehouse/rr/rr.types"
-
 
 export enum USER_STATUS {
+    ACTIVE = 1,
+    INACTIVE = 2
+}
+
+export enum DEPARTMENT_STATUS {
     ACTIVE = 1,
     INACTIVE = 2
 }

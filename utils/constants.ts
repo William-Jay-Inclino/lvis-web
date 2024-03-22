@@ -1,3 +1,4 @@
+import { DEPARTMENT_STATUS } from "~/composables/common.types"
 
 export const approvalStatus = {
     [APPROVAL_STATUS.PENDING]: {
@@ -19,6 +20,20 @@ export const approvalStatus = {
         value: APPROVAL_STATUS.CANCELLED,
         label: 'Cancelled',
         color: 'warning',
+    },
+}
+
+
+export const departmentStatus = {
+    [DEPARTMENT_STATUS.ACTIVE]: {
+        value: DEPARTMENT_STATUS.ACTIVE,
+        label: 'Active',
+        color: 'success',
+    },
+    [DEPARTMENT_STATUS.INACTIVE]: {
+        value: DEPARTMENT_STATUS.INACTIVE,
+        label: 'Inactive',
+        color: 'danger',
     },
 }
 

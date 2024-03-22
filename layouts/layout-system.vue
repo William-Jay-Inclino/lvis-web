@@ -33,7 +33,8 @@
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <li><nuxt-link class="dropdown-item"
                                             to="/data-management/employee">Employee</nuxt-link></li>
-                                    <li><a class="dropdown-item" href="#">Department</a></li>
+                                    <li><nuxt-link class="dropdown-item"
+                                            to="/system/data-management/department">Department</nuxt-link></li>
                                     <li><a class="dropdown-item" href="#">Classification</a></li>
                                     <li><a class="dropdown-item" href="#">Account</a></li>
                                 </ul>
