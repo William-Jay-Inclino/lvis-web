@@ -47,7 +47,8 @@
                                     Settings
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><a class="dropdown-item" href="#">Warehouse</a></li>
+                                    <li><nuxt-link class="dropdown-item"
+                                            to="/system/settings/warehouse">Warehouse</nuxt-link></li>
                                 </ul>
                             </li>
                             <li v-if="authUser" class="nav-item dropdown">
