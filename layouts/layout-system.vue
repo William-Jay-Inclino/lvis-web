@@ -35,6 +35,8 @@
                                             to="/data-management/employee">Employee</nuxt-link></li>
                                     <li><nuxt-link class="dropdown-item"
                                             to="/system/data-management/department">Department</nuxt-link></li>
+                                    <li><nuxt-link class="dropdown-item"
+                                            to="/system/data-management/account">Account</nuxt-link></li>
                                     <li><a class="dropdown-item" href="#">Classification</a></li>
                                     <li><a class="dropdown-item" href="#">Account</a></li>
                                 </ul>
