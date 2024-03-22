@@ -9,7 +9,7 @@
                 <div class="h5wrapper mb-3">
                     <hr class="result">
                     <h5 class="text-warning fst-italic">
-                        <i class="fas fa-info-circle"></i> Department Info
+                        <i class="fas fa-info-circle"></i> Employee Info
                     </h5>
                     <hr class="result">
                 </div>
@@ -19,20 +19,16 @@
                         <table class="table table-bordered">
                             <tbody>
                                 <tr>
-                                    <td class="text-muted">Code</td>
-                                    <td> {{ item.code }} </td>
+                                    <td class="text-muted">Firstname</td>
+                                    <td> {{ item.firstname }} </td>
                                 </tr>
                                 <tr>
-                                    <td class="text-muted">Name</td>
-                                    <td> {{ item.name }} </td>
+                                    <td class="text-muted">Middlename</td>
+                                    <td> {{ item.middlename || 'N/A' }} </td>
                                 </tr>
                                 <tr>
-                                    <td class="text-muted">Status</td>
-                                    <td>
-                                        <div :class="{ [`badge bg-${departmentStatus[item.status].color}`]: true }">
-                                            {{ departmentStatus[item.status].label }}
-                                        </div>
-                                    </td>
+                                    <td class="text-muted">Lastname</td>
+                                    <td> {{ item.lastname }} </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -75,13 +71,12 @@ definePageMeta({
     layout: "layout-system"
 })
 
-import * as api from '~/composables/system/department/department.api'
-import type { Department } from '~/composables/system/department/department';
-import { departmentStatus } from '~/utils/constants'
+import * as api from '~/composables/system/employee/employee.api'
+import type { Employee } from '~/composables/system/employee/employee.types';
 
 const router = useRouter()
 const route = useRoute()
-const item = ref<Department | undefined>()
+const item = ref<Employee | undefined>()
 const isLoadingPage = ref(true)
 
 onMounted(async () => {
@@ -92,9 +87,9 @@ onMounted(async () => {
 })
 
 
-const onClickGoToList = () => router.push(`/system/data-management/department`);
-const onClickAddNew = () => router.push(`/system/data-management/department/create`);
-const onClickUpdate = () => router.push(`/system/data-management/department/${item.value?.id}`);
+const onClickGoToList = () => router.push(`/data-management/employee`);
+const onClickAddNew = () => router.push(`/data-management/employee/create`);
+const onClickUpdate = () => router.push(`/data-management/employee/${item.value?.id}`);
 
 
 </script>
