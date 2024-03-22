@@ -4,7 +4,7 @@
         <div class="container px-0 custom-card">
             <nav class="navbar sticky-top navbar-expand-lg navbar-dark" style="background-color: #1877F2;">
                 <div class="container">
-                    <a class="navbar-brand" href="#">Leyeco V - Warehouse</a>
+                    <a class="navbar-brand" href="#">Leyeco V - System</a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
                         data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
                         <span class="navbar-toggler-icon"></span>
@@ -22,7 +22,7 @@
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <li><a class="dropdown-item" href="#">User Access Control</a></li>
-                                    <li><a class="dropdown-item" href="#">Activity Lg</a></li>
+                                    <li><a class="dropdown-item" href="#">Activity Log</a></li>
                                 </ul>
                             </li>
                             <li class="nav-item dropdown">
@@ -37,8 +37,8 @@
                                             to="/system/data-management/department">Department</nuxt-link></li>
                                     <li><nuxt-link class="dropdown-item"
                                             to="/system/data-management/account">Account</nuxt-link></li>
-                                    <li><a class="dropdown-item" href="#">Classification</a></li>
-                                    <li><a class="dropdown-item" href="#">Account</a></li>
+                                    <li><nuxt-link class="dropdown-item"
+                                            to="/system/data-management/classification">Classification</nuxt-link></li>
                                 </ul>
                             </li>
                             <li class="nav-item dropdown">
@@ -47,7 +47,7 @@
                                     Settings
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><a class="dropdown-item" href="#">Purchasing</a></li>
+                                    <li><a class="dropdown-item" href="#">Warehouse</a></li>
                                 </ul>
                             </li>
                             <li v-if="authUser" class="nav-item dropdown">
@@ -114,10 +114,14 @@
                             Data Management
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Employee</a></li>
-                            <li><a class="dropdown-item" href="#">Department</a></li>
-                            <li><a class="dropdown-item" href="#">Classification</a></li>
-                            <li><a class="dropdown-item" href="#">Account</a></li>
+                            <li><nuxt-link class="dropdown-item" to="/data-management/employee">Employee</nuxt-link>
+                            </li>
+                            <li><nuxt-link class="dropdown-item"
+                                    to="/system/data-management/department">Department</nuxt-link></li>
+                            <li><nuxt-link class="dropdown-item"
+                                    to="/system/data-management/classification">Classification</nuxt-link></li>
+                            <li><nuxt-link class="dropdown-item"
+                                    to="/system/data-management/account">Account</nuxt-link></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">

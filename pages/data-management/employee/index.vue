@@ -102,7 +102,7 @@
 <script setup lang="ts">
 
 definePageMeta({
-    layout: "layout-warehouse"
+    layout: "layout-system"
 })
 
 import * as api from '~/composables/system/employee/employee.api'
