@@ -219,11 +219,10 @@ export async function fetchFormDataInCreate(): Promise<{
                 id
                 name
             }
-            units(page: 1, pageSize: 10){
-                data {
-                    id
-                    name
-                }
+            units{
+                id
+                name
+                
             }
             items(page: 1, pageSize: 10){
                 data {
@@ -346,12 +345,10 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                     id
                     name
                 }
-                units(page: 1, pageSize: 50){
-                data {
+                units{
                     id
                     name
                 }
-            }
             items(page: 1, pageSize: 10){
                 data {
                     id

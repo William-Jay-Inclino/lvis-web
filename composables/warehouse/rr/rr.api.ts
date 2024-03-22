@@ -1,6 +1,5 @@
 import type { Item } from "../item/item.type"
 import type { PO } from "../po/po.types"
-import type { Unit } from "../unit/unit.types"
 import type { RrApproverSettings } from "./rr-approver.types"
 import type { CreateRrInput, FindAllResponse, MutationResponse, RR, UpdateRrInput } from "./rr.types"
 
@@ -327,11 +326,9 @@ export async function fetchFormDataInCreate(): Promise<{
                 id
                 name
             },
-            units(page: 1, pageSize: 10){
-                data {
-                    id
-                    name
-                }
+            units{
+                id
+                name
             },
             employees(page: 1, pageSize: 10) {
                 data {

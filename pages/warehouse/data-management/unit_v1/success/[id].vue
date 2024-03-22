@@ -6,9 +6,9 @@
 
             <div v-if="item">
                 <div class="alert alert-success" role="alert">
-                    Unit created successfully! 
+                    Unit created successfully!
                 </div>
-                
+
                 <div class="row pt-3">
                     <div class="col">
                         <table class="table table-bordered">
@@ -39,9 +39,9 @@
                         </div>
                     </div>
                 </div>
-    
+
             </div>
-            
+
         </div>
     </div>
 
@@ -50,21 +50,21 @@
 
 <script setup lang="ts">
 
-    definePageMeta({
-        layout: "layout-warehouse"
-    })
+definePageMeta({
+    layout: "layout-warehouse"
+})
 
-    import * as api from '~/composables/warehouse/unit/unit.api'
-    import type { CreateUnitInput, Unit } from '~/composables/warehouse/unit/unit.types';
+import * as api from '~/composables/warehouse/unit/unit.api'
+import type { CreateUnitInput, Unit } from '~/composables/warehouse/unit/unit.types';
 
-    const route = useRoute()
-    const item = ref<Unit | undefined>()
+const route = useRoute()
+const item = ref<Unit | undefined>()
 
-    onMounted( async() => {
+onMounted(async () => {
 
-        item.value = await api.findOne(route.params.id as string)
+    item.value = await api.findOne(route.params.id as string)
 
-    })
+})
 
 
-</script>
+</script>~/composables/warehouse/unit2/unit.api~/composables/warehouse/unit2/unit.types

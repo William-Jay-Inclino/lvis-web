@@ -1,15 +1,36 @@
 import { sendRequest } from "~/utils/api"
-import type { Unit, CreateUnitInput, MutationResponse } from "./unit";
+import type { Unit, CreateUnitInput, MutationResponse, FindAllResponse } from "./unit.types";
 
 
 
-export async function findAll(): Promise<Unit[]> {
+export async function findAll(payload: {page: number, pageSize: number, searchField: string | null, searchValue: string | null}): Promise<FindAllResponse> {
+    
+    const { page, pageSize, searchField, searchValue } = payload;
+
+    let field = null
+    let value = null
+
+    if(searchValue) {
+        field = `"${searchField}"`
+        value = `"${searchValue}"`
+    } 
+
 
     const query = `
         query {
-            units {
-                id
-                name
+            units(
+                page: ${page},
+                pageSize: ${pageSize},
+                searchField: ${field},
+                searchValue: ${value},
+            ) {
+                data {
+                    id
+                    name
+                }
+                totalItems
+                currentPage
+                totalPages
             }
         }
     `;
@@ -38,7 +59,7 @@ export async function findOne(id: string): Promise<Unit | undefined> {
         const response = await sendRequest(query);
         console.log('response', response)
 
-        if (response.data && response.data.data && response.data.data.unit) {
+        if(response.data && response.data.data && response.data.data.unit) {
             return response.data.data.unit;
         }
 
@@ -53,8 +74,8 @@ export async function findOne(id: string): Promise<Unit | undefined> {
 export async function create(input: CreateUnitInput): Promise<MutationResponse> {
 
     const inputFields = Object.keys(input)
-        .map(field => `${field}: "${input[field as keyof CreateUnitInput]}"`)
-        .join(', ');
+            .map(field => `${field}: "${input[field as keyof CreateUnitInput]}"`)
+            .join(', ');
 
     const mutation = `
         mutation {
@@ -68,11 +89,11 @@ export async function create(input: CreateUnitInput): Promise<MutationResponse> 
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if (response.data && response.data.data && response.data.data.createUnit) {
+        if(response.data && response.data.data && response.data.data.createUnit) {
             return {
                 success: true,
                 msg: 'Unit created successfully!',
-                data: response.data.data.createUnit
+                data: response.data.data.createUnit 
             }
         }
 
@@ -81,7 +102,7 @@ export async function create(input: CreateUnitInput): Promise<MutationResponse> 
 
     } catch (error) {
         console.error(error);
-
+        
         return {
             success: false,
             msg: 'Failed to create Unit. Please contact system administrator'
@@ -93,8 +114,8 @@ export async function create(input: CreateUnitInput): Promise<MutationResponse> 
 export async function update(id: string, input: CreateUnitInput): Promise<MutationResponse> {
 
     const inputFields = Object.keys(input)
-        .map(field => `${field}: "${input[field as keyof CreateUnitInput]}"`)
-        .join(', ');
+            .map(field => `${field}: "${input[field as keyof CreateUnitInput]}"`)
+            .join(', ');
 
     const mutation = `
         mutation {
@@ -108,11 +129,11 @@ export async function update(id: string, input: CreateUnitInput): Promise<Mutati
         const response = await sendRequest(mutation);
         console.log('response', response);
 
-        if (response.data && response.data.data && response.data.data.updateUnit) {
+        if(response.data && response.data.data && response.data.data.updateUnit) {
             return {
                 success: true,
                 msg: 'Unit updated successfully!',
-                data: response.data.data.updateUnit
+                data: response.data.data.updateUnit 
             }
         }
 
@@ -120,7 +141,7 @@ export async function update(id: string, input: CreateUnitInput): Promise<Mutati
 
     } catch (error) {
         console.error(error);
-
+        
         return {
             success: false,
             msg: 'Failed to update Unit. Please contact system administrator'
@@ -129,7 +150,7 @@ export async function update(id: string, input: CreateUnitInput): Promise<Mutati
     }
 }
 
-export async function remove(id: string): Promise<{ success: boolean, msg: string }> {
+export async function remove(id: string): Promise<{success: boolean, msg: string}> {
     const mutation = `
         mutation {
             removeUnit(id: "${id}"){
@@ -143,17 +164,17 @@ export async function remove(id: string): Promise<{ success: boolean, msg: strin
         const response = await sendRequest(mutation);
         console.log('response', response)
 
-        if (response.data && response.data.data && response.data.data.removeUnit) {
+        if(response.data && response.data.data && response.data.data.removeUnit) {
             return response.data.data.removeUnit
         }
 
         throw new Error(JSON.stringify(response.data.errors));
-
+        
     } catch (error) {
         console.error(error);
         return {
             success: false,
-            msg: 'Failed to remove Unit. Please contact system administrator'
+            msg: 'Failed to delete Unit. Please contact system administrator'
         }
     }
 }

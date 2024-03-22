@@ -154,8 +154,7 @@
                             data-bs-dismiss="modal">
                             <i class="fas fa-close"></i> Close
                         </button>
-                        <button v-if="formIsAdd || !canvassIsReferenceInRR" @click="addItem" class="btn btn-primary"
-                            :disabled="isAdding">
+                        <button v-if="formIsAdd" @click="addItem" class="btn btn-primary" :disabled="isAdding">
                             <i class="fas fa-plus-circle"></i> {{ isAdding ? 'Adding...' : 'Add' }} Item
                         </button>
                         <button v-else @click="editItem" class="btn btn-primary" :disabled="isEditing">
