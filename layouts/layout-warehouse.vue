@@ -54,7 +54,7 @@
                                             Type</nuxt-link>
                                     </li>
                                     <li>
-                                        <nuxt-link class="dropdown-item" to="/warehouse/stock-inventory/item">Item
+                                        <nuxt-link class="dropdown-item" to="/warehouse/stock-inventory/item-brand">Item
                                             Brand</nuxt-link>
                                     </li>
                                 </ul>
@@ -67,7 +67,10 @@
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <li><nuxt-link class="dropdown-item"
                                             to="/warehouse/data-management/unit">Unit</nuxt-link></li>
-                                    <li><a class="dropdown-item" href="#">Vehicle</a></li>
+                                    <li>
+                                        <nuxt-link class="dropdown-item"
+                                            to="/warehouse/data-management/vehicle">Vehicle</nuxt-link>
+                                    </li>
                                     <li><a class="dropdown-item" href="#">Supplier</a></li>
                                 </ul>
                             </li>
@@ -141,7 +144,16 @@
                             Stock Inventory
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><nuxt-link class="dropdown-item" to="/warehouse/stock-inventory/item">Item</nuxt-link>
+                            <li>
+                                <nuxt-link class="dropdown-item" to="/warehouse/stock-inventory/item">Item</nuxt-link>
+                            </li>
+                            <li>
+                                <nuxt-link class="dropdown-item" to="/warehouse/stock-inventory/item-type">Item
+                                    Type</nuxt-link>
+                            </li>
+                            <li>
+                                <nuxt-link class="dropdown-item" to="/warehouse/stock-inventory/item-brand">Item
+                                    Brand</nuxt-link>
                             </li>
                         </ul>
                     </li>
@@ -153,8 +165,10 @@
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li><nuxt-link class="dropdown-item" to="/warehouse/data-management/unit">Unit</nuxt-link>
                             </li>
-                            <li><a class="dropdown-item" href="#">Item Brand</a></li>
-                            <li><a class="dropdown-item" href="#">Vehicle</a></li>
+                            <li>
+                                <nuxt-link class="dropdown-item"
+                                    to="/warehouse/data-management/vehicle">Vehicle</nuxt-link>
+                            </li>
                             <li><a class="dropdown-item" href="#">Supplier</a></li>
                         </ul>
                     </li>
