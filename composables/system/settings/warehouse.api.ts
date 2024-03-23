@@ -1,4 +1,4 @@
-import type { ApproverMutationResponse, ApproverSetting, CreateApproverSetting, UpdateApproverSetting } from "./warehouse.types";
+import type { ApproverMutationResponse, ApproverSetting, CreateApproverSetting, UpdateApproverOrderResponse, UpdateApproverSetting } from "./warehouse.types";
 
 
 
@@ -110,7 +110,7 @@ export async function createApprover(input: CreateApproverSetting, transaction: 
     }
 }
 
-export async function removeApprover(id: string, transaction: string): Promise<{ success: boolean, msg: string }> {
+export async function removeApprover(id: string, transaction: string): Promise<{ success: boolean, msg: string, approvers: ApproverSetting[] }> {
 
     const mutation = `
         mutation {
@@ -119,6 +119,17 @@ export async function removeApprover(id: string, transaction: string): Promise<{
             ) {
                 success
                 msg
+                approvers{
+                    id
+                    approver {
+                        id
+                        firstname
+                        middlename
+                        lastname
+                    }
+                    label
+                    order
+                }
             }
         }`;
 
@@ -129,7 +140,8 @@ export async function removeApprover(id: string, transaction: string): Promise<{
         if (response.data && response.data.data && response.data.data[transaction]) {
             return {
                 success: response.data.data[transaction].success,
-                msg: response.data.data[transaction].msg
+                msg: response.data.data[transaction].msg,
+                approvers: response.data.data[transaction].approvers
             };
         }
 
@@ -140,7 +152,8 @@ export async function removeApprover(id: string, transaction: string): Promise<{
 
         return {
             success: false,
-            msg: 'Failed to remove Approver. Please contact system administrator'
+            msg: 'Failed to remove Approver. Please contact system administrator',
+            approvers: []
         };
     }
 }
@@ -188,6 +201,67 @@ export async function updateApprover(input: UpdateApproverSetting, transaction: 
         return {
             success: false,
             msg: 'Failed to update Approver. Please contact system administrator'
+        };
+    }
+}
+
+export async function updateApproverOrder(inputs: { id: string, order: number }[], transaction: string): Promise<UpdateApproverOrderResponse> {
+    const inputsString = inputs.map(({ id, order }) => `{ id: "${id}", order: ${order} }`).join('\n');
+    const mutation = `
+        mutation {
+            ${transaction}(
+                inputs: [
+                    ${inputsString}
+                ]
+            ) {
+                success
+                approvers {
+                    id
+                    approver {
+                        id
+                        firstname
+                        middlename
+                        lastname
+                    }
+                    label
+                    order
+                }
+            }
+        }
+    `;
+
+    console.log('mutation', mutation)
+
+    try {
+        const response = await sendRequest(mutation);
+        console.log('response', response);
+
+        if (response.data && response.data.data && response.data.data[transaction]) {
+
+            if (response.data.data[transaction].success) {
+                return {
+                    success: response.data.data[transaction].success,
+                    msg: 'Order updated successfully!',
+                    approvers: response.data.data[transaction].approvers
+                };
+            } else {
+                return {
+                    success: false,
+                    msg: 'Failed to update Approver Order. Please contact system administrator',
+                    approvers: []
+                }
+            }
+
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+    } catch (error) {
+        console.error(error);
+
+        return {
+            success: false,
+            msg: 'Failed to update Approver Order. Please contact system administrator',
+            approvers: []
         };
     }
 }

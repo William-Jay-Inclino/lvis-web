@@ -28,3 +28,9 @@ export interface ApproverMutationResponse {
     msg: string
     data?: ApproverSetting
 }
+
+export interface UpdateApproverOrderResponse {
+    success: boolean;
+    msg: string;
+    approvers: ApproverSetting[];
+}

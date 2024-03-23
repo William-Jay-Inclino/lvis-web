@@ -36,65 +36,129 @@
             </div>
         </div>
 
-        <div v-if="rootTab === ROOT_TABS.PURCHASING" class="row pt-5 justify-content-center">
-            <div class="col-3 border-end pe-5" style="height: 60vh">
-                <ul class="nav nav-pills flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">
-                            <i class="fas fa-users"></i>
-                            Default Approvers
-                        </a>
-                    </li>
-                    <li @click="onChangePurchasingTab(PURCHASING_TABS.RV_APPROVERS)" class="nav-item">
-                        <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.RV_APPROVERS }"
-                            href="#">RV</a>
-                    </li>
-                    <li @click="onChangePurchasingTab(PURCHASING_TABS.SPR_APPROVERS)" class="nav-item">
-                        <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.SPR_APPROVERS }"
-                            href="#">SPR</a>
-                    </li>
-                    <li @click="onChangePurchasingTab(PURCHASING_TABS.JO_APPROVERS)" class="nav-item">
-                        <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.JO_APPROVERS }"
-                            href="#">JO</a>
-                    </li>
-                    <li @click="onChangePurchasingTab(PURCHASING_TABS.MEQS_APPROVERS)" class="nav-item">
-                        <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.MEQS_APPROVERS }"
-                            href="#">MEQS</a>
-                    </li>
-                    <li @click="onChangePurchasingTab(PURCHASING_TABS.PO_APPROVERS)" class="nav-item">
-                        <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.PO_APPROVERS }"
-                            href="#">PO</a>
-                    </li>
-                    <li @click="onChangePurchasingTab(PURCHASING_TABS.RR_APPROVERS)" class="nav-item">
-                        <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.RR_APPROVERS }"
-                            href="#">RR</a>
-                    </li>
-                </ul>
+        <div v-if="rootTab === ROOT_TABS.PURCHASING">
+
+            <div class="h5wrapper mb-3 pt-5">
+                <hr class="result">
+                <h5 class="text-warning fst-italic">
+                    <i class="fas fa-users"></i> Default Approvers
+                </h5>
+                <hr class="result">
             </div>
 
-            <div class="col-1 vertical-line"></div>
-
-            <div class="col-8">
-
-                <div v-show="isLoadingMainContent">
-                    <LoaderSpinner />
+            <div class="row pt-2 justify-content-center">
+                <div class="col-3 border-end pe-5">
+                    <ul class="nav nav-pills flex-column">
+                        <li @click="onChangePurchasingTab(PURCHASING_TABS.RV_APPROVERS)" class="nav-item">
+                            <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.RV_APPROVERS }"
+                                href="#">RV</a>
+                        </li>
+                        <li @click="onChangePurchasingTab(PURCHASING_TABS.SPR_APPROVERS)" class="nav-item">
+                            <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.SPR_APPROVERS }"
+                                href="#">SPR</a>
+                        </li>
+                        <li @click="onChangePurchasingTab(PURCHASING_TABS.JO_APPROVERS)" class="nav-item">
+                            <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.JO_APPROVERS }"
+                                href="#">JO</a>
+                        </li>
+                        <li @click="onChangePurchasingTab(PURCHASING_TABS.MEQS_APPROVERS)" class="nav-item">
+                            <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.MEQS_APPROVERS }"
+                                href="#">MEQS</a>
+                        </li>
+                        <li @click="onChangePurchasingTab(PURCHASING_TABS.PO_APPROVERS)" class="nav-item">
+                            <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.PO_APPROVERS }"
+                                href="#">PO</a>
+                        </li>
+                        <li @click="onChangePurchasingTab(PURCHASING_TABS.RR_APPROVERS)" class="nav-item">
+                            <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.RR_APPROVERS }"
+                                href="#">RR</a>
+                        </li>
+                    </ul>
                 </div>
 
+                <div class="col-1 vertical-line"></div>
 
-                <div v-show="!isLoadingMainContent">
-                    <div v-if="isPurchasingApproversTab">
-                        <SystemSettingsApprover @add-approver="addApprover" @remove-approver="removeApprover"
-                            @edit-approver="editApprover" :approvers="approvers" :employees="employees"
-                            :is-adding-approver="purchasing.isAddingApprover"
-                            :is-editing-approver="purchasing.isEditingApprover"
-                            :is-updating-approver-order="purchasing.isUpdatingApproverOrder" />
+                <div class="col-8">
+
+                    <div v-show="isLoadingMainContent">
+                        <LoaderSpinner />
                     </div>
+
+
+                    <div v-show="!isLoadingMainContent">
+                        <div v-if="isPurchasingApproversTab">
+                            <SystemSettingsApprover @add-approver="addApprover" @remove-approver="removeApprover"
+                                @change-approver-order="changeApproverOrder" @edit-approver="editApprover"
+                                :approvers="approvers" :employees="employees"
+                                :is-adding-approver="purchasing.isAddingApprover"
+                                :is-editing-approver="purchasing.isEditingApprover"
+                                :is-updating-approver-order="purchasing.isUpdatingApproverOrder" />
+                        </div>
+                    </div>
+
+
                 </div>
 
+            </div>
+
+
+            <div class="h5wrapper mb-3 pt-5">
+                <hr class="result">
+                <h5 class="text-warning fst-italic">
+                    <i class="fas fa-wrench"></i> MEQS Configurations
+                </h5>
+                <hr class="result">
+            </div>
+
+
+            <div class="row pt-2 justify-content-center">
+
+                <div class="col-4">
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            No. of suppliers
+                        </label>
+                        <div class="row">
+                            <div class="col">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text">Min</span>
+                                    <input type="number" class="form-control" value="3">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text">Max</span>
+                                    <input type="number" class="form-control" value="5">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            File upload limit (MB)
+                        </label>
+                        <input type="number" class="form-control" value="5">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Require remarks for the lowest-priced supplier
+                        </label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" checked>
+                            <label class="form-check-label">Enabled</label>
+                        </div>
+                    </div>
+
+                </div>
 
             </div>
+
 
         </div>
+
 
     </div>
 </template>
@@ -297,8 +361,8 @@ async function removeApprover(id: string) {
 
                 if (response.success) {
                     toast.success(`${item.approver?.fullname} removed!`)
-                    approvers.value.splice(indx, 1)
-
+                    // approvers.value.splice(indx, 1)
+                    approvers.value = response.approvers
                 } else {
 
                     Swal.fire({
@@ -357,6 +421,47 @@ async function editApprover(
             position: 'top',
         })
     }
+}
+
+async function changeApproverOrder(
+    payload: { id: string, order: number }[],
+    closeModalBtn: HTMLButtonElement
+) {
+
+    console.log('payload', payload)
+    console.log('closeModalBtn', closeModalBtn)
+
+    let transaction = ''
+
+    if (purchasingTab.value === PURCHASING_TABS.RV_APPROVERS) transaction = 'updateRVApproverSettingOrder'
+    if (purchasingTab.value === PURCHASING_TABS.SPR_APPROVERS) transaction = 'updateSPRApproverSettingOrder'
+    if (purchasingTab.value === PURCHASING_TABS.JO_APPROVERS) transaction = 'updateJOApproverSettingOrder'
+    if (purchasingTab.value === PURCHASING_TABS.MEQS_APPROVERS) transaction = 'updateMEQSApproverSettingOrder'
+    if (purchasingTab.value === PURCHASING_TABS.PO_APPROVERS) transaction = 'updatePOApproverSettingOrder'
+    if (purchasingTab.value === PURCHASING_TABS.RR_APPROVERS) transaction = 'updateRRApproverSettingOrder'
+
+    purchasing.value.isUpdatingApproverOrder = true
+    const response = await warehouseApi.updateApproverOrder(payload, transaction)
+    purchasing.value.isUpdatingApproverOrder = false
+
+    if (response.success && response.approvers) {
+        toast.success(response.msg)
+
+        approvers.value = response.approvers.map(i => {
+            i.approver!['fullname'] = getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname)
+            return i
+        })
+        closeModalBtn.click()
+
+    } else {
+        Swal.fire({
+            title: 'Error!',
+            text: response.msg,
+            icon: 'error',
+            position: 'top',
+        })
+    }
+
 }
 
 
