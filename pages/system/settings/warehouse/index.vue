@@ -45,27 +45,27 @@
                             Default Approvers
                         </a>
                     </li>
-                    <li class="nav-item" @click="purchasingTab = PURCHASING_TABS.RV_APPROVERS">
+                    <li @click="onChangePurchasingTab(PURCHASING_TABS.RV_APPROVERS)" class="nav-item">
                         <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.RV_APPROVERS }"
                             href="#">RV</a>
                     </li>
-                    <li class="nav-item" @click="purchasingTab = PURCHASING_TABS.SPR_APPROVERS">
+                    <li @click="onChangePurchasingTab(PURCHASING_TABS.SPR_APPROVERS)" class="nav-item">
                         <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.SPR_APPROVERS }"
                             href="#">SPR</a>
                     </li>
-                    <li class="nav-item" @click="purchasingTab = PURCHASING_TABS.JO_APPROVERS">
+                    <li @click="onChangePurchasingTab(PURCHASING_TABS.JO_APPROVERS)" class="nav-item">
                         <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.JO_APPROVERS }"
                             href="#">JO</a>
                     </li>
-                    <li class="nav-item" @click="purchasingTab = PURCHASING_TABS.MEQS_APPROVERS">
+                    <li @click="onChangePurchasingTab(PURCHASING_TABS.MEQS_APPROVERS)" class="nav-item">
                         <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.MEQS_APPROVERS }"
                             href="#">MEQS</a>
                     </li>
-                    <li class="nav-item" @click="purchasingTab = PURCHASING_TABS.PO_APPROVERS">
+                    <li @click="onChangePurchasingTab(PURCHASING_TABS.PO_APPROVERS)" class="nav-item">
                         <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.PO_APPROVERS }"
                             href="#">PO</a>
                     </li>
-                    <li class="nav-item" @click="purchasingTab = PURCHASING_TABS.RR_APPROVERS">
+                    <li @click="onChangePurchasingTab(PURCHASING_TABS.RR_APPROVERS)" class="nav-item">
                         <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.RR_APPROVERS }"
                             href="#">RR</a>
                     </li>
@@ -76,9 +76,21 @@
 
             <div class="col-8">
 
-                <div v-if="purchasingTab === PURCHASING_TABS.RV_APPROVERS">
-                    <SystemSettingsApprover />
+                <div v-show="isLoadingMainContent">
+                    <LoaderSpinner />
                 </div>
+
+
+                <div v-show="!isLoadingMainContent">
+                    <div v-if="isPurchasingApproversTab">
+                        <SystemSettingsApprover @add-approver="addApprover" @remove-approver="removeApprover"
+                            @edit-approver="editApprover" :approvers="approvers" :employees="employees"
+                            :is-adding-approver="purchasing.isAddingApprover"
+                            :is-editing-approver="purchasing.isEditingApprover"
+                            :is-updating-approver-order="purchasing.isUpdatingApproverOrder" />
+                    </div>
+                </div>
+
 
             </div>
 
@@ -88,10 +100,16 @@
 </template>
 
 <script setup lang="ts">
+import type { ApproverSetting, CreateApproverSetting, UpdateApproverSetting } from '~/composables/system/settings/warehouse.types';
+import * as warehouseApi from '~/composables/system/settings/warehouse.api'
+import Swal from 'sweetalert2'
+import { useToast } from "vue-toastification";
 
 definePageMeta({
     layout: "layout-system"
 })
+
+const toast = useToast();
 
 const enum ROOT_TABS {
     PURCHASING,
@@ -109,8 +127,237 @@ const enum PURCHASING_TABS {
     RR_APPROVERS,
 }
 
+const isLoadingMainContent = ref(true)
+
+const purchasing = ref({
+    isAddingApprover: false,
+    isEditingApprover: false,
+    isUpdatingApproverOrder: false,
+})
+
 const rootTab = ref<ROOT_TABS>(ROOT_TABS.PURCHASING)
 const purchasingTab = ref(PURCHASING_TABS.RV_APPROVERS)
+const approvers = ref<ApproverSetting[]>([])
+const employees = ref<Employee[]>([])
+
+onMounted(async () => {
+
+    const _approvers = await warehouseApi.findAllDefaultApprovers('rvApproverSettings')
+
+    approvers.value = _approvers.map(i => {
+        i.approver!['fullname'] = getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname)
+        return i
+    })
+
+    const response = await warehouseApi.initPurchasingTabData()
+    employees.value = response.employees.map(i => {
+        i['fullname'] = getFullname(i.firstname, i.middlename, i.lastname)
+        return i
+    })
+
+    isLoadingMainContent.value = false
+
+
+})
+
+const isPurchasingApproversTab = computed(() => {
+
+    if (purchasingTab.value === PURCHASING_TABS.RV_APPROVERS) return true
+    if (purchasingTab.value === PURCHASING_TABS.SPR_APPROVERS) return true
+    if (purchasingTab.value === PURCHASING_TABS.JO_APPROVERS) return true
+    if (purchasingTab.value === PURCHASING_TABS.MEQS_APPROVERS) return true
+    if (purchasingTab.value === PURCHASING_TABS.PO_APPROVERS) return true
+    if (purchasingTab.value === PURCHASING_TABS.RR_APPROVERS) return true
+
+
+    return false
+
+})
+
+async function onChangePurchasingTab(tab: PURCHASING_TABS) {
+    console.log('onChangePurchasingTab', tab)
+
+    purchasingTab.value = tab
+    isLoadingMainContent.value = true
+
+    if (tab === PURCHASING_TABS.RV_APPROVERS) {
+        approvers.value = await warehouseApi.findAllDefaultApprovers('rvApproverSettings')
+        isLoadingMainContent.value = false
+        return
+    }
+
+    if (tab === PURCHASING_TABS.SPR_APPROVERS) {
+        approvers.value = await warehouseApi.findAllDefaultApprovers('sprApproverSettings')
+        isLoadingMainContent.value = false
+        return
+    }
+
+    if (tab === PURCHASING_TABS.JO_APPROVERS) {
+        approvers.value = await warehouseApi.findAllDefaultApprovers('joApproverSettings')
+        isLoadingMainContent.value = false
+        return
+    }
+
+    if (tab === PURCHASING_TABS.MEQS_APPROVERS) {
+        approvers.value = await warehouseApi.findAllDefaultApprovers('meqsApproverSettings')
+        isLoadingMainContent.value = false
+
+    }
+
+    if (tab === PURCHASING_TABS.PO_APPROVERS) {
+        approvers.value = await warehouseApi.findAllDefaultApprovers('poApproverSettings')
+        isLoadingMainContent.value = false
+        return
+    }
+
+    if (tab === PURCHASING_TABS.RR_APPROVERS) {
+        approvers.value = await warehouseApi.findAllDefaultApprovers('rrApproverSettings')
+        isLoadingMainContent.value = false
+        return
+    }
+
+}
+
+async function addApprover(payload: CreateApproverSetting, closeModalBtn: HTMLButtonElement) {
+    console.log('addApprover', payload, closeModalBtn)
+
+    let transaction = ''
+
+    if (purchasingTab.value === PURCHASING_TABS.RV_APPROVERS) transaction = 'createRvApproverSetting'
+    if (purchasingTab.value === PURCHASING_TABS.SPR_APPROVERS) transaction = 'createSprApproverSetting'
+    if (purchasingTab.value === PURCHASING_TABS.JO_APPROVERS) transaction = 'createJoApproverSetting'
+    if (purchasingTab.value === PURCHASING_TABS.MEQS_APPROVERS) transaction = 'createMeqsApproverSetting'
+    if (purchasingTab.value === PURCHASING_TABS.PO_APPROVERS) transaction = 'createPoApproverSetting'
+    if (purchasingTab.value === PURCHASING_TABS.RR_APPROVERS) transaction = 'createRrApproverSetting'
+
+
+    purchasing.value.isAddingApprover = true
+    const response = await warehouseApi.createApprover(payload, transaction)
+    purchasing.value.isAddingApprover = false
+
+    if (response.success && response.data) {
+        toast.success(response.msg)
+
+        const approver = response.data.approver
+
+        approver!.fullname = getFullname(approver!.firstname, approver!.middlename, approver!.lastname)
+
+        approvers.value.push(response.data)
+
+        closeModalBtn.click()
+
+    } else {
+        Swal.fire({
+            title: 'Error!',
+            text: response.msg,
+            icon: 'error',
+            position: 'top',
+        })
+    }
+
+}
+
+async function removeApprover(id: string) {
+
+    const indx = approvers.value.findIndex(i => i.id === id)
+
+    const item = approvers.value[indx]
+
+    if (!item) {
+        console.error('approver not found with id of: ' + id)
+        return
+    }
+
+    Swal.fire({
+        title: "Are you sure?",
+        text: `${item.approver?.fullname} will be removed!`,
+        position: "top",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#e74a3b",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Yes, delete it!",
+        reverseButtons: true,
+        showLoaderOnConfirm: true,
+        preConfirm: async (remove) => {
+
+            if (remove) {
+
+                let transaction = ''
+
+                if (purchasingTab.value === PURCHASING_TABS.RV_APPROVERS) transaction = 'removeRvApproverSetting'
+                if (purchasingTab.value === PURCHASING_TABS.SPR_APPROVERS) transaction = 'removeSprApproverSetting'
+                if (purchasingTab.value === PURCHASING_TABS.JO_APPROVERS) transaction = 'removeJoApproverSetting'
+                if (purchasingTab.value === PURCHASING_TABS.MEQS_APPROVERS) transaction = 'removeMeqsApproverSetting'
+                if (purchasingTab.value === PURCHASING_TABS.PO_APPROVERS) transaction = 'removePoApproverSetting'
+                if (purchasingTab.value === PURCHASING_TABS.RR_APPROVERS) transaction = 'removeRrApproverSetting'
+
+
+                const response = await warehouseApi.removeApprover(item.id, transaction)
+
+                if (response.success) {
+                    toast.success(`${item.approver?.fullname} removed!`)
+                    approvers.value.splice(indx, 1)
+
+                } else {
+
+                    Swal.fire({
+                        title: 'Error!',
+                        text: response.msg,
+                        icon: 'error',
+                        position: 'top',
+                    })
+
+                }
+            }
+
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    })
+
+}
+
+async function editApprover(
+    payload: UpdateApproverSetting,
+    closeModalBtn: HTMLButtonElement
+) {
+
+    let transaction = ''
+
+    if (purchasingTab.value === PURCHASING_TABS.RV_APPROVERS) transaction = 'updateRvApproverSetting'
+    if (purchasingTab.value === PURCHASING_TABS.SPR_APPROVERS) transaction = 'updateSprApproverSetting'
+    if (purchasingTab.value === PURCHASING_TABS.JO_APPROVERS) transaction = 'updateJoApproverSetting'
+    if (purchasingTab.value === PURCHASING_TABS.MEQS_APPROVERS) transaction = 'updateMeqsApproverSetting'
+    if (purchasingTab.value === PURCHASING_TABS.PO_APPROVERS) transaction = 'updatePoApproverSetting'
+    if (purchasingTab.value === PURCHASING_TABS.RR_APPROVERS) transaction = 'updateRrApproverSetting'
+
+    purchasing.value.isEditingApprover = true
+    const response = await warehouseApi.updateApprover(payload, transaction)
+    purchasing.value.isEditingApprover = true
+
+    if (response.success && response.data) {
+        toast.success(response.msg)
+
+        const prevApproverItemIndx = approvers.value.findIndex(i => i.id === payload.id)
+
+
+        const a = response.data.approver
+
+        response.data.approver!['fullname'] = getFullname(a!.firstname, a!.middlename, a!.lastname)
+
+        approvers.value[prevApproverItemIndx] = { ...response.data }
+
+        closeModalBtn.click()
+
+    } else {
+        Swal.fire({
+            title: 'Error!',
+            text: response.msg,
+            icon: 'error',
+            position: 'top',
+        })
+    }
+}
 
 
 </script>

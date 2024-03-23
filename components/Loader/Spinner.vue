@@ -4,7 +4,8 @@
             <div class="spinner-inner"></div>
         </div>
         <p class="loading-text text-muted fst-italic">
-            How about a quick smile while waiting?
+            <!-- How about a quick smile while waiting? -->
+            Loading... please wait
             <i class="fas fa-smile"></i>
         </p>
     </div>
@@ -19,7 +20,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 50vh;
+    height: 20vh;
 }
 
 .spinner {
