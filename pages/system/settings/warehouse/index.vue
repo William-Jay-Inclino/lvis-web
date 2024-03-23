@@ -41,7 +41,7 @@
             <div class="h5wrapper mb-3 pt-5">
                 <hr class="result">
                 <h5 class="text-warning fst-italic">
-                    <i class="fas fa-users"></i> Default Approvers
+                    <i class="fas fa-users"></i> Default {{ purchasingTab }} Approvers
                 </h5>
                 <hr class="result">
             </div>
@@ -183,12 +183,12 @@ const enum ROOT_TABS {
 }
 
 const enum PURCHASING_TABS {
-    RV_APPROVERS,
-    SPR_APPROVERS,
-    JO_APPROVERS,
-    MEQS_APPROVERS,
-    PO_APPROVERS,
-    RR_APPROVERS,
+    RV_APPROVERS = 'RV',
+    SPR_APPROVERS = 'SPR',
+    JO_APPROVERS = 'JO',
+    MEQS_APPROVERS = 'MEQS',
+    PO_APPROVERS = 'PO',
+    RR_APPROVERS = 'RR',
 }
 
 const isLoadingMainContent = ref(true)
@@ -362,7 +362,11 @@ async function removeApprover(id: string) {
                 if (response.success) {
                     toast.success(`${item.approver?.fullname} removed!`)
                     // approvers.value.splice(indx, 1)
-                    approvers.value = response.approvers
+                    approvers.value = response.approvers.map(i => {
+                        i.approver!['fullname'] = getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname)
+
+                        return i
+                    })
                 } else {
 
                     Swal.fire({
