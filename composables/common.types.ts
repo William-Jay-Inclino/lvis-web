@@ -14,7 +14,7 @@ export enum ROLE {
     ADMIN = 'ADMIN'
 }
 
-export interface Permissions {
+export interface UserPermissions {
     canViewSystem: boolean
     canViewWarehouse: boolean
     warehouse: {
@@ -37,7 +37,7 @@ export interface User {
     status: USER_STATUS
     role: ROLE
     user_employee?: UserEmployee
-    permissions?: Permissions
+    permissions?: UserPermissions
 }
 
 export interface UserEmployee {
