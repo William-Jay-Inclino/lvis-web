@@ -13,19 +13,20 @@
                     </button>
 
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <ul v-if="authUser" class="navbar-nav ms-auto mb-2 mb-lg-0">
                             <li class="nav-item">
                                 <nuxt-link class="nav-link text-white" to="/home">Home</nuxt-link>
                             </li>
-                            <li class="nav-item dropdown">
+                            <li v-if="canViewPurchasing" class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown"
                                     role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Purchasing
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><nuxt-link class="dropdown-item"
+                                    <li v-if="canViewCanvass"><nuxt-link class="dropdown-item"
                                             to="/warehouse/purchasing/canvass">Canvass</nuxt-link></li>
-                                    <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/rv">RV</nuxt-link>
+                                    <li v-if="canViewRV"><nuxt-link class="dropdown-item"
+                                            to="/warehouse/purchasing/rv">RV</nuxt-link>
                                     </li>
                                     <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/jo">JO</nuxt-link>
                                     </li>
@@ -77,7 +78,7 @@
                                     </li>
                                 </ul>
                             </li>
-                            <li v-if="authUser" class="nav-item dropdown">
+                            <li class="nav-item dropdown">
                                 <a style="color: #FFFF00;" class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
                                     role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fas fa-user-circle"></i>
@@ -125,7 +126,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">Activity Log</a>
                     </li>
-                    <li class="nav-item dropdown">
+                    <li v-if="canViewPurchasing" class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
                             Purchasing
@@ -196,12 +197,39 @@
 
 import { getAuthUser } from '~/utils/helpers';
 
-const authUser = ref()
+const authUser = ref<AuthUser>()
 
 onMounted(() => {
     authUser.value = getAuthUser()
 })
 
+const canViewPurchasing = computed(() => {
+
+    if (!authUser.value) return false
+
+    if (isAdmin(authUser.value)) return true
+
+    if (!authUser.value.user.permissions) return false
+
+    const warehousePermissions = authUser.value.user.permissions.warehouse
+
+    return !!warehousePermissions.canManageCanvass || !!warehousePermissions.canManageRV
+
+})
+
+const canViewCanvass = computed(() => {
+    if (!authUser.value) return false
+    if (isAdmin(authUser.value)) return true
+    if (!authUser.value.user.permissions) return false
+    return !!authUser.value.user.permissions.warehouse.canManageCanvass
+})
+
+const canViewRV = computed(() => {
+    if (!authUser.value) return false
+    if (isAdmin(authUser.value)) return true
+    if (!authUser.value.user.permissions) return false
+    return !!authUser.value.user.permissions.warehouse.canManageRV
+})
 
 </script>
 

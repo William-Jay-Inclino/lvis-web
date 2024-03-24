@@ -14,12 +14,30 @@ export enum ROLE {
     ADMIN = 'ADMIN'
 }
 
+export interface Permissions {
+    canViewSystem: boolean
+    canViewWarehouse: boolean
+    warehouse: {
+        canManageCanvass: {
+            create: boolean,
+            search: boolean,
+            viewDetails: boolean
+        },
+        canManageRV: {
+            create: boolean,
+            search: boolean,
+            viewDetails: boolean
+        }
+    }
+}
+
 export interface User {
     id: string
     username: string
     status: USER_STATUS
     role: ROLE
     user_employee?: UserEmployee
+    permissions?: Permissions
 }
 
 export interface UserEmployee {
