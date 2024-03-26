@@ -44,39 +44,39 @@
                                     </li>
                                 </ul>
                             </li>
-                            <li class="nav-item dropdown">
+                            <li v-if="canViewStockInventory(authUser)" class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown"
                                     role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Stock Inventory
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li>
+                                    <li v-if="canView('canManageItem', authUser)">
                                         <nuxt-link class="dropdown-item"
                                             to="/warehouse/stock-inventory/item">Item</nuxt-link>
                                     </li>
-                                    <li>
+                                    <li v-if="canView('canManageItemType', authUser)">
                                         <nuxt-link class="dropdown-item" to="/warehouse/stock-inventory/item-type">Item
                                             Type</nuxt-link>
                                     </li>
-                                    <li>
+                                    <li v-if="canView('canManageItemBrand', authUser)">
                                         <nuxt-link class="dropdown-item" to="/warehouse/stock-inventory/item-brand">Item
                                             Brand</nuxt-link>
                                     </li>
                                 </ul>
                             </li>
-                            <li class="nav-item dropdown">
+                            <li v-if="canViewDataManagement(authUser)" class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown"
                                     role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Data Management
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><nuxt-link class="dropdown-item"
+                                    <li v-if="canView('canManageUnit', authUser)"><nuxt-link class="dropdown-item"
                                             to="/warehouse/data-management/unit">Unit</nuxt-link></li>
-                                    <li>
+                                    <li v-if="canView('canManageVehicle', authUser)">
                                         <nuxt-link class="dropdown-item"
                                             to="/warehouse/data-management/vehicle">Vehicle</nuxt-link>
                                     </li>
-                                    <li>
+                                    <li v-if="canView('canManageSupplier', authUser)">
                                         <nuxt-link class="dropdown-item"
                                             to="/warehouse/data-management/supplier">Supplier</nuxt-link>
                                     </li>
@@ -153,38 +153,39 @@
                                     to="/warehouse/purchasing/rr">RR</nuxt-link></li>
                         </ul>
                     </li>
-                    <li class="nav-item dropdown">
+                    <li v-if="canViewStockInventory(authUser)" class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
                             Stock Inventory
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li>
+                            <li v-if="canView('canManageItem', authUser)">
                                 <nuxt-link class="dropdown-item" to="/warehouse/stock-inventory/item">Item</nuxt-link>
                             </li>
-                            <li>
+                            <li v-if="canView('canManageItemType', authUser)">
                                 <nuxt-link class="dropdown-item" to="/warehouse/stock-inventory/item-type">Item
                                     Type</nuxt-link>
                             </li>
-                            <li>
+                            <li v-if="canView('canManageItemBrand', authUser)">
                                 <nuxt-link class="dropdown-item" to="/warehouse/stock-inventory/item-brand">Item
                                     Brand</nuxt-link>
                             </li>
                         </ul>
                     </li>
-                    <li class="nav-item dropdown">
+                    <li v-if="canViewDataManagement(authUser)" class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
                             Data Management
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><nuxt-link class="dropdown-item" to="/warehouse/data-management/unit">Unit</nuxt-link>
+                            <li v-if="canView('canManageUnit', authUser)"><nuxt-link class="dropdown-item"
+                                    to="/warehouse/data-management/unit">Unit</nuxt-link>
                             </li>
-                            <li>
+                            <li v-if="canView('canManageVehicle', authUser)">
                                 <nuxt-link class="dropdown-item"
                                     to="/warehouse/data-management/vehicle">Vehicle</nuxt-link>
                             </li>
-                            <li>
+                            <li v-if="canView('canManageSupplier', authUser)">
                                 <nuxt-link class="dropdown-item"
                                     to="/warehouse/data-management/supplier">Supplier</nuxt-link>
                             </li>
@@ -223,7 +224,46 @@ function canViewPurchasing(authUser: AuthUser) {
 
     const warehousePermissions = authUser.user.permissions.warehouse
 
-    return !!warehousePermissions.canManageCanvass || !!warehousePermissions.canManageRV
+    return (
+        !!warehousePermissions.canManageCanvass ||
+        !!warehousePermissions.canManageRV ||
+        !!warehousePermissions.canManageSPR ||
+        !!warehousePermissions.canManageJO ||
+        !!warehousePermissions.canManageMEQS ||
+        !!warehousePermissions.canManagePO ||
+        !!warehousePermissions.canManageRR
+    )
+}
+
+
+function canViewStockInventory(authUser: AuthUser) {
+
+    if (isAdmin(authUser)) return true
+
+    if (!authUser.user.permissions) return false
+
+    const warehousePermissions = authUser.user.permissions.warehouse
+
+    return (
+        !!warehousePermissions.canManageItem ||
+        !!warehousePermissions.canManageItemBrand ||
+        !!warehousePermissions.canManageItemType
+    )
+}
+
+function canViewDataManagement(authUser: AuthUser) {
+
+    if (isAdmin(authUser)) return true
+
+    if (!authUser.user.permissions) return false
+
+    const warehousePermissions = authUser.user.permissions.warehouse
+
+    return (
+        !!warehousePermissions.canManageUnit ||
+        !!warehousePermissions.canManageVehicle ||
+        !!warehousePermissions.canManageSupplier
+    )
 }
 
 

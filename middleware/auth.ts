@@ -30,7 +30,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
             const permissions = authUser.user.permissions.warehouse
             if (!permissions) return redirectTo401Page()
 
-
+            // purchasing
             const isCanvassModule = to.name?.toString().includes(MODULES.CANVASS)
             const isRVModule = to.name?.toString().includes(MODULES.RV)
             const isSPRModule = to.name?.toString().includes(MODULES.SPR)
@@ -39,10 +39,12 @@ export default defineNuxtRouteMiddleware((to, from) => {
             const isPOModule = to.name?.toString().includes(MODULES.PO)
             const isRRModule = to.name?.toString().includes(MODULES.RR)
 
+            // data management
             const isSupplierModule = to.name?.toString().includes(MODULES.SUPPLIER)
             const isUnitModule = to.name?.toString().includes(MODULES.UNIT)
             const isVehicleModule = to.name?.toString().includes(MODULES.VEHICLE)
 
+            // stock inventory
             const isItemModule = to.name?.toString().includes(MODULES.ITEM)
             const isItemBrandModule = to.name?.toString().includes(MODULES.ITEM_BRAND)
             const isItemTypeModule = to.name?.toString().includes(MODULES.ITEM_TYPE)

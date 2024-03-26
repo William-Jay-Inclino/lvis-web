@@ -23,6 +23,7 @@ export interface UserEmployee {
 export interface UserPermissions {
     canViewSystem: boolean
     canViewWarehouse: boolean
+    system: SystemPermissions
     warehouse: WarehousePermissions
 }
 
