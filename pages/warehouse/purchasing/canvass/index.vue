@@ -180,16 +180,18 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import * as api from '~/composables/warehouse/canvass/canvass.api'
 import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
 import { getFullname, formatDate, isAdminOrOwner } from '~/utils/helpers'
 import moment from 'moment'
 import { MOBILE_WIDTH, PAGINATION_SIZE } from '~/utils/config'
+import { ROUTES } from '~/utils/constants';
 
+definePageMeta({
+    name: ROUTES.CANVASS_INDEX,
+    layout: "layout-warehouse",
+    middleware: ['auth']
+})
 
 const authUser = ref<AuthUser>({} as AuthUser)
 

@@ -211,18 +211,19 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
 import { type JO } from '~/composables/warehouse/jo/jo.types';
 import * as joApi from '~/composables/warehouse/jo/jo.api'
-import moment from 'moment'
 import { getFullname, formatDate } from '~/utils/helpers'
 import { MOBILE_WIDTH, PAGINATION_SIZE } from '~/utils/config'
-import { approvalStatus } from '~/utils/constants';
+import { ROUTES, approvalStatus } from '~/utils/constants';
 
+
+definePageMeta({
+    name: ROUTES.JO_INDEX,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
 
 const authUser = ref<AuthUser>({} as AuthUser)
 const router = useRouter()

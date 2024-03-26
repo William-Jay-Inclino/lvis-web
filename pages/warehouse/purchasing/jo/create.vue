@@ -144,16 +144,19 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import Swal from 'sweetalert2'
 import { getFullname } from '~/utils/helpers'
 import * as joApi from '~/composables/warehouse/jo/jo.api'
 import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
 import type { CreateJoInput } from '~/composables/warehouse/jo/jo.types';
 import { MOBILE_WIDTH } from '~/utils/config';
+
+definePageMeta({
+    name: ROUTES.JO_CREATE,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
+
 
 // CONSTANTS
 const router = useRouter();

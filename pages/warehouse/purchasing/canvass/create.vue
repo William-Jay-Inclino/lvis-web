@@ -95,12 +95,7 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import * as api from '~/composables/warehouse/canvass/canvass.api'
-import type { Unit } from '~/composables/warehouse/unit/unit.types';
 import Swal from 'sweetalert2'
 import type { CreateCanvassInput } from '~/composables/warehouse/canvass/canvass.types';
 import { getFullname } from '~/utils/helpers'
@@ -108,7 +103,13 @@ import { useToast } from "vue-toastification";
 import { MOBILE_WIDTH } from '~/utils/config';
 import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
 import type { Item } from '~/composables/warehouse/item/item.type';
+import { ROUTES } from '~/utils/constants';
 
+definePageMeta({
+    name: ROUTES.CANVASS_CREATE,
+    layout: "layout-warehouse",
+    middleware: ['auth']
+})
 
 // CONSTANTS
 const router = useRouter();

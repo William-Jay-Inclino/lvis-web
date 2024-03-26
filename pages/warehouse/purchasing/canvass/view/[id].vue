@@ -296,13 +296,16 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import * as api from '~/composables/warehouse/canvass/canvass.api'
 import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
 import { MOBILE_WIDTH } from '~/utils/config';
+import { ROUTES } from '~/utils/constants';
+
+definePageMeta({
+    name: ROUTES.CANVASS_VIEW,
+    layout: "layout-warehouse",
+    middleware: ['auth']
+})
 
 const authUser = ref<AuthUser>({} as AuthUser)
 const route = useRoute()

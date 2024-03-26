@@ -23,7 +23,6 @@ export const approvalStatus = {
     },
 }
 
-
 export const departmentStatus = {
     [DEPARTMENT_STATUS.ACTIVE]: {
         value: DEPARTMENT_STATUS.ACTIVE,
@@ -36,7 +35,6 @@ export const departmentStatus = {
         color: 'danger',
     },
 }
-
 
 export const VAT = {
     [VAT_TYPE.NONE]: {
@@ -75,7 +73,6 @@ export const itemTransaction = {
     }
 }
 
-
 export const NOTE_OPTIONS = [
     'Design',
     'Features',
@@ -88,3 +85,39 @@ export const NOTE_OPTIONS = [
     'Tradition',
     'Proven and Tested'
 ]
+
+export enum SERVICES {
+    WAREHOUSE = 'WAREHOUSE',
+    SYSTEM = 'SYSTEM'
+}
+
+export enum MODULES {
+    CANVASS = 'CANVASS',
+    RV = 'RV',
+    SPR = 'SPR',
+    JO = 'JO',
+    MEQS = 'MEQS',
+    PO = 'PO',
+    RR = 'RR',
+}
+
+export enum ROUTES {
+
+    // =======================  CANVASS ======================= 
+    CANVASS_INDEX = `${SERVICES.WAREHOUSE}_CANVASS_INDEX`,
+    CANVASS_CREATE = `${SERVICES.WAREHOUSE}_CANVASS_CREATE`,
+    CANVASS_UPDATE = `${SERVICES.WAREHOUSE}_CANVASS_UPDATE`,
+    CANVASS_VIEW = `${SERVICES.WAREHOUSE}_CANVASS_VIEW`,
+
+    // =======================  CANVASS ======================= 
+    RV_INDEX = `${SERVICES.WAREHOUSE}_RV_INDEX`,
+    RV_CREATE = `${SERVICES.WAREHOUSE}_RV_CREATE`,
+    RV_UPDATE = `${SERVICES.WAREHOUSE}_RV_UPDATE`,
+    RV_VIEW = `${SERVICES.WAREHOUSE}_RV_VIEW`,
+
+    // =======================  JO ======================= 
+    JO_INDEX = `${SERVICES.WAREHOUSE}_JO_INDEX`,
+    JO_CREATE = `${SERVICES.WAREHOUSE}_JO_CREATE`,
+    JO_UPDATE = `${SERVICES.WAREHOUSE}_JO_UPDATE`,
+    JO_VIEW = `${SERVICES.WAREHOUSE}_JO_VIEW`,
+}

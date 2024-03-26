@@ -191,12 +191,12 @@
                                         <tr>
                                             <td class="text-muted"> Approver </td>
                                             <td> {{ getFullname(i.approver!.firstname, i.approver!.middlename,
-                                                i.approver!.lastname) }} </td>
+                i.approver!.lastname) }} </td>
                                         </tr>
                                         <tr>
                                             <td class="text-muted"> Status </td>
                                             <td>
-                                                <span :class="{[`badge bg-${approvalStatus[i.status].color}`]: true}">
+                                                <span :class="{ [`badge bg-${approvalStatus[i.status].color}`]: true}">
                                                     {{ approvalStatus[i.status].label }}
                                                 </span>
                                             </td>
@@ -243,14 +243,16 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import * as api from '~/composables/warehouse/jo/jo.api'
 import type { JO } from '~/composables/warehouse/jo/jo.types';
 import { MOBILE_WIDTH } from '~/utils/config';
 import { approvalStatus } from '~/utils/constants'
+
+definePageMeta({
+    name: ROUTES.JO_VIEW,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
 
 const authUser = ref<AuthUser>({} as AuthUser)
 const route = useRoute()

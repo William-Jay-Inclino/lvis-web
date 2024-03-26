@@ -14,40 +14,6 @@ export enum ROLE {
     ADMIN = 'ADMIN'
 }
 
-export interface UserPermissions {
-    canViewSystem: boolean
-    canViewWarehouse: boolean
-    warehouse: {
-        canManageCanvass: {
-            create: boolean,
-            search: boolean,
-            viewDetails: boolean
-        },
-        canManageRV: {
-            create: boolean,
-            search: boolean,
-            viewDetails: boolean
-        }
-    }
-}
-
-export interface User {
-    id: string
-    username: string
-    status: USER_STATUS
-    role: ROLE
-    user_employee?: UserEmployee
-    permissions?: UserPermissions
-}
-
-export interface UserEmployee {
-    id: string
-    user_id: string
-    user: User
-    employee_id: string
-    employee: Employee
-}
-
 export interface AuthUser {
     user: User
     access_token: string
