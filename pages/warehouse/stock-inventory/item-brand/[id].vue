@@ -46,13 +46,15 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import * as api from '~/composables/warehouse/item-brand/item-brand.api'
 import type { CreateItemBrandInput } from '~/composables/warehouse/item-brand/item-brand.types'
 import Swal from 'sweetalert2'
+
+definePageMeta({
+    name: ROUTES.ITEM_BRAND_UPDATE,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
 
 const route = useRoute()
 const router = useRouter()

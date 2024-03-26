@@ -67,12 +67,14 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import * as api from '~/composables/warehouse/supplier/supplier.api'
 import type { Supplier } from '~/composables/warehouse/supplier/supplier';
+
+definePageMeta({
+    name: ROUTES.SUPPLIER_VIEW,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
 
 const router = useRouter()
 const route = useRoute()

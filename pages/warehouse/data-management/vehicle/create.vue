@@ -48,13 +48,15 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import * as api from '~/composables/warehouse/vehicle/vehicle.api'
 import type { CreateVehicleInput } from '~/composables/warehouse/vehicle/vehicle'
 import Swal from 'sweetalert2'
+
+definePageMeta({
+    name: ROUTES.VEHICLE_CREATE,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
 
 const router = useRouter()
 const isSaving = ref(false)

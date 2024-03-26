@@ -59,12 +59,14 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import * as api from '~/composables/warehouse/unit/unit.api'
 import type { Unit } from '~/composables/warehouse/unit/unit';
+
+definePageMeta({
+    name: ROUTES.UNIT_VIEW,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
 
 const router = useRouter()
 const route = useRoute()

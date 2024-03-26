@@ -73,14 +73,16 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import * as api from '~/composables/warehouse/vehicle/vehicle.api'
 import type { Vehicle } from '~/composables/warehouse/vehicle/vehicle'
 import Swal from 'sweetalert2'
 import { useToast } from "vue-toastification";
+
+definePageMeta({
+    name: ROUTES.VEHICLE_INDEX,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
 
 const toast = useToast();
 const router = useRouter()

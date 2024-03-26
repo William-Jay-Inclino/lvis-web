@@ -46,13 +46,15 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import * as api from '~/composables/warehouse/unit/unit.api'
 import type { CreateUnitInput } from '~/composables/warehouse/unit/unit'
 import Swal from 'sweetalert2'
+
+definePageMeta({
+    name: ROUTES.UNIT_UPDATE,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
 
 const route = useRoute()
 const router = useRouter()

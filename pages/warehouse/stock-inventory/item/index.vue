@@ -191,18 +191,16 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import * as api from '~/composables/warehouse/item/item.api'
 import type { Item } from '~/composables/warehouse/item/item.type';
-import { getFullname, formatDate } from '~/utils/helpers'
-import moment from 'moment'
 import { MOBILE_WIDTH, PAGINATION_SIZE } from '~/utils/config'
 
+definePageMeta({
+    name: ROUTES.ITEM_INDEX,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
 
-const router = useRouter()
 
 // flags
 const isMobile = ref(false)

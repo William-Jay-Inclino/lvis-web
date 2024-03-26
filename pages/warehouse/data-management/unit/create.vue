@@ -42,13 +42,15 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import * as api from '~/composables/warehouse/unit/unit.api'
 import type { CreateUnitInput } from '~/composables/warehouse/unit/unit'
 import Swal from 'sweetalert2'
+
+definePageMeta({
+    name: ROUTES.UNIT_CREATE,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
 
 const router = useRouter()
 const isSaving = ref(false)

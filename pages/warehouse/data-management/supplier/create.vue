@@ -58,13 +58,15 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import * as api from '~/composables/warehouse/supplier/supplier.api'
 import type { CreateSupplierInput } from '~/composables/warehouse/supplier/supplier'
 import Swal from 'sweetalert2'
+
+definePageMeta({
+    name: ROUTES.SUPPLIER_CREATE,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
 
 const router = useRouter()
 const isSaving = ref(false)

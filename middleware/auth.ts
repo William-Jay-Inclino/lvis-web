@@ -39,6 +39,14 @@ export default defineNuxtRouteMiddleware((to, from) => {
             const isPOModule = to.name?.toString().includes(MODULES.PO)
             const isRRModule = to.name?.toString().includes(MODULES.RR)
 
+            const isSupplierModule = to.name?.toString().includes(MODULES.SUPPLIER)
+            const isUnitModule = to.name?.toString().includes(MODULES.UNIT)
+            const isVehicleModule = to.name?.toString().includes(MODULES.VEHICLE)
+
+            const isItemModule = to.name?.toString().includes(MODULES.ITEM)
+            const isItemBrandModule = to.name?.toString().includes(MODULES.ITEM_BRAND)
+            const isItemTypeModule = to.name?.toString().includes(MODULES.ITEM_TYPE)
+
 
             if (isCanvassModule && !canAccessCanvass(to.name as ROUTES, permissions)) {
                 return redirectTo401Page()
@@ -65,6 +73,30 @@ export default defineNuxtRouteMiddleware((to, from) => {
             }
 
             if (isRRModule && !canAccessRR(to.name as ROUTES, permissions)) {
+                return redirectTo401Page()
+            }
+
+            if (isSupplierModule && !canAccessSupplier(to.name as ROUTES, permissions)) {
+                return redirectTo401Page()
+            }
+
+            if (isUnitModule && !canAccessUnit(to.name as ROUTES, permissions)) {
+                return redirectTo401Page()
+            }
+
+            if (isVehicleModule && !canAccessVehicle(to.name as ROUTES, permissions)) {
+                return redirectTo401Page()
+            }
+
+            if (isItemModule && !canAccessItem(to.name as ROUTES, permissions)) {
+                return redirectTo401Page()
+            }
+
+            if (isItemBrandModule && !canAccessItemBrand(to.name as ROUTES, permissions)) {
+                return redirectTo401Page()
+            }
+
+            if (isItemTypeModule && !canAccessItemType(to.name as ROUTES, permissions)) {
                 return redirectTo401Page()
             }
 
@@ -173,6 +205,102 @@ function canAccessRR(route: ROUTES, permissions: WarehousePermissions) {
 
     if (route === ROUTES.RR_INDEX) return !!permissions.canManageRR.search
     if (route === ROUTES.RR_CREATE) return !!permissions.canManageRR.create
+
+
+    return true
+
+}
+
+function canAccessSupplier(route: ROUTES, permissions: WarehousePermissions) {
+
+    console.log('canAccessSupplier', route, permissions)
+
+    if (!permissions.canManageSupplier) return false
+
+    if (route === ROUTES.SUPPLIER_INDEX) return !!permissions.canManageSupplier.search
+    if (route === ROUTES.SUPPLIER_CREATE) return !!permissions.canManageSupplier.create
+    if (route === ROUTES.SUPPLIER_UPDATE) return !!permissions.canManageSupplier.update
+    if (route === ROUTES.SUPPLIER_VIEW) return !!permissions.canManageSupplier.viewDetails
+
+
+    return true
+
+}
+
+function canAccessUnit(route: ROUTES, permissions: WarehousePermissions) {
+
+    console.log('canAccessUnit', route, permissions)
+
+    if (!permissions.canManageUnit) return false
+
+    if (route === ROUTES.UNIT_INDEX) return !!permissions.canManageUnit.search
+    if (route === ROUTES.UNIT_CREATE) return !!permissions.canManageUnit.create
+    if (route === ROUTES.UNIT_UPDATE) return !!permissions.canManageUnit.update
+    if (route === ROUTES.UNIT_VIEW) return !!permissions.canManageUnit.viewDetails
+
+
+    return true
+
+}
+
+function canAccessVehicle(route: ROUTES, permissions: WarehousePermissions) {
+
+    console.log('canAccessVehicle', route, permissions)
+
+    if (!permissions.canManageVehicle) return false
+
+    if (route === ROUTES.VEHICLE_INDEX) return !!permissions.canManageVehicle.search
+    if (route === ROUTES.VEHICLE_CREATE) return !!permissions.canManageVehicle.create
+    if (route === ROUTES.VEHICLE_UPDATE) return !!permissions.canManageVehicle.update
+    if (route === ROUTES.VEHICLE_VIEW) return !!permissions.canManageVehicle.viewDetails
+
+
+    return true
+
+}
+
+function canAccessItem(route: ROUTES, permissions: WarehousePermissions) {
+
+    console.log('canAccessItem', route, permissions)
+
+    if (!permissions.canManageItem) return false
+
+    if (route === ROUTES.ITEM_INDEX) return !!permissions.canManageItem.search
+    if (route === ROUTES.ITEM_CREATE) return !!permissions.canManageItem.create
+    if (route === ROUTES.ITEM_UPDATE) return !!permissions.canManageItem.update
+    if (route === ROUTES.ITEM_VIEW) return !!permissions.canManageItem.viewDetails
+
+
+    return true
+
+}
+
+function canAccessItemBrand(route: ROUTES, permissions: WarehousePermissions) {
+
+    console.log('canAccessItemBrand', route, permissions)
+
+    if (!permissions.canManageItemBrand) return false
+
+    if (route === ROUTES.ITEM_BRAND_INDEX) return !!permissions.canManageItemBrand.search
+    if (route === ROUTES.ITEM_BRAND_CREATE) return !!permissions.canManageItemBrand.create
+    if (route === ROUTES.ITEM_BRAND_UPDATE) return !!permissions.canManageItemBrand.update
+    if (route === ROUTES.ITEM_BRAND_VIEW) return !!permissions.canManageItemBrand.viewDetails
+
+
+    return true
+
+}
+
+function canAccessItemType(route: ROUTES, permissions: WarehousePermissions) {
+
+    console.log('canAccessItemType', route, permissions)
+
+    if (!permissions.canManageItemType) return false
+
+    if (route === ROUTES.ITEM_TYPE_INDEX) return !!permissions.canManageItemType.search
+    if (route === ROUTES.ITEM_TYPE_CREATE) return !!permissions.canManageItemType.create
+    if (route === ROUTES.ITEM_TYPE_UPDATE) return !!permissions.canManageItemType.update
+    if (route === ROUTES.ITEM_TYPE_VIEW) return !!permissions.canManageItemType.viewDetails
 
 
     return true

@@ -50,6 +50,12 @@ import * as api from '~/composables/warehouse/item-type/item-type.api'
 import type { CreateItemTypeInput } from '~/composables/warehouse/item-type/item-type.types'
 import Swal from 'sweetalert2'
 
+definePageMeta({
+    name: ROUTES.ITEM_TYPE_CREATE,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
+
 const router = useRouter()
 const isSaving = ref(false)
 

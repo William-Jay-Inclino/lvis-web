@@ -162,15 +162,17 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import type { ItemTransaction } from '~/composables/warehouse/item/item-transaction.type';
 import * as itemApi from '~/composables/warehouse/item/item.api'
 import type { Item } from '~/composables/warehouse/item/item.type';
 import { MOBILE_WIDTH } from '~/utils/config';
 import { itemTransaction } from '~/utils/constants';
+
+definePageMeta({
+    name: ROUTES.ITEM_VIEW,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
 
 const route = useRoute()
 const item = ref<Item | undefined>()

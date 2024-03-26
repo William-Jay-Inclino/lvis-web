@@ -75,14 +75,16 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import * as api from '~/composables/warehouse/supplier/supplier.api'
 import type { Supplier } from '~/composables/warehouse/supplier/supplier'
 import Swal from 'sweetalert2'
 import { useToast } from "vue-toastification";
+
+definePageMeta({
+    name: ROUTES.SUPPLIER_INDEX,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
 
 const toast = useToast();
 const router = useRouter()
