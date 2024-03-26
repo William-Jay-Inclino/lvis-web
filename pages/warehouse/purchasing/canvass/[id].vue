@@ -119,7 +119,9 @@ import { MOBILE_WIDTH } from '~/utils/config';
 import type { Item } from '~/composables/warehouse/item/item.type';
 
 definePageMeta({
-    layout: "layout-warehouse"
+    name: ROUTES.CANVASS_UPDATE,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
 })
 
 // CONSTANTS

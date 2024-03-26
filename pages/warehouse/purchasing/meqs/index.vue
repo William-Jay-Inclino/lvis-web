@@ -261,7 +261,9 @@ import type { SPR } from '~/composables/warehouse/spr/spr.types';
 
 
 definePageMeta({
-    layout: "layout-warehouse"
+    name: ROUTES.MEQS_INDEX,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
 })
 
 const authUser = ref<AuthUser>({} as AuthUser)

@@ -149,19 +149,20 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import Swal from 'sweetalert2'
 import { getFullname, formatToValidHtmlDate } from '~/utils/helpers'
 import { MOBILE_WIDTH } from '~/utils/config';
 import { useToast } from "vue-toastification";
-import type { RR, UpdateRrInput } from '~/composables/warehouse/rr/rr.types';
+import type { RR } from '~/composables/warehouse/rr/rr.types';
 import * as rrApi from '~/composables/warehouse/rr/rr.api'
 import * as rrApproverApi from '~/composables/warehouse/rr/rr-approver.api'
 import * as rrItemApi from '~/composables/warehouse/rr/rr-item.api'
-import type { UpdateRrItemsInput } from '~/composables/warehouse/rr/rr-item.types';
+
+definePageMeta({
+    name: ROUTES.RR_UPDATE,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
 
 const enum FORM_TYPE {
     RR_INFO,

@@ -273,12 +273,14 @@ import { useToast } from "vue-toastification";
 import Swal from 'sweetalert2'
 import type { MeqsSupplier } from '~/composables/warehouse/meqs/meqs-supplier';
 import type { MeqsSupplierItem } from '~/composables/warehouse/meqs/meqs-supplier-item';
-import type { Supplier } from '~/composables/common.types';
 import type { JO } from '~/composables/warehouse/jo/jo.types';
 import type { SPR } from '~/composables/warehouse/spr/spr.types';
+import type { Supplier } from '~/composables/warehouse/supplier/supplier';
 
 definePageMeta({
-    layout: "layout-warehouse"
+    name: ROUTES.MEQS_CREATE,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
 })
 
 // DEPENDENCIES

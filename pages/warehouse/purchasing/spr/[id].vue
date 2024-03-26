@@ -163,10 +163,6 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import Swal from 'sweetalert2'
 import { getFullname, formatToValidHtmlDate } from '~/utils/helpers'
 import { useToast } from "vue-toastification";
@@ -176,6 +172,11 @@ import { type SPR } from '~/composables/warehouse/spr/spr.types';
 import { MOBILE_WIDTH } from '~/utils/config';
 import { approvalStatus } from '~/utils/constants';
 
+definePageMeta({
+    name: ROUTES.SPR_UPDATE,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
 
 // DEPENDENCIES
 const route = useRoute()

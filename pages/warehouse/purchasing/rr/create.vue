@@ -186,10 +186,6 @@
 
 <script script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import type { PO } from '~/composables/warehouse/po/po.types';
 import type { CreateRrInput } from '~/composables/warehouse/rr/rr.types';
 import * as rrApi from '~/composables/warehouse/rr/rr.api';
@@ -199,6 +195,12 @@ import Swal from 'sweetalert2'
 import { useToast } from "vue-toastification";
 import { getNetPrice } from '~/utils/helpers';
 import type { Item } from '~/composables/warehouse/item/item.type';
+
+definePageMeta({
+    name: ROUTES.RR_CREATE,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
 
 // CONSTANTS
 const router = useRouter();

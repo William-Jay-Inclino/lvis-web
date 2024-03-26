@@ -356,9 +356,9 @@
                                             {{
         formatToPhpCurrency(
             getVatTotal({
-                                            price: rrItem.meqs_supplier_item.price,
-                                            quantity: rrItem.quantity_accepted,
-                                            vatType: rrItem.meqs_supplier_item.vat_type
+                price: rrItem.meqs_supplier_item.price,
+                quantity: rrItem.quantity_accepted,
+                vatType: rrItem.meqs_supplier_item.vat_type
                                             })
                                             )
                                             }}
@@ -435,15 +435,17 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import * as rrApi from '~/composables/warehouse/rr/rr.api'
 import type { RR } from '~/composables/warehouse/rr/rr.types';
 import { MOBILE_WIDTH } from '~/utils/config';
 import { approvalStatus } from '~/utils/constants'
 import { getTotalNetPrice, getVatAmount, getNetPrice, getGrossTotal, getVatTotal } from '~/utils/helpers';
+
+definePageMeta({
+    name: ROUTES.RR_VIEW,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
 
 const authUser = ref<AuthUser>({} as AuthUser)
 const route = useRoute()

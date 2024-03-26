@@ -1,8 +1,9 @@
 import type { PO } from "../po/po.types";
+import type { Supplier } from "../supplier/supplier";
 import type { MeqsSupplierAttachment } from "./meqs-supplier-attachment";
 import type { MeqsSupplierItem } from "./meqs-supplier-item";
 import type { MEQS } from "./meqs.types";
-import type { Supplier, VAT_TYPE } from "~/composables/common.types";
+import type { VAT_TYPE } from "~/composables/common.types";
 
 export interface MeqsSupplier {
   id: string;

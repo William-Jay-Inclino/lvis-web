@@ -107,10 +107,6 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import Swal from 'sweetalert2'
 import { getFullname, formatToValidHtmlDate } from '~/utils/helpers'
 import { MOBILE_WIDTH } from '~/utils/config';
@@ -118,6 +114,12 @@ import { useToast } from "vue-toastification";
 import type { PO } from '~/composables/warehouse/po/po.types';
 import * as poApi from '~/composables/warehouse/po/po.api'
 import * as poApproverApi from '~/composables/warehouse/po/po-approver.api'
+
+definePageMeta({
+    name: ROUTES.PO_UPDATE,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
 
 // DEPENDENCIES
 const route = useRoute()

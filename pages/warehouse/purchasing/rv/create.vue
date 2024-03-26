@@ -138,16 +138,18 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import Swal from 'sweetalert2'
 import { getFullname } from '~/utils/helpers'
 import * as rvApi from '~/composables/warehouse/rv/rv.api'
 import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
 import type { CreateRvInput } from '~/composables/warehouse/rv/rv.types';
 import { MOBILE_WIDTH } from '~/utils/config';
+
+definePageMeta({
+    name: ROUTES.RV_CREATE,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
 
 // CONSTANTS
 const router = useRouter();

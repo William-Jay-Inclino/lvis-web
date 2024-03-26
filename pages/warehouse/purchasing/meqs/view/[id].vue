@@ -319,15 +319,16 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import { MOBILE_WIDTH, UPLOADS_PATH } from '~/utils/config';
 import { formatToPhpCurrency } from '~/utils/helpers';
 import * as meqsApi from '~/composables/warehouse/meqs/meqs.api'
 import type { MEQS } from '~/composables/warehouse/meqs/meqs.types';
 
+definePageMeta({
+    name: ROUTES.MEQS_VIEW,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
 
 const authUser = ref<AuthUser>({} as AuthUser)
 const route = useRoute()

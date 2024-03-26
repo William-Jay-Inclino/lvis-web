@@ -92,6 +92,18 @@ export enum SERVICES {
 }
 
 export enum MODULES {
+
+    // ==============================================   SYSTEM ============================================== 
+    EMPLOYEE = 'EMPLOYEE',
+    SETTINGS = 'SETTINGS',
+    ACCOUNT = 'ACCOUNT',
+    CLASSIFICATION = 'CLASSIFICATION',
+    DEPARTMENT = 'DEPARTMENT',
+    PENDINGS = 'PENDINGS',
+
+    // ==============================================   WAREHOUSE ============================================== 
+
+    // =======================  PURCHASING ======================= 
     CANVASS = 'CANVASS',
     RV = 'RV',
     SPR = 'SPR',
@@ -99,9 +111,23 @@ export enum MODULES {
     MEQS = 'MEQS',
     PO = 'PO',
     RR = 'RR',
+
+    // =======================  DATA MANAGEMENT ======================= 
+    SUPPLIER = 'SUPPLIER',
+    UNIT = 'UNIT',
+    VEHICLE = 'VEHICLE',
+
+    // =======================  STOCK INVENTORY ======================= 
+    ITEM = 'ITEM',
+    ITEM_BRAND = 'ITEM_BRAND',
+    ITEM_TYPE = 'ITEM_TYPE',
+
+
 }
 
 export enum ROUTES {
+
+    // ==============================================   WAREHOUSE ============================================== 
 
     // =======================  CANVASS ======================= 
     CANVASS_INDEX = `${SERVICES.WAREHOUSE}_CANVASS_INDEX`,
@@ -109,7 +135,7 @@ export enum ROUTES {
     CANVASS_UPDATE = `${SERVICES.WAREHOUSE}_CANVASS_UPDATE`,
     CANVASS_VIEW = `${SERVICES.WAREHOUSE}_CANVASS_VIEW`,
 
-    // =======================  CANVASS ======================= 
+    // =======================  RV ======================= 
     RV_INDEX = `${SERVICES.WAREHOUSE}_RV_INDEX`,
     RV_CREATE = `${SERVICES.WAREHOUSE}_RV_CREATE`,
     RV_UPDATE = `${SERVICES.WAREHOUSE}_RV_UPDATE`,
@@ -120,4 +146,64 @@ export enum ROUTES {
     JO_CREATE = `${SERVICES.WAREHOUSE}_JO_CREATE`,
     JO_UPDATE = `${SERVICES.WAREHOUSE}_JO_UPDATE`,
     JO_VIEW = `${SERVICES.WAREHOUSE}_JO_VIEW`,
+
+    // =======================  SPR ======================= 
+    SPR_INDEX = `${SERVICES.WAREHOUSE}_SPR_INDEX`,
+    SPR_CREATE = `${SERVICES.WAREHOUSE}_SPR_CREATE`,
+    SPR_UPDATE = `${SERVICES.WAREHOUSE}_SPR_UPDATE`,
+    SPR_VIEW = `${SERVICES.WAREHOUSE}_SPR_VIEW`,
+
+    // =======================  MEQS ======================= 
+    MEQS_INDEX = `${SERVICES.WAREHOUSE}_MEQS_INDEX`,
+    MEQS_CREATE = `${SERVICES.WAREHOUSE}_MEQS_CREATE`,
+    MEQS_UPDATE = `${SERVICES.WAREHOUSE}_MEQS_UPDATE`,
+    MEQS_VIEW = `${SERVICES.WAREHOUSE}_MEQS_VIEW`,
+
+    // =======================  PO ======================= 
+    PO_INDEX = `${SERVICES.WAREHOUSE}_PO_INDEX`,
+    PO_CREATE = `${SERVICES.WAREHOUSE}_PO_CREATE`,
+    PO_UPDATE = `${SERVICES.WAREHOUSE}_PO_UPDATE`,
+    PO_VIEW = `${SERVICES.WAREHOUSE}_PO_VIEW`,
+
+    // =======================  RR ======================= 
+    RR_INDEX = `${SERVICES.WAREHOUSE}_RR_INDEX`,
+    RR_CREATE = `${SERVICES.WAREHOUSE}_RR_CREATE`,
+    RR_UPDATE = `${SERVICES.WAREHOUSE}_RR_UPDATE`,
+    RR_VIEW = `${SERVICES.WAREHOUSE}_RR_VIEW`,
+
+    // =======================  SUPPLIER ======================= 
+    SUPPLIER_INDEX = `${SERVICES.WAREHOUSE}_SUPPLIER_INDEX`,
+    SUPPLIER_CREATE = `${SERVICES.WAREHOUSE}_SUPPLIER_CREATE`,
+    SUPPLIER_UPDATE = `${SERVICES.WAREHOUSE}_SUPPLIER_UPDATE`,
+    SUPPLIER_VIEW = `${SERVICES.WAREHOUSE}_SUPPLIER_VIEW`,
+
+    // =======================  UNIT ======================= 
+    UNIT_INDEX = `${SERVICES.WAREHOUSE}_UNIT_INDEX`,
+    UNIT_CREATE = `${SERVICES.WAREHOUSE}_UNIT_CREATE`,
+    UNIT_UPDATE = `${SERVICES.WAREHOUSE}_UNIT_UPDATE`,
+    UNIT_VIEW = `${SERVICES.WAREHOUSE}_UNIT_VIEW`,
+
+    // =======================  VEHICLE ======================= 
+    VEHICLE_INDEX = `${SERVICES.WAREHOUSE}_VEHICLE_INDEX`,
+    VEHICLE_CREATE = `${SERVICES.WAREHOUSE}_VEHICLE_CREATE`,
+    VEHICLE_UPDATE = `${SERVICES.WAREHOUSE}_VEHICLE_UPDATE`,
+    VEHICLE_VIEW = `${SERVICES.WAREHOUSE}_VEHICLE_VIEW`,
+
+    // =======================  ITEM ======================= 
+    ITEM_INDEX = `${SERVICES.WAREHOUSE}_ITEM_INDEX`,
+    ITEM_CREATE = `${SERVICES.WAREHOUSE}_ITEM_CREATE`,
+    ITEM_UPDATE = `${SERVICES.WAREHOUSE}_ITEM_UPDATE`,
+    ITEM_VIEW = `${SERVICES.WAREHOUSE}_ITEM_VIEW`,
+
+    // =======================  ITEM BRAND ======================= 
+    ITEM_BRAND_INDEX = `${SERVICES.WAREHOUSE}_ITEM_BRAND_INDEX`,
+    ITEM_BRAND_CREATE = `${SERVICES.WAREHOUSE}_ITEM_BRAND_CREATE`,
+    ITEM_BRAND_UPDATE = `${SERVICES.WAREHOUSE}_ITEM_BRAND_UPDATE`,
+    ITEM_BRAND_VIEW = `${SERVICES.WAREHOUSE}_ITEM_BRAND_VIEW`,
+
+    // =======================  ITEM ======================= 
+    ITEM_TYPE_INDEX = `${SERVICES.WAREHOUSE}_ITEM_TYPE_INDEX`,
+    ITEM_TYPE_CREATE = `${SERVICES.WAREHOUSE}_ITEM_TYPE_CREATE`,
+    ITEM_TYPE_UPDATE = `${SERVICES.WAREHOUSE}_ITEM_TYPE_UPDATE`,
+    ITEM_TYPE_VIEW = `${SERVICES.WAREHOUSE}_ITEM_TYPE_VIEW`,
 }

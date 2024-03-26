@@ -238,17 +238,17 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import * as rrApi from '~/composables/warehouse/rr/rr.api'
 import type { RR } from '~/composables/warehouse/rr/rr.types';
 import { getFullname, formatDate } from '~/utils/helpers'
-import moment from 'moment'
 import { MOBILE_WIDTH, PAGINATION_SIZE } from '~/utils/config'
 import type { PO } from '~/composables/warehouse/po/po.types';
 
+definePageMeta({
+    name: ROUTES.RR_INDEX,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
 
 const authUser = ref<AuthUser>({} as AuthUser)
 const router = useRouter()

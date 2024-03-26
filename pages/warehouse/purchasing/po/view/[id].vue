@@ -255,15 +255,17 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import * as poApi from '~/composables/warehouse/po/po.api'
 import type { PO } from '~/composables/warehouse/po/po.types';
 import { MOBILE_WIDTH } from '~/utils/config';
 import { approvalStatus } from '~/utils/constants'
 import { getTotalNetPrice, getVatAmount } from '~/utils/helpers';
+
+definePageMeta({
+    name: ROUTES.PO_VIEW,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
 
 const authUser = ref<AuthUser>({} as AuthUser)
 const route = useRoute()

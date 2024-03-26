@@ -162,10 +162,6 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import Swal from 'sweetalert2'
 import { getFullname, formatToValidHtmlDate } from '~/utils/helpers'
 import { MOBILE_WIDTH } from '~/utils/config';
@@ -175,9 +171,15 @@ import * as meqsApi from '~/composables/warehouse/meqs/meqs.api'
 import * as meqsApproverApi from '~/composables/warehouse/meqs/meqs-approver.api'
 import * as meqsSupplierApi from '~/composables/warehouse/meqs/meqs-supplier.api'
 import * as meqsSupplierAttachmentApi from '~/composables/warehouse/meqs/meqs-supplier-attachment.api'
-import type { Supplier } from '~/composables/common.types';
 import type { CreateMeqsSupplierAttachmentSubInput, CreateMeqsSupplierInput, CreateMeqsSupplierItemInput, MeqsSupplier, UpdateMeqsSupplierInput, UpdateMeqsSupplierItemInput } from '~/composables/warehouse/meqs/meqs-supplier';
 import type { CreateMeqsSupplierAttachmentInput } from '~/composables/warehouse/meqs/meqs-supplier-attachment';
+import type { Supplier } from '~/composables/warehouse/supplier/supplier';
+
+definePageMeta({
+    name: ROUTES.MEQS_UPDATE,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
 
 const enum FORM_TYPE {
     MEQS_INFO,

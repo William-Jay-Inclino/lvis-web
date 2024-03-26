@@ -212,18 +212,18 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
 import { type SPR } from '~/composables/warehouse/spr/spr.types';
 import * as sprApi from '~/composables/warehouse/spr/spr.api'
-import moment from 'moment'
 import { getFullname, formatDate } from '~/utils/helpers'
 import { MOBILE_WIDTH, PAGINATION_SIZE } from '~/utils/config'
 import { approvalStatus } from '~/utils/constants';
 
+definePageMeta({
+    name: ROUTES.SPR_INDEX,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
 
 const authUser = ref<AuthUser>({} as AuthUser)
 const router = useRouter()

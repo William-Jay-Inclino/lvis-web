@@ -240,17 +240,17 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import * as poApi from '~/composables/warehouse/po/po.api'
 import type { PO } from '~/composables/warehouse/po/po.types';
 import { getFullname, formatDate } from '~/utils/helpers'
-import moment from 'moment'
 import { MOBILE_WIDTH, PAGINATION_SIZE } from '~/utils/config'
 import type { MEQS } from '~/composables/warehouse/meqs/meqs.types';
 
+definePageMeta({
+    name: ROUTES.PO_INDEX,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
 
 const authUser = ref<AuthUser>({} as AuthUser)
 const router = useRouter()

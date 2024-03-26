@@ -251,14 +251,16 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-warehouse"
-})
-
 import * as api from '~/composables/warehouse/rv/rv.api'
 import type { RV } from '~/composables/warehouse/rv/rv.types';
 import { MOBILE_WIDTH } from '~/utils/config';
 import { approvalStatus } from '~/utils/constants'
+
+definePageMeta({
+    name: ROUTES.RV_VIEW,
+    layout: "layout-warehouse",
+    middleware: ['auth'],
+})
 
 const authUser = ref<AuthUser>({} as AuthUser)
 const route = useRoute()
