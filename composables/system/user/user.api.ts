@@ -219,3 +219,94 @@ export async function remove(id: string): Promise<{ success: boolean, msg: strin
         }
     }
 }
+
+export async function fetchFormDataInCreate(): Promise<{
+    employees: Employee[],
+}> {
+
+
+    const query = `
+        query {
+            employees(page: 1, pageSize: 10) {
+                data {
+                    id
+                    firstname
+                    middlename
+                    lastname
+                }
+            }
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        let employees = []
+
+        if (!response.data || !response.data.data) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+
+        const data = response.data.data
+
+        if (data.employees && data.employees.data) {
+            employees = response.data.data.employees.data
+        }
+
+        return {
+            employees,
+        }
+
+    } catch (error) {
+        console.error(error);
+        return {
+            employees: [],
+        }
+    }
+
+
+}
+
+
+export async function isUsernameExist(username: string): Promise<{
+    success: boolean,
+    msg: string
+    data: boolean
+}> {
+
+    console.log('isUsernameExist()', username)
+
+    const query = `
+        query {
+            isUsernameExist(
+                username: "${username}",
+            )
+        }`;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response);
+
+        if (response.data && response.data.data && response.data.data.isUsernameExist !== undefined) {
+            return {
+                success: true,
+                msg: 'Finish checking username availability',
+                data: response.data.data.isUsernameExist
+            }
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+
+    } catch (error) {
+        console.error(error);
+        return {
+            success: false,
+            msg: 'Failed to check username availability. Please contact system administrator',
+            data: false
+        }
+
+    }
+
+}

@@ -44,7 +44,7 @@ export interface CreateUserInput {
     middlename: string
     lastname: string
     role: ROLE
-    permissions: UserPermissions
+    permissions: UserPermissions | null
 }
 
 
