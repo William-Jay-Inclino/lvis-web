@@ -15,7 +15,10 @@
                             <li class="nav-item">
                                 <nuxt-link class="nav-link text-white" to="/home">Home</nuxt-link>
                             </li>
-                            <li class="nav-item dropdown">
+                            <li class="nav-item">
+                                <nuxt-link class="nav-link text-white" to="/system/user">Users</nuxt-link>
+                            </li>
+                            <!-- <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown"
                                     role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Security
@@ -24,7 +27,7 @@
                                     <li><a class="dropdown-item" href="#">User Access Control</a></li>
                                     <li><a class="dropdown-item" href="#">Activity Log</a></li>
                                 </ul>
-                            </li>
+                            </li> -->
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown"
                                     role="button" data-bs-toggle="dropdown" aria-expanded="false">

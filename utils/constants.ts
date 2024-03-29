@@ -23,6 +23,19 @@ export const approvalStatus = {
     },
 }
 
+export const userStatus = {
+    [USER_STATUS.ACTIVE]: {
+        value: USER_STATUS.ACTIVE,
+        label: 'Active',
+        color: 'success',
+    },
+    [USER_STATUS.INACTIVE]: {
+        value: USER_STATUS.INACTIVE,
+        label: 'Inactive',
+        color: 'danger',
+    },
+}
+
 export const departmentStatus = {
     [DEPARTMENT_STATUS.ACTIVE]: {
         value: DEPARTMENT_STATUS.ACTIVE,

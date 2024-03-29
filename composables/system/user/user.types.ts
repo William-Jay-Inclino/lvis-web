@@ -1,13 +1,65 @@
-
-import { USER_STATUS, ROLE } from '~/composables/common.types'
+import { USER_STATUS, ROLE } from "#imports"
+import type { Employee } from "../employee/employee.types"
 
 export interface User {
     id: string
     username: string
+    password: string
+    firstname: string
+    middlename: string
+    lastname: string
     status: USER_STATUS
     role: ROLE
-    user_employee?: UserEmployee
     permissions?: UserPermissions
+
+
+    // =============== audit fields =============== 
+
+    created_by: string
+    updated_by: string
+    deleted_by: string
+    created_at: Date
+    updated_at: Date
+    deleted_at: Date
+
+
+
+    // =============== derived / resolvers =============== 
+    user_employee?: UserEmployee
+
+}
+
+export interface FindAllResponse {
+    data: User[]
+    totalItems: number
+    currentPage: number
+    totalPages: number
+}
+
+export interface CreateUserInput {
+    employee: Employee | null
+    username: string
+    password: string
+    firstname: string
+    middlename: string
+    lastname: string
+    role: ROLE
+    permissions: UserPermissions
+}
+
+
+export interface UpdateUserInput {
+    firstname: string
+    middlename: string
+    lastname: string
+    role: ROLE
+}
+
+
+export interface MutationResponse {
+    success: boolean
+    msg: string
+    data?: User
 }
 
 
