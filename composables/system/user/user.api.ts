@@ -233,6 +233,9 @@ export async function fetchFormDataInCreate(): Promise<{
                     firstname
                     middlename
                     lastname
+                    user_employee {
+                        id
+                    }
                 }
             }
         }

@@ -9,7 +9,7 @@
         <div class="row pt-3">
             <div class="col">
                 <span class="text-secondary">
-                    Step {{ currentStep }} of 3:
+                    Step {{ currentStep }} of {{ formData.role === ROLE.ADMIN ? '2' : '3' }}:
                     <span v-show="currentStep === 1"> Add User info </span>
                     <span v-show="currentStep === 2"> Add Login credentials </span>
                     <span v-show="currentStep === 3"> Add User Permissions </span>
@@ -21,6 +21,16 @@
         <div v-show="currentStep === 1" class="row justify-content-center pt-3">
 
             <div class="col-lg-6">
+
+                <div class="mb-3">
+                    <label class="form-label">
+                        Role
+                    </label>
+                    <select class="form-select" v-model="formData.role">
+                        <option :value="ROLE.ADMIN">Admin</option>
+                        <option :value="ROLE.USER">User</option>
+                    </select>
+                </div>
 
                 <div class="mb-3">
                     <label class="form-label">
@@ -39,8 +49,29 @@
                         Select Employee <span class="text-danger">*</span>
                     </label>
                     <client-only>
-                        <v-select :options="employees" label="fullname" v-model="formData.employee"
-                            @option:selected="onChangeEmployee"></v-select>
+                        <v-select @option:selected="onEmployeeSelected" :options="employees" label="fullname"
+                            v-model="formData.employee">
+                            <template v-slot:option="option">
+                                <div v-if="option.user_employee" class="row">
+                                    <div class="col">
+                                        <span class="text-danger">{{ option.fullname }}</span>
+                                    </div>
+                                    <div class="col text-end">
+                                        <small class="text-muted fst-italic">
+                                            Already has user account
+                                        </small>
+                                    </div>
+                                </div>
+                                <div v-else class="row">
+                                    <div class="col">
+                                        <span>{{ option.fullname }}</span>
+                                    </div>
+                                    <div class="col text-end">
+                                        <small class="text-success fst-italic"> Available </small>
+                                    </div>
+                                </div>
+                            </template>
+                        </v-select>
                     </client-only>
                 </div>
 
@@ -64,7 +95,7 @@
                     <input type="text" class="form-control" v-model="formData.lastname" required :disabled="isEmployee">
                 </div>
 
-                <div class="d-flex justify-content-between">
+                <div class="d-flex justify-content-between pt-3">
                     <button @click="onClickGoToList" type="button" class="btn btn-primary" :disabled="!canProceedStep2">
                         <i class="fas fa-chevron-left"></i> Back to User List
                     </button>
@@ -84,15 +115,39 @@
 
                 <SystemUserLoginCredentials :username="formData.username" :password="formData.password"
                     :is-username-exist="isUsernameExist" :is-checking-un-availability="isCheckingUnAvailability"
-                    @check-username-availability="checkUsernameAvailability" @update-username="onUpdateUsername" />
+                    @check-username-availability="checkUsernameAvailability" @update-username="onUpdateUsername"
+                    @update-password="onUpdatePassword" />
 
-                <div class="d-flex justify-content-between">
+                <div class="d-flex justify-content-between pt-3">
                     <button @click="goToStep1()" type="button" class="btn btn-secondary">
-                        <i class="fas fa-chevron-right"></i> Back
+                        <i class="fas fa-chevron-left"></i> Back
                     </button>
-                    <button @click="goToStep3()" type="button" class="btn btn-primary"
-                        :disabled="!canProceedStep3 || isCheckingUnAvailability">
+                    <button v-if="formData.role === ROLE.USER" @click="goToStep3()" type="button"
+                        class="btn btn-primary" :disabled="!canProceedStep3 || isCheckingUnAvailability">
                         <i class="fas fa-chevron-right"></i> Next
+                    </button>
+                    <button v-else @click="save" type="button" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div v-show="currentStep === 3" class="row justify-content-center pt-3">
+
+            <div class="col-lg-6">
+
+                <SystemUserPermissions :permissions="formData.permissions" />
+
+                <div class="d-flex justify-content-between pt-3">
+                    <button @click="goToStep2()" type="button" class="btn btn-secondary">
+                        <i class="fas fa-chevron-left"></i> Back
+                    </button>
+                    <button @click="save" type="button" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save
                     </button>
                 </div>
 
@@ -113,7 +168,8 @@ definePageMeta({
 })
 
 import * as api from '~/composables/system/user/user.api'
-import type { CreateUserInput } from '~/composables/system/user/user.types'
+import type { CreateUserInput, User } from '~/composables/system/user/user.types'
+import { permissions } from '~/composables/system/user/user.permissions'
 import Swal from 'sweetalert2'
 
 const router = useRouter()
@@ -127,6 +183,9 @@ const isCheckingUnAvailability = ref(false)
 
 const employees = ref<Employee[]>([])
 
+let currentEmployee: Employee | null = null
+
+
 const _initialFormData: CreateUserInput = {
     employee: null,
     username: '',
@@ -135,7 +194,7 @@ const _initialFormData: CreateUserInput = {
     middlename: '',
     lastname: '',
     role: ROLE.USER,
-    permissions: null
+    permissions: { ...permissions }
 }
 
 const formData = ref({ ..._initialFormData })
@@ -184,14 +243,17 @@ const canProceedStep3 = computed(() => {
 
 watch(isEmployee, (val) => {
 
-    if (!val) {
-        formData.value.employee = null
-        formData.value.firstname = ''
-        formData.value.middlename = ''
-        formData.value.lastname = ''
-    }
+    formData.value.employee = null
+    formData.value.firstname = ''
+    formData.value.middlename = ''
+    formData.value.lastname = ''
 
 })
+
+
+async function save() {
+    console.log('save()')
+}
 
 
 function onChangeEmployee() {
@@ -230,6 +292,23 @@ async function checkUsernameAvailability(username: string) {
 
 }
 
+
+function onEmployeeSelected(payload: User) {
+    console.log('onEmployeeSelected()', payload)
+    if (payload.user_employee) {
+        if (currentEmployee) {
+            formData.value.employee = currentEmployee
+        } else {
+            formData.value.employee = null
+        }
+    } else {
+        currentEmployee = payload
+
+        onChangeEmployee()
+
+    }
+}
+
 // ======================== UTILS ======================== 
 
 const onClickGoToList = () => router.push('/system/user')
@@ -247,7 +326,9 @@ const goToStep3 = async () => {
     }
 }
 const generateRandom3Digits = () => Math.floor(Math.random() * 900) + 100;
+
 const onUpdateUsername = (val: string) => formData.value.username = val
+const onUpdatePassword = (val: string) => formData.value.password = val
 
 const generateUsername = (firstName: string, lastName: string) => {
     const formattedFirstName = firstName.toLowerCase().replace(/\s+/g, '');
