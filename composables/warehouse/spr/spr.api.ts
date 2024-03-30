@@ -80,6 +80,7 @@ export async function findByRcNumber(rcNumber: string): Promise<SPR | undefined>
             spr(rc_number: "${rcNumber}") {
                 id
                 spr_number
+                created_by
                 status
                 canvass{
                     rc_number
@@ -118,6 +119,7 @@ export async function findBySprNumber(sprNumber: string): Promise<SPR | undefine
             spr(spr_number: "${sprNumber}") {
                 id
                 spr_number
+                created_by
                 status
                 canvass{
                     rc_number
@@ -163,6 +165,7 @@ export async function findOne(id: string): Promise<SPR | undefined> {
                     name 
                     plate_number
                 }
+                created_by
                 notes
                 cancelled_at
                 canvass {
@@ -255,6 +258,7 @@ export async function findAll(payload: { page: number, pageSize: number, date_re
                 data {
                     id
                     spr_number
+                    created_by
                     status
                     canvass{
                         rc_number
@@ -410,6 +414,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
             spr(id: "${id}") {
                 id
                 spr_number
+                created_by
                 status
                 canvass {
                     id

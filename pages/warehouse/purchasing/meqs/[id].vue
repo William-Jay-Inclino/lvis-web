@@ -22,7 +22,7 @@
                             <i class="fas fa-medal"></i> Awarding
                         </a>
                     </li>
-                    <li class="nav-item" @click="onClickTab(FORM_TYPE.APPROVER)">
+                    <li v-if="isAdmin(authUser)" class="nav-item" @click="onClickTab(FORM_TYPE.APPROVER)">
                         <a class="nav-link" :class="{ 'active': form === FORM_TYPE.APPROVER }" href="#">
                             <i class="fas fa-users"></i> Approvers
                         </a>
@@ -241,6 +241,8 @@ onMounted(async () => {
     })
 
     suppliers.value = response.suppliers
+
+    isLoadingPage.value = false
 
 })
 

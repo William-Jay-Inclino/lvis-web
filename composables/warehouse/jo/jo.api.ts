@@ -81,6 +81,7 @@ export async function findByRcNumber(rcNumber: string): Promise<JO | undefined> 
                 id
                 jo_number
                 status
+                created_by
                 canvass{
                     rc_number
                     requested_by {
@@ -118,6 +119,7 @@ export async function findByJoNumber(joNumber: string): Promise<JO | undefined> 
             jo(jo_number: "${joNumber}") {
                 id
                 jo_number
+                created_by
                 status
                 canvass{
                     rc_number
@@ -165,6 +167,7 @@ export async function findOne(id: string): Promise<JO | undefined> {
                     name
                 }
                 notes
+                created_by
                 cancelled_at
                 canvass {
                     id
@@ -256,6 +259,7 @@ export async function findAll(payload: { page: number, pageSize: number, date_re
                 data {
                     id
                     jo_number
+                    created_by
                     status
                     canvass{
                         rc_number
@@ -411,6 +415,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
             jo(id: "${id}") {
                 id
                 jo_number
+                created_by
                 status
                 canvass {
                     id

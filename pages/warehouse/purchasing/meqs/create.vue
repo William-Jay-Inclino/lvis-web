@@ -353,8 +353,8 @@ const referenceIsJo = computed((): boolean => !!meqsData.value.jo)
 const referenceIsSpr = computed((): boolean => !!meqsData.value.spr)
 const hasReference = computed((): boolean => !!referenceIsRv.value || !!referenceIsJo.value || !!referenceIsSpr.value)
 const canProceedStep2 = computed((): boolean => !!hasReference.value)
-// const canProceedStep3 = computed( (): boolean => meqsData.value.meqs_suppliers.length >= 3 && meqsData.value.meqs_suppliers.length <= 5)
-const canProceedStep3 = computed((): boolean => true)
+const canProceedStep3 = computed((): boolean => meqsData.value.meqs_suppliers.length >= 3 && meqsData.value.meqs_suppliers.length <= 5)
+// const canProceedStep3 = computed((): boolean => true)
 
 const purpose = computed(() => {
 

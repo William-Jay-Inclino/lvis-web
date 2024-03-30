@@ -174,13 +174,15 @@
                                     <i class="fas fa-search"></i> Search SPR
                                 </nuxt-link>
                             </div>
-                            <div v-if="!item.cancelled_at && isAdminOrOwner(item.created_by, authUser)">
-                                <nuxt-link class="btn btn-success me-2" :to="`/warehouse/purchasing/spr/${item.id}`">
+                            <div v-if="!item.cancelled_at">
+                                <button v-if="isAdminOrOwner(item.created_by, authUser)" class="btn btn-success me-2"
+                                    @click="onClickUpdate(item.id)">
                                     <i class="fas fa-sync"></i> Update SPR
-                                </nuxt-link>
-                                <nuxt-link class="btn btn-primary" to="/warehouse/purchasing/spr/create">
+                                </button>
+                                <button v-if="canCreate(authUser, 'canManageSPR')" class="btn btn-primary me-2"
+                                    @click="onClickAdd">
                                     <i class="fas fa-plus"></i> Add New SPR
-                                </nuxt-link>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -209,10 +211,13 @@ definePageMeta({
     layout: "layout-warehouse",
     middleware: ['auth'],
 })
-const isLoadingPage = ref(true)
 
+const isLoadingPage = ref(true)
 const authUser = ref<AuthUser>({} as AuthUser)
+
+const router = useRouter()
 const route = useRoute()
+
 const item = ref<SPR | undefined>()
 
 onMounted(async () => {
@@ -246,5 +251,8 @@ const hasPO = computed(() => {
 
 })
 
+
+const onClickAdd = () => router.push('/warehouse/purchasing/spr/create')
+const onClickUpdate = (id: string) => router.push('/warehouse/purchasing/spr/' + id)
 
 </script>

@@ -149,6 +149,9 @@ export function redirectTo401Page() {
 }
 
 export function canUpdate(authUser: AuthUser, created_by: string) {
+
+    if (isAdmin(authUser)) return true
+
     return authUser.user.username === created_by
 }
 

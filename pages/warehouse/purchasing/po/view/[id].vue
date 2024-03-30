@@ -1,6 +1,6 @@
 <template>
 
-    <div v-if="item && meqs">
+    <div v-if="!isLoadingPage && item && meqs">
 
         <div class="row pt-3 justify-content-center">
             <div class="col-lg-11">
@@ -175,6 +175,7 @@
                             <tr>
                                 <th class="bg-secondary text-white">No</th>
                                 <th class="bg-secondary text-white">Description</th>
+                                <th class="bg-secondary text-white">Item Class</th>
                                 <th class="bg-secondary text-white">Brand</th>
                                 <th class="bg-secondary text-white">Unit</th>
                                 <th class="bg-secondary text-white">Qty</th>
@@ -188,6 +189,7 @@
                             <tr v-for="item, i in supplierItems">
                                 <td class="text-muted"> {{ i + 1 }} </td>
                                 <td class="text-muted"> {{ item.canvass_item.description }} </td>
+                                <td class="text-muted"> {{ item.canvass_item.item ? 'Stock' : 'Non-Stock' }} </td>
                                 <td class="text-muted"> {{ item.canvass_item.brand ? item.canvass_item.brand.name :
         'N/A' }} </td>
                                 <td class="text-muted"> {{ item.canvass_item.unit ? item.canvass_item.unit.name : 'N/A'
@@ -204,7 +206,7 @@
                 pricePerUnit: item.price,
                 vatPerUnit: getVatAmount(item.price, item.vat_type), quantity:
                     item.canvass_item.quantity
-                                    })
+            })
                                     )
                                     }}
                                 </td>
@@ -236,18 +238,24 @@
                             <i class="fas fa-search"></i> Search PO
                         </nuxt-link>
                     </div>
-                    <div v-if="!item.cancelled_at && isAdminOrOwner(item.created_by, authUser)">
-                        <nuxt-link class="btn btn-success me-2" :to="`/warehouse/purchasing/po/${item.id}`">
+                    <div v-if="!item.cancelled_at">
+                        <button v-if="isAdminOrOwner(item.created_by, authUser)" class="btn btn-success me-2"
+                            @click="onClickUpdate(item.id)">
                             <i class="fas fa-sync"></i> Update PO
-                        </nuxt-link>
-                        <nuxt-link class="btn btn-primary" to="/warehouse/purchasing/po/create">
+                        </button>
+                        <button v-if="canCreate(authUser, 'canManagePO')" class="btn btn-primary me-2"
+                            @click="onClickAdd">
                             <i class="fas fa-plus"></i> Add New PO
-                        </nuxt-link>
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
 
+    </div>
+
+    <div v-else>
+        <LoaderSpinner />
     </div>
 
 </template>
@@ -257,7 +265,6 @@
 
 import * as poApi from '~/composables/warehouse/po/po.api'
 import type { PO } from '~/composables/warehouse/po/po.types';
-import { MOBILE_WIDTH } from '~/utils/config';
 import { approvalStatus } from '~/utils/constants'
 import { getTotalNetPrice, getVatAmount } from '~/utils/helpers';
 
@@ -267,25 +274,23 @@ definePageMeta({
     middleware: ['auth'],
 })
 
+const isLoadingPage = ref(true)
 const authUser = ref<AuthUser>({} as AuthUser)
+
+const router = useRouter()
 const route = useRoute()
+
 const item = ref<PO | undefined>()
-const isMobile = ref(false)
 
 onMounted(async () => {
-
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-
-    window.addEventListener('resize', checkMobile);
 
     authUser.value = getAuthUser()
     item.value = await poApi.findOne(route.params.id as string)
 
+    isLoadingPage.value = false
+
 })
 
-function checkMobile() {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-}
 
 const meqs = computed(() => {
 
@@ -293,29 +298,6 @@ const meqs = computed(() => {
     return meqs
 
 })
-
-// const rv = computed(() => {
-//     const meqs = item.value?.meqs_supplier.meqs
-//     if(meqs?.rv) return meqs.rv
-// })
-
-// const jo = computed(() => {
-//     const meqs = item.value?.meqs_supplier.meqs
-//     if(meqs?.jo) return meqs.jo
-// })
-
-// const spr = computed(() => {
-//     const meqs = item.value?.meqs_supplier.meqs
-//     if(meqs?.spr) return meqs.spr
-// })
-
-// const requisitioner = computed( () => {
-
-//     const employee = meqsReference.value?.canvass.requested_by 
-
-//     return getFullname(employee!.firstname, employee!.middlename, employee!.lastname)
-
-// }) 
 
 const supplierItems = computed(() => {
 
@@ -354,5 +336,10 @@ const totalPriceOfAllItems = computed(() => {
     return totalPrice
 
 })
+
+
+
+const onClickAdd = () => router.push('/warehouse/purchasing/po/create')
+const onClickUpdate = (id: string) => router.push('/warehouse/purchasing/po/' + id)
 
 </script>

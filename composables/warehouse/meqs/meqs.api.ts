@@ -1,9 +1,9 @@
 import axios from "axios";
 import type { RV } from "../rv/rv.types";
 import type { CreateMeqsInput, FindAllResponse, MEQS, MeqsApproverSettings, MutationResponse, UpdateMeqsInput } from "./meqs.types";
-import type { Supplier } from "~/composables/common.types";
 import type { SPR } from "../spr/spr.types";
 import type { JO } from "../jo/jo.types";
+import type { Supplier } from "../supplier/supplier";
 
 
 export async function fetchDataInSearchFilters(): Promise<{
@@ -110,6 +110,7 @@ export async function findByMeqsNumber(meqsNumber: string): Promise<MEQS | undef
             meq(meqs_number: "${meqsNumber}") {
                 id
                 meqs_number
+                created_by
                 status
                 rv {
                     rv_number
@@ -191,6 +192,7 @@ export async function findByReferenceNumber(payload: {
             meq(${searchField}: "${rv_number ?? jo_number ?? spr_number}") {
                 id
                 meqs_number
+                created_by
                 status
                 rv {
                     rv_number
@@ -276,6 +278,7 @@ export async function findAll(payload: { page: number, pageSize: number, date_re
                 data {
                     id
                     meqs_number
+                    created_by
                     status
                     rv {
                         rv_number
@@ -339,6 +342,7 @@ export async function findOne(id: string): Promise<MEQS | undefined> {
             meq(id: "${id}") {
                 id
                 meqs_number
+                created_by
                 notes
                 rv{
                     id
@@ -706,6 +710,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 meqs_date
                 cancelled_at
                 notes
+                created_by
                 is_rr_completed
                 rv {
                     id

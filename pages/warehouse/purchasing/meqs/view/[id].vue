@@ -91,18 +91,6 @@
                                     <td class="text-muted">Notes</td>
                                     <td> {{ item?.notes }} </td>
                                 </tr>
-                                <!-- <tr>
-                                    <td class="text-muted">Requisitioner</td>
-                                    <td> {{ getFullname(referenceData!.canvass.requested_by!.firstname, referenceData!.canvass.requested_by!.middlename, referenceData!.canvass.requested_by!.lastname) }} </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted">Requisitioner Purpose</td>
-                                    <td> {{ referenceData!.canvass.purpose }} </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted">Requisitioner Notes</td>
-                                    <td> {{ referenceData!.canvass.notes }} </td>
-                                </tr> -->
                             </tbody>
                         </table>
                     </div>
@@ -277,13 +265,15 @@
                                 <i class="fas fa-search"></i> Search MEQS
                             </nuxt-link>
                         </div>
-                        <div v-if="!item.cancelled_at && isAdminOrOwner(item.created_by, authUser)">
-                            <nuxt-link class="btn btn-success me-2" :to="`/warehouse/purchasing/meqs/${item.id}`">
+                        <div v-if="!item.cancelled_at">
+                            <button v-if="isAdminOrOwner(item.created_by, authUser)" class="btn btn-success me-2"
+                                @click="onClickUpdate(item.id)">
                                 <i class="fas fa-sync"></i> Update MEQS
-                            </nuxt-link>
-                            <nuxt-link class="btn btn-primary" to="/warehouse/purchasing/meqs/create">
+                            </button>
+                            <button v-if="canCreate(authUser, 'canManageMEQS')" class="btn btn-primary me-2"
+                                @click="onClickAdd">
                                 <i class="fas fa-plus"></i> Add New MEQS
-                            </nuxt-link>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -322,7 +312,7 @@
 
 <script setup lang="ts">
 
-import { MOBILE_WIDTH, UPLOADS_PATH } from '~/utils/config';
+import { UPLOADS_PATH } from '~/utils/config';
 import { formatToPhpCurrency } from '~/utils/helpers';
 import * as meqsApi from '~/composables/warehouse/meqs/meqs.api'
 import type { MEQS } from '~/composables/warehouse/meqs/meqs.types';
@@ -333,9 +323,11 @@ definePageMeta({
     middleware: ['auth'],
 })
 const isLoadingPage = ref(true)
-
 const authUser = ref<AuthUser>({} as AuthUser)
+
+const router = useRouter()
 const route = useRoute()
+
 const item = ref<MEQS | undefined>()
 const config = useRuntimeConfig()
 const API_FILE_ENDPOINT = config.public.apiUrl + '/api/v1/file-upload'
@@ -427,6 +419,11 @@ const hasPO = computed(() => {
     }
 
 })
+
+
+
+const onClickAdd = () => router.push('/warehouse/purchasing/meqs/create')
+const onClickUpdate = (id: string) => router.push('/warehouse/purchasing/meqs/' + id)
 
 
 </script>

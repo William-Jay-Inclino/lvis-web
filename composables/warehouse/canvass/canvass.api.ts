@@ -222,7 +222,6 @@ export async function fetchFormDataInCreate(): Promise<{
             units{
                 id
                 name
-                
             }
             items(page: 1, pageSize: 10){
                 data {
@@ -258,12 +257,12 @@ export async function fetchFormDataInCreate(): Promise<{
             employees = response.data.data.employees.data
         }
 
-        if (data.brands) { // temp
+        if (data.brands) {
             brands = data.brands
         }
 
-        if (data.units && data.units.data) {
-            units = response.data.data.units.data
+        if (data.units) {
+            units = data.units
         }
 
         if (data.items && data.items.data) {
@@ -305,6 +304,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 date_requested
                 purpose
                 notes
+                created_by
                 deleted_at
                 is_reference_in_rr
                 requested_by {

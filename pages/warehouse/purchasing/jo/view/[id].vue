@@ -219,13 +219,15 @@
                                     <i class="fas fa-search"></i> Search JO
                                 </nuxt-link>
                             </div>
-                            <div v-if="!item.cancelled_at && isAdminOrOwner(item.created_by, authUser)">
-                                <nuxt-link class="btn btn-success me-2" :to="`/warehouse/purchasing/jo/${item.id}`">
+                            <div v-if="!item.cancelled_at">
+                                <button v-if="isAdminOrOwner(item.created_by, authUser)" class="btn btn-success me-2"
+                                    @click="onClickUpdate(item.id)">
                                     <i class="fas fa-sync"></i> Update JO
-                                </nuxt-link>
-                                <nuxt-link class="btn btn-primary" to="/warehouse/purchasing/jo/create">
+                                </button>
+                                <button v-if="canCreate(authUser, 'canManageJO')" class="btn btn-primary me-2"
+                                    @click="onClickAdd">
                                     <i class="fas fa-plus"></i> Add New JO
-                                </nuxt-link>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -256,8 +258,10 @@ definePageMeta({
 })
 
 const isLoadingPage = ref(true)
-
 const authUser = ref<AuthUser>({} as AuthUser)
+
+const router = useRouter()
+
 const route = useRoute()
 const item = ref<JO | undefined>()
 
@@ -291,5 +295,9 @@ const hasPO = computed(() => {
     }
 
 })
+
+
+const onClickAdd = () => router.push('/warehouse/purchasing/jo/create')
+const onClickUpdate = (id: string) => router.push('/warehouse/purchasing/jo/' + id)
 
 </script>

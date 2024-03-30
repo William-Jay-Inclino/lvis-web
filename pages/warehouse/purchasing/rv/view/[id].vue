@@ -186,13 +186,15 @@
                                     <i class="fas fa-search"></i> Search RV
                                 </nuxt-link>
                             </div>
-                            <div v-if="!item.cancelled_at && isAdminOrOwner(item.created_by, authUser)">
-                                <nuxt-link class="btn btn-success me-2" :to="`/warehouse/purchasing/rv/${item.id}`">
+                            <div v-if="!item.cancelled_at">
+                                <button v-if="isAdminOrOwner(item.created_by, authUser)" class="btn btn-success me-2"
+                                    @click="onClickUpdate(item.id)">
                                     <i class="fas fa-sync"></i> Update RV
-                                </nuxt-link>
-                                <nuxt-link class="btn btn-primary" to="/warehouse/purchasing/rv/create">
+                                </button>
+                                <button v-if="canCreate(authUser, 'canManageRV')" class="btn btn-primary me-2"
+                                    @click="onClickAdd">
                                     <i class="fas fa-plus"></i> Add New RV
-                                </nuxt-link>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -220,10 +222,13 @@ definePageMeta({
     layout: "layout-warehouse",
     middleware: ['auth'],
 })
-const isLoadingPage = ref(true)
 
+const isLoadingPage = ref(true)
 const authUser = ref<AuthUser>({} as AuthUser)
+
+const router = useRouter()
 const route = useRoute()
+
 const item = ref<RV | undefined>()
 
 onMounted(async () => {
@@ -257,5 +262,8 @@ const hasPO = computed(() => {
 
 })
 
+
+const onClickAdd = () => router.push('/warehouse/purchasing/rv/create')
+const onClickUpdate = (id: string) => router.push('/warehouse/purchasing/rv/' + id)
 
 </script>

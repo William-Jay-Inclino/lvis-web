@@ -361,7 +361,7 @@
                 vatType: rrItem.meqs_supplier_item.vat_type
             })
         )
-                                            }}
+    }}
                                         </td>
                                         <td v-show="showNetTotal" class="text-muted text-center align-middle">
                                             {{
@@ -417,13 +417,15 @@
                             <i class="fas fa-search"></i> Search RR
                         </nuxt-link>
                     </div>
-                    <div v-if="!item.cancelled_at && isAdminOrOwner(item.created_by, authUser)">
-                        <nuxt-link class="btn btn-success me-2" :to="`/warehouse/purchasing/rr/${item.id}`">
+                    <div v-if="!item.cancelled_at">
+                        <button v-if="isAdminOrOwner(item.created_by, authUser)" class="btn btn-success me-2"
+                            @click="onClickUpdate(item.id)">
                             <i class="fas fa-sync"></i> Update RR
-                        </nuxt-link>
-                        <nuxt-link class="btn btn-primary" to="/warehouse/purchasing/rr/create">
+                        </button>
+                        <button v-if="canCreate(authUser, 'canManageRR')" class="btn btn-primary me-2"
+                            @click="onClickAdd">
                             <i class="fas fa-plus"></i> Add New RR
-                        </nuxt-link>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -451,9 +453,11 @@ definePageMeta({
 })
 
 const isLoadingPage = ref(true)
-
 const authUser = ref<AuthUser>({} as AuthUser)
+
+const router = useRouter()
 const route = useRoute()
+
 const item = ref<RR | undefined>()
 
 const showDescription = ref(true)
@@ -501,5 +505,7 @@ const meqs = computed(() => {
 })
 
 
+const onClickAdd = () => router.push('/warehouse/purchasing/rr/create')
+const onClickUpdate = (id: string) => router.push('/warehouse/purchasing/rr/' + id)
 
 </script>
