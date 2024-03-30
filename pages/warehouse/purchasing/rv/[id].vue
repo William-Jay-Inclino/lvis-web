@@ -1,5 +1,5 @@
 <template>
-    <div v-if="rvData && rvData.canvass && !rvData.cancelled_at" class="mb-3">
+    <div v-if="!isLoadingPage && rvData && rvData.canvass && !rvData.cancelled_at" class="mb-3">
         <h2 class="text-warning">Update RV</h2>
         <hr>
 
@@ -159,13 +159,17 @@
 
     </div>
 
+    <div v-else>
+        <LoaderSpinner />
+    </div>
+
 </template>
 
 
 <script setup lang="ts">
 
 import Swal from 'sweetalert2'
-import { getFullname, formatToValidHtmlDate } from '~/utils/helpers'
+import { getFullname, formatToValidHtmlDate, canUpdate } from '~/utils/helpers'
 import { useToast } from "vue-toastification";
 import * as rvApi from '~/composables/warehouse/rv/rv.api'
 import * as rvApproverApi from '~/composables/warehouse/rv/rv-approver.api'
@@ -178,6 +182,9 @@ definePageMeta({
     layout: "layout-warehouse",
     middleware: ['auth'],
 })
+
+const isLoadingPage = ref(true)
+const authUser = ref<AuthUser>({} as AuthUser)
 
 // DEPENDENCIES
 const route = useRoute()
@@ -211,14 +218,16 @@ const rvData = ref<RV>({} as RV)
 // ======================== LIFECYCLE HOOKS ========================  
 
 onMounted(async () => {
-
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-
-    window.addEventListener('resize', checkMobile);
+    authUser.value = getAuthUser()
 
     let response = await rvApi.fetchFormDataInUpdate(route.params.id as string)
 
     if (response.rv) {
+
+        if (!canUpdate(authUser.value, response.rv.created_by)) {
+            redirectTo401Page()
+        }
+
         populateForm(response.rv)
     }
 
@@ -528,10 +537,6 @@ async function onCancelRv() {
         allowOutsideClick: () => !Swal.isLoading()
     })
 
-}
-
-function checkMobile() {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
 }
 
 function isValidRvInfo(): boolean {

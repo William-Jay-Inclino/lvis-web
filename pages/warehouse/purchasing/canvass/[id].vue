@@ -1,5 +1,5 @@
 <template>
-    <div v-if="canvass" class="mb-3">
+    <div v-if="!isLoadingPage && canvass" class="mb-3">
 
         <h2 class="text-warning">Update Canvass</h2>
         <hr>
@@ -104,6 +104,11 @@
 
     </div>
 
+
+    <div v-else>
+        <LoaderSpinner />
+    </div>
+
 </template>
 
 
@@ -114,8 +119,7 @@ import * as canvassItemApi from '~/composables/warehouse/canvass/canvass-item.ap
 import Swal from 'sweetalert2'
 import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
 import { useToast } from "vue-toastification";
-import { formatToValidHtmlDate } from '~/utils/helpers'
-import { MOBILE_WIDTH } from '~/utils/config';
+import { formatToValidHtmlDate, redirectTo401Page, canUpdate } from '~/utils/helpers'
 import type { Item } from '~/composables/warehouse/item/item.type';
 
 definePageMeta({
@@ -124,12 +128,15 @@ definePageMeta({
     middleware: ['auth'],
 })
 
+const isLoadingPage = ref(true)
+const authUser = ref<AuthUser>({} as AuthUser)
+
+
 // CONSTANTS
 const toast = useToast();
 const route = useRoute()
 
 // FLAGS
-const isMobile = ref(false)
 const isCanvassDetailForm = ref(true)
 const isUpdating = ref(false)
 const isAddingItem = ref(false)
@@ -159,13 +166,16 @@ const canvassErrors = ref({ ..._canvassErrorsInitial })
 
 onMounted(async () => {
 
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-
-    window.addEventListener('resize', checkMobile);
+    authUser.value = getAuthUser()
 
     let response = await canvassApi.fetchFormDataInUpdate(route.params.id as string)
 
     if (response.canvass) {
+
+        if (!canUpdate(authUser.value, response.canvass.created_by)) {
+            redirectTo401Page()
+        }
+
         response.canvass.date_requested = formatToValidHtmlDate(response.canvass.date_requested)
 
         const requestedBy = response.canvass.requested_by
@@ -193,6 +203,9 @@ onMounted(async () => {
     brands.value = response.brands
     units.value = response.units
     items.value = response.items.map(i => ({ ...i, label: `${i.code} - ${i.name}` }))
+
+
+    isLoadingPage.value = false
 
 })
 
@@ -365,11 +378,6 @@ async function removeCanvassItem(indx: number) {
 
 
 // ======================== UTILS ======================== 
-
-function checkMobile() {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-}
-
 
 
 

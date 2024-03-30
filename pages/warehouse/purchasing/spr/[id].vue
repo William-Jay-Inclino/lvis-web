@@ -1,5 +1,5 @@
 <template>
-    <div v-if="sprData && sprData.canvass && !sprData.cancelled_at" class="mb-3">
+    <div v-if="!isLoadingPage && sprData && sprData.canvass && !sprData.cancelled_at" class="mb-3">
         <h2 class="text-warning">Update SPR</h2>
         <hr>
 
@@ -158,13 +158,17 @@
 
     </div>
 
+    <div v-else>
+        <LoaderSpinner />
+    </div>
+
 </template>
 
 
 <script setup lang="ts">
 
 import Swal from 'sweetalert2'
-import { getFullname, formatToValidHtmlDate } from '~/utils/helpers'
+import { getFullname, formatToValidHtmlDate, canUpdate } from '~/utils/helpers'
 import { useToast } from "vue-toastification";
 import * as sprApi from '~/composables/warehouse/spr/spr.api'
 import * as sprApproverApi from '~/composables/warehouse/spr/spr-approver.api'
@@ -177,6 +181,11 @@ definePageMeta({
     layout: "layout-warehouse",
     middleware: ['auth'],
 })
+
+
+const isLoadingPage = ref(true)
+const authUser = ref<AuthUser>({} as AuthUser)
+
 
 // DEPENDENCIES
 const route = useRoute()
@@ -212,14 +221,16 @@ const sprData = ref<SPR>({} as SPR)
 // ======================== LIFECYCLE HOOKS ========================  
 
 onMounted(async () => {
-
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-
-    window.addEventListener('resize', checkMobile);
+    authUser.value = getAuthUser()
 
     let response = await sprApi.fetchFormDataInUpdate(route.params.id as string)
 
     if (response.spr) {
+
+        if (!canUpdate(authUser.value, response.spr.created_by)) {
+            redirectTo401Page()
+        }
+
         populateForm(response.spr)
     }
 
@@ -525,10 +536,6 @@ async function onCancelSpr() {
         allowOutsideClick: () => !Swal.isLoading()
     })
 
-}
-
-function checkMobile() {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
 }
 
 function isValidSprInfo(): boolean {

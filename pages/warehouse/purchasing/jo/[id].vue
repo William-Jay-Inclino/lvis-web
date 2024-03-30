@@ -1,5 +1,5 @@
 <template>
-    <div v-if="joData && joData.canvass && !joData.cancelled_at" class="mb-3">
+    <div v-if="!isLoadingPage && joData && joData.canvass && !joData.cancelled_at" class="mb-3">
         <h2 class="text-warning">Update JO</h2>
         <hr>
 
@@ -164,13 +164,17 @@
 
     </div>
 
+    <div v-else>
+        <LoaderSpinner />
+    </div>
+
 </template>
 
 
 <script setup lang="ts">
 
 import Swal from 'sweetalert2'
-import { getFullname, formatToValidHtmlDate } from '~/utils/helpers'
+import { getFullname, formatToValidHtmlDate, redirectTo401Page, canUpdate } from '~/utils/helpers'
 import { useToast } from "vue-toastification";
 import * as joApi from '~/composables/warehouse/jo/jo.api'
 import * as joApproverApi from '~/composables/warehouse/jo/jo-approver.api'
@@ -183,6 +187,9 @@ definePageMeta({
     layout: "layout-warehouse",
     middleware: ['auth'],
 })
+
+const isLoadingPage = ref(true)
+const authUser = ref<AuthUser>({} as AuthUser)
 
 // DEPENDENCIES
 const route = useRoute()
@@ -219,14 +226,16 @@ const joData = ref<JO>({} as JO)
 // ======================== LIFECYCLE HOOKS ========================  
 
 onMounted(async () => {
-
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-
-    window.addEventListener('resize', checkMobile);
+    authUser.value = getAuthUser()
 
     let response = await joApi.fetchFormDataInUpdate(route.params.id as string)
 
     if (response.jo) {
+
+        if (!canUpdate(authUser.value, response.jo.created_by)) {
+            redirectTo401Page()
+        }
+
         populateForm(response.jo)
     }
 
@@ -535,10 +544,6 @@ async function onCancelJo() {
 
 }
 
-function checkMobile() {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-}
-
 function isValidJoInfo(): boolean {
 
     joDataErrors.value = { ..._joDataErrorsInitial }
@@ -564,7 +569,6 @@ function isValidJoInfo(): boolean {
     return true
 
 }
-
 
 
 </script>

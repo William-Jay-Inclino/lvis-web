@@ -1,5 +1,5 @@
 <template>
-    <div v-if="rrData && rrData.po && !rrData.cancelled_at">
+    <div v-if="!isLoadingPage && rrData && rrData.po && !rrData.cancelled_at">
         <h2 class="text-warning">Update RR</h2>
         <hr>
 
@@ -142,6 +142,11 @@
 
 
     </div>
+
+    <div v-else>
+        <LoaderSpinner />
+    </div>
+
 </template>
 
 
@@ -150,7 +155,7 @@
 <script setup lang="ts">
 
 import Swal from 'sweetalert2'
-import { getFullname, formatToValidHtmlDate } from '~/utils/helpers'
+import { getFullname, formatToValidHtmlDate, canUpdate } from '~/utils/helpers'
 import { MOBILE_WIDTH } from '~/utils/config';
 import { useToast } from "vue-toastification";
 import type { RR } from '~/composables/warehouse/rr/rr.types';
@@ -163,6 +168,9 @@ definePageMeta({
     layout: "layout-warehouse",
     middleware: ['auth'],
 })
+
+const isLoadingPage = ref(true)
+const authUser = ref<AuthUser>({} as AuthUser)
 
 const enum FORM_TYPE {
     RR_INFO,
@@ -197,14 +205,16 @@ const form = ref<FORM_TYPE>(FORM_TYPE.RR_INFO)
 // ======================== LIFECYCLE HOOKS ========================  
 
 onMounted(async () => {
-
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-
-    window.addEventListener('resize', checkMobile);
+    authUser.value = getAuthUser()
 
     let response = await rrApi.fetchFormDataInUpdate(route.params.id as string)
 
     if (response && response.rr) {
+
+        if (!canUpdate(authUser.value, response.rr.created_by)) {
+            redirectTo401Page()
+        }
+
         populateForm(response.rr)
     }
 

@@ -277,8 +277,6 @@ function canView(module: string, authUser: AuthUser) {
 
     if (isAdmin(authUser)) return true
 
-    console.log('authUser.user.permissions', authUser.user.permissions)
-
     if (!authUser.user.permissions) return false
 
     // @ts-ignore

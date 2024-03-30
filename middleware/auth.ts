@@ -1,19 +1,22 @@
-import type { WarehousePermissions } from "~/composables/user.entity"
+import type { WarehousePermissions } from "~/composables/system/user/user.types"
 import { ROUTES } from "~/utils/constants"
+import { redirectTo401Page } from "~/utils/helpers"
 
 const ROUTE_EXEMPTIONS = [
-    ROUTES.CANVASS_UPDATE, ROUTES.CANVASS_VIEW,
-    ROUTES.JO_UPDATE, ROUTES.JO_VIEW,
-    ROUTES.RV_UPDATE, ROUTES.RV_VIEW,
-    ROUTES.SPR_UPDATE, ROUTES.SPR_VIEW,
-    ROUTES.MEQS_UPDATE, ROUTES.MEQS_VIEW,
-    ROUTES.PO_UPDATE, ROUTES.PO_VIEW,
-    ROUTES.RR_UPDATE, ROUTES.RR_VIEW,
+    ROUTES.CANVASS_UPDATE,
+    ROUTES.JO_UPDATE,
+    ROUTES.RV_UPDATE,
+    ROUTES.SPR_UPDATE,
+    ROUTES.MEQS_UPDATE,
+    ROUTES.PO_UPDATE,
+    ROUTES.RR_UPDATE,
 ]
 
 export default defineNuxtRouteMiddleware((to, from) => {
 
     if (process.client) {
+
+        console.log('defineNuxtRouteMiddleware')
 
         const authUser = getAuthUser()
 
@@ -109,12 +112,6 @@ export default defineNuxtRouteMiddleware((to, from) => {
 })
 
 
-function redirectTo401Page() {
-    console.log('redirectTo401Page()')
-    return window.location.href = '/error/401'
-}
-
-
 function canAccessCanvass(route: ROUTES, permissions: WarehousePermissions) {
 
     console.log('canAccessCanvass', route, permissions)
@@ -123,6 +120,7 @@ function canAccessCanvass(route: ROUTES, permissions: WarehousePermissions) {
 
     if (route === ROUTES.CANVASS_INDEX) return !!permissions.canManageCanvass.search
     if (route === ROUTES.CANVASS_CREATE) return !!permissions.canManageCanvass.create
+    if (route === ROUTES.CANVASS_VIEW) return !!permissions.canManageCanvass.viewDetails
 
 
     return false
@@ -137,6 +135,7 @@ function canAccessRV(route: ROUTES, permissions: WarehousePermissions) {
 
     if (route === ROUTES.RV_INDEX) return !!permissions.canManageRV.search
     if (route === ROUTES.RV_CREATE) return !!permissions.canManageRV.create
+    if (route === ROUTES.RV_VIEW) return !!permissions.canManageRV.viewDetails
 
 
     return true
@@ -151,6 +150,7 @@ function canAccessSPR(route: ROUTES, permissions: WarehousePermissions) {
 
     if (route === ROUTES.SPR_INDEX) return !!permissions.canManageSPR.search
     if (route === ROUTES.SPR_CREATE) return !!permissions.canManageSPR.create
+    if (route === ROUTES.SPR_VIEW) return !!permissions.canManageSPR.viewDetails
 
 
     return true
@@ -165,6 +165,7 @@ function canAccessJO(route: ROUTES, permissions: WarehousePermissions) {
 
     if (route === ROUTES.JO_INDEX) return !!permissions.canManageJO.search
     if (route === ROUTES.JO_CREATE) return !!permissions.canManageJO.create
+    if (route === ROUTES.JO_VIEW) return !!permissions.canManageJO.viewDetails
 
 
     return true
@@ -179,6 +180,7 @@ function canAccessMEQS(route: ROUTES, permissions: WarehousePermissions) {
 
     if (route === ROUTES.MEQS_INDEX) return !!permissions.canManageMEQS.search
     if (route === ROUTES.MEQS_CREATE) return !!permissions.canManageMEQS.create
+    if (route === ROUTES.MEQS_VIEW) return !!permissions.canManageMEQS.viewDetails
 
 
     return true
@@ -193,6 +195,7 @@ function canAccessPO(route: ROUTES, permissions: WarehousePermissions) {
 
     if (route === ROUTES.PO_INDEX) return !!permissions.canManagePO.search
     if (route === ROUTES.PO_CREATE) return !!permissions.canManagePO.create
+    if (route === ROUTES.PO_VIEW) return !!permissions.canManagePO.viewDetails
 
 
     return true
@@ -207,6 +210,7 @@ function canAccessRR(route: ROUTES, permissions: WarehousePermissions) {
 
     if (route === ROUTES.RR_INDEX) return !!permissions.canManageRR.search
     if (route === ROUTES.RR_CREATE) return !!permissions.canManageRR.create
+    if (route === ROUTES.RR_VIEW) return !!permissions.canManageRR.viewDetails
 
 
     return true
@@ -219,10 +223,9 @@ function canAccessSupplier(route: ROUTES, permissions: WarehousePermissions) {
 
     if (!permissions.canManageSupplier) return false
 
-    if (route === ROUTES.SUPPLIER_INDEX) return !!permissions.canManageSupplier.search
+    if (route === ROUTES.SUPPLIER_INDEX) return !!permissions.canManageSupplier.read
     if (route === ROUTES.SUPPLIER_CREATE) return !!permissions.canManageSupplier.create
     if (route === ROUTES.SUPPLIER_UPDATE) return !!permissions.canManageSupplier.update
-    if (route === ROUTES.SUPPLIER_VIEW) return !!permissions.canManageSupplier.viewDetails
 
 
     return true
@@ -235,10 +238,9 @@ function canAccessUnit(route: ROUTES, permissions: WarehousePermissions) {
 
     if (!permissions.canManageUnit) return false
 
-    if (route === ROUTES.UNIT_INDEX) return !!permissions.canManageUnit.search
+    if (route === ROUTES.UNIT_INDEX) return !!permissions.canManageUnit.read
     if (route === ROUTES.UNIT_CREATE) return !!permissions.canManageUnit.create
     if (route === ROUTES.UNIT_UPDATE) return !!permissions.canManageUnit.update
-    if (route === ROUTES.UNIT_VIEW) return !!permissions.canManageUnit.viewDetails
 
 
     return true
@@ -251,10 +253,9 @@ function canAccessVehicle(route: ROUTES, permissions: WarehousePermissions) {
 
     if (!permissions.canManageVehicle) return false
 
-    if (route === ROUTES.VEHICLE_INDEX) return !!permissions.canManageVehicle.search
+    if (route === ROUTES.VEHICLE_INDEX) return !!permissions.canManageVehicle.read
     if (route === ROUTES.VEHICLE_CREATE) return !!permissions.canManageVehicle.create
     if (route === ROUTES.VEHICLE_UPDATE) return !!permissions.canManageVehicle.update
-    if (route === ROUTES.VEHICLE_VIEW) return !!permissions.canManageVehicle.viewDetails
 
 
     return true
@@ -283,10 +284,9 @@ function canAccessItemBrand(route: ROUTES, permissions: WarehousePermissions) {
 
     if (!permissions.canManageItemBrand) return false
 
-    if (route === ROUTES.ITEM_BRAND_INDEX) return !!permissions.canManageItemBrand.search
+    if (route === ROUTES.ITEM_BRAND_INDEX) return !!permissions.canManageItemBrand.read
     if (route === ROUTES.ITEM_BRAND_CREATE) return !!permissions.canManageItemBrand.create
     if (route === ROUTES.ITEM_BRAND_UPDATE) return !!permissions.canManageItemBrand.update
-    if (route === ROUTES.ITEM_BRAND_VIEW) return !!permissions.canManageItemBrand.viewDetails
 
 
     return true
@@ -299,10 +299,9 @@ function canAccessItemType(route: ROUTES, permissions: WarehousePermissions) {
 
     if (!permissions.canManageItemType) return false
 
-    if (route === ROUTES.ITEM_TYPE_INDEX) return !!permissions.canManageItemType.search
+    if (route === ROUTES.ITEM_TYPE_INDEX) return !!permissions.canManageItemType.read
     if (route === ROUTES.ITEM_TYPE_CREATE) return !!permissions.canManageItemType.create
     if (route === ROUTES.ITEM_TYPE_UPDATE) return !!permissions.canManageItemType.update
-    if (route === ROUTES.ITEM_TYPE_VIEW) return !!permissions.canManageItemType.viewDetails
 
 
     return true

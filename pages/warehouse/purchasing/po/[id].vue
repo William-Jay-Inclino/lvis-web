@@ -1,6 +1,6 @@
 <template>
 
-    <div v-if="poData && poData.meqs_supplier && !poData.cancelled_at">
+    <div v-if="!isLoadingPage && poData && poData.meqs_supplier && !poData.cancelled_at">
         <h2 class="text-warning">Update PO</h2>
         <hr>
 
@@ -102,13 +102,17 @@
 
     </div>
 
+    <div v-else>
+        <LoaderSpinner />
+    </div>
+
 </template>
 
 
 <script setup lang="ts">
 
 import Swal from 'sweetalert2'
-import { getFullname, formatToValidHtmlDate } from '~/utils/helpers'
+import { getFullname, formatToValidHtmlDate, canUpdate } from '~/utils/helpers'
 import { MOBILE_WIDTH } from '~/utils/config';
 import { useToast } from "vue-toastification";
 import type { PO } from '~/composables/warehouse/po/po.types';
@@ -120,6 +124,10 @@ definePageMeta({
     layout: "layout-warehouse",
     middleware: ['auth'],
 })
+
+
+const isLoadingPage = ref(true)
+const authUser = ref<AuthUser>({} as AuthUser)
 
 // DEPENDENCIES
 const route = useRoute()
@@ -141,14 +149,16 @@ const employees = ref<Employee[]>([])
 // ======================== LIFECYCLE HOOKS ========================  
 
 onMounted(async () => {
-
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-
-    window.addEventListener('resize', checkMobile);
+    authUser.value = getAuthUser()
 
     let response = await poApi.fetchFormDataInUpdate(route.params.id as string)
 
     if (response && response.po) {
+
+        if (!canUpdate(authUser.value, response.po.created_by)) {
+            redirectTo401Page()
+        }
+
         populateForm(response.po)
     }
 
@@ -422,10 +432,6 @@ async function onCancelPo() {
         },
         allowOutsideClick: () => !Swal.isLoading()
     })
-}
-
-function checkMobile() {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
 }
 
 </script>

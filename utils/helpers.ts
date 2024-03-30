@@ -1,5 +1,5 @@
 import moment from "moment";
-import { VAT_TYPE } from "#imports";
+import { VAT_TYPE, ROLE } from "#imports";
 
 export function getAuthUser(): AuthUser {
     const authUserJson = localStorage.getItem('authUser')
@@ -142,3 +142,11 @@ export function getGrossTotal(payload: { price: number, quantity: number }) {
     return (price * quantity)
 
 }
+
+export function redirectTo401Page() {
+    console.log('redirectTo401Page()')
+    return window.location.href = '/error/401'
+}
+
+
+export const canUpdate = (authUser: AuthUser, created_by: string) => authUser.user.username === created_by

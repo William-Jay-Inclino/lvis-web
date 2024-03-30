@@ -1,6 +1,6 @@
 <template>
 
-    <div v-if="meqsData && reference && !meqsData.cancelled_at">
+    <div v-if="!isLoadingPage && meqsData && reference && !meqsData.cancelled_at">
         <h2 class="text-warning">Update MEQS</h2>
         <hr>
 
@@ -156,6 +156,10 @@
 
     </div>
 
+    <div v-else>
+        <LoaderSpinner />
+    </div>
+
 </template>
 
 
@@ -163,7 +167,7 @@
 <script setup lang="ts">
 
 import Swal from 'sweetalert2'
-import { getFullname, formatToValidHtmlDate } from '~/utils/helpers'
+import { getFullname, formatToValidHtmlDate, redirectTo401Page, canUpdate } from '~/utils/helpers'
 import { MOBILE_WIDTH } from '~/utils/config';
 import { useToast } from "vue-toastification";
 import type { MEQS } from '~/composables/warehouse/meqs/meqs.types';
@@ -180,6 +184,9 @@ definePageMeta({
     layout: "layout-warehouse",
     middleware: ['auth'],
 })
+
+const isLoadingPage = ref(true)
+const authUser = ref<AuthUser>({} as AuthUser)
 
 const enum FORM_TYPE {
     MEQS_INFO,
@@ -217,14 +224,16 @@ const suppliers = ref<Supplier[]>([])
 // ======================== LIFECYCLE HOOKS ========================  
 
 onMounted(async () => {
-
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-
-    window.addEventListener('resize', checkMobile);
+    authUser.value = getAuthUser()
 
     let response = await meqsApi.fetchFormDataInUpdate(route.params.id as string)
 
     if (response && response.meqs) {
+
+        if (!canUpdate(authUser.value, response.meqs.created_by)) {
+            redirectTo401Page()
+        }
+
         populateForm(response.meqs)
     }
 
@@ -913,10 +922,6 @@ async function onCancelMeqs() {
         },
         allowOutsideClick: () => !Swal.isLoading()
     })
-}
-
-function checkMobile() {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
 }
 
 function onClickTab(formType: FORM_TYPE) {
