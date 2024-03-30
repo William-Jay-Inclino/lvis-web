@@ -23,7 +23,8 @@
                 Password
             </label>
             <div class="input-group">
-                <input :type="showPassword ? 'text' : 'password'" class="form-control" :value="password">
+                <input :type="showPassword ? 'text' : 'password'" class="form-control" :value="password"
+                    @input="onUpdatePassword">
                 <span class="input-group-text">
                     <button @click="showPassword = !showPassword" class="btn btn-sm btn-light">
                         <i class="fas text-primary"
@@ -65,6 +66,10 @@ const showPassword = ref(false)
 
 const onUpdateUsername = (event: any) => {
     emits('updateUsername', event.target.value)
+}
+
+const onUpdatePassword = (event: any) => {
+    emits('updatePassword', event.target.value)
 }
 
 </script>

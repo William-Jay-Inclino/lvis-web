@@ -96,7 +96,7 @@
                 </div>
 
                 <div class="d-flex justify-content-between pt-3">
-                    <button @click="onClickGoToList" type="button" class="btn btn-primary" :disabled="!canProceedStep2">
+                    <button @click="onClickGoToList" type="button" class="btn btn-secondary">
                         <i class="fas fa-chevron-left"></i> Back to User List
                     </button>
                     <button @click="goToStep2()" type="button" class="btn btn-primary" :disabled="!canProceedStep2">
@@ -126,8 +126,8 @@
                         class="btn btn-primary" :disabled="!canProceedStep3 || isCheckingUnAvailability">
                         <i class="fas fa-chevron-right"></i> Next
                     </button>
-                    <button v-else @click="save" type="button" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Save
+                    <button v-else @click="save" type="button" class="btn btn-primary" :disabled="isSaving">
+                        <i class="fas fa-save"></i> {{ isSaving ? 'Saving...' : 'Save' }}
                     </button>
                 </div>
 
@@ -146,8 +146,8 @@
                     <button @click="goToStep2()" type="button" class="btn btn-secondary">
                         <i class="fas fa-chevron-left"></i> Back
                     </button>
-                    <button @click="save" type="button" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Save
+                    <button @click="save" type="button" class="btn btn-primary" :disabled="isSaving">
+                        <i class="fas fa-save"></i> {{ isSaving ? 'Saving...' : 'Save' }}
                     </button>
                 </div>
 
@@ -215,6 +215,9 @@ onMounted(async () => {
 })
 
 
+
+// ======================== COMPUTED PROPERTIES ======================== 
+
 const canProceedStep2 = computed(() => {
 
     if (!!isEmployee.value && !formData.value.employee) {
@@ -241,6 +244,9 @@ const canProceedStep3 = computed(() => {
 })
 
 
+
+// ======================== WATCHERS ======================== 
+
 watch(isEmployee, (val) => {
 
     formData.value.employee = null
@@ -251,10 +257,35 @@ watch(isEmployee, (val) => {
 })
 
 
-async function save() {
-    console.log('save()')
-}
 
+// ======================== FUNCTIONS ======================== 
+
+async function save() {
+    console.log('save()', formData.value)
+
+    isSaving.value = true
+    const response = await api.create(formData.value)
+    isSaving.value = false
+
+    if (response.success && response.data) {
+
+        Swal.fire({
+            title: 'Success!',
+            text: response.msg,
+            icon: 'success',
+            position: 'top',
+        })
+
+        router.push(`/system/user/view/${response.data.id}`);
+    } else {
+        Swal.fire({
+            title: 'Error!',
+            text: response.msg,
+            icon: 'error',
+            position: 'top',
+        })
+    }
+}
 
 function onChangeEmployee() {
 
@@ -268,6 +299,24 @@ function onChangeEmployee() {
 
 }
 
+function onEmployeeSelected(payload: User) {
+    console.log('onEmployeeSelected()', payload)
+    if (payload.user_employee) {
+        if (currentEmployee) {
+            formData.value.employee = currentEmployee
+        } else {
+            formData.value.employee = null
+        }
+    } else {
+        currentEmployee = payload
+
+        onChangeEmployee()
+
+    }
+}
+
+
+// ======================== CHILD FUNCTIONS <LoginCredentials.vue> ======================== 
 
 async function checkUsernameAvailability(username: string) {
 
@@ -292,22 +341,9 @@ async function checkUsernameAvailability(username: string) {
 
 }
 
+const onUpdateUsername = (val: string) => formData.value.username = val
+const onUpdatePassword = (val: string) => formData.value.password = val
 
-function onEmployeeSelected(payload: User) {
-    console.log('onEmployeeSelected()', payload)
-    if (payload.user_employee) {
-        if (currentEmployee) {
-            formData.value.employee = currentEmployee
-        } else {
-            formData.value.employee = null
-        }
-    } else {
-        currentEmployee = payload
-
-        onChangeEmployee()
-
-    }
-}
 
 // ======================== UTILS ======================== 
 
@@ -315,6 +351,9 @@ const onClickGoToList = () => router.push('/system/user')
 const goToStep1 = () => currentStep.value = 1
 const goToStep2 = async () => {
     currentStep.value = 2
+
+    if (formData.value.password && formData.value.username) return
+
     formData.value.password = 'temp' + generateRandom3Digits()
     formData.value.username = generateUsername(formData.value.firstname, formData.value.lastname)
     await checkUsernameAvailability(formData.value.username)
@@ -326,10 +365,6 @@ const goToStep3 = async () => {
     }
 }
 const generateRandom3Digits = () => Math.floor(Math.random() * 900) + 100;
-
-const onUpdateUsername = (val: string) => formData.value.username = val
-const onUpdatePassword = (val: string) => formData.value.password = val
-
 const generateUsername = (firstName: string, lastName: string) => {
     const formattedFirstName = firstName.toLowerCase().replace(/\s+/g, '');
     const formattedLastName = lastName.toLowerCase().replace(/\s+/g, '');

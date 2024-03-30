@@ -213,6 +213,10 @@ const authUser = ref<AuthUser>()
 
 onMounted(() => {
     authUser.value = getAuthUser()
+    // @ts-ignore
+    authUser.value.user.permissions = JSON.parse(authUser.value.user.permissions)
+
+    console.log('authUser.value.user.permissions', authUser.value.user.permissions)
 })
 
 
@@ -224,14 +228,15 @@ function canViewPurchasing(authUser: AuthUser) {
 
     const warehousePermissions = authUser.user.permissions.warehouse
 
+
     return (
-        !!warehousePermissions.canManageCanvass ||
-        !!warehousePermissions.canManageRV ||
-        !!warehousePermissions.canManageSPR ||
-        !!warehousePermissions.canManageJO ||
-        !!warehousePermissions.canManageMEQS ||
-        !!warehousePermissions.canManagePO ||
-        !!warehousePermissions.canManageRR
+        (!!warehousePermissions.canManageCanvass && warehousePermissions.canManageCanvass.search) ||
+        (!!warehousePermissions.canManageRV && warehousePermissions.canManageRV.search) ||
+        (!!warehousePermissions.canManageSPR && warehousePermissions.canManageSPR.search) ||
+        (!!warehousePermissions.canManageJO && warehousePermissions.canManageJO.search) ||
+        (!!warehousePermissions.canManageMEQS && warehousePermissions.canManageMEQS.search) ||
+        (!!warehousePermissions.canManagePO && warehousePermissions.canManagePO.search) ||
+        (!!warehousePermissions.canManageRR && warehousePermissions.canManageRR.search)
     )
 }
 
@@ -245,9 +250,9 @@ function canViewStockInventory(authUser: AuthUser) {
     const warehousePermissions = authUser.user.permissions.warehouse
 
     return (
-        !!warehousePermissions.canManageItem ||
-        !!warehousePermissions.canManageItemBrand ||
-        !!warehousePermissions.canManageItemType
+        (!!warehousePermissions.canManageItem && warehousePermissions.canManageItem.search) ||
+        (!!warehousePermissions.canManageItemBrand && warehousePermissions.canManageItemBrand.read) ||
+        (!!warehousePermissions.canManageItemType && warehousePermissions.canManageItemType.read)
     )
 }
 
@@ -260,21 +265,33 @@ function canViewDataManagement(authUser: AuthUser) {
     const warehousePermissions = authUser.user.permissions.warehouse
 
     return (
-        !!warehousePermissions.canManageUnit ||
-        !!warehousePermissions.canManageVehicle ||
-        !!warehousePermissions.canManageSupplier
+        (!!warehousePermissions.canManageUnit && warehousePermissions.canManageUnit.read) ||
+        (!!warehousePermissions.canManageVehicle && warehousePermissions.canManageVehicle.read) ||
+        (!!warehousePermissions.canManageSupplier && warehousePermissions.canManageSupplier.read)
     )
 }
 
+
+// check first if has module
+// check if user can read or search the specified module
 
 function canView(module: string, authUser: AuthUser) {
 
     if (isAdmin(authUser)) return true
 
+    console.log('authUser.user.permissions', authUser.user.permissions)
+
     if (!authUser.user.permissions) return false
 
     // @ts-ignore
-    return !!authUser.user.permissions.warehouse[module]
+    if (!authUser.user.permissions.warehouse[module]) return false
+
+    // @ts-ignore
+    if (authUser.user.permissions.warehouse[module].read) return true
+    // @ts-ignore
+    if (authUser.user.permissions.warehouse[module].search) return true
+
+    return false
 }
 
 </script>

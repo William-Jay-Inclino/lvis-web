@@ -55,7 +55,7 @@ export async function findAll(payload: { page: number, pageSize: number, searchV
     }
 }
 
-export async function findOne(id: string): Promise<Employee | undefined> {
+export async function findOne(id: string): Promise<User | undefined> {
     const query = `
         query {
             user(id: "${id}") {
@@ -67,6 +67,14 @@ export async function findOne(id: string): Promise<Employee | undefined> {
                 role
                 status
                 permissions
+                user_employee {
+                    employee {
+                        id 
+                        firstname
+                        middlename
+                        lastname
+                    }
+                }
             }
         }
     `;
@@ -76,6 +84,7 @@ export async function findOne(id: string): Promise<Employee | undefined> {
         console.log('response', response)
 
         if (response.data && response.data.data && response.data.data.user) {
+            response.data.data.user.permissions = JSON.parse(response.data.data.user.permissions)
             return response.data.data.user;
         }
 
@@ -89,36 +98,26 @@ export async function findOne(id: string): Promise<Employee | undefined> {
 
 export async function create(input: CreateUserInput): Promise<MutationResponse> {
 
-    let employee_id = null
-    let middlename = null
-    let permissions = null
-
-    if (input.employee) {
-        employee_id = `"${input.employee.id}"`
-    }
-
-    if (input.middlename) {
-        middlename = `"${input.middlename}"`
-    }
-
-    if (input.permissions) {
-        permissions = JSON.stringify(input.permissions)
-    }
+    const escapeQuotes = (jsonString: string) => jsonString.replace(/"/g, '\\"')
 
     const mutation = `
         mutation {
             createUser(
-                employee_id: ${employee_id},
-                username: "${input.username}",
-                firstname: "${input.firstname}",
-                middlename: ${input.middlename},
-                lastname: "${input.lastname}",
-                role: ${input.role},
-                permissions: ${input.permissions},
+                input: {
+                    employee_id: ${input.employee ? `"${input.employee.id}"` : null},
+                    username: "${input.username}",
+                    password: "${input.password}",
+                    firstname: "${input.firstname}",
+                    middlename: ${input.middlename ? `"${input.middlename}"` : null},
+                    lastname: "${input.lastname}",
+                    role: ${input.role},
+                    permissions: ${input.permissions != null ? `"${escapeQuotes(JSON.stringify(input.permissions))}"` : null}
+                }
             ) {
                 id
             }
-        }`;
+        }
+    `;
 
     try {
         const response = await sendRequest(mutation);
@@ -129,22 +128,20 @@ export async function create(input: CreateUserInput): Promise<MutationResponse> 
                 success: true,
                 msg: 'User created successfully!',
                 data: response.data.data.createUser
-            }
+            };
         }
 
         throw new Error(JSON.stringify(response.data.errors));
-
-
     } catch (error) {
         console.error(error);
 
         return {
             success: false,
             msg: 'Failed to create User. Please contact system administrator'
-        }
-
+        };
     }
 }
+
 
 export async function updateUserInfo(id: string, input: UpdateUserInput): Promise<MutationResponse> {
 

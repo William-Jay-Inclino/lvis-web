@@ -1,3 +1,4 @@
+import type { User } from "./system/user/user.types"
 
 export enum USER_STATUS {
     ACTIVE = 1,
