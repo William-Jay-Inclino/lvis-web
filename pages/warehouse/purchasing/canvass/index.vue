@@ -33,7 +33,7 @@
             <button @click="search()" class="btn btn-primary" :disabled="isSearching">
                 <i class="fas fa-search"></i> {{ isSearching ? 'Searching...' : 'Search' }}
             </button>
-            <nuxt-link v-if="canCreate(authUser)" class="btn btn-primary float-end"
+            <nuxt-link v-if="canCreate(authUser, 'canManageCanvass')" class="btn btn-primary float-end"
                 to="/warehouse/purchasing/canvass/create">
                 <i class="fas fa-plus"></i> Create Canvass
             </nuxt-link>
@@ -85,9 +85,9 @@
                                         <td class="text-muted align-middle"> {{ formatDate(i.date_requested) }} </td>
                                         <td class="text-muted align-middle">
                                             <button @click="onClickViewDetails(i.id)" class="btn btn-light w-50"
-                                                :disabled="!canViewDetails(authUser)">
+                                                :disabled="!canViewDetails(authUser, 'canManageCanvass')">
                                                 <i class="fas fa-info-circle"
-                                                    :class="{ 'text-info': canViewDetails(authUser) }"></i>
+                                                    :class="{ 'text-info': canViewDetails(authUser, 'canManageCanvass') }"></i>
                                             </button>
                                             <button :disabled="!isAdminOrOwner(i.created_by, authUser)"
                                                 @click="onClickEdit(i.id)" class="btn btn-light w-50">
@@ -145,8 +145,8 @@
 
 import * as api from '~/composables/warehouse/canvass/canvass.api'
 import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
-import { getFullname, formatDate, isAdminOrOwner } from '~/utils/helpers'
-import { MOBILE_WIDTH, PAGINATION_SIZE } from '~/utils/config'
+import { getFullname, formatDate, isAdminOrOwner, canCreate, canViewDetails } from '~/utils/helpers'
+import { PAGINATION_SIZE } from '~/utils/config'
 import { ROUTES } from '~/utils/constants';
 
 definePageMeta({
@@ -156,14 +156,12 @@ definePageMeta({
 })
 
 const isLoadingPage = ref(true)
-
 const authUser = ref<AuthUser>({} as AuthUser)
 
 const router = useRouter()
 
 // flags
 
-const isMobile = ref(false)
 const isInitialLoad = ref(true)
 const isSearching = ref(false)
 const isPaginating = ref(false)
@@ -193,9 +191,6 @@ const items = ref<Canvass[]>([])
 // ======================== LIFECYCLE HOOKS ======================== 
 
 onMounted(async () => {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-
-    window.addEventListener('resize', checkMobile);
 
     authUser.value = getAuthUser()
     console.log('authUser.value', authUser.value)
@@ -280,31 +275,6 @@ async function search() {
 
 
 // ======================== UTILS ======================== 
-
-function checkMobile() {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-}
-
-const canCreate = (authUser: AuthUser) => {
-    console.log('canCreate', authUser)
-    if (isAdmin(authUser)) return true
-
-    if (!authUser.user.permissions) return false
-
-    return !!authUser.user.permissions.warehouse.canManageCanvass?.create
-
-}
-
-
-const canViewDetails = (authUser: AuthUser) => {
-    console.log('canCreate', authUser)
-    if (isAdmin(authUser)) return true
-
-    if (!authUser.user.permissions) return false
-
-    return !!authUser.user.permissions.warehouse.canManageCanvass?.viewDetails
-
-}
 
 const onClickViewDetails = (id: string) => router.push('/warehouse/purchasing/canvass/view/' + id)
 

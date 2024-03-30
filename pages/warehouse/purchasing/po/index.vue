@@ -1,6 +1,6 @@
 <template>
 
-    <div>
+    <div v-if="!isLoadingPage && authUser">
 
         <h2 class="text-warning">Search PO</h2>
 
@@ -43,7 +43,8 @@
             <button @click="search()" class="btn btn-primary" :disabled="isSearching">
                 <i class="fas fa-search"></i> {{ isSearching ? 'Searching...' : 'Search' }}
             </button>
-            <nuxt-link class="btn btn-primary float-end" to="/warehouse/purchasing/po/create">
+            <nuxt-link v-if="canCreate(authUser, 'canManagePO')" class="btn btn-primary float-end"
+                to="/warehouse/purchasing/po/create">
                 <i class="fas fa-plus"></i> Create PO
             </nuxt-link>
         </div>
@@ -70,138 +71,64 @@
                 <div class="row">
                     <div class="col">
 
-
-                        <div v-if="!isMobile">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th class="bg-secondary text-white">PO Number</th>
-                                            <th class="bg-secondary text-white">MEQS Number</th>
-                                            <th class="bg-secondary text-white">Requisitioner</th>
-                                            <th class="bg-secondary text-white">Date</th>
-                                            <th class="bg-secondary text-white">Status</th>
-                                            <th class="text-center bg-secondary text-white">
-                                                <i class="fas fa-cogs"></i>
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="i in items">
-                                            <td class="text-muted align-middle"> {{ i.po_number }} </td>
-                                            <td class="text-muted align-middle"> {{ i.meqs_supplier.meqs!.meqs_number }}
-                                            </td>
-                                            <td class="text-muted align-middle">
-                                                <span v-if="i.meqs_supplier.meqs!.rv">
-                                                    {{
-                            getRequisitionerFullname(i.meqs_supplier.meqs!.rv.canvass.requested_by)
-                        }}
-                                                </span>
-                                                <span v-else-if="i.meqs_supplier.meqs!.spr">
-                                                    {{
-                            getRequisitionerFullname(i.meqs_supplier.meqs!.spr.canvass.requested_by)
-                        }}
-                                                </span>
-                                                <span v-else-if="i.meqs_supplier.meqs!.jo">
-                                                    {{
-                            getRequisitionerFullname(i.meqs_supplier.meqs!.jo.canvass.requested_by)
-                        }}
-                                                </span>
-                                            </td>
-                                            <td class="text-muted align-middle"> {{ formatDate(i.po_date) }} </td>
-                                            <td>
-                                                <div :class="{ [`badge bg-${approvalStatus[i.status].color}`]: true }">
-                                                    {{ approvalStatus[i.status].label }}
-                                                </div>
-                                            </td>
-                                            <td class="text-muted align-middle">
-                                                <nuxt-link class="btn btn-light w-50"
-                                                    :to="'/warehouse/purchasing/po/view/' + i.id">
-                                                    <i class="fas fa-info-circle text-info"></i>
-                                                </nuxt-link>
-                                                <button v-if="isAdminOrOwner(i.created_by, authUser)"
-                                                    @click="onClickEdit(i.id)" class="btn btn-light w-50">
-                                                    <i class="fas fa-edit text-primary"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="bg-secondary text-white">PO Number</th>
+                                        <th class="bg-secondary text-white">MEQS Number</th>
+                                        <th class="bg-secondary text-white">Requisitioner</th>
+                                        <th class="bg-secondary text-white">Date</th>
+                                        <th class="bg-secondary text-white">Status</th>
+                                        <th class="text-center bg-secondary text-white">
+                                            <i class="fas fa-cogs"></i>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="i in items">
+                                        <td class="text-muted align-middle"> {{ i.po_number }} </td>
+                                        <td class="text-muted align-middle"> {{ i.meqs_supplier.meqs!.meqs_number }}
+                                        </td>
+                                        <td class="text-muted align-middle">
+                                            <span v-if="i.meqs_supplier.meqs!.rv">
+                                                {{
+        getRequisitionerFullname(i.meqs_supplier.meqs!.rv.canvass.requested_by)
+    }}
+                                            </span>
+                                            <span v-else-if="i.meqs_supplier.meqs!.spr">
+                                                {{
+        getRequisitionerFullname(i.meqs_supplier.meqs!.spr.canvass.requested_by)
+    }}
+                                            </span>
+                                            <span v-else-if="i.meqs_supplier.meqs!.jo">
+                                                {{
+        getRequisitionerFullname(i.meqs_supplier.meqs!.jo.canvass.requested_by)
+    }}
+                                            </span>
+                                        </td>
+                                        <td class="text-muted align-middle"> {{ formatDate(i.po_date) }} </td>
+                                        <td>
+                                            <div :class="{ [`badge bg-${approvalStatus[i.status].color}`]: true }">
+                                                {{ approvalStatus[i.status].label }}
+                                            </div>
+                                        </td>
+                                        <td class="text-muted align-middle">
+                                            <button @click="onClickViewDetails(i.id)" class="btn btn-light w-50"
+                                                :disabled="!canViewDetails(authUser, 'canManagePO')">
+                                                <i class="fas fa-info-circle"
+                                                    :class="{ 'text-info': canViewDetails(authUser, 'canManagePO') }"></i>
+                                            </button>
+                                            <button :disabled="!isAdminOrOwner(i.created_by, authUser)"
+                                                @click="onClickEdit(i.id)" class="btn btn-light w-50">
+                                                <i class="fas fa-edit"
+                                                    :class="{ 'text-primary': isAdminOrOwner(i.created_by, authUser) }"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-
-                        <div v-else>
-
-                            <div v-for="i in items" class="table-responsive">
-
-                                <table class="table table-hover table-bordered">
-
-                                    <tbody>
-                                        <tr>
-                                            <td width="50%" class="bg-secondary text-white"> PO Number </td>
-                                            <td class="bg-secondary text-white"> {{ i.po_number }} </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-muted"> MEQS Number </td>
-                                            <td> {{ i.meqs_supplier.meqs!.meqs_number }} </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-muted"> Requisitioner </td>
-                                            <td>
-                                                <span v-if="i.meqs_supplier.meqs!.rv">
-                                                    {{
-                            getRequisitionerFullname(i.meqs_supplier.meqs!.rv.canvass.requested_by)
-                        }}
-                                                </span>
-                                                <span v-else-if="i.meqs_supplier.meqs!.spr">
-                                                    {{
-                            getRequisitionerFullname(i.meqs_supplier.meqs!.spr.canvass.requested_by)
-                        }}
-                                                </span>
-                                                <span v-else-if="i.meqs_supplier.meqs!.jo">
-                                                    {{
-                            getRequisitionerFullname(i.meqs_supplier.meqs!.jo.canvass.requested_by)
-                        }}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-muted"> Date </td>
-                                            <td> {{ formatDate(i.po_date) }} </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-muted"> Status </td>
-                                            <td>
-                                                <div :class="{ [`badge bg-${approvalStatus[i.status].color}`]: true }">
-                                                    {{ approvalStatus[i.status].label }}
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-center"
-                                                :colspan="isAdminOrOwner(i.created_by, authUser) ? 1 : 2">
-                                                <nuxt-link class="btn btn-sm btn-light text-info w-100"
-                                                    :to="'/warehouse/purchasing/po/view/' + i.id">
-                                                    <i class="fas fa-info-circle text-info"></i> View Details
-                                                </nuxt-link>
-                                            </td>
-                                            <td v-if="isAdminOrOwner(i.created_by, authUser)" class="text-center">
-                                                <button @click="onClickEdit(i.id)"
-                                                    class="btn btn-sm btn-light text-primary w-100">
-                                                    <i class="fas fa-edit"></i>
-                                                    Edit PO
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-
-                                </table>
-
-
-                            </div>
-
-                        </div>
-
 
                     </div>
                 </div>
@@ -234,6 +161,10 @@
 
     </div>
 
+    <div v-else>
+        <LoaderSpinner />
+    </div>
+
 </template>
 
 
@@ -242,7 +173,7 @@
 
 import * as poApi from '~/composables/warehouse/po/po.api'
 import type { PO } from '~/composables/warehouse/po/po.types';
-import { getFullname, formatDate } from '~/utils/helpers'
+import { getFullname, formatDate, isAdminOrOwner, canCreate, canViewDetails } from '~/utils/helpers'
 import { MOBILE_WIDTH, PAGINATION_SIZE } from '~/utils/config'
 import type { MEQS } from '~/composables/warehouse/meqs/meqs.types';
 
@@ -252,7 +183,9 @@ definePageMeta({
     middleware: ['auth'],
 })
 
+const isLoadingPage = ref(true)
 const authUser = ref<AuthUser>({} as AuthUser)
+
 const router = useRouter()
 
 // flags
@@ -287,9 +220,6 @@ const items = ref<PO[]>([])
 // ======================== LIFECYCLE HOOKS ======================== 
 
 onMounted(async () => {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-
-    window.addEventListener('resize', checkMobile);
 
     authUser.value = getAuthUser()
     const response = await poApi.fetchDataInSearchFilters()
@@ -300,6 +230,8 @@ onMounted(async () => {
         i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
         return i
     })
+
+    isLoadingPage.value = false
 
 })
 
@@ -388,15 +320,14 @@ async function search() {
 
 
 // ======================== UTILS ======================== 
-
-function checkMobile() {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-}
-
 function getRequisitionerFullname(employee?: Employee | null) {
     console.log('employee', employee)
     if (!employee) return ''
     return getFullname(employee.firstname, employee.middlename, employee.lastname)
 }
+
+
+const onClickViewDetails = (id: string) => router.push('/warehouse/purchasing/po/view/' + id)
+
 
 </script>

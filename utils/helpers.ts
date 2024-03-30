@@ -148,5 +148,28 @@ export function redirectTo401Page() {
     return window.location.href = '/error/401'
 }
 
+export function canUpdate(authUser: AuthUser, created_by: string) {
+    return authUser.user.username === created_by
+}
 
-export const canUpdate = (authUser: AuthUser, created_by: string) => authUser.user.username === created_by
+
+export function canCreate(authUser: AuthUser, permission: string) {
+    if (isAdmin(authUser)) return true
+
+    if (!authUser.user.permissions) return false
+
+    // @ts-ignore
+    return !!authUser.user.permissions.warehouse[permission].create
+
+}
+
+
+export function canViewDetails(authUser: AuthUser, permission: string) {
+    if (isAdmin(authUser)) return true
+
+    if (!authUser.user.permissions) return false
+
+    // @ts-ignore
+    return !!authUser.user.permissions.warehouse[permission].viewDetails
+
+}

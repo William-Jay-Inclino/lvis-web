@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="!isLoadingPage && authUser">
         <h2 class="text-warning">Search MEQS</h2>
 
         <hr>
@@ -58,7 +58,8 @@
             <button @click="search()" class="btn btn-primary" :disabled="isSearching">
                 <i class="fas fa-search"></i> {{ isSearching ? 'Searching...' : 'Search' }}
             </button>
-            <nuxt-link class="btn btn-primary float-end" to="/warehouse/purchasing/meqs/create">
+            <nuxt-link v-if="canCreate(authUser, 'canManageMEQS')" class="btn btn-primary float-end"
+                to="/warehouse/purchasing/meqs/create">
                 <i class="fas fa-plus"></i> Create MEQS
             </nuxt-link>
         </div>
@@ -86,137 +87,75 @@
                 <div class="row">
                     <div class="col">
 
-
-                        <div v-if="!isMobile">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th class="bg-secondary text-white">MEQS Number</th>
-                                            <th class="bg-secondary text-white">Reference</th>
-                                            <th class="bg-secondary text-white">Requisitioner</th>
-                                            <th class="bg-secondary text-white">Date</th>
-                                            <th class="bg-secondary text-white text-center">Status</th>
-                                            <th class="text-center bg-secondary text-white">
-                                                <i class="fas fa-info-circle"></i>
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="i in items">
-                                            <td class="text-muted align-middle"> {{ i.meqs_number }} </td>
-                                            <td class="text-muted align-middle" v-if="i.rv">
-                                                RV#{{ i.rv.rv_number }}
-                                            </td>
-                                            <td class="text-muted align-middle" v-else-if="i.jo">
-                                                JO#{{ i.jo.jo_number }}
-                                            </td>
-                                            <td class="text-muted align-middle" v-if="i.spr">
-                                                SPR#{{ i.spr.spr_number }}
-                                            </td>
-                                            <td class="text-muted align-middle" v-if="i.rv">
-                                                {{
-                            getFullname(i.rv.canvass.requested_by!.firstname,
-                                i.rv.canvass.requested_by!.middlename,
-                                i.rv.canvass.requested_by!.lastname)
-                        }}
-                                            </td>
-                                            <td class="text-muted align-middle" v-else-if="i.jo">
-                                                {{
-                            getFullname(i.jo.canvass.requested_by!.firstname,
-                                i.jo.canvass.requested_by!.middlename,
-                                i.jo.canvass.requested_by!.lastname)
-                        }}
-                                            </td>
-                                            <td class="text-muted align-middle" v-if="i.spr">
-                                                {{
-                            getFullname(i.spr.canvass.requested_by!.firstname,
-                                i.spr.canvass.requested_by!.middlename,
-                                i.spr.canvass.requested_by!.lastname)
-                        }}
-                                            </td>
-                                            <td class="text-muted align-middle"> {{ formatDate(i.meqs_date) }} </td>
-                                            <td class="text-center align-middle">
-                                                <div :class="{ [`badge bg-${approvalStatus[i.status].color}`]: true }">
-                                                    {{ approvalStatus[i.status].label }}
-                                                </div>
-                                            </td>
-                                            <td class="text-muted align-middle">
-                                                <nuxt-link class="btn btn-light w-50"
-                                                    :to="'/warehouse/purchasing/meqs/view/' + i.id">
-                                                    <i class="fas fa-info-circle text-info"></i>
-                                                </nuxt-link>
-                                                <button v-if="isAdminOrOwner(i.created_by, authUser)"
-                                                    @click="onClickEdit(i.id)" class="btn btn-light w-50">
-                                                    <i class="fas fa-edit text-primary"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="bg-secondary text-white">MEQS Number</th>
+                                        <th class="bg-secondary text-white">Reference</th>
+                                        <th class="bg-secondary text-white">Requisitioner</th>
+                                        <th class="bg-secondary text-white">Date</th>
+                                        <th class="bg-secondary text-white text-center">Status</th>
+                                        <th class="text-center bg-secondary text-white">
+                                            <i class="fas fa-info-circle"></i>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="i in items">
+                                        <td class="text-muted align-middle"> {{ i.meqs_number }} </td>
+                                        <td class="text-muted align-middle" v-if="i.rv">
+                                            RV#{{ i.rv.rv_number }}
+                                        </td>
+                                        <td class="text-muted align-middle" v-else-if="i.jo">
+                                            JO#{{ i.jo.jo_number }}
+                                        </td>
+                                        <td class="text-muted align-middle" v-if="i.spr">
+                                            SPR#{{ i.spr.spr_number }}
+                                        </td>
+                                        <td class="text-muted align-middle" v-if="i.rv">
+                                            {{
+        getFullname(i.rv.canvass.requested_by!.firstname,
+            i.rv.canvass.requested_by!.middlename,
+            i.rv.canvass.requested_by!.lastname)
+    }}
+                                        </td>
+                                        <td class="text-muted align-middle" v-else-if="i.jo">
+                                            {{
+        getFullname(i.jo.canvass.requested_by!.firstname,
+            i.jo.canvass.requested_by!.middlename,
+            i.jo.canvass.requested_by!.lastname)
+    }}
+                                        </td>
+                                        <td class="text-muted align-middle" v-if="i.spr">
+                                            {{
+        getFullname(i.spr.canvass.requested_by!.firstname,
+            i.spr.canvass.requested_by!.middlename,
+            i.spr.canvass.requested_by!.lastname)
+    }}
+                                        </td>
+                                        <td class="text-muted align-middle"> {{ formatDate(i.meqs_date) }} </td>
+                                        <td class="text-center align-middle">
+                                            <div :class="{ [`badge bg-${approvalStatus[i.status].color}`]: true }">
+                                                {{ approvalStatus[i.status].label }}
+                                            </div>
+                                        </td>
+                                        <td class="text-muted align-middle">
+                                            <button @click="onClickViewDetails(i.id)" class="btn btn-light w-50"
+                                                :disabled="!canViewDetails(authUser, 'canManageMEQS')">
+                                                <i class="fas fa-info-circle"
+                                                    :class="{ 'text-info': canViewDetails(authUser, 'canManageMEQS') }"></i>
+                                            </button>
+                                            <button :disabled="!isAdminOrOwner(i.created_by, authUser)"
+                                                @click="onClickEdit(i.id)" class="btn btn-light w-50">
+                                                <i class="fas fa-edit"
+                                                    :class="{ 'text-primary': isAdminOrOwner(i.created_by, authUser) }"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-
-                        <div v-else>
-
-                            <div v-for="i in items" class="table-responsive">
-
-                                <table class="table table-hover table-bordered">
-
-                                    <tbody>
-                                        <tr>
-                                            <td width="50%" class="bg-secondary text-white"> MEQS Number </td>
-                                            <td class="bg-secondary text-white"> {{ i.meqs_number }} </td>
-                                        </tr>
-                                        <tr v-if="i.rv">
-                                            <td class="text-muted"> RV Number </td>
-                                            <td> {{ i.rv.rv_number }} </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-muted"> Requisitioner </td>
-                                            <td v-if="i.rv">
-                                                {{ getFullname(i.rv.canvass.requested_by!.firstname,
-                            i.rv.canvass.requested_by!.middlename,
-                            i.rv.canvass.requested_by!.lastname) }}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-muted"> Date </td>
-                                            <td> {{ formatDate(i.meqs_date) }} </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-muted"> Status </td>
-                                            <td>
-                                                <div :class="{ [`badge bg-${approvalStatus[i.status].color}`]: true }">
-                                                    {{ approvalStatus[i.status].label }}
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-center"
-                                                :colspan="isAdminOrOwner(i.created_by, authUser) ? 1 : 2">
-                                                <nuxt-link class="btn btn-sm btn-light text-info w-100"
-                                                    :to="'/warehouse/purchasing/meqs/view/' + i.id">
-                                                    <i class="fas fa-info-circle text-info"></i> View Details
-                                                </nuxt-link>
-                                            </td>
-                                            <td v-if="isAdminOrOwner(i.created_by, authUser)" class="text-center">
-                                                <button @click="onClickEdit(i.id)"
-                                                    class="btn btn-sm btn-light text-primary w-100">
-                                                    <i class="fas fa-edit"></i>
-                                                    Edit MEQS
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-
-                                </table>
-
-
-                            </div>
-
-                        </div>
-
 
                     </div>
                 </div>
@@ -248,6 +187,11 @@
         </div>
 
     </div>
+
+    <div v-else>
+        <LoaderSpinner />
+    </div>
+
 </template>
 
 
@@ -258,6 +202,7 @@ import type { RV } from '~/composables/warehouse/rv/rv.types';
 import * as meqsApi from '~/composables/warehouse/meqs/meqs.api'
 import type { JO } from '~/composables/warehouse/jo/jo.types';
 import type { SPR } from '~/composables/warehouse/spr/spr.types';
+import { getFullname, formatDate, isAdminOrOwner, canCreate, canViewDetails } from '~/utils/helpers'
 
 
 definePageMeta({
@@ -266,7 +211,10 @@ definePageMeta({
     middleware: ['auth'],
 })
 
+const isLoadingPage = ref(true)
 const authUser = ref<AuthUser>({} as AuthUser)
+
+
 const router = useRouter()
 
 // flags
@@ -312,9 +260,9 @@ const items = ref<MEQS[]>([])
 
 
 onMounted(async () => {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
+    // isMobile.value = window.innerWidth < MOBILE_WIDTH
 
-    window.addEventListener('resize', checkMobile);
+    // window.addEventListener('resize', checkMobile);
 
     authUser.value = getAuthUser()
     const response = await meqsApi.fetchDataInSearchFilters()
@@ -327,6 +275,9 @@ onMounted(async () => {
         i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
         return i
     })
+
+
+    isLoadingPage.value = false
 
 })
 
@@ -419,13 +370,11 @@ function onChangeTransactionType() {
 
 // ======================== UTILS ======================== 
 
-function checkMobile() {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-}
-
 function onClickEdit(id: string) {
     router.push('/warehouse/purchasing/meqs/' + id)
 }
+
+const onClickViewDetails = (id: string) => router.push('/warehouse/purchasing/meqs/view/' + id)
 
 
 </script>

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="!isLoadingPage && authUser">
         <h2 class="text-warning">Search JO</h2>
 
         <hr>
@@ -41,7 +41,8 @@
             <button @click="search()" class="btn btn-primary" :disabled="isSearching">
                 <i class="fas fa-search"></i> {{ isSearching ? 'Searching...' : 'Search' }}
             </button>
-            <nuxt-link class="btn btn-primary float-end" to="/warehouse/purchasing/jo/create">
+            <nuxt-link v-if="canCreate(authUser, 'canManageJO')" class="btn btn-primary float-end"
+                to="/warehouse/purchasing/jo/create">
                 <i class="fas fa-plus"></i> Create JO
             </nuxt-link>
         </div>
@@ -70,53 +71,55 @@
                     <div class="col">
 
 
-                        <div v-if="!isMobile">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th class="bg-secondary text-white">JO Number</th>
-                                            <th class="bg-secondary text-white">RC Number</th>
-                                            <th class="bg-secondary text-white">Requisitioner</th>
-                                            <th class="bg-secondary text-white">Date</th>
-                                            <th class="bg-secondary text-white text-center">Status</th>
-                                            <th class="text-center bg-secondary text-white">
-                                                <i class="fas fa-cogs"></i>
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="i in items">
-                                            <td class="text-muted align-middle"> {{ i.jo_number }} </td>
-                                            <td class="text-muted align-middle"> {{ i.canvass.rc_number }} </td>
-                                            <td class="text-muted align-middle"> {{
-                            getFullname(i.canvass.requested_by!.firstname,
-                                i.canvass.requested_by!.middlename, i.canvass.requested_by!.lastname) }}
-                                            </td>
-                                            <td class="text-muted align-middle"> {{ formatDate(i.date_requested) }}
-                                            </td>
-                                            <td class="text-center align-middle">
-                                                <div :class="{ [`badge bg-${approvalStatus[i.status].color}`]: true }">
-                                                    {{ approvalStatus[i.status].label }}
-                                                </div>
-                                            </td>
-                                            <td class="text-muted align-middle">
-                                                <nuxt-link class="btn btn-light w-50"
-                                                    :to="'/warehouse/purchasing/jo/view/' + i.id">
-                                                    <i class="fas fa-info-circle text-info"></i>
-                                                </nuxt-link>
-                                                <button v-if="isAdminOrOwner(i.created_by, authUser)"
-                                                    @click="onClickEdit(i.id)" class="btn btn-light w-50">
-                                                    <i class="fas fa-edit text-primary"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                        <!-- <div v-if="!isMobile"> -->
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="bg-secondary text-white">JO Number</th>
+                                        <th class="bg-secondary text-white">RC Number</th>
+                                        <th class="bg-secondary text-white">Requisitioner</th>
+                                        <th class="bg-secondary text-white">Date</th>
+                                        <th class="bg-secondary text-white text-center">Status</th>
+                                        <th class="text-center bg-secondary text-white">
+                                            <i class="fas fa-cogs"></i>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="i in items">
+                                        <td class="text-muted align-middle"> {{ i.jo_number }} </td>
+                                        <td class="text-muted align-middle"> {{ i.canvass.rc_number }} </td>
+                                        <td class="text-muted align-middle"> {{
+        getFullname(i.canvass.requested_by!.firstname,
+            i.canvass.requested_by!.middlename, i.canvass.requested_by!.lastname) }}
+                                        </td>
+                                        <td class="text-muted align-middle"> {{ formatDate(i.date_requested) }}
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            <div :class="{ [`badge bg-${approvalStatus[i.status].color}`]: true }">
+                                                {{ approvalStatus[i.status].label }}
+                                            </div>
+                                        </td>
+                                        <td class="text-muted align-middle">
+                                            <button @click="onClickViewDetails(i.id)" class="btn btn-light w-50"
+                                                :disabled="!canViewDetails(authUser, 'canManageJO')">
+                                                <i class="fas fa-info-circle"
+                                                    :class="{ 'text-info': canViewDetails(authUser, 'canManageJO') }"></i>
+                                            </button>
+                                            <button :disabled="!isAdminOrOwner(i.created_by, authUser)"
+                                                @click="onClickEdit(i.id)" class="btn btn-light w-50">
+                                                <i class="fas fa-edit"
+                                                    :class="{ 'text-primary': isAdminOrOwner(i.created_by, authUser) }"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
+                        <!-- </div> -->
 
-                        <div v-else>
+                        <!-- <div v-else>
 
                             <div v-for="i in items" class="table-responsive">
 
@@ -172,7 +175,7 @@
 
                             </div>
 
-                        </div>
+                        </div> -->
 
 
                     </div>
@@ -206,6 +209,10 @@
 
     </div>
 
+    <div v-else>
+        <LoaderSpinner />
+    </div>
+
 </template>
 
 
@@ -214,7 +221,7 @@
 import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
 import { type JO } from '~/composables/warehouse/jo/jo.types';
 import * as joApi from '~/composables/warehouse/jo/jo.api'
-import { getFullname, formatDate } from '~/utils/helpers'
+import { getFullname, formatDate, isAdminOrOwner, canCreate, canViewDetails } from '~/utils/helpers'
 import { MOBILE_WIDTH, PAGINATION_SIZE } from '~/utils/config'
 import { ROUTES, approvalStatus } from '~/utils/constants';
 
@@ -225,11 +232,14 @@ definePageMeta({
     middleware: ['auth'],
 })
 
+const isLoadingPage = ref(true)
 const authUser = ref<AuthUser>({} as AuthUser)
+
+
 const router = useRouter()
 
 // flags
-const isMobile = ref(false)
+// const isMobile = ref(false)
 const isInitialLoad = ref(true)
 const isSearching = ref(false)
 const isPaginating = ref(false)
@@ -263,9 +273,9 @@ const items = ref<JO[]>([])
 // ======================== LIFECYCLE HOOKS ======================== 
 
 onMounted(async () => {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
+    // isMobile.value = window.innerWidth < MOBILE_WIDTH
 
-    window.addEventListener('resize', checkMobile);
+    // window.addEventListener('resize', checkMobile);
 
     authUser.value = getAuthUser()
 
@@ -277,6 +287,8 @@ onMounted(async () => {
         i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
         return i
     })
+
+    isLoadingPage.value = false
 
 })
 
@@ -358,15 +370,16 @@ async function search() {
 
 // ======================== UTILS ======================== 
 
-function checkMobile() {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-}
+// function checkMobile() {
+//     isMobile.value = window.innerWidth < MOBILE_WIDTH
+// }
 
 
 function onClickEdit(id: string) {
     router.push('/warehouse/purchasing/jo/' + id)
 }
 
+const onClickViewDetails = (id: string) => router.push('/warehouse/purchasing/jo/view/' + id)
 
 
 </script>
