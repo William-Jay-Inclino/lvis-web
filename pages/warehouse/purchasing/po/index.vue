@@ -43,10 +43,9 @@
             <button @click="search()" class="btn btn-primary" :disabled="isSearching">
                 <i class="fas fa-search"></i> {{ isSearching ? 'Searching...' : 'Search' }}
             </button>
-            <nuxt-link v-if="canCreate(authUser, 'canManagePO')" class="btn btn-primary float-end"
-                to="/warehouse/purchasing/po/create">
+            <button v-if="canCreate(authUser, 'canManagePO')" @click="onClickAdd" class="btn btn-primary float-end">
                 <i class="fas fa-plus"></i> Create PO
-            </nuxt-link>
+            </button>
         </div>
 
         <div class="h5wrapper mb-3 mt-3" v-show="!isInitialLoad && !isSearching && !isPaginating">
@@ -174,7 +173,7 @@
 import * as poApi from '~/composables/warehouse/po/po.api'
 import type { PO } from '~/composables/warehouse/po/po.types';
 import { getFullname, formatDate, isAdminOrOwner, canCreate, canViewDetails } from '~/utils/helpers'
-import { MOBILE_WIDTH, PAGINATION_SIZE } from '~/utils/config'
+import { PAGINATION_SIZE } from '~/utils/config'
 import type { MEQS } from '~/composables/warehouse/meqs/meqs.types';
 
 definePageMeta({
@@ -189,7 +188,6 @@ const authUser = ref<AuthUser>({} as AuthUser)
 const router = useRouter()
 
 // flags
-const isMobile = ref(false)
 const isInitialLoad = ref(true)
 const isSearching = ref(false)
 const isPaginating = ref(false)
@@ -238,10 +236,6 @@ onMounted(async () => {
 
 
 // ======================== FUNCTIONS ======================== 
-
-function onClickEdit(id: string) {
-    router.push('/warehouse/purchasing/po/' + id)
-}
 
 async function changePage(page: number) {
 
@@ -328,6 +322,8 @@ function getRequisitionerFullname(employee?: Employee | null) {
 
 
 const onClickViewDetails = (id: string) => router.push('/warehouse/purchasing/po/view/' + id)
+const onClickEdit = (id: string) => router.push('/warehouse/purchasing/po/' + id)
+const onClickAdd = () => router.push('/warehouse/purchasing/po/create')
 
 
 </script>

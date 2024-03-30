@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="!isLoadingPage">
         <h2 class="text-warning">Create SPR</h2>
         <hr>
 
@@ -132,6 +132,10 @@
 
     </div>
 
+    <div v-else>
+        <LoaderSpinner />
+    </div>
+
 </template>
 
 
@@ -142,19 +146,18 @@ import { getFullname } from '~/utils/helpers'
 import * as sprApi from '~/composables/warehouse/spr/spr.api'
 import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
 import type { CreateSprInput } from '~/composables/warehouse/spr/spr.types';
-import { MOBILE_WIDTH } from '~/utils/config';
 
 definePageMeta({
     name: ROUTES.SPR_CREATE,
     layout: "layout-warehouse",
     middleware: ['auth'],
 })
+const isLoadingPage = ref(true)
 
 // CONSTANTS
 const router = useRouter();
 
 // FLAGS
-const isMobile = ref(false)
 const isSaving = ref(false)
 
 // INITIAL DATA
@@ -189,10 +192,6 @@ const vehicles = ref<Vehicle[]>([])
 // ======================== LIFECYCLE HOOKS ========================  
 onMounted(async () => {
 
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-
-    window.addEventListener('resize', checkMobile);
-
     const response = await sprApi.fetchFormDataInCreate()
 
     canvasses.value = response.canvasses
@@ -205,6 +204,8 @@ onMounted(async () => {
     sprData.value.approvers = response.approvers
     classifications.value = response.classifications
     vehicles.value = response.vehicles
+
+    isLoadingPage.value = false
 
 })
 
@@ -314,11 +315,6 @@ function isValid(): boolean {
     return true
 
 }
-
-function checkMobile() {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-}
-
 
 
 

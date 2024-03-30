@@ -1,6 +1,6 @@
 <template>
 
-    <div v-if="item" class="row justify-content-center mb-3">
+    <div v-if="!isLoadingPage && item" class="row justify-content-center mb-3">
 
         <div class="col-lg-10">
 
@@ -314,6 +314,9 @@
 
     </div>
 
+    <div v-else>
+        <LoaderSpinner />
+    </div>
 </template>
 
 
@@ -329,11 +332,11 @@ definePageMeta({
     layout: "layout-warehouse",
     middleware: ['auth'],
 })
+const isLoadingPage = ref(true)
 
 const authUser = ref<AuthUser>({} as AuthUser)
 const route = useRoute()
 const item = ref<MEQS | undefined>()
-const isMobile = ref(false)
 const config = useRuntimeConfig()
 const API_FILE_ENDPOINT = config.public.apiUrl + '/api/v1/file-upload'
 
@@ -343,13 +346,11 @@ const modalToShow = ref<'attachment' | 'note'>('attachment')
 
 onMounted(async () => {
 
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-
-    window.addEventListener('resize', checkMobile);
-
     authUser.value = getAuthUser()
 
     item.value = await meqsApi.findOne(route.params.id as string)
+
+    isLoadingPage.value = false
 
 })
 
@@ -373,10 +374,6 @@ const referenceLabel = computed(() => {
     return ''
 
 })
-
-function checkMobile() {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-}
 
 function getUploadsPath(src: string) {
 

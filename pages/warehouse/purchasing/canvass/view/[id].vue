@@ -1,6 +1,6 @@
 <template>
 
-    <div class="row justify-content-center">
+    <div v-if="!isLoadingPage" class="row justify-content-center">
 
         <div class="col-lg-9">
 
@@ -27,7 +27,7 @@
                                         <td>
                                             <div v-if="item.rv">
                                                 <nuxt-link :to="'/warehouse/purchasing/rv/view/' + item.rv.id">{{
-                item.rv.rv_number }}</nuxt-link>
+        item.rv.rv_number }}</nuxt-link>
                                             </div>
                                             <div v-else>
                                                 N/A
@@ -39,7 +39,7 @@
                                         <td>
                                             <div v-if="item.jo">
                                                 <nuxt-link :to="'/warehouse/purchasing/jo/view/' + item.jo.id">{{
-                item.jo.jo_number }}</nuxt-link>
+        item.jo.jo_number }}</nuxt-link>
                                             </div>
                                             <div v-else>
                                                 N/A
@@ -51,7 +51,7 @@
                                         <td>
                                             <div v-if="item.spr">
                                                 <nuxt-link :to="'/warehouse/purchasing/spr/view/' + item.spr.id">{{
-                item.spr.spr_number }}</nuxt-link>
+        item.spr.spr_number }}</nuxt-link>
                                             </div>
                                             <div v-else>
                                                 N/A
@@ -167,7 +167,7 @@
                                     <tr>
                                         <td class="text-muted">Requisitioner</td>
                                         <td> {{ getFullname(item.requested_by!.firstname, item.requested_by!.middlename,
-                item.requested_by!.lastname) }} </td>
+        item.requested_by!.lastname) }} </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -219,7 +219,7 @@
                             </div>
                         </div>
 
-                        <div v-else>
+                        <!-- <div v-else>
 
                             <div class="h5wrapper mb-3">
                                 <hr class="result">
@@ -258,7 +258,7 @@
 
                             </div>
 
-                        </div>
+                        </div> -->
 
                     </div>
                 </div>
@@ -291,6 +291,10 @@
         </div>
     </div>
 
+    <div v-else>
+        <LoaderSpinner />
+    </div>
+
 </template>
 
 
@@ -307,6 +311,8 @@ definePageMeta({
     middleware: ['auth']
 })
 
+const isLoadingPage = ref(true)
+
 const authUser = ref<AuthUser>({} as AuthUser)
 const route = useRoute()
 const item = ref<Canvass | undefined>()
@@ -321,6 +327,9 @@ onMounted(async () => {
     authUser.value = getAuthUser()
 
     item.value = await api.findOne(route.params.id as string)
+
+
+    isLoadingPage.value = false
 
 })
 

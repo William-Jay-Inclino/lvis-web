@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="!isLoadingPage">
 
         <h2 class="text-warning">Create MEQS</h2>
         <hr>
@@ -41,9 +41,9 @@
                                                     <div class="col text-end">
                                                         <small class="text-muted fst-italic">
                                                             {{
-                        // @ts-ignore
-                        approvalStatus[option.status].label
-                    }}
+        // @ts-ignore
+        approvalStatus[option.status].label
+    }}
                                                         </small>
                                                     </div>
                                                 </div>
@@ -84,9 +84,9 @@
                                                     <div class="col text-end">
                                                         <small class="text-muted fst-italic">
                                                             {{
-                        // @ts-ignore
-                        approvalStatus[option.status].label
-                    }}
+        // @ts-ignore
+        approvalStatus[option.status].label
+    }}
                                                         </small>
                                                     </div>
                                                 </div>
@@ -127,9 +127,9 @@
                                                     <div class="col text-end">
                                                         <small class="text-muted fst-italic">
                                                             {{
-                        // @ts-ignore
-                        approvalStatus[option.status].label
-                    }}
+        // @ts-ignore
+        approvalStatus[option.status].label
+    }}
                                                         </small>
                                                     </div>
                                                 </div>
@@ -260,6 +260,10 @@
             :is-saving-meqs="isSavingMeqs" @update-notes="updateNotes" @save="saveMeqs" />
 
     </div>
+
+    <div v-else>
+        <LoaderSpinner />
+    </div>
 </template>
 
 
@@ -283,6 +287,8 @@ definePageMeta({
     middleware: ['auth'],
 })
 
+const isLoadingPage = ref(true)
+
 // DEPENDENCIES
 const toast = useToast();
 const config = useRuntimeConfig()
@@ -294,7 +300,6 @@ const requiredNotesBtn = ref<HTMLButtonElement>()
 const API_URL = config.public.apiUrl
 
 // FLAGS 
-const isMobile = ref(false)
 const isInitialStep3 = ref(true)
 const isSavingMeqs = ref(false)
 
@@ -326,10 +331,6 @@ const meqsData = ref<CreateMeqsInput>({
 
 onMounted(async () => {
 
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-
-    window.addEventListener('resize', checkMobile);
-
     const response = await meqsApi.fetchFormDataInCreate()
 
     rvs.value = response.rvs
@@ -337,6 +338,8 @@ onMounted(async () => {
     sprs.value = response.sprs
     suppliers.value = response.suppliers
     meqsData.value.approvers = response.approvers
+
+    isLoadingPage.value = false
 
 })
 
@@ -873,7 +876,6 @@ function updateNotes(canvass_item_id: string, note: string) {
 
 // ======================== UTILS ======================== 
 
-const checkMobile = () => isMobile.value = window.innerWidth < MOBILE_WIDTH
 const goToStep1 = () => currentStep.value = 1
 const goToStep2 = () => currentStep.value = 2
 const goToStep3 = () => currentStep.value = 3

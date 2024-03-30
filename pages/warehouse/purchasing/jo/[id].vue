@@ -179,7 +179,6 @@ import { useToast } from "vue-toastification";
 import * as joApi from '~/composables/warehouse/jo/jo.api'
 import * as joApproverApi from '~/composables/warehouse/jo/jo-approver.api'
 import { type JO } from '~/composables/warehouse/jo/jo.types';
-import { MOBILE_WIDTH } from '~/utils/config';
 import { approvalStatus } from '~/utils/constants';
 
 definePageMeta({
@@ -197,7 +196,6 @@ const router = useRouter();
 const toast = useToast();
 
 // FLAGS
-const isMobile = ref(false)
 const isJODetailForm = ref(true)
 const isUpdating = ref(false)
 const isUpdatingApproverOrder = ref(false)
@@ -341,28 +339,28 @@ async function updateJoInfo() {
 
 }
 
-async function cancelJo() {
+// async function cancelJo() {
 
-    console.log('cancelJo')
-    const response = await joApi.cancel(joData.value.id)
+//     console.log('cancelJo')
+//     const response = await joApi.cancel(joData.value.id)
 
-    if (response.success) {
-        toast.success(response.msg)
-        joData.value.cancelled_at = response.cancelled_at!
+//     if (response.success) {
+//         toast.success(response.msg)
+//         joData.value.cancelled_at = response.cancelled_at!
 
-        router.push('/warehouse/purchasing/jo')
+//         router.push('/warehouse/purchasing/jo')
 
-    } else {
-        Swal.fire({
-            title: 'Error!',
-            text: response.msg,
-            icon: 'error',
-            position: 'top',
-        })
-    }
+//     } else {
+//         Swal.fire({
+//             title: 'Error!',
+//             text: response.msg,
+//             icon: 'error',
+//             position: 'top',
+//         })
+//     }
 
 
-}
+// }
 
 
 
@@ -519,30 +517,30 @@ async function changeApproverOrder(
 
 // ======================== UTILS ========================  
 
-async function onCancelJo() {
+// async function onCancelJo() {
 
-    Swal.fire({
-        title: "Are you sure?",
-        text: `This JO will be cancelled!`,
-        position: "top",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#e74a3b",
-        cancelButtonColor: "#6c757d",
-        confirmButtonText: "Yes, cancel it!",
-        reverseButtons: true,
-        showLoaderOnConfirm: true,
-        preConfirm: async (remove) => {
+//     Swal.fire({
+//         title: "Are you sure?",
+//         text: `This JO will be cancelled!`,
+//         position: "top",
+//         icon: "warning",
+//         showCancelButton: true,
+//         confirmButtonColor: "#e74a3b",
+//         cancelButtonColor: "#6c757d",
+//         confirmButtonText: "Yes, cancel it!",
+//         reverseButtons: true,
+//         showLoaderOnConfirm: true,
+//         preConfirm: async (remove) => {
 
-            if (remove) {
-                await cancelJo()
-            }
+//             if (remove) {
+//                 await cancelJo()
+//             }
 
-        },
-        allowOutsideClick: () => !Swal.isLoading()
-    })
+//         },
+//         allowOutsideClick: () => !Swal.isLoading()
+//     })
 
-}
+// }
 
 function isValidJoInfo(): boolean {
 

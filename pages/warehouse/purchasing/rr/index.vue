@@ -43,10 +43,9 @@
             <button @click="search()" class="btn btn-primary" :disabled="isSearching">
                 <i class="fas fa-search"></i> {{ isSearching ? 'Searching...' : 'Search' }}
             </button>
-            <nuxt-link v-if="canCreate(authUser, 'canManageRR')" class="btn btn-primary float-end"
-                to="/warehouse/purchasing/rr/create">
+            <button v-if="canCreate(authUser, 'canManageRR')" @click="onClickAdd" class="btn btn-primary float-end">
                 <i class="fas fa-plus"></i> Create RR
-            </nuxt-link>
+            </button>
         </div>
 
         <div class="h5wrapper mb-3 mt-3" v-show="!isInitialLoad && !isSearching && !isPaginating">
@@ -175,7 +174,7 @@
 import * as rrApi from '~/composables/warehouse/rr/rr.api'
 import type { RR } from '~/composables/warehouse/rr/rr.types';
 import { getFullname, formatDate, isAdminOrOwner, canCreate, canViewDetails } from '~/utils/helpers'
-import { MOBILE_WIDTH, PAGINATION_SIZE } from '~/utils/config'
+import { PAGINATION_SIZE } from '~/utils/config'
 import type { PO } from '~/composables/warehouse/po/po.types';
 
 definePageMeta({
@@ -238,10 +237,6 @@ onMounted(async () => {
 
 
 // ======================== FUNCTIONS ======================== 
-
-function onClickEdit(id: string) {
-    router.push('/warehouse/purchasing/rr/' + id)
-}
 
 async function changePage(page: number) {
 
@@ -329,6 +324,8 @@ function getRequisitionerFullname(employee?: Employee | null) {
 
 
 const onClickViewDetails = (id: string) => router.push('/warehouse/purchasing/rr/view/' + id)
+const onClickEdit = (id: string) => router.push('/warehouse/purchasing/rr/' + id)
+const onClickAdd = () => router.push('/warehouse/purchasing/rr/create')
 
 
 </script>

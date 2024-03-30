@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="!isLoadingPage">
 
         <h2 class="text-warning">Create RR</h2>
         <hr>
@@ -32,9 +32,9 @@
                                     <div class="col text-end">
                                         <small class="text-muted fst-italic">
                                             {{
-                        // @ts-ignore
-                        approvalStatus[option.status].label
-                    }}
+        // @ts-ignore
+        approvalStatus[option.status].label
+    }}
                                         </small>
                                     </div>
                                 </div>
@@ -116,11 +116,7 @@
         <div v-show="currentStep === 2" class="row justify-content-center pt-5">
             <div class="col-12">
 
-                <div v-if="!isMobile">
-
-                    <WarehouseRRItems :rr-items="rrData.rr_items" />
-
-                </div>
+                <WarehouseRRItems :rr-items="rrData.rr_items" />
 
             </div>
         </div>
@@ -180,6 +176,11 @@
         </div>
 
     </div>
+
+    <div v-else>
+        <LoaderSpinner />
+    </div>
+
 </template>
 
 
@@ -202,12 +203,13 @@ definePageMeta({
     middleware: ['auth'],
 })
 
+const isLoadingPage = ref(true)
+
 // CONSTANTS
 const router = useRouter();
 const toast = useToast();
 
 // FLAGS
-const isMobile = ref(false)
 const isSaving = ref(false)
 
 const currentStep = ref(1)
@@ -246,10 +248,6 @@ const items = ref<Item[]>([])
 
 onMounted(async () => {
 
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-
-    window.addEventListener('resize', checkMobile);
-
     const response = await rrApi.fetchFormDataInCreate()
 
     employees.value = response.employees.map((i) => {
@@ -261,6 +259,8 @@ onMounted(async () => {
     rrData.value.approvers = response.approvers
     pos.value = response.pos
     items.value = response.items.map(i => ({ ...i, label: `${i.code} - ${i.name}` }))
+
+    isLoadingPage.value = false
 
 })
 
@@ -428,65 +428,7 @@ function isValidStep2(): boolean {
 
 // ======================== CHILD FUNCTIONS <Items.vue> ======================== 
 
-// function addItem(data: RrItem, modalCloseBtn: HTMLButtonElement) {
-
-//     console.log('addItem', data)
-
-//     rrData.value.rr_items.push(data)
-
-//     modalCloseBtn.click()
-
-//     toast.success('Item added!')
-
-// }
-
-// function removeItem(indx: number) {
-
-//     console.log('removeItem', indx)
-
-//     const rrItem = rrData.value.rr_items[indx]
-
-//     Swal.fire({
-//         title: "Are you sure?",
-//         text:  `Item no. ${ indx + 1 } with description of ${rrItem.meqs_supplier_item.canvass_item.description}  will be removed!`,
-//         position: "top",
-//         icon: "warning",
-//         showCancelButton: true,
-//         confirmButtonColor: "#e74a3b",
-//         cancelButtonColor: "#6c757d",
-//         confirmButtonText: "Yes, remove it!",
-//         reverseButtons: true,
-//         }).then( async(result) => {
-//         if (result.isConfirmed) {
-
-//             rrData.value.rr_items.splice(indx, 1)
-
-//             toast.success('Item removed!')
-
-//         }
-//     });
-
-
-
-// }
-
-// function editItem(indx: number, data: RrItem, modalCloseBtn: HTMLButtonElement) {
-//     console.log('editItem', indx, data)
-//     console.log('modalCloseBtn', modalCloseBtn)
-
-//     rrData.value.rr_items[indx] = {...data}
-
-//     modalCloseBtn.click()
-
-//     toast.success('Item edited!')
-
-// }
-
 // ======================== UTILS ======================== 
-
-function checkMobile() {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-}
 
 const goToStep1 = () => currentStep.value = 1
 const goToStep2 = () => {

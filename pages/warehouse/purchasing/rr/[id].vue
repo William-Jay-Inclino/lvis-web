@@ -156,7 +156,6 @@
 
 import Swal from 'sweetalert2'
 import { getFullname, formatToValidHtmlDate, canUpdate } from '~/utils/helpers'
-import { MOBILE_WIDTH } from '~/utils/config';
 import { useToast } from "vue-toastification";
 import type { RR } from '~/composables/warehouse/rr/rr.types';
 import * as rrApi from '~/composables/warehouse/rr/rr.api'
@@ -184,7 +183,6 @@ const router = useRouter();
 const toast = useToast();
 
 // FLAGS
-const isMobile = ref(false)
 const isUpdating = ref(false)
 const isUpdatingRrItems = ref(false)
 const isUpdatingApproverOrder = ref(false)
@@ -222,6 +220,9 @@ onMounted(async () => {
         i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
         return i
     })
+
+
+    isLoadingPage.value = false
 
 })
 
@@ -275,16 +276,6 @@ function populateForm(data: RR) {
 async function updateRrInfo() {
     console.log('updatePoInfo')
 
-    console.log('updating...')
-
-    // const data: UpdateRrInput = {
-    //     received_by: rrData.value.received_by,
-    //     invoice_number: rrData.value.invoice_number,
-    //     delivery_number: rrData.value.delivery_number,
-    //     notes: rrData.value.notes,
-    //     delivery_charge: rrData.value.delivery_charge,
-    // }
-
     isUpdating.value = true
     const response = await rrApi.update(rrData.value.id, rrData.value)
     isUpdating.value = false
@@ -307,24 +298,24 @@ async function updateRrInfo() {
 
 }
 
-async function cancelRr() {
-    const response = await rrApi.cancel(rrData.value.id)
+// async function cancelRr() {
+//     const response = await rrApi.cancel(rrData.value.id)
 
-    if (response.success) {
-        toast.success(response.msg)
-        rrData.value.cancelled_at = response.cancelled_at!
+//     if (response.success) {
+//         toast.success(response.msg)
+//         rrData.value.cancelled_at = response.cancelled_at!
 
-        router.push('/warehouse/purchasing/rr')
+//         router.push('/warehouse/purchasing/rr')
 
-    } else {
-        Swal.fire({
-            title: 'Error!',
-            text: response.msg,
-            icon: 'error',
-            position: 'top',
-        })
-    }
-}
+//     } else {
+//         Swal.fire({
+//             title: 'Error!',
+//             text: response.msg,
+//             icon: 'error',
+//             position: 'top',
+//         })
+//     }
+// }
 
 
 // ======================== CHILD EVENTS: <WarehouseRRItems> ========================  
@@ -529,31 +520,27 @@ async function changeApproverOrder(
 
 // ======================== UTILS ========================  
 
-async function onCancelRr() {
-    Swal.fire({
-        title: "Are you sure?",
-        text: `This RR will be cancelled!`,
-        position: "top",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#e74a3b",
-        cancelButtonColor: "#6c757d",
-        confirmButtonText: "Yes, cancel it!",
-        reverseButtons: true,
-        showLoaderOnConfirm: true,
-        preConfirm: async (remove) => {
+// async function onCancelRr() {
+//     Swal.fire({
+//         title: "Are you sure?",
+//         text: `This RR will be cancelled!`,
+//         position: "top",
+//         icon: "warning",
+//         showCancelButton: true,
+//         confirmButtonColor: "#e74a3b",
+//         cancelButtonColor: "#6c757d",
+//         confirmButtonText: "Yes, cancel it!",
+//         reverseButtons: true,
+//         showLoaderOnConfirm: true,
+//         preConfirm: async (remove) => {
 
-            if (remove) {
-                await cancelRr()
-            }
+//             if (remove) {
+//                 await cancelRr()
+//             }
 
-        },
-        allowOutsideClick: () => !Swal.isLoading()
-    })
-}
-
-function checkMobile() {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-}
+//         },
+//         allowOutsideClick: () => !Swal.isLoading()
+//     })
+// }
 
 </script>

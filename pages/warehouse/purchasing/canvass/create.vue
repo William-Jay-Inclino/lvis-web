@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="!isLoadingPage">
         <h2 class="text-warning">Create Canvass</h2>
         <hr>
 
@@ -90,6 +90,10 @@
 
     </div>
 
+    <div v-else>
+        <LoaderSpinner />
+    </div>
+
 </template>
 
 
@@ -100,7 +104,6 @@ import Swal from 'sweetalert2'
 import type { CreateCanvassInput } from '~/composables/warehouse/canvass/canvass.types';
 import { getFullname } from '~/utils/helpers'
 import { useToast } from "vue-toastification";
-import { MOBILE_WIDTH } from '~/utils/config';
 import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
 import type { Item } from '~/composables/warehouse/item/item.type';
 import { ROUTES } from '~/utils/constants';
@@ -110,6 +113,8 @@ definePageMeta({
     layout: "layout-warehouse",
     middleware: ['auth']
 })
+
+const isLoadingPage = ref(true)
 
 // CONSTANTS
 const router = useRouter();
@@ -149,10 +154,6 @@ const items = ref<Item[]>([])
 
 onMounted(async () => {
 
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-
-    window.addEventListener('resize', checkMobile);
-
     const response = await api.fetchFormDataInCreate()
 
     employees.value = response.employees.map((i) => {
@@ -162,6 +163,8 @@ onMounted(async () => {
     brands.value = response.brands
     units.value = response.units
     items.value = response.items.map(i => ({ ...i, label: `${i.code} - ${i.name}` }))
+
+    isLoadingPage.value = false
 
 })
 
@@ -281,12 +284,8 @@ async function removeCanvassItem(indx: number) {
 
 // ======================== UTILS ======================== 
 
-function checkMobile() {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-}
 
 
 
 
 </script>
-~/composables/warehouse/unit2/unit.types

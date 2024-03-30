@@ -113,7 +113,6 @@
 
 import Swal from 'sweetalert2'
 import { getFullname, formatToValidHtmlDate, canUpdate } from '~/utils/helpers'
-import { MOBILE_WIDTH } from '~/utils/config';
 import { useToast } from "vue-toastification";
 import type { PO } from '~/composables/warehouse/po/po.types';
 import * as poApi from '~/composables/warehouse/po/po.api'
@@ -135,7 +134,6 @@ const router = useRouter();
 const toast = useToast();
 
 // FLAGS
-const isMobile = ref(false)
 const isPODetailForm = ref(true)
 const isUpdating = ref(false)
 const isUpdatingApproverOrder = ref(false)
@@ -166,6 +164,8 @@ onMounted(async () => {
         i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
         return i
     })
+
+    isLoadingPage.value = false
 
 })
 
@@ -238,24 +238,24 @@ async function updatePoInfo() {
 
 }
 
-async function cancelPo() {
-    const response = await poApi.cancel(poData.value.id)
+// async function cancelPo() {
+//     const response = await poApi.cancel(poData.value.id)
 
-    if (response.success) {
-        toast.success(response.msg)
-        poData.value.cancelled_at = response.cancelled_at!
+//     if (response.success) {
+//         toast.success(response.msg)
+//         poData.value.cancelled_at = response.cancelled_at!
 
-        router.push('/warehouse/purchasing/po')
+//         router.push('/warehouse/purchasing/po')
 
-    } else {
-        Swal.fire({
-            title: 'Error!',
-            text: response.msg,
-            icon: 'error',
-            position: 'top',
-        })
-    }
-}
+//     } else {
+//         Swal.fire({
+//             title: 'Error!',
+//             text: response.msg,
+//             icon: 'error',
+//             position: 'top',
+//         })
+//     }
+// }
 
 
 
@@ -411,27 +411,27 @@ async function changeApproverOrder(
 
 // ======================== UTILS ========================  
 
-async function onCancelPo() {
-    Swal.fire({
-        title: "Are you sure?",
-        text: `This PO will be cancelled!`,
-        position: "top",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#e74a3b",
-        cancelButtonColor: "#6c757d",
-        confirmButtonText: "Yes, cancel it!",
-        reverseButtons: true,
-        showLoaderOnConfirm: true,
-        preConfirm: async (remove) => {
+// async function onCancelPo() {
+//     Swal.fire({
+//         title: "Are you sure?",
+//         text: `This PO will be cancelled!`,
+//         position: "top",
+//         icon: "warning",
+//         showCancelButton: true,
+//         confirmButtonColor: "#e74a3b",
+//         cancelButtonColor: "#6c757d",
+//         confirmButtonText: "Yes, cancel it!",
+//         reverseButtons: true,
+//         showLoaderOnConfirm: true,
+//         preConfirm: async (remove) => {
 
-            if (remove) {
-                await cancelPo()
-            }
+//             if (remove) {
+//                 await cancelPo()
+//             }
 
-        },
-        allowOutsideClick: () => !Swal.isLoading()
-    })
-}
+//         },
+//         allowOutsideClick: () => !Swal.isLoading()
+//     })
+// }
 
 </script>

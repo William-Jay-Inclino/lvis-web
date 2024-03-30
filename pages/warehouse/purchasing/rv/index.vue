@@ -41,10 +41,9 @@
             <button @click="search()" class="btn btn-primary" :disabled="isSearching">
                 <i class="fas fa-search"></i> {{ isSearching ? 'Searching...' : 'Search' }}
             </button>
-            <nuxt-link v-if="canCreate(authUser, 'canManageRV')" class="btn btn-primary float-end"
-                to="/warehouse/purchasing/rv/create">
+            <button v-if="canCreate(authUser, 'canManageRV')" @click="onClickAdd" class="btn btn-primary float-end">
                 <i class="fas fa-plus"></i> Create RV
-            </nuxt-link>
+            </button>
         </div>
 
         <div class="h6wrapper mb-3 mt-3" v-show="!isInitialLoad && !isSearching && !isPaginating">
@@ -163,7 +162,7 @@ import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
 import { type RV } from '~/composables/warehouse/rv/rv.types';
 import * as rvApi from '~/composables/warehouse/rv/rv.api'
 import { getFullname, formatDate, isAdminOrOwner, canCreate, canViewDetails } from '~/utils/helpers'
-import { MOBILE_WIDTH, PAGINATION_SIZE } from '~/utils/config'
+import { PAGINATION_SIZE } from '~/utils/config'
 import { ROUTES, approvalStatus } from '~/utils/constants';
 
 definePageMeta({
@@ -305,31 +304,9 @@ async function search() {
 
 // ======================== UTILS ======================== 
 
-function onClickEdit(id: string) {
-    router.push('/warehouse/purchasing/rv/' + id)
-}
-
 const onClickViewDetails = (id: string) => router.push('/warehouse/purchasing/rv/view/' + id)
+const onClickEdit = (id: string) => router.push('/warehouse/purchasing/rv/' + id)
+const onClickAdd = () => router.push('/warehouse/purchasing/rv/create')
 
 
 </script>
-
-
-
-<style scoped>
-hr.result {
-    flex: 1;
-    margin: 0 10px;
-    border: none;
-    border-top: 1px solid #333;
-}
-
-h6 {
-    margin: 0;
-}
-
-.h6wrapper {
-    display: flex;
-    align-items: center;
-}
-</style>

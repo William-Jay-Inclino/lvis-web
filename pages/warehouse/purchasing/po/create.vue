@@ -1,6 +1,6 @@
 <template>
 
-    <div>
+    <div v-if="!isLoadingPage">
 
         <h2 class="text-warning">Create PO</h2>
         <hr>
@@ -26,9 +26,9 @@
                                             <div class="col text-end">
                                                 <small class="text-muted fst-italic">
                                                     {{
-                                    // @ts-ignore
-                                    approvalStatus[option.status].label
-                                }}
+        // @ts-ignore
+        approvalStatus[option.status].label
+    }}
                                                 </small>
                                             </div>
                                         </div>
@@ -148,7 +148,7 @@
                                 <td class="text-muted"> {{ i + 1 }} </td>
                                 <td class="text-muted"> {{ item.canvass_item.description }} </td>
                                 <td class="text-muted"> {{ item.canvass_item.brand ? item.canvass_item.brand.name :
-                                    'N/A' }}
+        'N/A' }}
                                 </td>
                                 <td class="text-muted"> {{ item.canvass_item.unit ? item.canvass_item.unit.name : 'N/A'
                                     }} </td>
@@ -159,12 +159,12 @@
                                     }} </td>
                                 <td class="text-muted">
                                     {{
-                                    formatToPhpCurrency(getTotalNetPrice({
-                                        pricePerUnit: item.price,
-                                        vatPerUnit: getVatAmount(item.price, item.vat_type),
-                                        quantity: item.canvass_item.quantity
-                                    }))
-                                }}
+        formatToPhpCurrency(getTotalNetPrice({
+            pricePerUnit: item.price,
+            vatPerUnit: getVatAmount(item.price, item.vat_type),
+            quantity: item.canvass_item.quantity
+        }))
+    }}
                                 </td>
                             </tr>
                             <tr>
@@ -191,6 +191,10 @@
 
     </div>
 
+    <div v-else>
+        <LoaderSpinner />
+    </div>
+
 </template>
 
 
@@ -211,10 +215,11 @@ definePageMeta({
     middleware: ['auth'],
 })
 
+const isLoadingPage = ref(true)
+
 const router = useRouter();
 
 // FLAGS
-const isMobile = ref(false)
 const isSaving = ref(false)
 
 let currentMeqsSupplier: MeqsSupplier | null = null
@@ -233,10 +238,6 @@ const poData = ref<CreatePoInput>({
 // ======================== LIFECYCLE HOOKS ========================  
 onMounted(async () => {
 
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-
-    window.addEventListener('resize', checkMobile);
-
     const response = await poApi.fetchFormDataInCreate()
 
     meqs.value = response.meqs.map(i => {
@@ -253,6 +254,8 @@ onMounted(async () => {
 
     })
     poData.value.approvers = response.approvers
+
+    isLoadingPage.value = false
 
 })
 
@@ -364,11 +367,6 @@ function onSupplierSelected(payload: MeqsSupplier) {
     } else {
         currentMeqsSupplier = payload
     }
-}
-
-
-function checkMobile() {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
 }
 
 function resetSupplier() {

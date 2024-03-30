@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="!isLoadingPage">
         <h2 class="text-warning">Create RV</h2>
         <hr>
 
@@ -133,6 +133,10 @@
 
     </div>
 
+    <div v-else>
+        <LoaderSpinner />
+    </div>
+
 </template>
 
 
@@ -143,19 +147,18 @@ import { getFullname } from '~/utils/helpers'
 import * as rvApi from '~/composables/warehouse/rv/rv.api'
 import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
 import type { CreateRvInput } from '~/composables/warehouse/rv/rv.types';
-import { MOBILE_WIDTH } from '~/utils/config';
 
 definePageMeta({
     name: ROUTES.RV_CREATE,
     layout: "layout-warehouse",
     middleware: ['auth'],
 })
+const isLoadingPage = ref(true)
 
 // CONSTANTS
 const router = useRouter();
 
 // FLAGS
-const isMobile = ref(false)
 const isSaving = ref(false)
 
 // INITIAL DATA
@@ -189,10 +192,6 @@ const classifications = ref<Classification[]>([])
 // ======================== LIFECYCLE HOOKS ========================  
 onMounted(async () => {
 
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-
-    window.addEventListener('resize', checkMobile);
-
     const response = await rvApi.fetchFormDataInCreate()
 
     canvasses.value = response.canvasses
@@ -204,6 +203,8 @@ onMounted(async () => {
 
     rvData.value.approvers = response.approvers
     classifications.value = response.classifications
+
+    isLoadingPage.value = false
 
 })
 
@@ -309,11 +310,6 @@ function isValid(): boolean {
     return true
 
 }
-
-function checkMobile() {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-}
-
 
 
 

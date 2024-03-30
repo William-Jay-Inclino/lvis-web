@@ -1,5 +1,5 @@
 <template>
-    <div v-if="item && meqs">
+    <div v-if="!isLoadingPage && item && meqs">
 
         <div class="row pt-3 justify-content-center">
             <div class="col-lg-12">
@@ -359,8 +359,8 @@
                 price: rrItem.meqs_supplier_item.price,
                 quantity: rrItem.quantity_accepted,
                 vatType: rrItem.meqs_supplier_item.vat_type
-                                            })
-                                            )
+            })
+        )
                                             }}
                                         </td>
                                         <td v-show="showNetTotal" class="text-muted text-center align-middle">
@@ -430,6 +430,10 @@
         </div>
 
     </div>
+
+    <div v-else>
+        <LoaderSpinner />
+    </div>
 </template>
 
 
@@ -437,7 +441,6 @@
 
 import * as rrApi from '~/composables/warehouse/rr/rr.api'
 import type { RR } from '~/composables/warehouse/rr/rr.types';
-import { MOBILE_WIDTH } from '~/utils/config';
 import { approvalStatus } from '~/utils/constants'
 import { getTotalNetPrice, getVatAmount, getNetPrice, getGrossTotal, getVatTotal } from '~/utils/helpers';
 
@@ -447,10 +450,11 @@ definePageMeta({
     middleware: ['auth'],
 })
 
+const isLoadingPage = ref(true)
+
 const authUser = ref<AuthUser>({} as AuthUser)
 const route = useRoute()
 const item = ref<RR | undefined>()
-const isMobile = ref(false)
 
 const showDescription = ref(true)
 const showItemCode = ref(true)
@@ -467,26 +471,12 @@ const showVatTotal = ref(true)
 const showNetTotal = ref(true)
 
 onMounted(async () => {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-    window.addEventListener('resize', checkMobile);
     authUser.value = getAuthUser()
     const rr = await rrApi.findOne(route.params.id as string)
     item.value = rr
+    isLoadingPage.value = false
 })
 
-function checkMobile() {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-}
-
-// const isRV = computed( () => {
-//     const meqs = item.value?.po.meqs_supplier.meqs
-
-//     if(meqs?.rv) {
-//         return true 
-//     }
-//     return false 
-
-// })
 
 const grossTotalSummary = computed(() => {
 

@@ -173,7 +173,6 @@ import { useToast } from "vue-toastification";
 import * as sprApi from '~/composables/warehouse/spr/spr.api'
 import * as sprApproverApi from '~/composables/warehouse/spr/spr-approver.api'
 import { type SPR } from '~/composables/warehouse/spr/spr.types';
-import { MOBILE_WIDTH } from '~/utils/config';
 import { approvalStatus } from '~/utils/constants';
 
 definePageMeta({
@@ -193,7 +192,6 @@ const router = useRouter();
 const toast = useToast();
 
 // FLAGS
-const isMobile = ref(false)
 const isSPRDetailForm = ref(true)
 const isUpdating = ref(false)
 const isUpdatingApproverOrder = ref(false)
@@ -241,6 +239,8 @@ onMounted(async () => {
 
     classifications.value = response.classifications
     vehicles.value = response.vehicles
+
+    isLoadingPage.value = false
 
 })
 
@@ -336,27 +336,27 @@ async function updateSprInfo() {
 
 }
 
-async function cancelSpr() {
+// async function cancelSpr() {
 
-    const response = await sprApi.cancel(sprData.value.id)
+//     const response = await sprApi.cancel(sprData.value.id)
 
-    if (response.success) {
-        toast.success(response.msg)
-        sprData.value.cancelled_at = response.cancelled_at!
+//     if (response.success) {
+//         toast.success(response.msg)
+//         sprData.value.cancelled_at = response.cancelled_at!
 
-        router.push('/warehouse/purchasing/spr')
+//         router.push('/warehouse/purchasing/spr')
 
-    } else {
-        Swal.fire({
-            title: 'Error!',
-            text: response.msg,
-            icon: 'error',
-            position: 'top',
-        })
-    }
+//     } else {
+//         Swal.fire({
+//             title: 'Error!',
+//             text: response.msg,
+//             icon: 'error',
+//             position: 'top',
+//         })
+//     }
 
 
-}
+// }
 
 
 
@@ -513,30 +513,30 @@ async function changeApproverOrder(
 
 // ======================== UTILS ========================  
 
-async function onCancelSpr() {
+// async function onCancelSpr() {
 
-    Swal.fire({
-        title: "Are you sure?",
-        text: `This SPR will be cancelled!`,
-        position: "top",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#e74a3b",
-        cancelButtonColor: "#6c757d",
-        confirmButtonText: "Yes, cancel it!",
-        reverseButtons: true,
-        showLoaderOnConfirm: true,
-        preConfirm: async (remove) => {
+//     Swal.fire({
+//         title: "Are you sure?",
+//         text: `This SPR will be cancelled!`,
+//         position: "top",
+//         icon: "warning",
+//         showCancelButton: true,
+//         confirmButtonColor: "#e74a3b",
+//         cancelButtonColor: "#6c757d",
+//         confirmButtonText: "Yes, cancel it!",
+//         reverseButtons: true,
+//         showLoaderOnConfirm: true,
+//         preConfirm: async (remove) => {
 
-            if (remove) {
-                await cancelSpr()
-            }
+//             if (remove) {
+//                 await cancelSpr()
+//             }
 
-        },
-        allowOutsideClick: () => !Swal.isLoading()
-    })
+//         },
+//         allowOutsideClick: () => !Swal.isLoading()
+//     })
 
-}
+// }
 
 function isValidSprInfo(): boolean {
 

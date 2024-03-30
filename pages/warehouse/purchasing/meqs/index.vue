@@ -58,10 +58,9 @@
             <button @click="search()" class="btn btn-primary" :disabled="isSearching">
                 <i class="fas fa-search"></i> {{ isSearching ? 'Searching...' : 'Search' }}
             </button>
-            <nuxt-link v-if="canCreate(authUser, 'canManageMEQS')" class="btn btn-primary float-end"
-                to="/warehouse/purchasing/meqs/create">
+            <button v-if="canCreate(authUser, 'canManageMEQS')" @click="onClickAdd" class="btn btn-primary float-end">
                 <i class="fas fa-plus"></i> Create MEQS
-            </nuxt-link>
+            </button>
         </div>
 
         <div class="h6wrapper mb-3 mt-3" v-show="!isInitialLoad && !isSearching && !isPaginating">
@@ -218,7 +217,6 @@ const authUser = ref<AuthUser>({} as AuthUser)
 const router = useRouter()
 
 // flags
-const isMobile = ref(false)
 const isInitialLoad = ref(true)
 const isSearching = ref(false)
 const isPaginating = ref(false)
@@ -260,9 +258,6 @@ const items = ref<MEQS[]>([])
 
 
 onMounted(async () => {
-    // isMobile.value = window.innerWidth < MOBILE_WIDTH
-
-    // window.addEventListener('resize', checkMobile);
 
     authUser.value = getAuthUser()
     const response = await meqsApi.fetchDataInSearchFilters()
@@ -370,37 +365,9 @@ function onChangeTransactionType() {
 
 // ======================== UTILS ======================== 
 
-function onClickEdit(id: string) {
-    router.push('/warehouse/purchasing/meqs/' + id)
-}
-
 const onClickViewDetails = (id: string) => router.push('/warehouse/purchasing/meqs/view/' + id)
+const onClickEdit = (id: string) => router.push('/warehouse/purchasing/meqs/' + id)
+const onClickAdd = () => router.push('/warehouse/purchasing/meqs/create')
 
 
 </script>
-
-
-
-
-
-
-
-
-
-<style scoped>
-hr.result {
-    flex: 1;
-    margin: 0 10px;
-    border: none;
-    border-top: 1px solid #333;
-}
-
-h6 {
-    margin: 0;
-}
-
-.h6wrapper {
-    display: flex;
-    align-items: center;
-}
-</style>

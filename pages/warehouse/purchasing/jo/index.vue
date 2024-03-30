@@ -41,10 +41,9 @@
             <button @click="search()" class="btn btn-primary" :disabled="isSearching">
                 <i class="fas fa-search"></i> {{ isSearching ? 'Searching...' : 'Search' }}
             </button>
-            <nuxt-link v-if="canCreate(authUser, 'canManageJO')" class="btn btn-primary float-end"
-                to="/warehouse/purchasing/jo/create">
+            <button v-if="canCreate(authUser, 'canManageJO')" @click="onClickAdd" class="btn btn-primary float-end">
                 <i class="fas fa-plus"></i> Create JO
-            </nuxt-link>
+            </button>
         </div>
 
         <div class="h6wrapper mb-3 mt-3" v-show="!isInitialLoad && !isSearching && !isPaginating">
@@ -222,7 +221,7 @@ import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
 import { type JO } from '~/composables/warehouse/jo/jo.types';
 import * as joApi from '~/composables/warehouse/jo/jo.api'
 import { getFullname, formatDate, isAdminOrOwner, canCreate, canViewDetails } from '~/utils/helpers'
-import { MOBILE_WIDTH, PAGINATION_SIZE } from '~/utils/config'
+import { PAGINATION_SIZE } from '~/utils/config'
 import { ROUTES, approvalStatus } from '~/utils/constants';
 
 
@@ -370,36 +369,9 @@ async function search() {
 
 // ======================== UTILS ======================== 
 
-// function checkMobile() {
-//     isMobile.value = window.innerWidth < MOBILE_WIDTH
-// }
-
-
-function onClickEdit(id: string) {
-    router.push('/warehouse/purchasing/jo/' + id)
-}
-
 const onClickViewDetails = (id: string) => router.push('/warehouse/purchasing/jo/view/' + id)
+const onClickEdit = (id: string) => router.push('/warehouse/purchasing/jo/' + id)
+const onClickAdd = () => router.push('/warehouse/purchasing/jo/create')
 
 
 </script>
-
-
-
-<style scoped>
-hr.result {
-    flex: 1;
-    margin: 0 10px;
-    border: none;
-    border-top: 1px solid #333;
-}
-
-h6 {
-    margin: 0;
-}
-
-.h6wrapper {
-    display: flex;
-    align-items: center;
-}
-</style>

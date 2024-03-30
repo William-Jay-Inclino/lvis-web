@@ -33,10 +33,10 @@
             <button @click="search()" class="btn btn-primary" :disabled="isSearching">
                 <i class="fas fa-search"></i> {{ isSearching ? 'Searching...' : 'Search' }}
             </button>
-            <nuxt-link v-if="canCreate(authUser, 'canManageCanvass')" class="btn btn-primary float-end"
-                to="/warehouse/purchasing/canvass/create">
+            <button v-if="canCreate(authUser, 'canManageCanvass')" @click="onClickAdd"
+                class="btn btn-primary float-end">
                 <i class="fas fa-plus"></i> Create Canvass
-            </nuxt-link>
+            </button>
         </div>
 
         <div class="h5wrapper mb-3 mt-3" v-show="!isInitialLoad && !isSearching && !isPaginating">
@@ -210,9 +210,7 @@ onMounted(async () => {
 
 // ======================== FUNCTIONS ======================== 
 
-function onClickEdit(id: string) {
-    router.push('/warehouse/purchasing/canvass/' + id)
-}
+
 
 async function changePage(page: number) {
 
@@ -277,5 +275,7 @@ async function search() {
 // ======================== UTILS ======================== 
 
 const onClickViewDetails = (id: string) => router.push('/warehouse/purchasing/canvass/view/' + id)
+const onClickEdit = (id: string) => router.push('/warehouse/purchasing/canvass/' + id)
+const onClickAdd = () => router.push('/warehouse/purchasing/canvass/create')
 
 </script>

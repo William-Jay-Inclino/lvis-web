@@ -174,7 +174,6 @@ import { useToast } from "vue-toastification";
 import * as rvApi from '~/composables/warehouse/rv/rv.api'
 import * as rvApproverApi from '~/composables/warehouse/rv/rv-approver.api'
 import { type RV } from '~/composables/warehouse/rv/rv.types';
-import { MOBILE_WIDTH } from '~/utils/config';
 import { approvalStatus } from '~/utils/constants';
 
 definePageMeta({
@@ -192,7 +191,6 @@ const router = useRouter();
 const toast = useToast();
 
 // FLAGS
-const isMobile = ref(false)
 const isRVDetailForm = ref(true)
 const isUpdating = ref(false)
 const isUpdatingApproverOrder = ref(false)
@@ -237,6 +235,8 @@ onMounted(async () => {
     })
 
     classifications.value = response.classifications
+
+    isLoadingPage.value = false
 
 })
 
@@ -336,28 +336,28 @@ async function updateRvInfo() {
 
 }
 
-async function cancelRv() {
+// async function cancelRv() {
 
-    console.log('cancelRv')
-    const response = await rvApi.cancel(rvData.value.id)
+//     console.log('cancelRv')
+//     const response = await rvApi.cancel(rvData.value.id)
 
-    if (response.success) {
-        toast.success(response.msg)
-        rvData.value.cancelled_at = response.cancelled_at!
+//     if (response.success) {
+//         toast.success(response.msg)
+//         rvData.value.cancelled_at = response.cancelled_at!
 
-        router.push('/warehouse/purchasing/rv')
+//         router.push('/warehouse/purchasing/rv')
 
-    } else {
-        Swal.fire({
-            title: 'Error!',
-            text: response.msg,
-            icon: 'error',
-            position: 'top',
-        })
-    }
+//     } else {
+//         Swal.fire({
+//             title: 'Error!',
+//             text: response.msg,
+//             icon: 'error',
+//             position: 'top',
+//         })
+//     }
 
 
-}
+// }
 
 
 
@@ -514,30 +514,30 @@ async function changeApproverOrder(
 
 // ======================== UTILS ========================  
 
-async function onCancelRv() {
+// async function onCancelRv() {
 
-    Swal.fire({
-        title: "Are you sure?",
-        text: `This RV will be cancelled!`,
-        position: "top",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#e74a3b",
-        cancelButtonColor: "#6c757d",
-        confirmButtonText: "Yes, cancel it!",
-        reverseButtons: true,
-        showLoaderOnConfirm: true,
-        preConfirm: async (remove) => {
+//     Swal.fire({
+//         title: "Are you sure?",
+//         text: `This RV will be cancelled!`,
+//         position: "top",
+//         icon: "warning",
+//         showCancelButton: true,
+//         confirmButtonColor: "#e74a3b",
+//         cancelButtonColor: "#6c757d",
+//         confirmButtonText: "Yes, cancel it!",
+//         reverseButtons: true,
+//         showLoaderOnConfirm: true,
+//         preConfirm: async (remove) => {
 
-            if (remove) {
-                await cancelRv()
-            }
+//             if (remove) {
+//                 await cancelRv()
+//             }
 
-        },
-        allowOutsideClick: () => !Swal.isLoading()
-    })
+//         },
+//         allowOutsideClick: () => !Swal.isLoading()
+//     })
 
-}
+// }
 
 function isValidRvInfo(): boolean {
 

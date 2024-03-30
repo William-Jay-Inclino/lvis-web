@@ -168,7 +168,6 @@
 
 import Swal from 'sweetalert2'
 import { getFullname, formatToValidHtmlDate, redirectTo401Page, canUpdate } from '~/utils/helpers'
-import { MOBILE_WIDTH } from '~/utils/config';
 import { useToast } from "vue-toastification";
 import type { MEQS } from '~/composables/warehouse/meqs/meqs.types';
 import * as meqsApi from '~/composables/warehouse/meqs/meqs.api'
@@ -204,7 +203,6 @@ const config = useRuntimeConfig()
 const API_URL = config.public.apiUrl
 
 // FLAGS
-const isMobile = ref(false)
 const isUpdating = ref(false)
 const isUpdatingApproverOrder = ref(false)
 const isAddingApprover = ref(false)
@@ -347,24 +345,24 @@ async function updateMeqsInfo() {
 
 }
 
-async function cancelMeqs() {
-    const response = await meqsApi.cancel(meqsData.value.id)
+// async function cancelMeqs() {
+//     const response = await meqsApi.cancel(meqsData.value.id)
 
-    if (response.success) {
-        toast.success(response.msg)
-        meqsData.value.cancelled_at = response.cancelled_at!
+//     if (response.success) {
+//         toast.success(response.msg)
+//         meqsData.value.cancelled_at = response.cancelled_at!
 
-        router.push('/warehouse/purchasing/meqs')
+//         router.push('/warehouse/purchasing/meqs')
 
-    } else {
-        Swal.fire({
-            title: 'Error!',
-            text: response.msg,
-            icon: 'error',
-            position: 'top',
-        })
-    }
-}
+//     } else {
+//         Swal.fire({
+//             title: 'Error!',
+//             text: response.msg,
+//             icon: 'error',
+//             position: 'top',
+//         })
+//     }
+// }
 
 
 
@@ -901,28 +899,28 @@ function removeAwardForAllSuppliersWith(canvass_item_id: string) {
 
 // ======================== UTILS ========================  
 
-async function onCancelMeqs() {
-    Swal.fire({
-        title: "Are you sure?",
-        text: `This MEQS will be cancelled!`,
-        position: "top",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#e74a3b",
-        cancelButtonColor: "#6c757d",
-        confirmButtonText: "Yes, cancel it!",
-        reverseButtons: true,
-        showLoaderOnConfirm: true,
-        preConfirm: async (remove) => {
+// async function onCancelMeqs() {
+//     Swal.fire({
+//         title: "Are you sure?",
+//         text: `This MEQS will be cancelled!`,
+//         position: "top",
+//         icon: "warning",
+//         showCancelButton: true,
+//         confirmButtonColor: "#e74a3b",
+//         cancelButtonColor: "#6c757d",
+//         confirmButtonText: "Yes, cancel it!",
+//         reverseButtons: true,
+//         showLoaderOnConfirm: true,
+//         preConfirm: async (remove) => {
 
-            if (remove) {
-                await cancelMeqs()
-            }
+//             if (remove) {
+//                 await cancelMeqs()
+//             }
 
-        },
-        allowOutsideClick: () => !Swal.isLoading()
-    })
-}
+//         },
+//         allowOutsideClick: () => !Swal.isLoading()
+//     })
+// }
 
 function onClickTab(formType: FORM_TYPE) {
     form.value = formType

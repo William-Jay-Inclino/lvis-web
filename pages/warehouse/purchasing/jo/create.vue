@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="!isLoadingPage">
         <h2 class="text-warning">Create JO</h2>
         <hr>
 
@@ -139,6 +139,10 @@
 
     </div>
 
+    <div v-else>
+        <LoaderSpinner />
+    </div>
+
 </template>
 
 
@@ -149,7 +153,6 @@ import { getFullname } from '~/utils/helpers'
 import * as joApi from '~/composables/warehouse/jo/jo.api'
 import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
 import type { CreateJoInput } from '~/composables/warehouse/jo/jo.types';
-import { MOBILE_WIDTH } from '~/utils/config';
 
 definePageMeta({
     name: ROUTES.JO_CREATE,
@@ -157,6 +160,7 @@ definePageMeta({
     middleware: ['auth'],
 })
 
+const isLoadingPage = ref(true)
 
 // CONSTANTS
 const router = useRouter();
@@ -199,10 +203,6 @@ const departments = ref<Department[]>([])
 // ======================== LIFECYCLE HOOKS ========================  
 onMounted(async () => {
 
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-
-    window.addEventListener('resize', checkMobile);
-
     const response = await joApi.fetchFormDataInCreate()
 
     canvasses.value = response.canvasses
@@ -215,6 +215,8 @@ onMounted(async () => {
     joData.value.approvers = response.approvers
     classifications.value = response.classifications
     departments.value = response.departments
+
+    isLoadingPage.value = false
 
 })
 
@@ -328,11 +330,6 @@ function isValid(): boolean {
     return true
 
 }
-
-function checkMobile() {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-}
-
 
 
 
