@@ -63,7 +63,7 @@ async function login() {
             const axiosError = err as AxiosError;
             console.log('Error:', axiosError.response);
 
-            if (axiosError.response && axiosError.response.status === 401) {
+            if (axiosError.response && (axiosError.response.status === 401 || axiosError.response.status === 404)) {
                 error.value.show = true;
                 error.value.msg = "Access denied! It appears you lack the necessary permissions to login. Consider verifying your credentials or contacting the system administrator."
             } else {

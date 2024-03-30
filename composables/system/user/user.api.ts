@@ -224,7 +224,7 @@ export async function fetchFormDataInCreate(): Promise<{
 
     const query = `
         query {
-            employees(page: 1, pageSize: 10) {
+            employees(page: 1, pageSize: 25) {
                 data {
                     id
                     firstname
@@ -267,7 +267,6 @@ export async function fetchFormDataInCreate(): Promise<{
 
 
 }
-
 
 export async function isUsernameExist(username: string): Promise<{
     success: boolean,
