@@ -115,8 +115,6 @@ const authUser = ref<AuthUser>()
 
 onMounted(() => {
     authUser.value = getAuthUser()
-    // @ts-ignore
-    authUser.value.user.permissions = JSON.parse(authUser.value.user.permissions)
 })
 
 

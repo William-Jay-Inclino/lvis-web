@@ -66,7 +66,14 @@
                     <hr class="result">
                 </div>
 
-                <SystemUserPermissions :permissions="item.permissions" :is-view-only="true" />
+                <div v-if="item.role === ROLE.ADMIN">
+                    <div class="text-muted text-center">--No restrictions--</div>
+                </div>
+
+                <div v-else>
+                    <SystemUserPermissions :permissions="item.permissions" :is-view-only="true" />
+                </div>
+
 
 
                 <div class="row pt-5">
