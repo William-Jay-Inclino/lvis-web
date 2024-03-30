@@ -5,7 +5,10 @@
             <label class="form-label">
                 Username
             </label>
-            <div class="input-group">
+
+            <input v-if="!canUpdateUsername" type="text" class="form-control" :value="username" disabled>
+
+            <div v-else class="input-group">
                 <input type="text" class="form-control" :value="username" @input="onUpdateUsername">
                 <span class="input-group-text">
                     <button @click="emits('checkUsernameAvailability', username)"
@@ -14,8 +17,10 @@
                     </button>
                 </span>
             </div>
-            <small class="text-danger fst-italic" v-if="isUsernameExist"> Username already exist </small>
-            <small class="text-success fst-italic" v-else> Username is available </small>
+            <div v-if="canUpdateUsername">
+                <small class="text-danger fst-italic" v-if="isUsernameExist"> Username already exist </small>
+                <small class="text-success fst-italic" v-else> Username is available </small>
+            </div>
         </div>
 
         <div class="mb-3">
@@ -60,6 +65,10 @@ const props = defineProps({
         type: String,
         default: ''
     },
+    canUpdateUsername: {
+        type: Boolean,
+        default: true
+    }
 });
 
 const showPassword = ref(false)

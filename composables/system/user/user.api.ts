@@ -1,5 +1,5 @@
 import { sendRequest } from "~/utils/api"
-import type { User, CreateUserInput, MutationResponse, FindAllResponse, UpdateUserInput } from "./user.types";
+import type { User, CreateUserInput, MutationResponse, FindAllResponse, UpdateUserInput, UserPermissions } from "./user.types";
 
 
 
@@ -154,10 +154,13 @@ export async function updateUserInfo(id: string, input: UpdateUserInput): Promis
     const mutation = `
         mutation {
             updateUser(
-                firstname: "${input.firstname}",
-                middlename: ${input.middlename},
-                lastname: "${input.lastname}",
-                role: ${input.role},
+                id: "${id}",
+                input: {
+                    firstname: "${input.firstname}",
+                    middlename: ${middlename},
+                    lastname: "${input.lastname}",
+                    role: ${input.role},
+                }
             ) {
                 id
             }
@@ -183,6 +186,87 @@ export async function updateUserInfo(id: string, input: UpdateUserInput): Promis
         return {
             success: false,
             msg: 'Failed to update User. Please contact system administrator'
+        }
+
+    }
+}
+
+export async function updatePassword(id: string, password: string): Promise<MutationResponse> {
+
+    const mutation = `
+        mutation {
+            updateUser(
+                id: "${id}",
+                input: {
+                    password: "${password}",
+                }
+            ) {
+                id
+            }
+        }`;
+
+    try {
+        const response = await sendRequest(mutation);
+        console.log('response', response);
+
+        if (response.data && response.data.data && response.data.data.updateUser) {
+            return {
+                success: true,
+                msg: 'Password updated successfully!',
+                data: response.data.data.updateUser
+            }
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+    } catch (error) {
+        console.error(error);
+
+        return {
+            success: false,
+            msg: 'Failed to update Password. Please contact system administrator'
+        }
+
+    }
+}
+
+
+export async function updatePermissions(id: string, permissions: UserPermissions): Promise<MutationResponse> {
+
+    const escapeQuotes = (jsonString: string) => jsonString.replace(/"/g, '\\"')
+
+    const mutation = `
+        mutation {
+            updateUser(
+                id: "${id}",
+                input: {
+                    permissions: ${permissions != null ? `"${escapeQuotes(JSON.stringify(permissions))}"` : null}
+                }
+            ) {
+                id
+            }
+        }`;
+
+    try {
+        const response = await sendRequest(mutation);
+        console.log('response', response);
+
+        if (response.data && response.data.data && response.data.data.updateUser) {
+            return {
+                success: true,
+                msg: 'Permissions updated successfully!',
+                data: response.data.data.updateUser
+            }
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+    } catch (error) {
+        console.error(error);
+
+        return {
+            success: false,
+            msg: 'Failed to update Permissions. Please contact system administrator'
         }
 
     }

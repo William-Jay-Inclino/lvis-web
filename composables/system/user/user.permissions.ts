@@ -1,9 +1,6 @@
 import type { SystemPermissions, UserPermissions, WarehousePermissions } from "./user.types"
 
 
-
-
-
 export const systemPermissions: SystemPermissions = {
 
     // ========= DATA MANAGEMENT ========= 
@@ -32,7 +29,6 @@ export const systemPermissions: SystemPermissions = {
         delete: false,
     },
 }
-
 
 export const warehousePermissions: WarehousePermissions = {
 

@@ -97,7 +97,7 @@
 
                 <div class="d-flex justify-content-between pt-3">
                     <button @click="onClickGoToList" type="button" class="btn btn-secondary">
-                        <i class="fas fa-chevron-left"></i> Back to User List
+                        <i class="fas fa-list"></i> Go to list
                     </button>
                     <button @click="goToStep2()" type="button" class="btn btn-primary" :disabled="!canProceedStep2">
                         <i class="fas fa-chevron-right"></i> Next
