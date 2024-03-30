@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="!isLoadingPage">
         <h2 class="text-warning">Search Item</h2>
         <hr>
 
@@ -32,7 +32,7 @@
             <button @click="search" class="btn btn-primary" :disabled="isSearching">
                 <i class="fas fa-search"></i> {{ isSearching ? 'Searching...' : 'Search' }}
             </button>
-            <button class="btn btn-primary float-end">
+            <button v-if="canCreate(authUser, 'canManageItem')" @click="onClickAdd" class="btn btn-primary float-end">
                 <i class="fas fa-plus"></i> Add Stock Item
             </button>
         </div>
@@ -59,102 +59,44 @@
                 <div class="row">
                     <div class="col">
 
-
-                        <div v-if="!isMobile">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th class="bg-secondary text-white">Item Code</th>
-                                            <th class="bg-secondary text-white">Name</th>
-                                            <th class="bg-secondary text-white">Description</th>
-                                            <th class="bg-secondary text-white">Type</th>
-                                            <th class="bg-secondary text-white">GWA Price</th>
-                                            <th class="bg-secondary text-white">Quantity</th>
-                                            <th class="text-center bg-secondary text-white">
-                                                <i class="fas fa-cogs"></i>
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="i in items">
-                                            <td class="text-muted align-middle"> {{ i.code }} </td>
-                                            <td class="text-muted align-middle"> {{ i.name }} </td>
-                                            <td class="text-muted align-middle"> {{ i.description }} </td>
-                                            <td class="text-muted align-middle"> {{ i.item_type.name }} </td>
-                                            <td class="text-muted align-middle"> {{ formatToPhpCurrency(i.GWAPrice) }}
-                                            </td>
-                                            <td class="text-muted align-middle"> {{ i.total_quantity }} </td>
-                                            <td class="text-muted align-middle">
-                                                <nuxt-link class="btn btn-light w-50"
-                                                    :to="'/warehouse/stock-inventory/item/view/' + i.id">
-                                                    <i class="fas fa-info-circle text-info"></i>
-                                                </nuxt-link>
-                                                <button @click="onClickEdit(i.id)" class="btn btn-light w-50">
-                                                    <i class="fas fa-edit text-primary"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="bg-secondary text-white">Item Code</th>
+                                        <th class="bg-secondary text-white">Name</th>
+                                        <th class="bg-secondary text-white">Description</th>
+                                        <th class="bg-secondary text-white">Type</th>
+                                        <th class="bg-secondary text-white">GWA Price</th>
+                                        <th class="bg-secondary text-white">Quantity</th>
+                                        <th class="text-center bg-secondary text-white">
+                                            <i class="fas fa-cogs"></i>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="i in items">
+                                        <td class="text-muted align-middle"> {{ i.code }} </td>
+                                        <td class="text-muted align-middle"> {{ i.name }} </td>
+                                        <td class="text-muted align-middle"> {{ i.description }} </td>
+                                        <td class="text-muted align-middle"> {{ i.item_type.name }} </td>
+                                        <td class="text-muted align-middle"> {{ formatToPhpCurrency(i.GWAPrice) }}
+                                        </td>
+                                        <td class="text-muted align-middle"> {{ i.total_quantity }} </td>
+                                        <td class="text-muted align-middle">
+                                            <button @click="onClickViewDetails(i.id)" class="btn btn-light w-50"
+                                                :disabled="!canViewDetails(authUser, 'canManageItem')">
+                                                <i class="fas fa-info-circle"
+                                                    :class="{ 'text-info': canViewDetails(authUser, 'canManageItem') }"></i>
+                                            </button>
+                                            <button @click="onClickEdit(i.id)" class="btn btn-light w-50">
+                                                <i class="fas fa-edit text-primary"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-
-                        <div v-else>
-
-                            <div v-for="i in items" class="table-responsive">
-
-                                <table class="table table-hover table-bordered">
-
-                                    <tbody>
-                                        <tr>
-                                            <td width="50%" class="bg-secondary text-white"> Item Code </td>
-                                            <td class="bg-secondary text-white"> {{ i.code }} </td>
-                                        </tr>
-                                        <tr>
-                                            <td width="50%" class="bg-secondary text-white"> Name </td>
-                                            <td class="bg-secondary text-white"> {{ i.name }} </td>
-                                        </tr>
-                                        <tr>
-                                            <td width="50%" class="bg-secondary text-white"> Description </td>
-                                            <td class="bg-secondary text-white"> {{ i.description }} </td>
-                                        </tr>
-                                        <tr>
-                                            <td width="50%" class="bg-secondary text-white"> Item Type </td>
-                                            <td class="bg-secondary text-white"> {{ i.item_type.name }} </td>
-                                        </tr>
-                                        <tr>
-                                            <td width="50%" class="bg-secondary text-white"> GWA Price </td>
-                                            <td class="bg-secondary text-white"> {{ formatToPhpCurrency(i.GWAPrice) }}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td width="50%" class="bg-secondary text-white"> Quantity </td>
-                                            <td class="bg-secondary text-white"> {{ i.total_quantity }} </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-center">
-                                                <nuxt-link class="btn btn-sm btn-light text-primary w-100"
-                                                    :to="'/warehouse/stock-inventory/item/view/' + i.id">
-                                                    View Details
-                                                </nuxt-link>
-                                            </td>
-                                            <td class="text-center">
-                                                <button @click="onClickEdit(i.id)"
-                                                    class="btn btn-sm btn-light text-primary w-100">
-                                                    Edit Item
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-
-                                </table>
-
-
-                            </div>
-
-                        </div>
-
 
                     </div>
                 </div>
@@ -186,6 +128,10 @@
         </div>
 
     </div>
+
+    <div v-else>
+        <LoaderSpinner />
+    </div>
 </template>
 
 
@@ -193,17 +139,19 @@
 
 import * as api from '~/composables/warehouse/item/item.api'
 import type { Item } from '~/composables/warehouse/item/item.type';
-import { MOBILE_WIDTH, PAGINATION_SIZE } from '~/utils/config'
+import { PAGINATION_SIZE } from '~/utils/config'
 
 definePageMeta({
     name: ROUTES.ITEM_INDEX,
     layout: "layout-warehouse",
     middleware: ['auth'],
 })
+const isLoadingPage = ref(true)
+const authUser = ref<AuthUser>({} as AuthUser)
 
+const router = useRouter()
 
 // flags
-const isMobile = ref(false)
 const isInitialLoad = ref(true)
 const isSearching = ref(false)
 const isPaginating = ref(false)
@@ -233,25 +181,20 @@ const items = ref<Item[]>([])
 // ======================== LIFECYCLE HOOKS ======================== 
 
 onMounted(async () => {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-
-    window.addEventListener('resize', checkMobile);
+    authUser.value = getAuthUser()
 
     const response = await api.fetchDataInSearchFilters()
 
     itemOptions.value = response.items
     itemTypes.value = response.itemTypes
 
+    isLoadingPage.value = false
+
 })
 
 
 
 // ======================== FUNCTIONS ======================== 
-
-function onClickEdit(id: string) {
-    console.log('onClickEdit', id)
-    // router.push('/warehouse/purchasing/canvass/' + id)
-}
 
 async function changePage(page: number) {
 
@@ -315,9 +258,8 @@ async function search() {
 
 // ======================== UTILS ======================== 
 
-function checkMobile() {
-    isMobile.value = window.innerWidth < MOBILE_WIDTH
-}
-
+const onClickViewDetails = (id: string) => router.push('/warehouse/stock-inventory/item/view/' + id)
+const onClickEdit = (id: string) => router.push('/warehouse/stock-inventory/item/' + id)
+const onClickAdd = () => router.push('/warehouse/stock-inventory/item/create')
 
 </script>
