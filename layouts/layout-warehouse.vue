@@ -1,7 +1,5 @@
 <template>
 
-    <NuxtLoadingIndicator />
-
     <div>
         <div class="container px-0 custom-card">
             <nav class="navbar sticky-top navbar-expand-lg navbar-dark" style="background-color: #1877F2;">

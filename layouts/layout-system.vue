@@ -11,40 +11,31 @@
                     </button>
 
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <ul v-if="authUser" class="navbar-nav ms-auto mb-2 mb-lg-0">
                             <li class="nav-item">
                                 <nuxt-link class="nav-link text-white" to="/home">Home</nuxt-link>
                             </li>
-                            <li class="nav-item">
+                            <li v-if="isAdmin(authUser)" class="nav-item">
                                 <nuxt-link class="nav-link text-white" to="/system/user">Users</nuxt-link>
                             </li>
-                            <!-- <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown"
-                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Security
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><a class="dropdown-item" href="#">User Access Control</a></li>
-                                    <li><a class="dropdown-item" href="#">Activity Log</a></li>
-                                </ul>
-                            </li> -->
-                            <li class="nav-item dropdown">
+                            <li v-if="canViewDataManagement(authUser)" class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown"
                                     role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Data Management
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><nuxt-link class="dropdown-item"
+                                    <li v-if="canView('canManageEmployee', authUser)"><nuxt-link class="dropdown-item"
                                             to="/data-management/employee">Employee</nuxt-link></li>
-                                    <li><nuxt-link class="dropdown-item"
+                                    <li v-if="canView('canManageDepartment', authUser)"><nuxt-link class="dropdown-item"
                                             to="/system/data-management/department">Department</nuxt-link></li>
-                                    <li><nuxt-link class="dropdown-item"
+                                    <li v-if="canView('canManageAccount', authUser)"><nuxt-link class="dropdown-item"
                                             to="/system/data-management/account">Account</nuxt-link></li>
-                                    <li><nuxt-link class="dropdown-item"
+                                    <li v-if="canView('canManageClassification', authUser)"><nuxt-link
+                                            class="dropdown-item"
                                             to="/system/data-management/classification">Classification</nuxt-link></li>
                                 </ul>
                             </li>
-                            <li class="nav-item dropdown">
+                            <li v-if="isAdmin(authUser)" class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown"
                                     role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Settings
@@ -160,6 +151,42 @@ const authUser = ref()
 onMounted(() => {
     authUser.value = getAuthUser()
 })
+
+
+function canViewDataManagement(authUser: AuthUser) {
+
+    if (isAdmin(authUser)) return true
+
+    if (!authUser.user.permissions) return false
+
+    const systemPermissions = authUser.user.permissions.system
+
+
+    return (
+        (!!systemPermissions.canManageAccount && systemPermissions.canManageAccount.read) ||
+        (!!systemPermissions.canManageEmployee && systemPermissions.canManageEmployee.read) ||
+        (!!systemPermissions.canManageDepartment && systemPermissions.canManageDepartment.read) ||
+        (!!systemPermissions.canManageClassification && systemPermissions.canManageClassification.read)
+    )
+}
+
+// check first if has module
+// check if user can read the specified module
+
+function canView(module: string, authUser: AuthUser) {
+
+    if (isAdmin(authUser)) return true
+
+    if (!authUser.user.permissions) return false
+
+    // @ts-ignore
+    if (!authUser.user.permissions.system[module]) return false
+
+    // @ts-ignore
+    if (authUser.user.permissions.system[module].read) return true
+
+    return false
+}
 
 
 </script>
