@@ -1,4 +1,4 @@
-import type { FindAllResponse, Item } from "./item.type";
+import type { CreateItemInput, FindAllResponse, Item, MutationResponse, UpdateItemInput } from "./item.type";
 
 
 
@@ -33,8 +33,8 @@ export async function fetchDataInSearchFilters(): Promise<{
 
         const data = response.data.data
 
-        if (data.item && data.item.data) {
-            items = response.data.data.item.data
+        if (data.items && data.items.data) {
+            items = response.data.data.items.data
         }
 
         if (data.item_types) {
@@ -191,5 +191,175 @@ export async function findOne(id: string): Promise<Item | undefined> {
     } catch (error) {
         console.error(error);
         return undefined
+    }
+}
+
+export async function fetchFormDataInCreate(): Promise<{
+    itemTypes: ItemType[],
+    units: Unit[],
+}> {
+
+
+    const query = `
+        query {
+            item_types{
+                id
+                name
+            }
+            units{
+                id
+                name
+            }
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        let itemTypes = []
+        let units = []
+
+        if (!response.data || !response.data.data) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+
+        const data = response.data.data
+
+        if (data.item_types) {
+            itemTypes = data.item_types
+        }
+
+        if (data.units) {
+            units = data.units
+        }
+
+        return {
+            itemTypes,
+            units,
+        }
+
+    } catch (error) {
+        console.error(error);
+        return {
+            itemTypes: [],
+            units: [],
+        }
+    }
+
+
+}
+
+export async function create(input: CreateItemInput): Promise<MutationResponse> {
+
+    const mutation = `
+        mutation {
+            createItem(input: {
+                item_type_id: "${input.item_type?.id}",
+                unit_id: "${input.unit?.id}",
+                code: "${input.code}",
+                name: "${input.name}",
+                description: "${input.description}",
+                initial_quantity: ${input.initial_quantity},
+                initial_average_price: ${input.initial_average_price},
+                alert_level: ${input.alert_level},
+            }) {
+                id 
+            }
+        }`;
+
+    try {
+        const response = await sendRequest(mutation);
+        console.log('response', response);
+
+        if (response.data && response.data.data && response.data.data.createItem) {
+            return {
+                success: true,
+                msg: 'Item created successfully!',
+                data: response.data.data.createItem
+            }
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+
+    } catch (error) {
+        console.error(error);
+
+        return {
+            success: false,
+            msg: 'Failed to create Item. Please contact system administrator'
+        }
+
+    }
+}
+
+export async function update(id: string, input: UpdateItemInput): Promise<MutationResponse> {
+
+
+    const mutation = `
+        mutation {
+            updateItem(id: "${id}", input: {
+                item_type_id: "${input.item_type?.id}",
+                unit_id: "${input.unit?.id}",
+                code: "${input.code}",
+                name: "${input.name}",
+                description: "${input.description}",
+            }) {
+                id 
+            }
+        }`;
+
+    try {
+        const response = await sendRequest(mutation);
+        console.log('response', response);
+
+        if (response.data && response.data.data && response.data.data.updateItem) {
+            return {
+                success: true,
+                msg: 'Item updated successfully!',
+                data: response.data.data.updateItem
+            }
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+    } catch (error) {
+        console.error(error);
+
+        return {
+            success: false,
+            msg: 'Failed to update Item. Please contact system administrator'
+        }
+
+    }
+}
+
+export async function remove(id: string): Promise<{ success: boolean, msg: string }> {
+    const mutation = `
+        mutation {
+            removeItem(id: "${id}"){
+                success
+                msg
+            }
+        }
+    `;
+
+    try {
+        const response = await sendRequest(mutation);
+        console.log('response', response)
+
+        if (response.data && response.data.data && response.data.data.removeItem) {
+            return response.data.data.removeItem
+        }
+
+        throw new Error(JSON.stringify(response.data.errors));
+
+    } catch (error) {
+        console.error(error);
+        return {
+            success: false,
+            msg: 'Failed to remove Item. Please contact system administrator'
+        }
     }
 }

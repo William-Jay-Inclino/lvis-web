@@ -8,7 +8,7 @@
                 <div class="mb-3">
                     <label class="form-label">Item Code</label>
                     <client-only>
-                        <v-select :options="itemOptions" label="rc_number" v-model="searchItem"></v-select>
+                        <v-select :options="itemOptions" label="code" v-model="searchItem"></v-select>
                     </client-only>
                 </div>
             </div>
@@ -16,7 +16,7 @@
                 <div class="mb-3">
                     <label class="form-label">Item Type</label>
                     <client-only>
-                        <v-select :options="itemTypes" label="fullname" v-model="searchItemType"></v-select>
+                        <v-select :options="itemTypes" label="name" v-model="searchItemType"></v-select>
                     </client-only>
                 </div>
             </div>
@@ -186,6 +186,8 @@ onMounted(async () => {
     authUser.value = getAuthUser()
 
     const response = await api.fetchDataInSearchFilters()
+
+    console.log('response', response)
 
     itemOptions.value = response.items
     itemTypes.value = response.itemTypes
