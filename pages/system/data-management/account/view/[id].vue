@@ -39,13 +39,16 @@
                     <div class="col">
                         <div class="d-flex justify-content-end gap-2">
                             <div class="d-flex justify-content-end gap-2">
-                                <button class="btn btn-secondary" @click="onClickGoToList">
+                                <button v-if="canRead(authUser, 'canManageAccount')" class="btn btn-secondary"
+                                    @click="onClickGoToList">
                                     <i class="fas fa-list"></i> Go to List
                                 </button>
-                                <button class="btn btn-success" @click="onClickUpdate">
+                                <button v-if="canEdit(authUser, 'canManageAccount')" class="btn btn-success"
+                                    @click="onClickUpdate">
                                     <i class="fas fa-sync"></i> Update
                                 </button>
-                                <button class="btn btn-primary" @click="onClickAddNew">
+                                <button v-if="canCreate(authUser, 'canManageAccount')" class="btn btn-primary"
+                                    @click="onClickAddNew">
                                     <i class="fas fa-plus"></i> Add New
                                 </button>
                             </div>
@@ -67,17 +70,21 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-system"
-})
-
 import * as api from '~/composables/system/account/account.api'
 import type { Account } from '~/composables/system/account/account';
+
+definePageMeta({
+    name: ROUTES.ACCOUNT_UPDATE,
+    layout: "layout-system",
+    middleware: ['auth'],
+})
+
+const isLoadingPage = ref(true)
+const authUser = ref<AuthUser>({} as AuthUser)
 
 const router = useRouter()
 const route = useRoute()
 const item = ref<Account | undefined>()
-const isLoadingPage = ref(true)
 
 onMounted(async () => {
 

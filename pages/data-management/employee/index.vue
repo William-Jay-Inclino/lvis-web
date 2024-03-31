@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="!isLoadingPage">
 
         <h2 class="text-warning">Employee</h2>
 
@@ -7,7 +7,8 @@
 
         <div class="row">
             <div class="col">
-                <button @click="onClickCreate" class="btn btn-primary float-end">
+                <button v-if="canCreate(authUser, 'canManageEmployee')" @click="onClickCreate"
+                    class="btn btn-primary float-end">
                     <i class="fas fa-plus"></i> Create
                 </button>
             </div>
@@ -53,11 +54,15 @@
                                         <td class="text-muted"> {{ i.middlename }} </td>
                                         <td class="text-muted"> {{ i.lastname }} </td>
                                         <td class="text-center">
-                                            <button @click="onClickDelete(i.id)" class="btn btn-sm btn-light me-3">
-                                                <i class="fas fa-trash text-danger"></i>
+                                            <button :disabled="!canDelete(authUser, 'canManageEmployee')"
+                                                @click="onClickDelete(i.id)" class="btn btn-sm btn-light me-3">
+                                                <i class="fas fa-trash"
+                                                    :class="{ 'text-danger': canDelete(authUser, 'canManageEmployee') }"></i>
                                             </button>
-                                            <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
-                                                <i class="fas fa-edit text-primary"></i>
+                                            <button :disabled="!canEdit(authUser, 'canManageEmployee')"
+                                                @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
+                                                <i class="fas fa-edit"
+                                                    :class="{ 'text-primary': canEdit(authUser, 'canManageEmployee') }"></i>
                                             </button>
                                         </td>
                                     </tr>
@@ -96,14 +101,13 @@
 
     </div>
 
+    <div v-else>
+        <LoaderSpinner />
+    </div>
 </template>
 
 
 <script setup lang="ts">
-
-definePageMeta({
-    layout: "layout-system"
-})
 
 import * as api from '~/composables/system/employee/employee.api'
 import type { Employee } from '~/composables/system/employee/employee.types';
@@ -111,6 +115,14 @@ import { PAGINATION_SIZE } from '~/utils/config'
 import Swal from 'sweetalert2'
 import { useToast } from "vue-toastification";
 
+definePageMeta({
+    name: ROUTES.EMPLOYEE_INDEX,
+    layout: "layout-system",
+    middleware: ['auth'],
+})
+
+const isLoadingPage = ref(true)
+const authUser = ref<AuthUser>({} as AuthUser)
 
 const toast = useToast();
 const router = useRouter()
@@ -131,6 +143,7 @@ const searchValue = ref(null)
 const pagination = ref({ ..._paginationInitial })
 
 onMounted(async () => {
+    authUser.value = getAuthUser()
 
     isSearching.value = true
     const { data, currentPage, totalItems, totalPages } = await api.findAll({
@@ -144,6 +157,9 @@ onMounted(async () => {
     pagination.value.totalItems = totalItems
     pagination.value.currentPage = currentPage
     pagination.value.totalPages = totalPages
+
+
+    isLoadingPage.value = false
 })
 
 async function changePage(page: number) {

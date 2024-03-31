@@ -31,7 +31,6 @@ export function isAdminOrOwner(createdBy: string, authUser: AuthUser) {
 
 }
 
-
 export function getFullname(firstname: string, middlename: string | null, lastname: string) {
     if (middlename) {
         return lastname + ', ' + firstname + ' ' + convertMiddleNameToInitial(middlename)
@@ -183,6 +182,16 @@ export function canEdit(authUser: AuthUser, permission: string) {
 
     // @ts-ignore
     return !!authUser.user.permissions.warehouse[permission].update
+
+}
+
+export function canRead(authUser: AuthUser, permission: string) {
+    if (isAdmin(authUser)) return true
+
+    if (!authUser.user.permissions) return false
+
+    // @ts-ignore
+    return !!authUser.user.permissions.warehouse[permission].read
 
 }
 

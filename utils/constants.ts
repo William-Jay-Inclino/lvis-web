@@ -140,7 +140,44 @@ export enum MODULES {
 
 export enum ROUTES {
 
+
+
+    // ==============================================   SYSTEM ============================================== 
+
+
+
+    // =======================  EMPLOYEE ======================= 
+    EMPLOYEE_INDEX = `${SERVICES.SYSTEM}_EMPLOYEE_INDEX`,
+    EMPLOYEE_CREATE = `${SERVICES.SYSTEM}_EMPLOYEE_CREATE`,
+    EMPLOYEE_UPDATE = `${SERVICES.SYSTEM}_EMPLOYEE_UPDATE`,
+    EMPLOYEE_VIEW = `${SERVICES.SYSTEM}_EMPLOYEE_VIEW`,
+
+    // =======================  ACCOUNT ======================= 
+    ACCOUNT_INDEX = `${SERVICES.SYSTEM}_ACCOUNT_INDEX`,
+    ACCOUNT_CREATE = `${SERVICES.SYSTEM}_ACCOUNT_CREATE`,
+    ACCOUNT_UPDATE = `${SERVICES.SYSTEM}_ACCOUNT_UPDATE`,
+    ACCOUNT_VIEW = `${SERVICES.SYSTEM}_ACCOUNT_VIEW`,
+
+    // =======================  CLASSIFICATION ======================= 
+    CLASSIFICATION_INDEX = `${SERVICES.SYSTEM}_CLASSIFICATION_INDEX`,
+    CLASSIFICATION_CREATE = `${SERVICES.SYSTEM}_CLASSIFICATION_CREATE`,
+    CLASSIFICATION_UPDATE = `${SERVICES.SYSTEM}_CLASSIFICATION_UPDATE`,
+    CLASSIFICATION_VIEW = `${SERVICES.SYSTEM}_CLASSIFICATION_VIEW`,
+
+    // =======================  DEPARTMENT ======================= 
+    DEPARTMENT_INDEX = `${SERVICES.SYSTEM}_DEPARTMENT_INDEX`,
+    DEPARTMENT_CREATE = `${SERVICES.SYSTEM}_DEPARTMENT_CREATE`,
+    DEPARTMENT_UPDATE = `${SERVICES.SYSTEM}_DEPARTMENT_UPDATE`,
+    DEPARTMENT_VIEW = `${SERVICES.SYSTEM}_DEPARTMENT_VIEW`,
+
+
+
+
+
+
     // ==============================================   WAREHOUSE ============================================== 
+
+
 
     // =======================  CANVASS ======================= 
     CANVASS_INDEX = `${SERVICES.WAREHOUSE}_CANVASS_INDEX`,

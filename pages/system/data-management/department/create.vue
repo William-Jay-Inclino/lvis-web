@@ -48,13 +48,15 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-system"
-})
-
 import * as api from '~/composables/system/department/department.api'
 import type { CreateDepartmentInput } from '~/composables/system/department/department'
 import Swal from 'sweetalert2'
+
+definePageMeta({
+    name: ROUTES.DEPARTMENT_CREATE,
+    layout: "layout-system",
+    middleware: ['auth'],
+})
 
 const router = useRouter()
 const isSaving = ref(false)

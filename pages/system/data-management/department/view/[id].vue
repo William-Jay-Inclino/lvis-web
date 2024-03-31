@@ -43,13 +43,16 @@
                     <div class="col">
                         <div class="d-flex justify-content-end gap-2">
                             <div class="d-flex justify-content-end gap-2">
-                                <button class="btn btn-secondary" @click="onClickGoToList">
+                                <button v-if="canRead(authUser, 'canManageDepartment')" class="btn btn-secondary"
+                                    @click="onClickGoToList">
                                     <i class="fas fa-list"></i> Go to List
                                 </button>
-                                <button class="btn btn-success" @click="onClickUpdate">
+                                <button v-if="canEdit(authUser, 'canManageDepartment')" class="btn btn-success"
+                                    @click="onClickUpdate">
                                     <i class="fas fa-sync"></i> Update
                                 </button>
-                                <button class="btn btn-primary" @click="onClickAddNew">
+                                <button v-if="canCreate(authUser, 'canManageDepartment')" class="btn btn-primary"
+                                    @click="onClickAddNew">
                                     <i class="fas fa-plus"></i> Add New
                                 </button>
                             </div>
@@ -71,21 +74,25 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-system"
-})
-
 import * as api from '~/composables/system/department/department.api'
 import type { Department } from '~/composables/system/department/department';
 import { departmentStatus } from '~/utils/constants'
 
+definePageMeta({
+    name: ROUTES.DEPARTMENT_INDEX,
+    layout: "layout-system",
+    middleware: ['auth'],
+})
+
+const isLoadingPage = ref(true)
+const authUser = ref<AuthUser>({} as AuthUser)
+
 const router = useRouter()
 const route = useRoute()
 const item = ref<Department | undefined>()
-const isLoadingPage = ref(true)
 
 onMounted(async () => {
-
+    authUser.value = getAuthUser()
     item.value = await api.findOne(route.params.id as string)
     isLoadingPage.value = false
 

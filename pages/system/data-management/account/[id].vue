@@ -57,25 +57,27 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-system"
-})
-
 import * as api from '~/composables/system/account/account.api'
 import type { CreateAccountInput, Account } from '~/composables/system/account/account'
 import Swal from 'sweetalert2'
+
+definePageMeta({
+    name: ROUTES.ACCOUNT_UPDATE,
+    layout: "layout-system",
+    middleware: ['auth'],
+})
+
+const isLoadingPage = ref(true)
 
 const route = useRoute()
 const router = useRouter()
 const isSaving = ref(false)
 
 const item = ref<Account>()
-const isLoadingPage = ref(true)
 
 onMounted(async () => {
 
     const response = await api.findOne(route.params.id as string)
-    isLoadingPage.value = false
 
     if (!response) {
         console.error('Account not found')
@@ -84,6 +86,7 @@ onMounted(async () => {
 
     item.value = response
 
+    isLoadingPage.value = false
 })
 
 

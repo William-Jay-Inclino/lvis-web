@@ -52,14 +52,15 @@
 
 
 <script setup lang="ts">
-
-definePageMeta({
-    layout: "layout-system"
-})
-
 import * as api from '~/composables/system/employee/employee.api'
 import type { CreateEmployeeInput } from '~/composables/system/employee/employee.types'
 import Swal from 'sweetalert2'
+
+definePageMeta({
+    name: ROUTES.EMPLOYEE_CREATE,
+    layout: "layout-system",
+    middleware: ['auth'],
+})
 
 const router = useRouter()
 const isSaving = ref(false)

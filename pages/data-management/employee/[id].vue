@@ -57,25 +57,27 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-system"
-})
-
 import * as api from '~/composables/system/employee/employee.api'
 import type { CreateEmployeeInput, Employee } from '~/composables/system/employee/employee.types'
 import Swal from 'sweetalert2'
+
+definePageMeta({
+    name: ROUTES.EMPLOYEE_UPDATE,
+    layout: "layout-system",
+    middleware: ['auth'],
+})
+
+const isLoadingPage = ref(true)
 
 const route = useRoute()
 const router = useRouter()
 const isSaving = ref(false)
 
 const item = ref<Employee>()
-const isLoadingPage = ref(true)
 
 onMounted(async () => {
 
     const response = await api.findOne(route.params.id as string)
-    isLoadingPage.value = false
 
     if (!response) {
         console.error('Employee not found')
@@ -84,6 +86,7 @@ onMounted(async () => {
 
     item.value = response
 
+    isLoadingPage.value = false
 })
 
 

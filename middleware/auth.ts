@@ -1,4 +1,4 @@
-import type { WarehousePermissions } from "~/composables/system/user/user.types"
+import type { SystemPermissions, WarehousePermissions } from "~/composables/system/user/user.types"
 import { ROUTES } from "~/utils/constants"
 import { redirectTo401Page } from "~/utils/helpers"
 
@@ -26,7 +26,40 @@ export default defineNuxtRouteMiddleware((to, from) => {
 
         if (!authUser.user.permissions) return redirectTo401Page()
 
+        const isSystemService = to.name?.toString().includes(SERVICES.SYSTEM)
         const isWarehouseService = to.name?.toString().includes(SERVICES.WAREHOUSE)
+
+
+        if (isSystemService) {
+
+            const permissions = authUser.user.permissions.system
+            if (!permissions) return redirectTo401Page()
+
+            // data management
+            const isEmployeeModule = to.name?.toString().includes(MODULES.EMPLOYEE)
+            const isAccountModule = to.name?.toString().includes(MODULES.ACCOUNT)
+            const isClassificationModule = to.name?.toString().includes(MODULES.CLASSIFICATION)
+            const isDepartmentModule = to.name?.toString().includes(MODULES.DEPARTMENT)
+
+
+            if (isEmployeeModule && !canAccessEmployee(to.name as ROUTES, permissions)) {
+                return redirectTo401Page()
+            }
+
+            if (isAccountModule && !canAccessAccount(to.name as ROUTES, permissions)) {
+                return redirectTo401Page()
+            }
+
+            if (isClassificationModule && !canAccessClassification(to.name as ROUTES, permissions)) {
+                return redirectTo401Page()
+            }
+
+            if (isDepartmentModule && !canAccessDepartment(to.name as ROUTES, permissions)) {
+                return redirectTo401Page()
+            }
+
+        }
+
 
         if (isWarehouseService) {
 
@@ -105,11 +138,80 @@ export default defineNuxtRouteMiddleware((to, from) => {
                 return redirectTo401Page()
             }
 
+            return redirectTo401Page()
+
         }
 
 
     }
 })
+
+
+// ============================================== SYSTEM ============================================== 
+
+function canAccessEmployee(route: ROUTES, permissions: SystemPermissions) {
+
+    console.log('canAccessEmployee', route, permissions)
+
+    if (!permissions.canManageEmployee) return false
+
+    if (route === ROUTES.EMPLOYEE_INDEX) return !!permissions.canManageEmployee.read
+    if (route === ROUTES.EMPLOYEE_CREATE) return !!permissions.canManageEmployee.create
+    if (route === ROUTES.EMPLOYEE_UPDATE) return !!permissions.canManageEmployee.update
+
+
+    return true
+
+}
+
+function canAccessAccount(route: ROUTES, permissions: SystemPermissions) {
+
+    console.log('canAccessAccount', route, permissions)
+
+    if (!permissions.canManageAccount) return false
+
+    if (route === ROUTES.ACCOUNT_INDEX) return !!permissions.canManageAccount.read
+    if (route === ROUTES.ACCOUNT_CREATE) return !!permissions.canManageAccount.create
+    if (route === ROUTES.ACCOUNT_UPDATE) return !!permissions.canManageAccount.update
+
+
+    return true
+
+}
+
+function canAccessClassification(route: ROUTES, permissions: SystemPermissions) {
+
+    console.log('canAccessClassification', route, permissions)
+
+    if (!permissions.canManageClassification) return false
+
+    if (route === ROUTES.CLASSIFICATION_INDEX) return !!permissions.canManageClassification.read
+    if (route === ROUTES.CLASSIFICATION_CREATE) return !!permissions.canManageClassification.create
+    if (route === ROUTES.CLASSIFICATION_UPDATE) return !!permissions.canManageClassification.update
+
+
+    return true
+
+}
+
+function canAccessDepartment(route: ROUTES, permissions: SystemPermissions) {
+
+    console.log('canAccessDepartment', route, permissions)
+
+    if (!permissions.canManageDepartment) return false
+
+    if (route === ROUTES.DEPARTMENT_INDEX) return !!permissions.canManageDepartment.read
+    if (route === ROUTES.DEPARTMENT_CREATE) return !!permissions.canManageDepartment.create
+    if (route === ROUTES.DEPARTMENT_UPDATE) return !!permissions.canManageDepartment.update
+
+
+    return true
+
+}
+
+
+
+// ============================================== WAREHOUSE ============================================== 
 
 
 function canAccessCanvass(route: ROUTES, permissions: WarehousePermissions) {

@@ -41,13 +41,15 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-system"
-})
-
 import * as api from '~/composables/system/classification/classification.api'
 import type { CreateClassificationInput } from '~/composables/system/classification/classification'
 import Swal from 'sweetalert2'
+
+definePageMeta({
+    name: ROUTES.CLASSIFICATION_CREATE,
+    layout: "layout-system",
+    middleware: ['auth'],
+})
 
 const router = useRouter()
 const isSaving = ref(false)

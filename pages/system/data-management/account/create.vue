@@ -54,13 +54,15 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-system"
-})
-
 import * as api from '~/composables/system/account/account.api'
 import type { CreateAccountInput } from '~/composables/system/account/account'
 import Swal from 'sweetalert2'
+
+definePageMeta({
+    name: ROUTES.ACCOUNT_CREATE,
+    layout: "layout-system",
+    middleware: ['auth'],
+})
 
 const router = useRouter()
 const isSaving = ref(false)

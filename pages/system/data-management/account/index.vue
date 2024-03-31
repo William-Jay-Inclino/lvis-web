@@ -7,7 +7,8 @@
 
         <div class="row">
             <div class="col">
-                <button @click="onClickCreate" class="btn btn-primary float-end">
+                <button v-if="canCreate(authUser, 'canManageAccount')" @click="onClickCreate"
+                    class="btn btn-primary float-end">
                     <i class="fas fa-plus"></i> Create
                 </button>
             </div>
@@ -45,11 +46,15 @@
                                         <td class="text-muted"> {{ i.name }} </td>
                                         <td class="text-muted"> {{ i.description }} </td>
                                         <td class="text-center">
-                                            <button @click="onClickDelete(i.id)" class="btn btn-sm btn-light me-3">
-                                                <i class="fas fa-trash text-danger"></i>
+                                            <button :disabled="!canDelete(authUser, 'canManageAccount')"
+                                                @click="onClickDelete(i.id)" class="btn btn-sm btn-light me-3">
+                                                <i class="fas fa-trash"
+                                                    :class="{ 'text-danger': canDelete(authUser, 'canManageAccount') }"></i>
                                             </button>
-                                            <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
-                                                <i class="fas fa-edit text-primary"></i>
+                                            <button :disabled="!canEdit(authUser, 'canManageAccount')"
+                                                @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
+                                                <i class="fas fa-edit"
+                                                    :class="{ 'text-primary': canEdit(authUser, 'canManageAccount') }"></i>
                                             </button>
                                         </td>
                                     </tr>
@@ -75,14 +80,19 @@
 
 <script setup lang="ts">
 
-definePageMeta({
-    layout: "layout-system"
-})
-
 import * as api from '~/composables/system/account/account.api'
 import type { Account } from '~/composables/system/account/account'
 import Swal from 'sweetalert2'
 import { useToast } from "vue-toastification";
+
+definePageMeta({
+    name: ROUTES.ACCOUNT_INDEX,
+    layout: "layout-system",
+    middleware: ['auth'],
+})
+
+const isLoadingPage = ref(true)
+const authUser = ref<AuthUser>({} as AuthUser)
 
 const toast = useToast();
 const router = useRouter()
@@ -90,10 +100,8 @@ const router = useRouter()
 const items = ref<Account[]>([])
 const searchValue = ref('')
 
-const isLoadingPage = ref(true)
-
 onMounted(async () => {
-
+    authUser.value = getAuthUser()
     items.value = await api.findAll()
     isLoadingPage.value = false
 
