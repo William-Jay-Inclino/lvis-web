@@ -83,13 +83,18 @@
                                         <td class="text-muted align-middle"> {{ formatToPhpCurrency(i.GWAPrice) }}
                                         </td>
                                         <td class="text-muted align-middle"> {{ i.total_quantity }} </td>
-                                        <td class="text-muted align-middle">
-                                            <button @click="onClickViewDetails(i.id)" class="btn btn-light w-50"
+                                        <td class="text-muted align-middle text-center">
+                                            <button :disabled="!canDelete(authUser, 'canManageItem')"
+                                                @click="onClickDelete(i.id)" class="btn btn-light btn-sm me-3">
+                                                <i class="fas fa-trash"
+                                                    :class="{ 'text-danger': canDelete(authUser, 'canManageItem') }"></i>
+                                            </button>
+                                            <button @click="onClickViewDetails(i.id)" class="btn btn-light btn-sm me-3"
                                                 :disabled="!canViewDetails(authUser, 'canManageItem')">
                                                 <i class="fas fa-info-circle"
                                                     :class="{ 'text-info': canViewDetails(authUser, 'canManageItem') }"></i>
                                             </button>
-                                            <button @click="onClickEdit(i.id)" class="btn btn-light w-50"
+                                            <button @click="onClickEdit(i.id)" class="btn btn-light btn-sm"
                                                 :disabled="!canEdit(authUser, 'canManageItem')">
                                                 <i class="fas fa-edit"
                                                     :class="{ 'text-primary': canEdit(authUser, 'canManageItem') }"></i>
@@ -142,6 +147,9 @@
 import * as api from '~/composables/warehouse/item/item.api'
 import type { Item } from '~/composables/warehouse/item/item.type';
 import { PAGINATION_SIZE } from '~/utils/config'
+import Swal from 'sweetalert2'
+import { useToast } from "vue-toastification";
+
 
 definePageMeta({
     name: ROUTES.ITEM_INDEX,
@@ -151,6 +159,7 @@ definePageMeta({
 const isLoadingPage = ref(true)
 const authUser = ref<AuthUser>({} as AuthUser)
 
+const toast = useToast();
 const router = useRouter()
 
 // flags
@@ -258,6 +267,56 @@ async function search() {
     pagination.value.totalPages = totalPages
 }
 
+async function onClickDelete(id: string) {
+    console.log('onClickDelete', id)
+
+    const indx = items.value.findIndex(i => i.id === id)
+    const item = items.value[indx]
+
+
+    if (!item) {
+        console.error('Item not found with id: ' + id)
+        return
+    }
+
+    Swal.fire({
+        title: "Are you sure?",
+        text: `${item.name} will be removed!`,
+        position: "top",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#e74a3b",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Yes, remove it!",
+        reverseButtons: true,
+        showLoaderOnConfirm: true,
+        preConfirm: async (remove) => {
+
+            if (remove) {
+                const response = await api.remove(item.id)
+
+                if (response.success) {
+
+                    items.value.splice(indx, 1)
+                    toast.success(response.msg)
+
+
+                } else {
+
+                    Swal.fire({
+                        title: 'Error!',
+                        text: response.msg,
+                        icon: 'error',
+                        position: 'top',
+                    })
+
+                }
+            }
+
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    })
+}
 
 
 // ======================== UTILS ======================== 

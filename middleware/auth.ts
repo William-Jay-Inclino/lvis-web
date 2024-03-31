@@ -138,8 +138,6 @@ export default defineNuxtRouteMiddleware((to, from) => {
                 return redirectTo401Page()
             }
 
-            return redirectTo401Page()
-
         }
 
 

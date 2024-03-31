@@ -107,6 +107,7 @@
 
 import * as api from '~/composables/warehouse/item/item.api'
 import type { CreateItemInput } from '~/composables/warehouse/item/item.type'
+import { generateNumbersBy5 } from '~/composables/warehouse/item/item.common'
 import Swal from 'sweetalert2'
 
 definePageMeta({
@@ -153,10 +154,8 @@ onMounted(async () => {
 
     itemTypes.value = response.itemTypes
     units.value = response.units
-
-    isLoadingPage.value = false
     alertLevels.value = generateNumbersBy5({ max: 100 })
-
+    isLoadingPage.value = false
 })
 
 
@@ -168,6 +167,7 @@ async function onSubmit() {
 
     isSaving.value = true
     const response = await api.create(formData.value)
+    console.log('response', response)
     isSaving.value = false
 
     if (response.success && response.data) {
@@ -234,13 +234,5 @@ function isValid(): boolean {
 
 
 const onClickGoToList = () => router.push('/warehouse/stock-inventory/item')
-
-function generateNumbersBy5(p: { max: number }) {
-    const result = [];
-    for (let i = 1; i <= p.max / 5; i++) {
-        result.push(i * 5);
-    }
-    return result;
-}
 
 </script>

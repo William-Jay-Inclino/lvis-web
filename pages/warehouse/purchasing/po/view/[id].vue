@@ -1,6 +1,6 @@
 <template>
 
-    <div v-if="!isLoadingPage && item && meqs">
+    <div v-if="!isLoadingPage && authUser && item && meqs">
 
         <div class="row pt-3 justify-content-center">
             <div class="col-lg-11">
@@ -206,7 +206,7 @@
                 pricePerUnit: item.price,
                 vatPerUnit: getVatAmount(item.price, item.vat_type), quantity:
                     item.canvass_item.quantity
-            })
+                                    })
                                     )
                                     }}
                                 </td>

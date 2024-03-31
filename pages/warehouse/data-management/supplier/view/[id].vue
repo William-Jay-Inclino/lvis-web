@@ -1,6 +1,6 @@
 <template>
 
-    <div v-if="!isLoadingPage" class="row justify-content-center pt-3">
+    <div v-if="!isLoadingPage && authUser" class="row justify-content-center pt-3">
 
         <div class="col-lg-6">
 
@@ -39,13 +39,16 @@
                     <div class="col">
                         <div class="d-flex justify-content-end gap-2">
                             <div class="d-flex justify-content-end gap-2">
-                                <button class="btn btn-secondary" @click="onClickGoToList">
+                                <button v-if="canRead(authUser, 'canManageSupplier')" class="btn btn-secondary"
+                                    @click="onClickGoToList">
                                     <i class="fas fa-list"></i> Go to List
                                 </button>
-                                <button class="btn btn-success" @click="onClickUpdate">
+                                <button v-if="canEdit(authUser, 'canManageSupplier')" class="btn btn-success"
+                                    @click="onClickUpdate">
                                     <i class="fas fa-sync"></i> Update
                                 </button>
-                                <button class="btn btn-primary" @click="onClickAddNew">
+                                <button v-if="canCreate(authUser, 'canManageSupplier')" class="btn btn-primary"
+                                    @click="onClickAddNew">
                                     <i class="fas fa-plus"></i> Add New
                                 </button>
                             </div>
@@ -77,13 +80,14 @@ definePageMeta({
 })
 
 const isLoadingPage = ref(true)
+const authUser = ref<AuthUser>({} as AuthUser)
 
 const router = useRouter()
 const route = useRoute()
 const item = ref<Supplier | undefined>()
 
 onMounted(async () => {
-
+    authUser.value = getAuthUser()
     item.value = await api.findOne(route.params.id as string)
     isLoadingPage.value = false
 

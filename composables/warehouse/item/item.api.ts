@@ -250,6 +250,86 @@ export async function fetchFormDataInCreate(): Promise<{
 
 }
 
+export async function fetchFormDataInUpdate(id: string): Promise<{
+    itemTypes: ItemType[],
+    units: Unit[],
+    item: Item | undefined
+}> {
+
+
+    const query = `
+        query {
+            item(id: "${id}") {
+                id
+                code 
+                name
+                description
+                alert_level
+                item_type {
+                    id 
+                    name
+                }
+                unit {
+                    id
+                    name
+                }
+            }
+            item_types{
+                id
+                name
+            }
+            units{
+                id
+                name
+            }
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        let itemTypes = []
+        let units = []
+
+        if (!response.data || !response.data.data) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+
+        const data = response.data.data
+
+        if (!data.item) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+
+        const item = data.item
+
+        if (data.item_types) {
+            itemTypes = data.item_types
+        }
+
+        if (data.units) {
+            units = data.units
+        }
+
+        return {
+            itemTypes,
+            units,
+            item
+        }
+
+    } catch (error) {
+        console.error(error);
+        return {
+            item: undefined,
+            itemTypes: [],
+            units: [],
+        }
+    }
+
+
+}
+
 export async function create(input: CreateItemInput): Promise<MutationResponse> {
 
     const mutation = `
@@ -280,6 +360,13 @@ export async function create(input: CreateItemInput): Promise<MutationResponse> 
             }
         }
 
+        if (response.data && response.data.errors && response.data.errors[0].extensions && response.data.errors[0].extensions.status === 409) {
+            return {
+                success: false,
+                msg: response.data.errors[0].message || 'Item code must be unique'
+            }
+        }
+
         throw new Error(JSON.stringify(response.data.errors));
 
 
@@ -305,6 +392,7 @@ export async function update(id: string, input: UpdateItemInput): Promise<Mutati
                 code: "${input.code}",
                 name: "${input.name}",
                 description: "${input.description}",
+                alert_level: ${input.alert_level},
             }) {
                 id 
             }
@@ -319,6 +407,13 @@ export async function update(id: string, input: UpdateItemInput): Promise<Mutati
                 success: true,
                 msg: 'Item updated successfully!',
                 data: response.data.data.updateItem
+            }
+        }
+
+        if (response.data && response.data.errors && response.data.errors[0].extensions && response.data.errors[0].extensions.status === 409) {
+            return {
+                success: false,
+                msg: response.data.errors[0].message || 'Item code must be unique'
             }
         }
 

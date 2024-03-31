@@ -1,6 +1,6 @@
 <template>
 
-    <div v-if="!isLoadingPage" class="row justify-content-center">
+    <div v-if="!isLoadingPage && authUser" class="row justify-content-center">
 
         <div class="col-lg-9">
 
@@ -128,22 +128,22 @@
 
                 <hr>
 
-                <div class="row mb-3 pt-3">
+                <div class="row pt-5">
                     <div class="col">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <nuxt-link class="btn btn-secondary" to="/warehouse/stock-inventory/item">
-                                    <i class="fas fa-chevron-left"></i> Back to Search
-                                </nuxt-link>
-                            </div>
-                            <div>
-                                <nuxt-link class="btn btn-success me-2"
-                                    :to="`/warehouse/stock-inventory/item/${item.id}`">
+                        <div class="d-flex justify-content-end gap-2">
+                            <div class="d-flex justify-content-end gap-2">
+                                <button v-if="canRead(authUser, 'canManageItem')" class="btn btn-secondary"
+                                    @click="onClickGoToList">
+                                    <i class="fas fa-list"></i> Go to List
+                                </button>
+                                <button v-if="canEdit(authUser, 'canManageItem')" class="btn btn-success"
+                                    @click="onClickUpdate">
                                     <i class="fas fa-sync"></i> Update
-                                </nuxt-link>
-                                <nuxt-link class="btn btn-primary" to="/warehouse/stock-inventory/item/create">
+                                </button>
+                                <button v-if="canCreate(authUser, 'canManageItem')" class="btn btn-primary"
+                                    @click="onClickAddNew">
                                     <i class="fas fa-plus"></i> Add New
-                                </nuxt-link>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -175,11 +175,14 @@ definePageMeta({
 })
 
 const isLoadingPage = ref(true)
+const authUser = ref<AuthUser>({} as AuthUser)
 
+const router = useRouter()
 const route = useRoute()
 const item = ref<Item | undefined>()
 
 onMounted(async () => {
+    authUser.value = getAuthUser()
     item.value = await itemApi.findOne(route.params.id as string)
     isLoadingPage.value = false
 
@@ -207,5 +210,9 @@ function formatTxnNumber(n: number) {
     return n.toString().padStart(5, '0');
 }
 
+
+const onClickGoToList = () => router.push(`/warehouse/stock-inventory/item`);
+const onClickAddNew = () => router.push(`/warehouse/stock-inventory/item/create`);
+const onClickUpdate = () => router.push(`/warehouse/stock-inventory/item/${item.value?.id}`);
 
 </script>

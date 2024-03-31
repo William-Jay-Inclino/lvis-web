@@ -1,6 +1,6 @@
 <template>
 
-    <div v-if="!isLoadingPage" class="row justify-content-center pt-3">
+    <div v-if="!isLoadingPage && authUser" class="row justify-content-center pt-3">
 
         <div class="col-lg-6">
 
@@ -79,7 +79,7 @@ const route = useRoute()
 const item = ref<Classification | undefined>()
 
 onMounted(async () => {
-
+    authUser.value = getAuthUser()
     item.value = await api.findOne(route.params.id as string)
     isLoadingPage.value = false
 

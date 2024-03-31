@@ -1,6 +1,6 @@
 <template>
 
-    <div v-if="!isLoadingPage" class="row justify-content-center pt-3">
+    <div v-if="!isLoadingPage && authUser" class="row justify-content-center pt-3">
 
         <div class="col-lg-6">
 

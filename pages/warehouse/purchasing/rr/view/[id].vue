@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!isLoadingPage && item && meqs">
+    <div v-if="!isLoadingPage && authUser && item && meqs">
 
         <div class="row pt-3 justify-content-center">
             <div class="col-lg-12">
@@ -360,8 +360,8 @@
                 quantity: rrItem.quantity_accepted,
                 vatType: rrItem.meqs_supplier_item.vat_type
             })
-        )
-    }}
+                                            )
+                                            }}
                                         </td>
                                         <td v-show="showNetTotal" class="text-muted text-center align-middle">
                                             {{
