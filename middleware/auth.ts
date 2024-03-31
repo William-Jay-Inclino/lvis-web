@@ -42,20 +42,27 @@ export default defineNuxtRouteMiddleware((to, from) => {
             const isDepartmentModule = to.name?.toString().includes(MODULES.DEPARTMENT)
 
 
-            if (isEmployeeModule && !canAccessEmployee(to.name as ROUTES, permissions)) {
-                return redirectTo401Page()
+            if (isEmployeeModule) {
+                if (!canAccessEmployee(to.name as ROUTES, permissions)) return redirectTo401Page()
+                return
             }
 
-            if (isAccountModule && !canAccessAccount(to.name as ROUTES, permissions)) {
-                return redirectTo401Page()
+            if (isAccountModule) {
+                if (!canAccessAccount(to.name as ROUTES, permissions)) return redirectTo401Page()
+                return
+
             }
 
-            if (isClassificationModule && !canAccessClassification(to.name as ROUTES, permissions)) {
-                return redirectTo401Page()
+            if (isClassificationModule) {
+                if (!canAccessClassification(to.name as ROUTES, permissions)) return redirectTo401Page()
+                return
+
             }
 
-            if (isDepartmentModule && !canAccessDepartment(to.name as ROUTES, permissions)) {
-                return redirectTo401Page()
+            if (isDepartmentModule) {
+                if (!canAccessDepartment(to.name as ROUTES, permissions)) return redirectTo401Page()
+                return
+
             }
 
         }
@@ -86,60 +93,87 @@ export default defineNuxtRouteMiddleware((to, from) => {
             const isItemTypeModule = to.name?.toString().includes(MODULES.ITEM_TYPE)
 
 
-            if (isCanvassModule && !canAccessCanvass(to.name as ROUTES, permissions)) {
-                return redirectTo401Page()
+            if (isCanvassModule) {
+                if (!canAccessCanvass(to.name as ROUTES, permissions)) return redirectTo401Page()
+                return
             }
 
-            if (isRVModule && !canAccessRV(to.name as ROUTES, permissions)) {
-                return redirectTo401Page()
+            if (isRVModule) {
+                if (!canAccessRV(to.name as ROUTES, permissions)) return redirectTo401Page()
+                return
             }
 
-            if (isSPRModule && !canAccessSPR(to.name as ROUTES, permissions)) {
-                return redirectTo401Page()
+            if (isSPRModule) {
+                if (!canAccessSPR(to.name as ROUTES, permissions)) return redirectTo401Page()
+                return
+
             }
 
-            if (isJOModule && !canAccessJO(to.name as ROUTES, permissions)) {
-                return redirectTo401Page()
+            if (isJOModule) {
+                if (!canAccessJO(to.name as ROUTES, permissions)) return redirectTo401Page()
+                return
+
             }
 
-            if (isMEQSModule && !canAccessMEQS(to.name as ROUTES, permissions)) {
-                return redirectTo401Page()
+            if (isMEQSModule) {
+                if (!canAccessMEQS(to.name as ROUTES, permissions)) return redirectTo401Page()
+                return
+
             }
 
-            if (isPOModule && !canAccessPO(to.name as ROUTES, permissions)) {
-                return redirectTo401Page()
+            if (isPOModule) {
+                if (!canAccessPO(to.name as ROUTES, permissions)) return redirectTo401Page()
+                return
+
             }
 
-            if (isRRModule && !canAccessRR(to.name as ROUTES, permissions)) {
-                return redirectTo401Page()
+            if (isRRModule) {
+                if (!canAccessRR(to.name as ROUTES, permissions)) return redirectTo401Page()
+                return
+
             }
 
-            if (isSupplierModule && !canAccessSupplier(to.name as ROUTES, permissions)) {
-                return redirectTo401Page()
+            if (isSupplierModule) {
+                if (!canAccessSupplier(to.name as ROUTES, permissions)) return redirectTo401Page()
+                return
+
             }
 
-            if (isUnitModule && !canAccessUnit(to.name as ROUTES, permissions)) {
-                return redirectTo401Page()
+            if (isUnitModule) {
+                if (!canAccessUnit(to.name as ROUTES, permissions)) return redirectTo401Page()
+                return
+
             }
 
-            if (isVehicleModule && !canAccessVehicle(to.name as ROUTES, permissions)) {
-                return redirectTo401Page()
+            if (isVehicleModule) {
+                if (!canAccessVehicle(to.name as ROUTES, permissions)) return redirectTo401Page()
+                return
+
             }
 
-            if (isItemModule && !canAccessItem(to.name as ROUTES, permissions)) {
-                return redirectTo401Page()
+            if (isItemModule) {
+                if (!canAccessItem(to.name as ROUTES, permissions)) return redirectTo401Page()
+                return
+
             }
 
-            if (isItemBrandModule && !canAccessItemBrand(to.name as ROUTES, permissions)) {
-                return redirectTo401Page()
+            if (isItemBrandModule) {
+                if (!canAccessItemBrand(to.name as ROUTES, permissions)) return redirectTo401Page()
+                return
+
             }
 
-            if (isItemTypeModule && !canAccessItemType(to.name as ROUTES, permissions)) {
-                return redirectTo401Page()
+            if (isItemTypeModule) {
+                if (!canAccessItemType(to.name as ROUTES, permissions)) return redirectTo401Page()
+                return
             }
+
+
+
 
         }
 
+        return redirectTo401Page()
 
     }
 })

@@ -15,6 +15,15 @@
                             <li class="nav-item">
                                 <nuxt-link class="nav-link text-white" to="/home">Home</nuxt-link>
                             </li>
+                            <li v-if="isApprover(authUser)" class="nav-item">
+                                <nuxt-link class="nav-link text-white position-relative" to="/e-forms/pendings">
+                                    Pendings
+                                    <span
+                                        class="position-absolute top-1 start-100 translate-middle badge rounded-pill bg-danger">
+                                        {{ totalPendings }}
+                                    </span>
+                                </nuxt-link>
+                            </li>
                             <li v-if="isAdmin(authUser)" class="nav-item">
                                 <nuxt-link class="nav-link text-white" to="/system/user">Users</nuxt-link>
                             </li>
@@ -150,6 +159,15 @@ onMounted(() => {
     authUser.value = getAuthUser()
 })
 
+const totalPendings = computed(() => {
+    if (!authUser.value) return
+    if (authUser.value.user.user_employee?.employee.total_pending_approvals) {
+        return authUser.value.user.user_employee?.employee.total_pending_approvals
+    }
+    return 0
+})
+
+const isApprover = (authUser: AuthUser) => !!authUser.user.user_employee?.employee.is_approver
 
 function canViewDataManagement(authUser: AuthUser) {
 

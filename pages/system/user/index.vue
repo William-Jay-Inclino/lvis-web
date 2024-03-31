@@ -1,7 +1,7 @@
 <template>
     <div>
 
-        <h2 class="text-warning">User</h2>
+        <h2 class="text-warning">Users</h2>
 
         <hr>
 
