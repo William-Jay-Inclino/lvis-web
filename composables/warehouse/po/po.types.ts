@@ -2,10 +2,12 @@ import type { APPROVAL_STATUS } from "~/composables/common.types";
 import type { MeqsSupplier } from "../meqs/meqs-supplier";
 import type { PoApproverSettings } from "./po-approver.types";
 import type { RR } from "../rr/rr.types";
+import type { Account } from "~/composables/system/account/account";
 
 export interface PO {
     id: string;
     meqs_supplier_id: string;
+    fund_source_id?: string | null;
     po_number: string;
     po_date: string;
     notes: string
@@ -29,16 +31,19 @@ export interface PO {
     po_approvers: Approver[];
     status: APPROVAL_STATUS;
     is_referenced: boolean
+    fund_source: Account | null
 }
 
 export interface CreatePoInput {
     meqs_supplier: MeqsSupplier | null
+    fund_source: Account | null
     approvers: PoApproverSettings[];
     notes: string
 }
 
 export interface UpdatePoInput {
     notes: string
+    fund_source: Account | null
 }
 
 export interface CreatePoApproverSubInput {

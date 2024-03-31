@@ -100,6 +100,10 @@
                                 <td> {{ VAT[item.meqs_supplier.supplier!.vat_type].label }} </td>
                             </tr>
                             <tr>
+                                <td class="text-muted">Fund Source</td>
+                                <td> {{ item.fund_source ? item.fund_source.name : 'N/A' }} </td>
+                            </tr>
+                            <tr>
                                 <td class="text-muted">Notes</td>
                                 <td> {{ item.notes }} </td>
                             </tr>

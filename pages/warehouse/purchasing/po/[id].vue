@@ -60,6 +60,13 @@
                 </div>
 
                 <div class="mb-3">
+                    <label class="form-label">Fund Source</label>
+                    <client-only>
+                        <v-select :options="accounts" label="name" v-model="poData.fund_source"></v-select>
+                    </client-only>
+                </div>
+
+                <div class="mb-3">
                     <label class="form-label">Notes</label>
                     <textarea v-model="poData.notes" class="form-control" rows="3"></textarea>
                 </div>
@@ -114,9 +121,10 @@
 import Swal from 'sweetalert2'
 import { getFullname, formatToValidHtmlDate } from '~/utils/helpers'
 import { useToast } from "vue-toastification";
-import type { PO } from '~/composables/warehouse/po/po.types';
+import type { PO, UpdatePoInput } from '~/composables/warehouse/po/po.types';
 import * as poApi from '~/composables/warehouse/po/po.api'
 import * as poApproverApi from '~/composables/warehouse/po/po-approver.api'
+import type { Account } from '~/composables/system/account/account';
 
 definePageMeta({
     name: ROUTES.PO_UPDATE,
@@ -143,6 +151,7 @@ const isEditingApprover = ref(false)
 const poData = ref<PO>({} as PO)
 
 const employees = ref<Employee[]>([])
+const accounts = ref<Account[]>([])
 
 // ======================== LIFECYCLE HOOKS ========================  
 
@@ -164,6 +173,8 @@ onMounted(async () => {
         i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
         return i
     })
+
+    accounts.value = response.accounts
 
     isLoadingPage.value = false
 
@@ -216,8 +227,13 @@ async function updatePoInfo() {
 
     console.log('updating...')
 
+    const data: UpdatePoInput = {
+        notes: poData.value.notes,
+        fund_source: poData.value.fund_source,
+    }
+
     isUpdating.value = true
-    const response = await poApi.update(poData.value.id, poData.value)
+    const response = await poApi.update(poData.value.id, data)
     isUpdating.value = false
 
     if (response.success && response.data) {

@@ -62,29 +62,31 @@
                             <label class="form-label">
                                 Supplier <span class="text-danger">*</span>
                             </label>
-                            <v-select @option:selected="onSupplierSelected" :options="suppliers" label="label"
-                                v-model="poData.meqs_supplier">
-                                <template v-slot:option="option">
-                                    <div v-if="option.is_referenced" class="row">
-                                        <div class="col">
-                                            <span class="text-danger">{{ option.label }}</span>
+                            <client-only>
+                                <v-select @option:selected="onSupplierSelected" :options="suppliers" label="label"
+                                    v-model="poData.meqs_supplier">
+                                    <template v-slot:option="option">
+                                        <div v-if="option.is_referenced" class="row">
+                                            <div class="col">
+                                                <span class="text-danger">{{ option.label }}</span>
+                                            </div>
+                                            <div class="col text-end">
+                                                <small class="text-muted fst-italic">
+                                                    Referenced
+                                                </small>
+                                            </div>
                                         </div>
-                                        <div class="col text-end">
-                                            <small class="text-muted fst-italic">
-                                                Referenced
-                                            </small>
+                                        <div v-else class="row">
+                                            <div class="col">
+                                                <span>{{ option.label }}</span>
+                                            </div>
+                                            <div class="col text-end">
+                                                <small class="text-success fst-italic"> Available </small>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div v-else class="row">
-                                        <div class="col">
-                                            <span>{{ option.label }}</span>
-                                        </div>
-                                        <div class="col text-end">
-                                            <small class="text-success fst-italic"> Available </small>
-                                        </div>
-                                    </div>
-                                </template>
-                            </v-select>
+                                    </template>
+                                </v-select>
+                            </client-only>
                         </div>
 
                         <div v-if="poData.meqs_supplier" class="mb-3">
@@ -93,6 +95,15 @@
                             </label>
                             <input type="text" class="form-control" disabled
                                 :value="VAT[poData.meqs_supplier.supplier!.vat_type].label">
+                        </div>
+
+                        <div v-if="selectedMeqs">
+                            <label class="form-label">
+                                Fund Source
+                            </label>
+                            <client-only>
+                                <v-select :options="accounts" label="name" v-model="poData.fund_source"></v-select>
+                            </client-only>
                         </div>
 
                         <div v-if="selectedMeqs" class="mb-3">
@@ -162,9 +173,9 @@
         formatToPhpCurrency(getTotalNetPrice({
             pricePerUnit: item.price,
             vatPerUnit: getVatAmount(item.price, item.vat_type),
-            quantity: item.canvass_item.quantity
-        }))
-    }}
+                                    quantity: item.canvass_item.quantity
+                                    }))
+                                    }}
                                 </td>
                             </tr>
                             <tr>
@@ -208,6 +219,7 @@ import { formatToPhpCurrency } from '~/utils/helpers'
 import type { MeqsSupplier } from '~/composables/warehouse/meqs/meqs-supplier';
 import Swal from 'sweetalert2'
 import { getTotalNetPrice, getVatAmount } from '~/utils/helpers';
+import type { Account } from '~/composables/system/account/account';
 
 definePageMeta({
     name: ROUTES.PO_CREATE,
@@ -227,9 +239,11 @@ let currentMeqs: MEQS | null = null
 
 const selectedMeqs = ref<MEQS | null>(null)
 const meqs = ref<MEQS[]>([])
+const accounts = ref<Account[]>([])
 
 const poData = ref<CreatePoInput>({
     meqs_supplier: null,
+    fund_source: null,
     approvers: [],
     notes: ''
 })
@@ -254,6 +268,7 @@ onMounted(async () => {
 
     })
     poData.value.approvers = response.approvers
+    accounts.value = response.accounts
 
     isLoadingPage.value = false
 

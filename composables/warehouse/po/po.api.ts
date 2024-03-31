@@ -1,3 +1,4 @@
+import type { Account } from "~/composables/system/account/account";
 import type { MEQS } from "../meqs/meqs.types";
 import type { PoApproverSettings } from "./po-approver.types";
 import type { CreatePoInput, FindAllResponse, MutationResponse, PO, UpdatePoInput } from "./po.types";
@@ -245,6 +246,7 @@ export async function fetchDataInSearchFilters(): Promise<{
 
 export async function fetchFormDataInCreate(): Promise<{
     meqs: MEQS[],
+    accounts: Account[],
     approvers: PoApproverSettings[]
 }> {
 
@@ -298,6 +300,12 @@ export async function fetchFormDataInCreate(): Promise<{
                 label
                 order
             },
+            accounts {
+                id
+                code
+                name
+                description
+            }
         }
     `;
 
@@ -307,6 +315,7 @@ export async function fetchFormDataInCreate(): Promise<{
 
         let meqs = []
         let approvers = []
+        let accounts = []
 
         if (!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
@@ -322,16 +331,22 @@ export async function fetchFormDataInCreate(): Promise<{
             approvers = data.poApproverSettings
         }
 
+        if (data.accounts) {
+            accounts = data.accounts
+        }
+
         return {
             meqs,
-            approvers
+            approvers,
+            accounts
         }
 
     } catch (error) {
         console.error(error);
         return {
             meqs: [],
-            approvers: []
+            approvers: [],
+            accounts: [],
         }
     }
 
@@ -340,6 +355,7 @@ export async function fetchFormDataInCreate(): Promise<{
 
 export async function fetchFormDataInUpdate(id: string): Promise<{
     employees: Employee[],
+    accounts: Account[],
     po: PO | undefined
 }> {
 
@@ -352,6 +368,10 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 cancelled_at
                 created_by
                 notes
+                fund_source {
+                    id 
+                    name
+                }
                 meqs_supplier{
                     id
                     supplier {
@@ -432,6 +452,12 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                     lastname
                 }
             },
+            accounts {
+                id
+                code
+                name
+                description
+            }
         }
     `;
 
@@ -440,6 +466,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
         console.log('response', response)
 
         let employees: Employee[] = []
+        let accounts: Account[] = []
 
         if (!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
@@ -455,16 +482,22 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
             employees = response.data.data.employees.data
         }
 
+        if (data.accounts) {
+            accounts = data.accounts
+        }
+
         return {
             po: data.po,
-            employees
+            employees,
+            accounts,
         }
 
     } catch (error) {
         console.error(error);
         return {
             po: undefined,
-            employees: []
+            employees: [],
+            accounts: [],
         }
     }
 
@@ -487,6 +520,7 @@ export async function create(input: CreatePoInput): Promise<MutationResponse> {
             createPo(
                 input: {
                     meqs_supplier_id: "${input.meqs_supplier?.id}"
+                    fund_source_id: ${input.fund_source ? `"${input.fund_source.id}"` : null}
                     notes: "${input.notes}"
                     approvers: [${approvers}]
                 }
@@ -530,6 +564,10 @@ export async function findOne(id: string): Promise<PO | undefined> {
                 notes
                 created_by
                 cancelled_at
+                fund_source {
+                    id 
+                    name 
+                }
                 po_approvers{
                     approver {
                         firstname
@@ -661,6 +699,7 @@ export async function update(id: string, input: UpdatePoInput): Promise<Mutation
             updatePo(
                 id: "${id}",
                 input: {
+                    fund_source_id: ${input.fund_source ? `"${input.fund_source.id}"` : null}
                     notes: "${input.notes}"
                 }
             ) {
