@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!isLoadingPage">
+    <div v-if="!isLoadingPage && authUser">
 
         <h2 class="text-warning">Employee</h2>
 
@@ -7,7 +7,7 @@
 
         <div class="row">
             <div class="col">
-                <button v-if="canCreate(authUser, 'canManageEmployee')" @click="onClickCreate"
+                <button v-if="canCreate(authUser, 'canManageEmployee', SERVICES.SYSTEM)" @click="onClickCreate"
                     class="btn btn-primary float-end">
                     <i class="fas fa-plus"></i> Create
                 </button>
@@ -54,15 +54,16 @@
                                         <td class="text-muted"> {{ i.middlename }} </td>
                                         <td class="text-muted"> {{ i.lastname }} </td>
                                         <td class="text-center">
-                                            <button :disabled="!canDelete(authUser, 'canManageEmployee')"
+                                            <button
+                                                :disabled="!canDelete(authUser, 'canManageEmployee', SERVICES.SYSTEM)"
                                                 @click="onClickDelete(i.id)" class="btn btn-sm btn-light me-3">
                                                 <i class="fas fa-trash"
-                                                    :class="{ 'text-danger': canDelete(authUser, 'canManageEmployee') }"></i>
+                                                    :class="{ 'text-danger': canDelete(authUser, 'canManageEmployee', SERVICES.SYSTEM) }"></i>
                                             </button>
-                                            <button :disabled="!canEdit(authUser, 'canManageEmployee')"
+                                            <button :disabled="!canEdit(authUser, 'canManageEmployee', SERVICES.SYSTEM)"
                                                 @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
                                                 <i class="fas fa-edit"
-                                                    :class="{ 'text-primary': canEdit(authUser, 'canManageEmployee') }"></i>
+                                                    :class="{ 'text-primary': canEdit(authUser, 'canManageEmployee', SERVICES.SYSTEM) }"></i>
                                             </button>
                                         </td>
                                     </tr>

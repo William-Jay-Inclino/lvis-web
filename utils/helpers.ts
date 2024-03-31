@@ -1,5 +1,5 @@
 import moment from "moment";
-import { VAT_TYPE, ROLE } from "#imports";
+import { VAT_TYPE, ROLE, SERVICES } from "#imports";
 
 export function getAuthUser(): AuthUser {
     const authUserJson = localStorage.getItem('authUser')
@@ -155,52 +155,65 @@ export function canUpdate(authUser: AuthUser, created_by: string) {
 }
 
 
-export function canCreate(authUser: AuthUser, permission: string) {
+export function canCreate(authUser: AuthUser, permission: string, service?: SERVICES) {
+
+    console.log('canCreate', authUser, permission)
     if (isAdmin(authUser)) return true
 
     if (!authUser.user.permissions) return false
 
+    const _service = (service || SERVICES.WAREHOUSE).toLowerCase()
+
     // @ts-ignore
-    return !!authUser.user.permissions.warehouse[permission].create
+    return !!authUser.user.permissions[_service][permission].create
 
 }
 
-export function canDelete(authUser: AuthUser, permission: string) {
+export function canDelete(authUser: AuthUser, permission: string, service?: SERVICES) {
     if (isAdmin(authUser)) return true
 
     if (!authUser.user.permissions) return false
 
+    const _service = (service || SERVICES.WAREHOUSE).toLowerCase()
+
     // @ts-ignore
-    return !!authUser.user.permissions.warehouse[permission].delete
+    return !!authUser.user.permissions[_service][permission].delete
 
 }
 
-export function canEdit(authUser: AuthUser, permission: string) {
+export function canEdit(authUser: AuthUser, permission: string, service?: SERVICES) {
     if (isAdmin(authUser)) return true
 
     if (!authUser.user.permissions) return false
 
+    const _service = (service || SERVICES.WAREHOUSE).toLowerCase()
+
+
     // @ts-ignore
-    return !!authUser.user.permissions.warehouse[permission].update
+    return !!authUser.user.permissions[_service][permission].update
 
 }
 
-export function canRead(authUser: AuthUser, permission: string) {
+export function canRead(authUser: AuthUser, permission: string, service?: SERVICES) {
     if (isAdmin(authUser)) return true
 
     if (!authUser.user.permissions) return false
 
+    const _service = (service || SERVICES.WAREHOUSE).toLowerCase()
+
     // @ts-ignore
-    return !!authUser.user.permissions.warehouse[permission].read
+    return !!authUser.user.permissions[_service][permission].read
 
 }
 
-export function canViewDetails(authUser: AuthUser, permission: string) {
+export function canViewDetails(authUser: AuthUser, permission: string, service?: SERVICES) {
     if (isAdmin(authUser)) return true
 
     if (!authUser.user.permissions) return false
 
+    const _service = (service || SERVICES.WAREHOUSE).toLowerCase()
+
     // @ts-ignore
-    return !!authUser.user.permissions.warehouse[permission].viewDetails
+    return !!authUser.user.permissions[_service][permission].viewDetails
 
 }
