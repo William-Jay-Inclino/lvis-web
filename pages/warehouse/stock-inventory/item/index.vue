@@ -142,7 +142,6 @@
 import * as api from '~/composables/warehouse/item/item.api'
 import type { Item } from '~/composables/warehouse/item/item.type';
 import { PAGINATION_SIZE } from '~/utils/config'
-import { canEdit } from '~/utils/helpers';
 
 definePageMeta({
     name: ROUTES.ITEM_INDEX,

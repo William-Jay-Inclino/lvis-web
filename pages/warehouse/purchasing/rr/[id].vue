@@ -155,7 +155,7 @@
 <script setup lang="ts">
 
 import Swal from 'sweetalert2'
-import { getFullname, formatToValidHtmlDate, canUpdate } from '~/utils/helpers'
+import { getFullname, formatToValidHtmlDate } from '~/utils/helpers'
 import { useToast } from "vue-toastification";
 import type { RR } from '~/composables/warehouse/rr/rr.types';
 import * as rrApi from '~/composables/warehouse/rr/rr.api'

@@ -5,10 +5,11 @@
             <nav class="navbar sticky-top navbar-expand-lg navbar-dark" style="background-color: #1877F2;">
                 <div class="container">
                     <a class="navbar-brand" href="#">Leyeco V - Warehouse</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
-                    <span class="navbar-toggler-icon"></span>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
+                        data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                        <span class="navbar-toggler-icon"></span>
                     </button>
-    
+
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                             <li class="nav-item">
@@ -18,7 +19,8 @@
                                 <nuxt-link class="nav-link text-white" to="/e-forms/pendings">Pending Forms</nuxt-link>
                             </li>
                             <li v-if="authUser" class="nav-item dropdown">
-                                <a style="color: #FFFF00;" class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <a style="color: #FFFF00;" class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fas fa-user-circle"></i>
                                     <span class="fw-bold fst-italic ms-1">
 
@@ -35,22 +37,23 @@
                             </li>
                         </ul>
                     </div>
-    
+
                 </div>
             </nav>
-    
+
             <div class="container">
-    
+
                 <div class="mt-3">
                     <slot />
-    
+
                 </div>
-    
+
             </div>
-    
+
         </div>
-    
-        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample"
+            aria-labelledby="offcanvasExampleLabel">
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             <div class="offcanvas-header">
                 <img src="/Me.jpg" alt="Profile Picture" class="img-fluid">
@@ -64,11 +67,13 @@
                         <a class="nav-link" href="#">Activity Log</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             Purchasing
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/canvass">Canvass</nuxt-link></li>
+                            <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/canvass">Canvass</nuxt-link>
+                            </li>
                             <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/rv">RV</nuxt-link></li>
                             <li><a class="dropdown-item" href="#">SPR</a></li>
                             <li><a class="dropdown-item" href="#">JO</a></li>
@@ -93,13 +98,11 @@
 
 <script setup lang="ts">
 
-    import { getAuthUser } from '~/utils/helpers';
+const authUser = ref()
 
-    const authUser = ref()
-
-    onMounted( () => {
-        authUser.value = getAuthUser()
-    })
+onMounted(() => {
+    authUser.value = getAuthUser()
+})
 
 
 </script>
@@ -107,33 +110,34 @@
 
 
 <style scoped>
-    .nav-item {
-        padding: 0.5rem 1rem;
-        transition: background-color 0.3s;
-    }
+.nav-item {
+    padding: 0.5rem 1rem;
+    transition: background-color 0.3s;
+}
 
-    .nav-link {
-        color: #343a40; /* Dark text color */
-        transition: color 0.3s;
-    }
+.nav-link {
+    color: #343a40;
+    /* Dark text color */
+    transition: color 0.3s;
+}
 
-    .dropdown-menu {
-        background-color: #f8f9fa; /* Light grey background for dropdown menu */
-    }
+.dropdown-menu {
+    background-color: #f8f9fa;
+    /* Light grey background for dropdown menu */
+}
 
-    .dropdown-item {
-        color: #343a40;
-        transition: color 0.3s;
-    }
+.dropdown-item {
+    color: #343a40;
+    transition: color 0.3s;
+}
 
-    .custom-card {
-        background-color: white;
-        border-radius: 10px;
-        border: 0;
-        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
-        height: 100vh;
-        padding: 0px 20px 20px 20px;
-        overflow-y: auto;
-    }
-
+.custom-card {
+    background-color: white;
+    border-radius: 10px;
+    border: 0;
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+    height: 100vh;
+    padding: 0px 20px 20px 20px;
+    overflow-y: auto;
+}
 </style>

@@ -220,7 +220,7 @@
 import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
 import { type JO } from '~/composables/warehouse/jo/jo.types';
 import * as joApi from '~/composables/warehouse/jo/jo.api'
-import { getFullname, formatDate, isAdminOrOwner, canCreate, canViewDetails } from '~/utils/helpers'
+import { getFullname, formatDate } from '~/utils/helpers'
 import { PAGINATION_SIZE } from '~/utils/config'
 import { ROUTES, approvalStatus } from '~/utils/constants';
 

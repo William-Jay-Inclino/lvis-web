@@ -174,7 +174,7 @@
 <script setup lang="ts">
 
 import Swal from 'sweetalert2'
-import { getFullname, formatToValidHtmlDate, redirectTo401Page, canUpdate } from '~/utils/helpers'
+import { getFullname, formatToValidHtmlDate, redirectTo401Page } from '~/utils/helpers'
 import { useToast } from "vue-toastification";
 import * as joApi from '~/composables/warehouse/jo/jo.api'
 import * as joApproverApi from '~/composables/warehouse/jo/jo-approver.api'

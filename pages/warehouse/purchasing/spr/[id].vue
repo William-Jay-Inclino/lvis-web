@@ -168,7 +168,7 @@
 <script setup lang="ts">
 
 import Swal from 'sweetalert2'
-import { getFullname, formatToValidHtmlDate, canUpdate } from '~/utils/helpers'
+import { getFullname, formatToValidHtmlDate } from '~/utils/helpers'
 import { useToast } from "vue-toastification";
 import * as sprApi from '~/composables/warehouse/spr/spr.api'
 import * as sprApproverApi from '~/composables/warehouse/spr/spr-approver.api'

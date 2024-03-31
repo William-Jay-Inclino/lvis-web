@@ -161,7 +161,7 @@
 import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
 import { type SPR } from '~/composables/warehouse/spr/spr.types';
 import * as sprApi from '~/composables/warehouse/spr/spr.api'
-import { getFullname, formatDate, isAdminOrOwner, canCreate, canViewDetails } from '~/utils/helpers'
+import { getFullname, formatDate } from '~/utils/helpers'
 import { PAGINATION_SIZE } from '~/utils/config'
 import { approvalStatus } from '~/utils/constants';
 

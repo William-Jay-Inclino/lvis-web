@@ -80,7 +80,6 @@ import * as api from '~/composables/warehouse/item-brand/item-brand.api'
 import type { ItemBrand } from '~/composables/warehouse/item-brand/item-brand.types'
 import Swal from 'sweetalert2'
 import { useToast } from "vue-toastification";
-import { canDelete, canEdit } from '~/utils/helpers';
 
 definePageMeta({
     name: ROUTES.ITEM_BRAND_INDEX,

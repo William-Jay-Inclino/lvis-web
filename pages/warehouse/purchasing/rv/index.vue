@@ -161,7 +161,7 @@
 import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
 import { type RV } from '~/composables/warehouse/rv/rv.types';
 import * as rvApi from '~/composables/warehouse/rv/rv.api'
-import { getFullname, formatDate, isAdminOrOwner, canCreate, canViewDetails } from '~/utils/helpers'
+import { getFullname, formatDate } from '~/utils/helpers'
 import { PAGINATION_SIZE } from '~/utils/config'
 import { ROUTES, approvalStatus } from '~/utils/constants';
 

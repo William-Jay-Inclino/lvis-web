@@ -205,9 +205,9 @@
 
 <script setup lang="ts">
 
-import { getAuthUser } from '~/utils/helpers';
-
 const authUser = ref<AuthUser>()
+
+const router = useRouter()
 
 onMounted(() => {
     authUser.value = getAuthUser()
@@ -235,7 +235,6 @@ function canViewPurchasing(authUser: AuthUser) {
         (!!warehousePermissions.canManageRR && warehousePermissions.canManageRR.search)
     )
 }
-
 
 function canViewStockInventory(authUser: AuthUser) {
 
@@ -266,7 +265,6 @@ function canViewDataManagement(authUser: AuthUser) {
         (!!warehousePermissions.canManageSupplier && warehousePermissions.canManageSupplier.read)
     )
 }
-
 
 // check first if has module
 // check if user can read or search the specified module

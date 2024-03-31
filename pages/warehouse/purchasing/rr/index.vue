@@ -173,7 +173,7 @@
 
 import * as rrApi from '~/composables/warehouse/rr/rr.api'
 import type { RR } from '~/composables/warehouse/rr/rr.types';
-import { getFullname, formatDate, isAdminOrOwner, canCreate, canViewDetails } from '~/utils/helpers'
+import { getFullname, formatDate } from '~/utils/helpers'
 import { PAGINATION_SIZE } from '~/utils/config'
 import type { PO } from '~/composables/warehouse/po/po.types';
 

@@ -144,8 +144,6 @@
 
 <script setup lang="ts">
 
-import { getAuthUser } from '~/utils/helpers';
-
 const authUser = ref()
 
 onMounted(() => {

@@ -112,7 +112,7 @@
 <script setup lang="ts">
 
 import Swal from 'sweetalert2'
-import { getFullname, formatToValidHtmlDate, canUpdate } from '~/utils/helpers'
+import { getFullname, formatToValidHtmlDate } from '~/utils/helpers'
 import { useToast } from "vue-toastification";
 import type { PO } from '~/composables/warehouse/po/po.types';
 import * as poApi from '~/composables/warehouse/po/po.api'

@@ -119,7 +119,7 @@ import * as canvassItemApi from '~/composables/warehouse/canvass/canvass-item.ap
 import Swal from 'sweetalert2'
 import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
 import { useToast } from "vue-toastification";
-import { formatToValidHtmlDate, redirectTo401Page, canUpdate } from '~/utils/helpers'
+import { formatToValidHtmlDate, redirectTo401Page } from '~/utils/helpers'
 import type { Item } from '~/composables/warehouse/item/item.type';
 
 definePageMeta({

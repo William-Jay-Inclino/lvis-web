@@ -145,7 +145,7 @@
 
 import * as api from '~/composables/warehouse/canvass/canvass.api'
 import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
-import { getFullname, formatDate, isAdminOrOwner, canCreate, canViewDetails } from '~/utils/helpers'
+import { getFullname, formatDate } from '~/utils/helpers'
 import { PAGINATION_SIZE } from '~/utils/config'
 import { ROUTES } from '~/utils/constants';
 
