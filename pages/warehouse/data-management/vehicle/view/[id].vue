@@ -71,10 +71,10 @@ definePageMeta({
     middleware: ['auth'],
 })
 
+const isLoadingPage = ref(true)
 const router = useRouter()
 const route = useRoute()
 const item = ref<Vehicle | undefined>()
-const isLoadingPage = ref(true)
 
 onMounted(async () => {
 

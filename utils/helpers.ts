@@ -166,6 +166,25 @@ export function canCreate(authUser: AuthUser, permission: string) {
 
 }
 
+export function canDelete(authUser: AuthUser, permission: string) {
+    if (isAdmin(authUser)) return true
+
+    if (!authUser.user.permissions) return false
+
+    // @ts-ignore
+    return !!authUser.user.permissions.warehouse[permission].delete
+
+}
+
+export function canEdit(authUser: AuthUser, permission: string) {
+    if (isAdmin(authUser)) return true
+
+    if (!authUser.user.permissions) return false
+
+    // @ts-ignore
+    return !!authUser.user.permissions.warehouse[permission].update
+
+}
 
 export function canViewDetails(authUser: AuthUser, permission: string) {
     if (isAdmin(authUser)) return true

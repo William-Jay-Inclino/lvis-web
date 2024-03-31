@@ -89,8 +89,10 @@
                                                 <i class="fas fa-info-circle"
                                                     :class="{ 'text-info': canViewDetails(authUser, 'canManageItem') }"></i>
                                             </button>
-                                            <button @click="onClickEdit(i.id)" class="btn btn-light w-50">
-                                                <i class="fas fa-edit text-primary"></i>
+                                            <button @click="onClickEdit(i.id)" class="btn btn-light w-50"
+                                                :disabled="!canEdit(authUser, 'canManageItem')">
+                                                <i class="fas fa-edit"
+                                                    :class="{ 'text-primary': canEdit(authUser, 'canManageItem') }"></i>
                                             </button>
                                         </td>
                                     </tr>
@@ -140,6 +142,7 @@
 import * as api from '~/composables/warehouse/item/item.api'
 import type { Item } from '~/composables/warehouse/item/item.type';
 import { PAGINATION_SIZE } from '~/utils/config'
+import { canEdit } from '~/utils/helpers';
 
 definePageMeta({
     name: ROUTES.ITEM_INDEX,

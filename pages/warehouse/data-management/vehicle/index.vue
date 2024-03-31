@@ -7,7 +7,8 @@
 
         <div class="row">
             <div class="col">
-                <button @click="onClickCreate" class="btn btn-primary float-end">
+                <button v-if="canCreate(authUser, 'canManageVehicle')" @click="onClickCreate"
+                    class="btn btn-primary float-end">
                     <i class="fas fa-plus"></i> Create
                 </button>
             </div>
@@ -43,11 +44,15 @@
                                         <td class="text-muted"> {{ i.name }} </td>
                                         <td class="text-muted"> {{ i.plate_number }} </td>
                                         <td class="text-center">
-                                            <button @click="onClickDelete(i.id)" class="btn btn-sm btn-light me-3">
-                                                <i class="fas fa-trash text-danger"></i>
+                                            <button :disabled="!canDelete(authUser, 'canManageVehicle')"
+                                                @click="onClickDelete(i.id)" class="btn btn-sm btn-light me-3">
+                                                <i class="fas fa-trash"
+                                                    :class="{ 'text-danger': canDelete(authUser, 'canManageVehicle') }"></i>
                                             </button>
-                                            <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
-                                                <i class="fas fa-edit text-primary"></i>
+                                            <button :disabled="!canEdit(authUser, 'canManageVehicle')"
+                                                @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
+                                                <i class="fas fa-edit"
+                                                    :class="{ 'text-primary': canEdit(authUser, 'canManageVehicle') }"></i>
                                             </button>
                                         </td>
                                     </tr>
@@ -84,13 +89,14 @@ definePageMeta({
     middleware: ['auth'],
 })
 
+const isLoadingPage = ref(true)
+const authUser = ref<AuthUser>({} as AuthUser)
+
 const toast = useToast();
 const router = useRouter()
 
 const items = ref<Vehicle[]>([])
 const searchValue = ref('')
-
-const isLoadingPage = ref(true)
 
 onMounted(async () => {
 

@@ -7,7 +7,8 @@
 
         <div class="row">
             <div class="col">
-                <button @click="onClickCreate" class="btn btn-primary float-end">
+                <button v-if="canCreate(authUser, 'canManageItemBrand')" @click="onClickCreate"
+                    class="btn btn-primary float-end">
                     <i class="fas fa-plus"></i> Create
                 </button>
             </div>
@@ -41,11 +42,15 @@
                                     <tr v-for="i in filteredItems">
                                         <td class="text-muted"> {{ i.name }} </td>
                                         <td class="text-center">
-                                            <button @click="onClickDelete(i.id)" class="btn btn-sm btn-light me-3">
-                                                <i class="fas fa-trash text-danger"></i>
+                                            <button :disabled="!canDelete(authUser, 'canManageItemBrand')"
+                                                @click="onClickDelete(i.id)" class="btn btn-sm btn-light me-3">
+                                                <i class="fas fa-trash"
+                                                    :class="{ 'text-danger': canDelete(authUser, 'canManageItemBrand') }"></i>
                                             </button>
-                                            <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
-                                                <i class="fas fa-edit text-primary"></i>
+                                            <button :disabled="!canEdit(authUser, 'canManageItemBrand')"
+                                                @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
+                                                <i class="fas fa-edit"
+                                                    :class="{ 'text-primary': canEdit(authUser, 'canManageItemBrand') }"></i>
                                             </button>
                                         </td>
                                     </tr>
@@ -75,6 +80,7 @@ import * as api from '~/composables/warehouse/item-brand/item-brand.api'
 import type { ItemBrand } from '~/composables/warehouse/item-brand/item-brand.types'
 import Swal from 'sweetalert2'
 import { useToast } from "vue-toastification";
+import { canDelete, canEdit } from '~/utils/helpers';
 
 definePageMeta({
     name: ROUTES.ITEM_BRAND_INDEX,
@@ -82,15 +88,18 @@ definePageMeta({
     middleware: ['auth'],
 })
 
+const isLoadingPage = ref(true)
+const authUser = ref<AuthUser>({} as AuthUser)
+
 const toast = useToast();
 const router = useRouter()
 
 const items = ref<ItemBrand[]>([])
 const searchValue = ref('')
 
-const isLoadingPage = ref(true)
 
 onMounted(async () => {
+    authUser.value = getAuthUser()
 
     items.value = await api.findAll()
     isLoadingPage.value = false

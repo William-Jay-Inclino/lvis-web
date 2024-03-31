@@ -56,17 +56,17 @@ definePageMeta({
     middleware: ['auth'],
 })
 
+const isLoadingPage = ref(true)
+
 const route = useRoute()
 const router = useRouter()
 const isSaving = ref(false)
 
 const item = ref<ItemType>()
-const isLoadingPage = ref(true)
 
 onMounted(async () => {
 
     const response = await api.findOne(route.params.id as string)
-    isLoadingPage.value = false
 
     if (!response) {
         console.error('Item brand not found')
@@ -75,6 +75,7 @@ onMounted(async () => {
 
     item.value = response
 
+    isLoadingPage.value = false
 })
 
 

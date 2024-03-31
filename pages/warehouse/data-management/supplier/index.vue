@@ -7,7 +7,8 @@
 
         <div class="row">
             <div class="col">
-                <button @click="onClickCreate" class="btn btn-primary float-end">
+                <button v-if="canCreate(authUser, 'canManageSupplier')" @click="onClickCreate"
+                    class="btn btn-primary float-end">
                     <i class="fas fa-plus"></i> Create
                 </button>
             </div>
@@ -45,11 +46,15 @@
                                         <td class="text-muted"> {{ i.contact }} </td>
                                         <td class="text-muted"> {{ VAT[i.vat_type].label }} </td>
                                         <td class="text-center">
-                                            <button @click="onClickDelete(i.id)" class="btn btn-sm btn-light me-3">
-                                                <i class="fas fa-trash text-danger"></i>
+                                            <button :disabled="!canDelete(authUser, 'canManageSupplier')"
+                                                @click="onClickDelete(i.id)" class="btn btn-sm btn-light me-3">
+                                                <i class="fas fa-trash"
+                                                    :class="{ 'text-danger': canDelete(authUser, 'canManageSupplier') }"></i>
                                             </button>
-                                            <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
-                                                <i class="fas fa-edit text-primary"></i>
+                                            <button :disabled="!canEdit(authUser, 'canManageSupplier')"
+                                                @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
+                                                <i class="fas fa-edit"
+                                                    :class="{ 'text-primary': canEdit(authUser, 'canManageSupplier') }"></i>
                                             </button>
                                         </td>
                                     </tr>
@@ -86,16 +91,17 @@ definePageMeta({
     middleware: ['auth'],
 })
 
+const isLoadingPage = ref(true)
+const authUser = ref<AuthUser>({} as AuthUser)
+
 const toast = useToast();
 const router = useRouter()
 
 const items = ref<Supplier[]>([])
 const searchValue = ref('')
 
-const isLoadingPage = ref(true)
-
 onMounted(async () => {
-
+    authUser.value = getAuthUser()
     items.value = await api.findAll()
     isLoadingPage.value = false
 
