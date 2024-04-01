@@ -50,6 +50,8 @@
                                     Settings
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <li><nuxt-link class="dropdown-item" to="/system/settings/system-variables">System
+                                            Variables</nuxt-link></li>
                                     <li><nuxt-link class="dropdown-item"
                                             to="/system/settings/warehouse">Warehouse</nuxt-link></li>
                                 </ul>
