@@ -8,7 +8,7 @@ export interface Employee {
 
     // derived / resolvers 
 
-    is_approver?: boolean
+    // is_approver?: boolean
     pending_approvals?: PendingApproval[]
     total_pending_approvals?: number
 }

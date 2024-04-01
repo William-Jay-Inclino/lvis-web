@@ -232,7 +232,14 @@ const totalPendings = computed(() => {
     return 0
 })
 
-const isApprover = (authUser: AuthUser) => !!authUser.user.user_employee?.employee.is_approver
+const isApprover = (authUser: AuthUser) => {
+
+    const total_pendings = authUser.user.user_employee?.employee.total_pending_approvals
+    if (total_pendings && total_pendings > 0) {
+        return true
+    }
+
+}
 
 function canViewPurchasing(authUser: AuthUser) {
 

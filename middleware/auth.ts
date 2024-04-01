@@ -179,6 +179,14 @@ export default defineNuxtRouteMiddleware((to, from) => {
 })
 
 
+function isApprover(authUser: AuthUser) {
+    const total_pendings = authUser.user.user_employee?.employee.total_pending_approvals
+    if (total_pendings && total_pendings > 0) {
+        return true
+    }
+}
+
+
 // ============================================== SYSTEM ============================================== 
 
 function canAccessEmployee(route: ROUTES, permissions: SystemPermissions) {
@@ -252,9 +260,13 @@ function canAccessCanvass(route: ROUTES, permissions: WarehousePermissions) {
 
     if (!permissions.canManageCanvass) return false
 
+    const authUser = getAuthUser()
+
     if (route === ROUTES.CANVASS_INDEX) return !!permissions.canManageCanvass.search
     if (route === ROUTES.CANVASS_CREATE) return !!permissions.canManageCanvass.create
-    if (route === ROUTES.CANVASS_VIEW) return !!permissions.canManageCanvass.viewDetails
+    if (route === ROUTES.CANVASS_VIEW) {
+        return !!permissions.canManageCanvass.viewDetails || isApprover(authUser)
+    }
 
 
     return false
@@ -267,9 +279,13 @@ function canAccessRV(route: ROUTES, permissions: WarehousePermissions) {
 
     if (!permissions.canManageRV) return false
 
+    const authUser = getAuthUser()
+
     if (route === ROUTES.RV_INDEX) return !!permissions.canManageRV.search
     if (route === ROUTES.RV_CREATE) return !!permissions.canManageRV.create
-    if (route === ROUTES.RV_VIEW) return !!permissions.canManageRV.viewDetails
+    if (route === ROUTES.RV_VIEW) {
+        return !!permissions.canManageRV.viewDetails || isApprover(authUser)
+    }
 
 
     return true
@@ -282,9 +298,13 @@ function canAccessSPR(route: ROUTES, permissions: WarehousePermissions) {
 
     if (!permissions.canManageSPR) return false
 
+    const authUser = getAuthUser()
+
     if (route === ROUTES.SPR_INDEX) return !!permissions.canManageSPR.search
     if (route === ROUTES.SPR_CREATE) return !!permissions.canManageSPR.create
-    if (route === ROUTES.SPR_VIEW) return !!permissions.canManageSPR.viewDetails
+    if (route === ROUTES.SPR_VIEW) {
+        return !!permissions.canManageSPR.viewDetails || isApprover(authUser)
+    }
 
 
     return true
@@ -297,9 +317,13 @@ function canAccessJO(route: ROUTES, permissions: WarehousePermissions) {
 
     if (!permissions.canManageJO) return false
 
+    const authUser = getAuthUser()
+
     if (route === ROUTES.JO_INDEX) return !!permissions.canManageJO.search
     if (route === ROUTES.JO_CREATE) return !!permissions.canManageJO.create
-    if (route === ROUTES.JO_VIEW) return !!permissions.canManageJO.viewDetails
+    if (route === ROUTES.JO_VIEW) {
+        return !!permissions.canManageJO.viewDetails || isApprover(authUser)
+    }
 
 
     return true
@@ -312,9 +336,13 @@ function canAccessMEQS(route: ROUTES, permissions: WarehousePermissions) {
 
     if (!permissions.canManageMEQS) return false
 
+    const authUser = getAuthUser()
+
     if (route === ROUTES.MEQS_INDEX) return !!permissions.canManageMEQS.search
     if (route === ROUTES.MEQS_CREATE) return !!permissions.canManageMEQS.create
-    if (route === ROUTES.MEQS_VIEW) return !!permissions.canManageMEQS.viewDetails
+    if (route === ROUTES.MEQS_VIEW) {
+        return !!permissions.canManageMEQS.viewDetails || isApprover(authUser)
+    }
 
 
     return true
@@ -327,9 +355,13 @@ function canAccessPO(route: ROUTES, permissions: WarehousePermissions) {
 
     if (!permissions.canManagePO) return false
 
+    const authUser = getAuthUser()
+
     if (route === ROUTES.PO_INDEX) return !!permissions.canManagePO.search
     if (route === ROUTES.PO_CREATE) return !!permissions.canManagePO.create
-    if (route === ROUTES.PO_VIEW) return !!permissions.canManagePO.viewDetails
+    if (route === ROUTES.PO_VIEW) {
+        return !!permissions.canManagePO.viewDetails || isApprover(authUser)
+    }
 
 
     return true
@@ -342,9 +374,13 @@ function canAccessRR(route: ROUTES, permissions: WarehousePermissions) {
 
     if (!permissions.canManageRR) return false
 
+    const authUser = getAuthUser()
+
     if (route === ROUTES.RR_INDEX) return !!permissions.canManageRR.search
     if (route === ROUTES.RR_CREATE) return !!permissions.canManageRR.create
-    if (route === ROUTES.RR_VIEW) return !!permissions.canManageRR.viewDetails
+    if (route === ROUTES.RR_VIEW) {
+        return !!permissions.canManageRR.viewDetails || isApprover(authUser)
+    }
 
 
     return true
