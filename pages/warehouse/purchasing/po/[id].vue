@@ -1,6 +1,6 @@
 <template>
 
-    <div v-if="!isLoadingPage && poData && poData.meqs_supplier && !poData.cancelled_at">
+    <div v-if="!isLoadingPage && authUser && poData && poData.meqs_supplier && !poData.cancelled_at">
         <h2 class="text-warning">Update PO</h2>
         <hr>
 
@@ -59,7 +59,7 @@
                         disabled>
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3" v-if="isAdmin(authUser)">
                     <label class="form-label">Fund Source</label>
                     <client-only>
                         <v-select :options="accounts" label="name" v-model="poData.fund_source"></v-select>

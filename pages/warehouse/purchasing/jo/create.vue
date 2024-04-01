@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!isLoadingPage">
+    <div v-if="!isLoadingPage && authUser">
         <h2 class="text-warning">Create JO</h2>
         <hr>
 
@@ -84,7 +84,7 @@
                             </small>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-3" v-if="isAdmin(authUser)">
                             <label class="form-label">
                                 Classification
                             </label>
@@ -161,12 +161,12 @@ definePageMeta({
 })
 
 const isLoadingPage = ref(true)
+const authUser = ref<AuthUser>({} as AuthUser)
 
 // CONSTANTS
 const router = useRouter();
 
 // FLAGS
-const isMobile = ref(false)
 const isSaving = ref(false)
 
 // INITIAL DATA
@@ -202,6 +202,7 @@ const departments = ref<Department[]>([])
 
 // ======================== LIFECYCLE HOOKS ========================  
 onMounted(async () => {
+    authUser.value = getAuthUser()
 
     const response = await joApi.fetchFormDataInCreate()
 

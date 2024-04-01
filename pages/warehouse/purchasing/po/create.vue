@@ -1,6 +1,6 @@
 <template>
 
-    <div v-if="!isLoadingPage">
+    <div v-if="!isLoadingPage && authUser">
 
         <h2 class="text-warning">Create PO</h2>
         <hr>
@@ -97,7 +97,7 @@
                                 :value="VAT[poData.meqs_supplier.supplier!.vat_type].label">
                         </div>
 
-                        <div v-if="selectedMeqs">
+                        <div v-if="selectedMeqs && isAdmin(authUser)">
                             <label class="form-label">
                                 Fund Source
                             </label>
@@ -228,6 +228,7 @@ definePageMeta({
 })
 
 const isLoadingPage = ref(true)
+const authUser = ref<AuthUser>({} as AuthUser)
 
 const router = useRouter();
 
@@ -251,6 +252,7 @@ const poData = ref<CreatePoInput>({
 
 // ======================== LIFECYCLE HOOKS ========================  
 onMounted(async () => {
+    authUser.value = getAuthUser()
 
     const response = await poApi.fetchFormDataInCreate()
 

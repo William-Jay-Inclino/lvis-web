@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!isLoadingPage && rvData && rvData.canvass && !rvData.cancelled_at" class="mb-3">
+    <div v-if="!isLoadingPage && authUser && rvData && rvData.canvass && !rvData.cancelled_at" class="mb-3">
         <h2 class="text-warning">Update RV</h2>
         <hr>
 
@@ -89,7 +89,7 @@
                     </small>
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3" v-if="isAdmin(authUser)">
                     <label class="form-label">
                         Classification
                     </label>
