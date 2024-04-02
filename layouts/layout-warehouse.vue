@@ -1,10 +1,10 @@
 <template>
 
     <div>
-        <div class="container px-0 custom-card">
+        <div class="px-0">
             <nav class="navbar sticky-top navbar-expand-lg navbar-dark" style="background-color: #1877F2;">
-                <div class="container">
-                    <a class="navbar-brand" href="#">Leyeco V - Warehouse</a>
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#">Leyeco V - POWERHOUSE</a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
                         data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
                         <span class="navbar-toggler-icon"></span>
@@ -115,7 +115,14 @@
             <div class="container">
 
                 <div class="mt-3">
+
+                    <!-- <div class="card"> -->
+
+                    <!-- <div class="card-body"> -->
                     <slot />
+
+                    <!-- </div> -->
+                    <!-- </div> -->
 
                 </div>
 
@@ -337,6 +344,7 @@ function canView(module: string, authUser: AuthUser) {
     transition: color 0.3s;
 }
 
+/*
 .custom-card {
     background-color: white;
     border-radius: 10px;
@@ -346,4 +354,5 @@ function canView(module: string, authUser: AuthUser) {
     padding: 0px 20px 20px 20px;
     overflow-y: auto;
 }
+*/
 </style>

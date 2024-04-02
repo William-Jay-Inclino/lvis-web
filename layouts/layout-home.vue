@@ -2,7 +2,7 @@
     <div>
         <nav class="navbar sticky-top navbar-expand-lg navbar-dark" style="background-color: #1877F2;">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">Leyeco V</a>
+                <a class="navbar-brand" href="#">Leyeco V - HOMEPAGE</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
@@ -23,7 +23,7 @@
                             <a style="color: #FFFF00;" class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
                                 role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-user-circle"></i>
-                                <span class="fw-bold ms-1">
+                                <span class="fw-bold fst-italic ms-1">
 
                                     {{ authUser.user.username }}
 

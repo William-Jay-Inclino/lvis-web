@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!isLoadingPage">
+    <div v-if="!isLoadingPage && authUser">
 
         <h2 class="text-warning">Vehicle</h2>
 
@@ -99,7 +99,7 @@ const items = ref<Vehicle[]>([])
 const searchValue = ref('')
 
 onMounted(async () => {
-
+    authUser.value = getAuthUser()
     items.value = await api.findAll()
     isLoadingPage.value = false
 

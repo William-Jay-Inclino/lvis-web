@@ -1,10 +1,10 @@
 <template>
 
     <div>
-        <div class="container px-0 custom-card">
+        <div class="px-0">
             <nav class="navbar sticky-top navbar-expand-lg navbar-dark" style="background-color: #1877F2;">
-                <div class="container">
-                    <a class="navbar-brand" href="#">Leyeco V - Warehouse</a>
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#">Leyeco V - eFORMS</a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
                         data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
                         <span class="navbar-toggler-icon"></span>
@@ -15,9 +15,9 @@
                             <li class="nav-item">
                                 <nuxt-link class="nav-link text-white" to="/home">Home</nuxt-link>
                             </li>
-                            <li class="nav-item">
+                            <!-- <li class="nav-item">
                                 <nuxt-link class="nav-link text-white" to="/e-forms/pendings">Pending Forms</nuxt-link>
-                            </li>
+                            </li> -->
                             <li v-if="authUser" class="nav-item dropdown">
                                 <a style="color: #FFFF00;" class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
                                     role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -131,7 +131,7 @@ onMounted(() => {
     transition: color 0.3s;
 }
 
-.custom-card {
+/* .custom-card {
     background-color: white;
     border-radius: 10px;
     border: 0;
@@ -139,5 +139,5 @@ onMounted(() => {
     height: 100vh;
     padding: 0px 20px 20px 20px;
     overflow-y: auto;
-}
+} */
 </style>
