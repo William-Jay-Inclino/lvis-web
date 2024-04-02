@@ -8,6 +8,11 @@ export enum PENDING_APPROVAL_TYPE {
     RR = 'RR'
 }
 
+export enum PENDING_TRANSACTION {
+    APPROVE = 'Approve',
+    DISAPPROVE = 'Disapprove',
+}
+
 export interface PendingApproval {
     id: string
     type: PENDING_APPROVAL_TYPE

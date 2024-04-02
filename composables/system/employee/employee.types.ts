@@ -11,6 +11,8 @@ export interface Employee {
     // is_approver?: boolean
     pending_approvals?: PendingApproval[]
     total_pending_approvals?: number
+    is_budget_officer?: boolean
+    is_finance_manager?: boolean
 }
 
 export interface FindAllResponse {

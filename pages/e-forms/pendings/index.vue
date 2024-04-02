@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!isLoadingPage && authUser">
+    <div v-if="!isLoadingPage && authUser && authUser.user.user_employee">
 
         <h3 class="text-warning">Pending for Approval/Disapproval</h3>
 
@@ -32,11 +32,21 @@
                                     </nuxt-link>
                                 </td>
                                 <td class="text-muted align-middle"> {{ formatDate(item.transaction_date) }} </td>
-                                <td class="text-center align-middle">
-                                    <button @click="onApprove(i)" class="btn btn-light w-50">
+                                <td v-if="isBudgetOfficer || isFinanceManager" class="text-center align-middle">
+                                    <button @click="onClickApprove(i)" class="btn btn-light w-50" data-bs-toggle="modal"
+                                        data-bs-target="#pendingModal">
                                         <i class="fas fa-check-circle text-success"></i>
                                     </button>
-                                    <button @click="onDisapprove(i)" class="btn btn-light w-50">
+                                    <button @click="onClickDisapprove(i)" class="btn btn-light w-50"
+                                        data-bs-toggle="modal" data-bs-target="#pendingModal">
+                                        <i class="fas fa-times-circle text-danger"></i>
+                                    </button>
+                                </td>
+                                <td v-else class="text-center align-middle">
+                                    <button @click="onDefaultApprove(i)" class="btn btn-light w-50">
+                                        <i class="fas fa-check-circle text-success"></i>
+                                    </button>
+                                    <button @click="onDefaultDisapprove(i)" class="btn btn-light w-50">
                                         <i class="fas fa-times-circle text-danger"></i>
                                     </button>
                                 </td>
@@ -48,6 +58,12 @@
 
             </div>
         </div>
+
+        <EformsPendingModal v-if="isBudgetOfficer || isFinanceManager" :employee="authUser.user.user_employee.employee"
+            :pending-approval="modalData.pendingApproval" :pending-transaction="modalData.pendingTransaction"
+            :accounts="accounts" :classifications="classifications" :is-approving="isApproving"
+            :is-disapproving="isDisapproving" @approve-budget-officer="onApproveBudgetOfficer"
+            @disapprove-budget-officer="onDisapproveBudgetOfficer" />
 
     </div>
 
@@ -63,16 +79,38 @@ definePageMeta({
     layout: "layout-e-form"
 })
 
-import { PENDING_APPROVAL_TYPE, type PendingApproval } from '~/composables/e-forms/pendings/pendings.types';
+import { PENDING_APPROVAL_TYPE, PENDING_TRANSACTION, type PendingApproval } from '~/composables/e-forms/pendings/pendings.types';
 import * as pendingsApi from '~/composables/e-forms/pendings/pendings.api'
 import Swal from 'sweetalert2'
 import { useToast } from "vue-toastification";
 import { APPROVAL_STATUS } from '#imports';
+import type { Account } from '~/composables/system/account/account';
+import type { Classification } from '~/composables/system/classification/classification';
 
 const isLoadingPage = ref(true)
+const isApproving = ref(false)
+const isDisapproving = ref(false)
+
+
 const authUser = ref<AuthUser>()
 const toast = useToast();
 const pendings = ref<PendingApproval[]>([])
+const classifications = ref<Classification[]>([])
+const accounts = ref<Account[]>([])
+
+type ModalData = {
+    pendingTransaction: PENDING_TRANSACTION,
+    pendingApproval: PendingApproval | null,
+    accounts: Account[],
+    classifications: Classification[]
+}
+
+const modalData = ref<ModalData>({
+    pendingTransaction: PENDING_TRANSACTION.APPROVE,
+    pendingApproval: null,
+    accounts: [],
+    classifications: []
+})
 
 onMounted(async () => {
     authUser.value = getAuthUser()
@@ -80,9 +118,24 @@ onMounted(async () => {
 
     if (authUser.value.user.user_employee) {
 
-        const response = await pendingsApi.getPendingsByEmployeeId(authUser.value.user.user_employee.employee.id)
+        if (!!authUser.value.user.user_employee.employee.is_budget_officer) {
+            console.log('is budget officer')
+            const response = await pendingsApi.fetchDataForBudgetOfficer(authUser.value.user.user_employee.employee.id)
+            pendings.value = response.pendings
+            classifications.value = response.classifications
 
-        pendings.value = response.pendings
+        } else if (!!authUser.value.user.user_employee.employee.is_finance_manager) {
+            console.log('is finance manager')
+            const response = await pendingsApi.fetchDataForFinanceManager(authUser.value.user.user_employee.employee.id)
+            pendings.value = response.pendings
+            accounts.value = response.accounts
+
+        } else {
+            console.log('is normal approver')
+            const response = await pendingsApi.getPendingsByEmployeeId(authUser.value.user.user_employee.employee.id)
+            pendings.value = response.pendings
+        }
+
 
         isLoadingPage.value = false
 
@@ -91,6 +144,17 @@ onMounted(async () => {
 
 })
 
+const isBudgetOfficer = computed(() => {
+    if (!authUser.value) return
+    if (!authUser.value.user.user_employee) return
+    return !!authUser.value.user.user_employee.employee.is_budget_officer
+})
+
+const isFinanceManager = computed(() => {
+    if (!authUser.value) return
+    if (!authUser.value.user.user_employee) return
+    return !!authUser.value.user.user_employee.employee.is_finance_manager
+})
 
 function getLink(type: PENDING_APPROVAL_TYPE, id: string) {
 
@@ -120,7 +184,257 @@ function getLink(type: PENDING_APPROVAL_TYPE, id: string) {
 
 }
 
-function onApprove(indx: number) {
+function onClickApprove(indx: number) {
+    console.log('onClickApprove', indx)
+    const item = pendings.value[indx]
+
+    modalData.value.pendingApproval = item
+    modalData.value.pendingTransaction = PENDING_TRANSACTION.APPROVE
+}
+
+function onClickDisapprove(indx: number) {
+    console.log('onClickApprove', indx)
+    const item = pendings.value[indx]
+
+    modalData.value.pendingApproval = item
+    modalData.value.pendingTransaction = PENDING_TRANSACTION.DISAPPROVE
+}
+
+async function onApproveBudgetOfficer(payload: {
+    pendingApproval: PendingApproval,
+    classification: Classification,
+    remarks: string
+}, closeBtnModal: HTMLButtonElement) {
+    console.log('onApproveBudgetOfficer', payload)
+
+
+    const indx = pendings.value.findIndex(i => i.id === payload.pendingApproval.id)
+
+    if (indx === -1) {
+        console.error('pending approval not found with id of ', payload.pendingApproval.id)
+        return
+    }
+
+    let mutationName = ''
+
+    if (payload.pendingApproval.type === PENDING_APPROVAL_TYPE.RV) {
+        mutationName = 'update_rv_classification_and_rv_approver'
+    } else if (payload.pendingApproval.type === PENDING_APPROVAL_TYPE.SPR) {
+        mutationName = 'update_spr_classification_and_spr_approver'
+    } else if (payload.pendingApproval.type === PENDING_APPROVAL_TYPE.JO) {
+        mutationName = 'update_jo_classification_and_jo_approver'
+    } else {
+        toast.error('Budget Officer can only approve RV, SPR, and JO')
+        return
+    }
+
+    // reference id is either rv_id, spr_id, jo_id
+
+    const data = {
+        id: payload.pendingApproval.reference_id,
+        classificationId: payload.classification.id,
+        notes: payload.remarks,
+        status: APPROVAL_STATUS.APPROVED
+    }
+
+    isApproving.value = true
+    const response = await pendingsApi.update_classification_and_approver(mutationName, data)
+    isApproving.value = false
+
+    if (response.success) {
+
+        Swal.fire({
+            title: 'Approved!',
+            text: response.msg,
+            icon: 'success',
+            position: 'top',
+        });
+
+        pendings.value.splice(indx, 1)
+
+    } else {
+        Swal.fire({
+            title: 'Error!',
+            text: response.msg,
+            icon: 'error',
+            position: 'top',
+        })
+    }
+
+    closeBtnModal.click()
+
+}
+
+async function onDisapproveBudgetOfficer(payload: {
+    pendingApproval: PendingApproval,
+    classification: Classification,
+    remarks: string
+}, closeBtnModal: HTMLButtonElement) {
+    console.log('onDisapproveBudgetOfficer', payload)
+
+
+    const indx = pendings.value.findIndex(i => i.id === payload.pendingApproval.id)
+
+    if (indx === -1) {
+        console.error('pending approval not found with id of ', payload.pendingApproval.id)
+        return
+    }
+
+    let mutationName = ''
+
+    if (payload.pendingApproval.type === PENDING_APPROVAL_TYPE.RV) {
+        mutationName = 'update_rv_classification_and_rv_approver'
+    } else if (payload.pendingApproval.type === PENDING_APPROVAL_TYPE.SPR) {
+        mutationName = 'update_spr_classification_and_spr_approver'
+    } else if (payload.pendingApproval.type === PENDING_APPROVAL_TYPE.JO) {
+        mutationName = 'update_jo_classification_and_jo_approver'
+    } else {
+        toast.error('Budget Officer can only disapprove RV, SPR, and JO')
+        return
+    }
+
+    // reference id is either rv_id, spr_id, jo_id
+
+    const data = {
+        id: payload.pendingApproval.reference_id,
+        classificationId: payload.classification.id,
+        notes: payload.remarks,
+        status: APPROVAL_STATUS.DISAPPROVED
+    }
+
+    isDisapproving.value = true
+    const response = await pendingsApi.update_classification_and_approver(mutationName, data)
+    isDisapproving.value = false
+
+    if (response.success) {
+
+        Swal.fire({
+            title: 'Disapproved!',
+            text: response.msg,
+            icon: 'success',
+            position: 'top',
+        });
+
+        pendings.value.splice(indx, 1)
+
+    } else {
+        Swal.fire({
+            title: 'Error!',
+            text: response.msg,
+            icon: 'error',
+            position: 'top',
+        })
+    }
+
+    closeBtnModal.click()
+
+}
+
+async function onApproveFinanceManager(payload: {
+    pendingApproval: PendingApproval,
+    fundSource: Account,
+    remarks: string
+}, closeBtnModal: HTMLButtonElement) {
+    console.log('onApproveFinanceManager', payload)
+
+
+    const indx = pendings.value.findIndex(i => i.id === payload.pendingApproval.id)
+
+    if (indx === -1) {
+        console.error('pending approval not found with id of ', payload.pendingApproval.id)
+        return
+    }
+
+    let mutationName = 'update_po_fund_source_and_po_approver'
+
+    const data = {
+        id: payload.pendingApproval.reference_id,
+        fundSourceId: payload.fundSource.id,
+        notes: payload.remarks,
+        status: APPROVAL_STATUS.APPROVED
+    }
+
+    isApproving.value = true
+    const response = await pendingsApi.update_fund_source_and_po_approver(mutationName, data)
+    isApproving.value = false
+
+    if (response.success) {
+
+        Swal.fire({
+            title: 'Approved!',
+            text: response.msg,
+            icon: 'success',
+            position: 'top',
+        });
+
+        pendings.value.splice(indx, 1)
+
+    } else {
+        Swal.fire({
+            title: 'Error!',
+            text: response.msg,
+            icon: 'error',
+            position: 'top',
+        })
+    }
+
+    closeBtnModal.click()
+
+}
+
+async function onDisapproveFinanceManager(payload: {
+    pendingApproval: PendingApproval,
+    fundSource: Account,
+    remarks: string
+}, closeBtnModal: HTMLButtonElement) {
+    console.log('onDisapproveFinanceManager', payload)
+
+
+    const indx = pendings.value.findIndex(i => i.id === payload.pendingApproval.id)
+
+    if (indx === -1) {
+        console.error('pending approval not found with id of ', payload.pendingApproval.id)
+        return
+    }
+
+    let mutationName = 'update_po_fund_source_and_po_approver'
+
+    const data = {
+        id: payload.pendingApproval.reference_id,
+        fundSourceId: payload.fundSource.id,
+        notes: payload.remarks,
+        status: APPROVAL_STATUS.DISAPPROVED
+    }
+
+    isDisapproving.value = true
+    const response = await pendingsApi.update_fund_source_and_po_approver(mutationName, data)
+    isDisapproving.value = false
+
+    if (response.success) {
+
+        Swal.fire({
+            title: 'Disapproved!',
+            text: response.msg,
+            icon: 'success',
+            position: 'top',
+        });
+
+        pendings.value.splice(indx, 1)
+
+    } else {
+        Swal.fire({
+            title: 'Error!',
+            text: response.msg,
+            icon: 'error',
+            position: 'top',
+        })
+    }
+
+    closeBtnModal.click()
+
+}
+
+function onDefaultApprove(indx: number) {
 
     const item = pendings.value[indx]
     const status = APPROVAL_STATUS.APPROVED
@@ -155,7 +469,7 @@ function onApprove(indx: number) {
 
 }
 
-function onDisapprove(indx: number) {
+function onDefaultDisapprove(indx: number) {
 
     const item = pendings.value[indx]
     const status = APPROVAL_STATUS.DISAPPROVED
@@ -207,17 +521,17 @@ async function executeTransaction(type: PENDING_APPROVAL_TYPE, indx: number, pay
     let response
 
     if (type === PENDING_APPROVAL_TYPE.RV) {
-        response = await pendingsApi.updateRvStatus(payload)
+        response = await pendingsApi.updateStatus('updateRvApprover', payload)
     } else if (type === PENDING_APPROVAL_TYPE.SPR) {
-        response = await pendingsApi.updateSprStatus(payload)
+        response = await pendingsApi.updateStatus('updateSprApprover', payload)
     } else if (type === PENDING_APPROVAL_TYPE.JO) {
-        response = await pendingsApi.updateJoStatus(payload)
+        response = await pendingsApi.updateStatus('updateJoApprover', payload)
     } else if (type === PENDING_APPROVAL_TYPE.MEQS) {
-        response = await pendingsApi.updateMeqsStatus(payload)
+        response = await pendingsApi.updateStatus('updateMeqsApprover', payload)
     } else if (type === PENDING_APPROVAL_TYPE.PO) {
-        response = await pendingsApi.updatePoStatus(payload)
+        response = await pendingsApi.updateStatus('updatePoApprover', payload)
     } else if (type === PENDING_APPROVAL_TYPE.RR) {
-        response = await pendingsApi.updateRrStatus(payload)
+        response = await pendingsApi.updateStatus('updateRrApprover', payload)
     }
 
     if (!response) return
