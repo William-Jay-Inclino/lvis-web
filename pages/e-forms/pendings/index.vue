@@ -32,7 +32,7 @@
                                     </nuxt-link>
                                 </td>
                                 <td class="text-muted align-middle"> {{ formatDate(item.transaction_date) }} </td>
-                                <td v-if="isBudgetOfficer || isFinanceManager" class="text-center align-middle">
+                                <td v-if="!isDefaultApproval(item)" class="text-center align-middle">
                                     <button @click="onClickApprove(i)" class="btn btn-light w-50" data-bs-toggle="modal"
                                         data-bs-target="#pendingModal">
                                         <i class="fas fa-check-circle text-success"></i>
@@ -63,7 +63,8 @@
             :pending-approval="modalData.pendingApproval" :pending-transaction="modalData.pendingTransaction"
             :accounts="accounts" :classifications="classifications" :is-approving="isApproving"
             :is-disapproving="isDisapproving" @approve-budget-officer="onApproveBudgetOfficer"
-            @disapprove-budget-officer="onDisapproveBudgetOfficer" />
+            @disapprove-budget-officer="onDisapproveBudgetOfficer" @approve-finance-manager="onApproveFinanceManager"
+            @disapprove-finance-manager="onDisapproveFinanceManager" />
 
     </div>
 
@@ -155,6 +156,25 @@ const isFinanceManager = computed(() => {
     if (!authUser.value.user.user_employee) return
     return !!authUser.value.user.user_employee.employee.is_finance_manager
 })
+
+function isDefaultApproval(pending: PendingApproval) {
+
+    const pendingIsJO = pending.type === PENDING_APPROVAL_TYPE.JO
+    const pendingIsRV = pending.type === PENDING_APPROVAL_TYPE.RV
+    const pendingIsSPR = pending.type === PENDING_APPROVAL_TYPE.SPR
+    const pendingIsPO = pending.type === PENDING_APPROVAL_TYPE.PO
+
+    if (isBudgetOfficer.value && (pendingIsJO || pendingIsRV || pendingIsSPR)) {
+        return false
+    }
+
+    if (isFinanceManager.value && pendingIsPO) {
+        return false
+    }
+
+    return true
+
+}
 
 function getLink(type: PENDING_APPROVAL_TYPE, id: string) {
 
