@@ -5,7 +5,7 @@ export default defineNuxtConfig({
             apiUrl: process.env.API_URL,
             graphqlApiUrl: process.env.GRAPHQL_API_URL,
             chatGptApiKey: process.env.CHATGPT_API_KEY
-        } 
+        }
     },
     devtools: { enabled: false },
     app: {
@@ -17,20 +17,22 @@ export default defineNuxtConfig({
                 // Add any other meta tags here
             ],
             link: [
-                { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css' },
+                // { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css' },
                 { rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css' },
             ],
             script: [
-                { src: "https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js", type: "text/javascript" }
+                // { src: "https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js", type: "text/javascript" }
             ],
         }
     },
     plugins: [
+        { src: '~/plugins/bootstrap.client.ts', mode: 'client' },
         { src: '~/plugins/vue-toastification.ts', mode: 'client' },
         { src: '~/plugins/vue-select.ts', mode: 'client' },
         { src: '~/plugins/vuedraggable.ts', mode: 'client' },
     ],
     css: [
-        '~/assets/css/main.css'
+        '~/assets/css/main.css',
+        'bootstrap/dist/css/bootstrap.min.css'
     ]
 })
