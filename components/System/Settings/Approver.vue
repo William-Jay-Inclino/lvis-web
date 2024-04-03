@@ -326,7 +326,13 @@ const uniqueEmployees = computed(() => {
 
 function onClickAddApprover() {
     isApproverModalAdd.value = true
-    const highestOrder = props.approvers.reduce((max, obj) => obj.order > max ? obj.order : max, props.approvers[0].order)
+
+    let highestOrder = 0
+
+    if (props.approvers.length > 0) {
+        highestOrder = props.approvers.reduce((max, obj) => obj.order > max ? obj.order : max, props.approvers[0].order)
+    }
+
     addApproverData.value.order = highestOrder + 1
 }
 
