@@ -112,7 +112,7 @@ import Swal from 'sweetalert2'
 
 definePageMeta({
     name: ROUTES.ITEM_CREATE,
-    layout: "layout-system",
+    layout: "layout-warehouse",
     middleware: ['auth'],
 })
 

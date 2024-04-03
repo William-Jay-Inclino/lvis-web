@@ -80,6 +80,7 @@ const item = ref<Unit | undefined>()
 onMounted(async () => {
     authUser.value = getAuthUser()
     item.value = await api.findOne(route.params.id as string)
+    console.log('item.value', item.value)
     isLoadingPage.value = false
 
 })

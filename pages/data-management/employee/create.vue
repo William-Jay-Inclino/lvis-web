@@ -17,7 +17,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
-                            Middlename>
+                            Middlename
                         </label>
                         <input type="text" class="form-control" v-model="formData.middlename">
                     </div>
