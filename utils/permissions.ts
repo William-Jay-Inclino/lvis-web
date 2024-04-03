@@ -6,7 +6,9 @@ export function getAuthUser(): AuthUser {
     const authUserJson = localStorage.getItem('authUser')
 
     if (!authUserJson) {
-        throw console.error('authUser in localstorage not found');
+        console.error('authUser in localstorage not found');
+        // @ts-ignore
+        return redirectTo401Page()
     }
 
     const authUser = JSON.parse(authUserJson) as AuthUser

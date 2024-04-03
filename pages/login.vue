@@ -40,6 +40,13 @@ const error = ref({
     msg: ''
 })
 
+
+onMounted(() => {
+
+    localStorage.removeItem('authUser');
+
+})
+
 async function login() {
     console.log('login()');
     try {
