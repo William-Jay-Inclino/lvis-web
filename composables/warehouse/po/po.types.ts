@@ -32,6 +32,7 @@ export interface PO {
     status: APPROVAL_STATUS;
     is_referenced: boolean
     fund_source: Account | null
+    can_update?: boolean
 }
 
 export interface CreatePoInput {

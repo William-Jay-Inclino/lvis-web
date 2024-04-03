@@ -24,6 +24,7 @@ export async function findByRefNumber(payload: { po_number?: string, meqs_number
                 po_date
                 created_by
                 cancelled_at
+                can_update
                 meqs_supplier {
                     meqs {
                         meqs_number
@@ -115,6 +116,7 @@ export async function findAll(payload: { page: number, pageSize: number, date_re
                     po_date
                     created_by
                     cancelled_at
+                    can_update
                     meqs_supplier {
                         meqs {
                             meqs_number
@@ -368,6 +370,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 cancelled_at
                 created_by
                 notes
+                can_update
                 fund_source {
                     id 
                     name
@@ -564,6 +567,7 @@ export async function findOne(id: string): Promise<PO | undefined> {
                 notes
                 created_by
                 cancelled_at
+                can_update
                 fund_source {
                     id 
                     name 

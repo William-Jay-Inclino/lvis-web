@@ -228,14 +228,15 @@ onMounted(async () => {
 
     let response = await joApi.fetchFormDataInUpdate(route.params.id as string)
 
-    if (response.jo) {
-
-        if (!canUpdate(authUser.value, response.jo.created_by)) {
-            redirectTo401Page()
-        }
-
-        populateForm(response.jo)
+    if (!response.jo) {
+        return redirectTo401Page()
     }
+
+    if (!response.jo.can_update) {
+        return redirectTo401Page()
+    }
+
+    populateForm(response.jo)
 
     employees.value = response.employees.map((i) => {
         i.fullname = getFullname(i.firstname, i.middlename, i.lastname)

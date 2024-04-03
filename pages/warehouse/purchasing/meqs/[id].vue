@@ -226,14 +226,15 @@ onMounted(async () => {
 
     let response = await meqsApi.fetchFormDataInUpdate(route.params.id as string)
 
-    if (response && response.meqs) {
-
-        if (!canUpdate(authUser.value, response.meqs.created_by)) {
-            redirectTo401Page()
-        }
-
-        populateForm(response.meqs)
+    if (!response.meqs) {
+        return redirectTo401Page()
     }
+
+    if (!response.meqs.can_update) {
+        return redirectTo401Page()
+    }
+
+    populateForm(response.meqs)
 
     employees.value = response.employees.map((i) => {
         i.fullname = getFullname(i.firstname, i.middlename, i.lastname)

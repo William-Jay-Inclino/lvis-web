@@ -37,6 +37,7 @@ export interface JO {
   department: Department
   supervisor: Employee
   is_referenced: boolean;
+  can_update?: boolean;
 
 }
 

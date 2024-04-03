@@ -82,6 +82,7 @@ export async function findByRcNumber(rcNumber: string): Promise<JO | undefined> 
                 jo_number
                 status
                 created_by
+                can_update
                 canvass{
                     rc_number
                     requested_by {
@@ -121,6 +122,7 @@ export async function findByJoNumber(joNumber: string): Promise<JO | undefined> 
                 jo_number
                 created_by
                 status
+                can_update
                 canvass{
                     rc_number
                     requested_by {
@@ -161,6 +163,7 @@ export async function findOne(id: string): Promise<JO | undefined> {
                 status
                 date_requested 
                 equipment
+                can_update
                 department {
                     id 
                     code 
@@ -261,6 +264,7 @@ export async function findAll(payload: { page: number, pageSize: number, date_re
                     jo_number
                     created_by
                     status
+                    can_update
                     canvass{
                         rc_number
                         requested_by {
@@ -417,6 +421,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 jo_number
                 created_by
                 status
+                can_update
                 canvass {
                     id
                     rc_number

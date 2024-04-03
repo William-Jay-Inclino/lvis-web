@@ -83,6 +83,7 @@ export async function findByRcNumber(rcNumber: string): Promise<RV | undefined> 
                 rv_number
                 created_by
                 status
+                can_update
                 canvass{
                     rc_number
                     requested_by {
@@ -122,6 +123,7 @@ export async function findByRvNumber(rvNumber: string): Promise<RV | undefined> 
                 rv_number
                 created_by
                 status
+                can_update
                 canvass{
                     rc_number
                     requested_by {
@@ -166,6 +168,7 @@ export async function findOne(id: string): Promise<RV | undefined> {
                 notes
                 cancelled_at
                 created_by
+                can_update
                 canvass {
                     id
                     rc_number
@@ -258,6 +261,7 @@ export async function findAll(payload: { page: number, pageSize: number, date_re
                     rv_number
                     created_by
                     status
+                    can_update
                     canvass{
                         rc_number
                         requested_by {
@@ -400,6 +404,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 rv_number
                 status
                 created_by
+                can_update
                 canvass {
                     id
                     rc_number

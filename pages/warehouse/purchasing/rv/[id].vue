@@ -220,14 +220,15 @@ onMounted(async () => {
 
     let response = await rvApi.fetchFormDataInUpdate(route.params.id as string)
 
-    if (response.rv) {
-
-        if (!canUpdate(authUser.value, response.rv.created_by)) {
-            redirectTo401Page()
-        }
-
-        populateForm(response.rv)
+    if (!response.rv) {
+        return redirectTo401Page()
     }
+
+    if (!response.rv.can_update) {
+        return redirectTo401Page()
+    }
+
+    populateForm(response.rv)
 
     employees.value = response.employees.map((i) => {
         i.fullname = getFullname(i.firstname, i.middlename, i.lastname)

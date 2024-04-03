@@ -160,14 +160,15 @@ onMounted(async () => {
 
     let response = await poApi.fetchFormDataInUpdate(route.params.id as string)
 
-    if (response && response.po) {
-
-        if (!canUpdate(authUser.value, response.po.created_by)) {
-            redirectTo401Page()
-        }
-
-        populateForm(response.po)
+    if (!response.po) {
+        return redirectTo401Page()
     }
+
+    if (!response.po.can_update) {
+        redirectTo401Page()
+    }
+
+    populateForm(response.po)
 
     employees.value = response.employees.map((i) => {
         i.fullname = getFullname(i.firstname, i.middlename, i.lastname)

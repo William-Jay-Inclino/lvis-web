@@ -38,6 +38,8 @@ export interface RR {
     rr_items: RrItem[]
     status: APPROVAL_STATUS;
     received_by: Employee;
+
+    can_update?: boolean
 }
 
 

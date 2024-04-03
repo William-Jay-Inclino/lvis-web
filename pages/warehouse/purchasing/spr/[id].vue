@@ -223,14 +223,15 @@ onMounted(async () => {
 
     let response = await sprApi.fetchFormDataInUpdate(route.params.id as string)
 
-    if (response.spr) {
-
-        if (!canUpdate(authUser.value, response.spr.created_by)) {
-            redirectTo401Page()
-        }
-
-        populateForm(response.spr)
+    if (!response.spr) {
+        return redirectTo401Page()
     }
+
+    if (!response.spr.can_update) {
+        redirectTo401Page()
+    }
+
+    populateForm(response.spr)
 
     employees.value = response.employees.map((i) => {
         i.fullname = getFullname(i.firstname, i.middlename, i.lastname)

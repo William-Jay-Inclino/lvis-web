@@ -36,6 +36,7 @@ export interface SPR {
   classification: Classification | null;
   supervisor: Employee
   is_referenced: boolean;
+  can_update?: boolean;
 
 }
 

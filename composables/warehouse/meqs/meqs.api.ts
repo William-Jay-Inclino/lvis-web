@@ -112,6 +112,7 @@ export async function findByMeqsNumber(meqsNumber: string): Promise<MEQS | undef
                 meqs_number
                 created_by
                 status
+                can_update
                 rv {
                     rv_number
                     canvass {
@@ -194,6 +195,7 @@ export async function findByReferenceNumber(payload: {
                 meqs_number
                 created_by
                 status
+                can_update
                 rv {
                     rv_number
                     canvass {
@@ -280,6 +282,7 @@ export async function findAll(payload: { page: number, pageSize: number, date_re
                     meqs_number
                     created_by
                     status
+                    can_update
                     rv {
                         rv_number
                         canvass {
@@ -344,6 +347,7 @@ export async function findOne(id: string): Promise<MEQS | undefined> {
                 meqs_number
                 created_by
                 notes
+                can_update
                 rv{
                     id
                     rv_number
@@ -712,6 +716,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 notes
                 created_by
                 is_rr_completed
+                can_update
                 rv {
                     id
                     rv_number 

@@ -187,7 +187,7 @@
                                 </nuxt-link>
                             </div>
                             <div v-if="!item.cancelled_at">
-                                <button v-if="isAdminOrOwner(item.created_by, authUser)" class="btn btn-success me-2"
+                                <button v-if="!!item.can_update" class="btn btn-success me-2"
                                     @click="onClickUpdate(item.id)">
                                     <i class="fas fa-sync"></i> Update RV
                                 </button>

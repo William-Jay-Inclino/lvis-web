@@ -1,10 +1,11 @@
-import type { APPROVAL_STATUS, Approver, Supplier, VAT_TYPE } from "~/composables/common.types";
+import type { APPROVAL_STATUS, Approver, VAT_TYPE } from "~/composables/common.types";
 import type { RV } from "../rv/rv.types";
 import type { CanvassItem } from "../canvass/canvass-item.types";
 import type { MeqsSupplier } from "./meqs-supplier";
 import type { MeqsSupplierItem } from "./meqs-supplier-item";
 import type { SPR } from "../spr/spr.types";
 import type { JO } from "../jo/jo.types";
+import type { Supplier } from "../supplier/supplier";
 
 
 export interface MEQS {
@@ -36,6 +37,7 @@ export interface MEQS {
   meqs_suppliers: MeqsSupplier[];
   status: APPROVAL_STATUS
   is_rr_completed?: boolean
+  can_update?: boolean
 
 
   // =============== set programmatically =============== 

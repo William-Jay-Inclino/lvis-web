@@ -105,10 +105,9 @@
                                                 <i class="fas fa-info-circle"
                                                     :class="{ 'text-info': canViewDetails(authUser, 'canManageSPR') }"></i>
                                             </button>
-                                            <button :disabled="!isAdminOrOwner(i.created_by, authUser)"
-                                                @click="onClickEdit(i.id)" class="btn btn-light w-50">
-                                                <i class="fas fa-edit"
-                                                    :class="{ 'text-primary': isAdminOrOwner(i.created_by, authUser) }"></i>
+                                            <button :disabled="!i.can_update" @click="onClickEdit(i.id)"
+                                                class="btn btn-light w-50">
+                                                <i class="fas fa-edit" :class="{ 'text-primary': !!i.can_update }"></i>
                                             </button>
                                         </td>
                                     </tr>

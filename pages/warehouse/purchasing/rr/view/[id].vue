@@ -360,7 +360,7 @@
                 quantity: rrItem.quantity_accepted,
                 vatType: rrItem.meqs_supplier_item.vat_type
             })
-                                            )
+        )
                                             }}
                                         </td>
                                         <td v-show="showNetTotal" class="text-muted text-center align-middle">
@@ -418,8 +418,7 @@
                         </nuxt-link>
                     </div>
                     <div v-if="!item.cancelled_at">
-                        <button v-if="isAdminOrOwner(item.created_by, authUser)" class="btn btn-success me-2"
-                            @click="onClickUpdate(item.id)">
+                        <button v-if="!!item.can_update" class="btn btn-success me-2" @click="onClickUpdate(item.id)">
                             <i class="fas fa-sync"></i> Update RR
                         </button>
                         <button v-if="canCreate(authUser, 'canManageRR')" class="btn btn-primary me-2"

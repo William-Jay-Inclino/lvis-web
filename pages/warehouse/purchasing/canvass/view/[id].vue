@@ -273,12 +273,13 @@
                                     <i class="fas fa-search"></i> Search Canvass
                                 </nuxt-link>
                             </div>
-                            <div v-if="!item.deleted_at && isAdminOrOwner(item.created_by, authUser)">
-                                <nuxt-link class="btn btn-success me-2"
+                            <div v-if="!item.deleted_at">
+                                <nuxt-link v-if="!!item.can_update" class="btn btn-success me-2"
                                     :to="`/warehouse/purchasing/canvass/${item.id}`">
                                     <i class="fas fa-sync"></i> Update Canvass
                                 </nuxt-link>
-                                <nuxt-link class="btn btn-primary" to="/warehouse/purchasing/canvass/create">
+                                <nuxt-link v-if="canCreate(authUser, 'canManageCanvass')" class="btn btn-primary"
+                                    to="/warehouse/purchasing/canvass/create">
                                     <i class="fas fa-plus"></i> Add New Canvass
                                 </nuxt-link>
                             </div>

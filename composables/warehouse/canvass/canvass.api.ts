@@ -31,6 +31,7 @@ export async function findAll(payload: { page: number, pageSize: number, date_re
                     date_requested
                     created_by
                     deleted_at
+                    can_update
                     requested_by {
                         id
                         firstname
@@ -64,6 +65,7 @@ export async function findByRcNumber(rcNumber: string): Promise<Canvass | undefi
                 date_requested
                 created_by
                 deleted_at
+                can_update
                 requested_by {
                     id
                     firstname
@@ -101,6 +103,7 @@ export async function findOne(id: string): Promise<Canvass | undefined> {
                 notes
                 created_by
                 deleted_at
+                can_update
                 requested_by {
                     id
                     firstname
@@ -307,6 +310,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 created_by
                 deleted_at
                 is_reference_in_rr
+                can_update
                 requested_by {
                     id
                     firstname

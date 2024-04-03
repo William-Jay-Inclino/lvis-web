@@ -25,6 +25,7 @@ export async function findByRefNumber(payload: { po_number?: string, rr_number?:
                 rr_date
                 created_by
                 cancelled_at
+                can_update
                 po {
                     id
                     po_number
@@ -120,6 +121,7 @@ export async function findAll(payload: { page: number, pageSize: number, date_re
                     status
                     rr_date
                     created_by
+                    can_update
                     cancelled_at
                     po {
                         id
@@ -432,6 +434,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 delivery_charge
                 created_by
                 cancelled_at
+                can_update
                 received_by {
                     id
                     firstname
@@ -544,6 +547,7 @@ export async function findOne(id: string): Promise<RR | undefined> {
                 status
                 created_by
                 cancelled_at
+                can_update
                 received_by {
                     id
                     firstname

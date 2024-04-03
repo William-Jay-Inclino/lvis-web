@@ -82,6 +82,7 @@ export async function findByRcNumber(rcNumber: string): Promise<SPR | undefined>
                 spr_number
                 created_by
                 status
+                can_update
                 canvass{
                     rc_number
                     requested_by {
@@ -121,6 +122,7 @@ export async function findBySprNumber(sprNumber: string): Promise<SPR | undefine
                 spr_number
                 created_by
                 status
+                can_update
                 canvass{
                     rc_number
                     requested_by {
@@ -160,6 +162,7 @@ export async function findOne(id: string): Promise<SPR | undefined> {
                 spr_number
                 status
                 date_requested 
+                can_update
                 vehicle {
                     id 
                     name 
@@ -260,6 +263,7 @@ export async function findAll(payload: { page: number, pageSize: number, date_re
                     spr_number
                     created_by
                     status
+                    can_update
                     canvass{
                         rc_number
                         requested_by {
@@ -416,6 +420,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 spr_number
                 created_by
                 status
+                can_update
                 canvass {
                     id
                     rc_number
