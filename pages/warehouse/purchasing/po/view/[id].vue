@@ -210,8 +210,8 @@
                 pricePerUnit: item.price,
                 vatPerUnit: getVatAmount(item.price, item.vat_type), quantity:
                     item.canvass_item.quantity
-                                    })
-                                    )
+            })
+        )
                                     }}
                                 </td>
                             </tr>
@@ -238,11 +238,18 @@
                 <hr>
                 <div class="d-flex justify-content-end">
                     <div class="me-2">
-                        <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/po">
+                        <nuxt-link class="btn btn-secondary me-2" to="/warehouse/purchasing/po">
                             <i class="fas fa-search"></i> Search PO
                         </nuxt-link>
+                        <button class="btn btn-danger">
+                            <i class="fas fa-print"></i> Print PO
+                        </button>
                     </div>
                     <div v-if="!item.cancelled_at">
+                        <button v-if="isAdminOrOwner(item.created_by, authUser)" class="btn btn-warning me-2"
+                            @click="onCancelPo()">
+                            <i class="fas fa-times-circle"></i> Cancel PO
+                        </button>
                         <button v-if="!!item.can_update" class="btn btn-success me-2" @click="onClickUpdate(item.id)">
                             <i class="fas fa-sync"></i> Update PO
                         </button>
@@ -270,6 +277,8 @@ import * as poApi from '~/composables/warehouse/po/po.api'
 import type { PO } from '~/composables/warehouse/po/po.types';
 import { approvalStatus } from '~/utils/constants'
 import { getTotalNetPrice, getVatAmount } from '~/utils/helpers';
+import { useToast } from "vue-toastification";
+import Swal from 'sweetalert2'
 
 definePageMeta({
     name: ROUTES.PO_VIEW,
@@ -282,6 +291,7 @@ const authUser = ref<AuthUser>({} as AuthUser)
 
 const router = useRouter()
 const route = useRoute()
+const toast = useToast();
 
 const item = ref<PO | undefined>()
 
@@ -340,7 +350,54 @@ const totalPriceOfAllItems = computed(() => {
 
 })
 
+async function onCancelPo() {
 
+    Swal.fire({
+        title: "Are you sure?",
+        text: `This PO will be cancelled!`,
+        position: "top",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#e74a3b",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Yes, cancel it!",
+        reverseButtons: true,
+        showLoaderOnConfirm: true,
+        preConfirm: async (remove) => {
+
+            if (remove) {
+                await cancelPo()
+            }
+
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    })
+
+}
+
+async function cancelPo() {
+
+    if (!item.value) return
+
+    const response = await poApi.cancel(item.value.id)
+
+    if (response.success) {
+        toast.success(response.msg)
+        item.value.cancelled_at = response.cancelled_at!
+
+        router.push('/warehouse/purchasing/po')
+
+    } else {
+        Swal.fire({
+            title: 'Error!',
+            text: response.msg,
+            icon: 'error',
+            position: 'top',
+        })
+    }
+
+
+}
 
 const onClickAdd = () => router.push('/warehouse/purchasing/po/create')
 const onClickUpdate = (id: string) => router.push('/warehouse/purchasing/po/' + id)

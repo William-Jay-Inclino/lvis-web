@@ -215,11 +215,18 @@
                     <div class="col">
                         <div class="d-flex justify-content-end">
                             <div class="me-2">
-                                <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/jo">
+                                <nuxt-link class="btn btn-secondary me-2" to="/warehouse/purchasing/jo">
                                     <i class="fas fa-search"></i> Search JO
                                 </nuxt-link>
+                                <button class="btn btn-danger">
+                                    <i class="fas fa-print"></i> Print JO
+                                </button>
                             </div>
                             <div v-if="!item.cancelled_at">
+                                <button v-if="isAdminOrOwner(item.created_by, authUser)" class="btn btn-warning me-2"
+                                    @click="onCancelJo()">
+                                    <i class="fas fa-times-circle"></i> Cancel JO
+                                </button>
                                 <button v-if="!!item.can_update" class="btn btn-success me-2"
                                     @click="onClickUpdate(item.id)">
                                     <i class="fas fa-sync"></i> Update JO
@@ -250,6 +257,8 @@
 import * as api from '~/composables/warehouse/jo/jo.api'
 import type { JO } from '~/composables/warehouse/jo/jo.types';
 import { approvalStatus } from '~/utils/constants'
+import { useToast } from "vue-toastification";
+import Swal from 'sweetalert2'
 
 definePageMeta({
     name: ROUTES.JO_VIEW,
@@ -261,6 +270,7 @@ const isLoadingPage = ref(true)
 const authUser = ref<AuthUser>({} as AuthUser)
 
 const router = useRouter()
+const toast = useToast();
 
 const route = useRoute()
 const item = ref<JO | undefined>()
@@ -296,6 +306,54 @@ const hasPO = computed(() => {
 
 })
 
+async function onCancelJo() {
+
+    Swal.fire({
+        title: "Are you sure?",
+        text: `This JO will be cancelled!`,
+        position: "top",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#e74a3b",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Yes, cancel it!",
+        reverseButtons: true,
+        showLoaderOnConfirm: true,
+        preConfirm: async (remove) => {
+
+            if (remove) {
+                await cancelJo()
+            }
+
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    })
+
+}
+
+async function cancelJo() {
+
+    if (!item.value) return
+
+    const response = await api.cancel(item.value.id)
+
+    if (response.success) {
+        toast.success(response.msg)
+        item.value.cancelled_at = response.cancelled_at!
+
+        router.push('/warehouse/purchasing/jo')
+
+    } else {
+        Swal.fire({
+            title: 'Error!',
+            text: response.msg,
+            icon: 'error',
+            position: 'top',
+        })
+    }
+
+
+}
 
 const onClickAdd = () => router.push('/warehouse/purchasing/jo/create')
 const onClickUpdate = (id: string) => router.push('/warehouse/purchasing/jo/' + id)

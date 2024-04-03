@@ -182,11 +182,18 @@
                     <div class="col">
                         <div class="d-flex justify-content-end">
                             <div class="me-2">
-                                <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rv">
+                                <nuxt-link class="btn btn-secondary me-2" to="/warehouse/purchasing/rv">
                                     <i class="fas fa-search"></i> Search RV
                                 </nuxt-link>
+                                <button class="btn btn-danger">
+                                    <i class="fas fa-print"></i> Print RV
+                                </button>
                             </div>
                             <div v-if="!item.cancelled_at">
+                                <button v-if="isAdminOrOwner(item.created_by, authUser)" class="btn btn-warning me-2"
+                                    @click="onCancelRv()">
+                                    <i class="fas fa-times-circle"></i> Cancel RV
+                                </button>
                                 <button v-if="!!item.can_update" class="btn btn-success me-2"
                                     @click="onClickUpdate(item.id)">
                                     <i class="fas fa-sync"></i> Update RV
@@ -216,6 +223,8 @@
 import * as api from '~/composables/warehouse/rv/rv.api'
 import type { RV } from '~/composables/warehouse/rv/rv.types';
 import { approvalStatus } from '~/utils/constants'
+import { useToast } from "vue-toastification";
+import Swal from 'sweetalert2'
 
 definePageMeta({
     name: ROUTES.RV_VIEW,
@@ -228,6 +237,9 @@ const authUser = ref<AuthUser>({} as AuthUser)
 
 const router = useRouter()
 const route = useRoute()
+
+const toast = useToast();
+
 
 const item = ref<RV | undefined>()
 
@@ -262,6 +274,56 @@ const hasPO = computed(() => {
 
 })
 
+
+async function onCancelRv() {
+
+    Swal.fire({
+        title: "Are you sure?",
+        text: `This RV will be cancelled!`,
+        position: "top",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#e74a3b",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Yes, cancel it!",
+        reverseButtons: true,
+        showLoaderOnConfirm: true,
+        preConfirm: async (remove) => {
+
+            if (remove) {
+                await cancelRv()
+            }
+
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    })
+
+}
+
+async function cancelRv() {
+    console.log('cancelRv')
+
+    if (!item.value) return
+
+    const response = await api.cancel(item.value.id)
+
+    if (response.success) {
+        toast.success(response.msg)
+        item.value.cancelled_at = response.cancelled_at!
+
+        router.push('/warehouse/purchasing/rv')
+
+    } else {
+        Swal.fire({
+            title: 'Error!',
+            text: response.msg,
+            icon: 'error',
+            position: 'top',
+        })
+    }
+
+
+}
 
 const onClickAdd = () => router.push('/warehouse/purchasing/rv/create')
 const onClickUpdate = (id: string) => router.push('/warehouse/purchasing/rv/' + id)

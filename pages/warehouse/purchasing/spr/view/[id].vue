@@ -170,11 +170,18 @@
                     <div class="col">
                         <div class="d-flex justify-content-end">
                             <div class="me-2">
-                                <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/spr">
+                                <nuxt-link class="btn btn-secondary me-2" to="/warehouse/purchasing/spr">
                                     <i class="fas fa-search"></i> Search SPR
                                 </nuxt-link>
+                                <button class="btn btn-danger">
+                                    <i class="fas fa-print"></i> Print SPR
+                                </button>
                             </div>
                             <div v-if="!item.cancelled_at">
+                                <button v-if="isAdminOrOwner(item.created_by, authUser)" class="btn btn-warning me-2"
+                                    @click="onCancelSpr()">
+                                    <i class="fas fa-times-circle"></i> Cancel SPR
+                                </button>
                                 <button v-if="!!item.can_update" class="btn btn-success me-2"
                                     @click="onClickUpdate(item.id)">
                                     <i class="fas fa-sync"></i> Update SPR
@@ -205,6 +212,8 @@
 import * as api from '~/composables/warehouse/spr/spr.api'
 import type { SPR } from '~/composables/warehouse/spr/spr.types';
 import { approvalStatus } from '~/utils/constants'
+import { useToast } from "vue-toastification";
+import Swal from 'sweetalert2'
 
 definePageMeta({
     name: ROUTES.SPR_VIEW,
@@ -217,6 +226,8 @@ const authUser = ref<AuthUser>({} as AuthUser)
 
 const router = useRouter()
 const route = useRoute()
+
+const toast = useToast();
 
 const item = ref<SPR | undefined>()
 
@@ -250,6 +261,55 @@ const hasPO = computed(() => {
     }
 
 })
+
+async function onCancelSpr() {
+
+    Swal.fire({
+        title: "Are you sure?",
+        text: `This SPR will be cancelled!`,
+        position: "top",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#e74a3b",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Yes, cancel it!",
+        reverseButtons: true,
+        showLoaderOnConfirm: true,
+        preConfirm: async (remove) => {
+
+            if (remove) {
+                await cancelSpr()
+            }
+
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    })
+
+}
+
+async function cancelSpr() {
+
+    if (!item.value) return
+
+    const response = await api.cancel(item.value.id)
+
+    if (response.success) {
+        toast.success(response.msg)
+        item.value.cancelled_at = response.cancelled_at!
+
+        router.push('/warehouse/purchasing/spr')
+
+    } else {
+        Swal.fire({
+            title: 'Error!',
+            text: response.msg,
+            icon: 'error',
+            position: 'top',
+        })
+    }
+
+
+}
 
 
 const onClickAdd = () => router.push('/warehouse/purchasing/spr/create')

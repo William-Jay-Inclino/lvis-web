@@ -269,9 +269,12 @@
                     <div class="col">
                         <div class="d-flex justify-content-end">
                             <div class="me-2">
-                                <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">
+                                <nuxt-link class="btn btn-secondary me-2" to="/warehouse/purchasing/canvass">
                                     <i class="fas fa-search"></i> Search Canvass
                                 </nuxt-link>
+                                <button class="btn btn-danger">
+                                    <i class="fas fa-print"></i> Print Canvass
+                                </button>
                             </div>
                             <div v-if="!item.deleted_at">
                                 <nuxt-link v-if="!!item.can_update" class="btn btn-success me-2"

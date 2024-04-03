@@ -261,11 +261,18 @@
                 <div class="col">
                     <div class="d-flex justify-content-end">
                         <div class="me-2">
-                            <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/meqs">
+                            <nuxt-link class="btn btn-secondary me-2" to="/warehouse/purchasing/meqs">
                                 <i class="fas fa-search"></i> Search MEQS
                             </nuxt-link>
+                            <button class="btn btn-danger">
+                                <i class="fas fa-print"></i> Print MEQS
+                            </button>
                         </div>
                         <div v-if="!item.cancelled_at">
+                            <button v-if="isAdminOrOwner(item.created_by, authUser)" class="btn btn-warning me-2"
+                                @click="onCancelMeqs()">
+                                <i class="fas fa-times-circle"></i> Cancel MEQS
+                            </button>
                             <button v-if="!!item.can_update" class="btn btn-success me-2"
                                 @click="onClickUpdate(item.id)">
                                 <i class="fas fa-sync"></i> Update MEQS
@@ -316,6 +323,8 @@ import { UPLOADS_PATH } from '~/utils/config';
 import { formatToPhpCurrency } from '~/utils/helpers';
 import * as meqsApi from '~/composables/warehouse/meqs/meqs.api'
 import type { MEQS } from '~/composables/warehouse/meqs/meqs.types';
+import { useToast } from "vue-toastification";
+import Swal from 'sweetalert2'
 
 definePageMeta({
     name: ROUTES.MEQS_VIEW,
@@ -327,6 +336,7 @@ const authUser = ref<AuthUser>({} as AuthUser)
 
 const router = useRouter()
 const route = useRoute()
+const toast = useToast();
 
 const item = ref<MEQS | undefined>()
 const config = useRuntimeConfig()
@@ -420,7 +430,54 @@ const hasPO = computed(() => {
 
 })
 
+async function onCancelMeqs() {
 
+    Swal.fire({
+        title: "Are you sure?",
+        text: `This MEQS will be cancelled!`,
+        position: "top",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#e74a3b",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Yes, cancel it!",
+        reverseButtons: true,
+        showLoaderOnConfirm: true,
+        preConfirm: async (remove) => {
+
+            if (remove) {
+                await cancelMeqs()
+            }
+
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    })
+
+}
+
+async function cancelMeqs() {
+
+    if (!item.value) return
+
+    const response = await meqsApi.cancel(item.value.id)
+
+    if (response.success) {
+        toast.success(response.msg)
+        item.value.cancelled_at = response.cancelled_at!
+
+        router.push('/warehouse/purchasing/meqs')
+
+    } else {
+        Swal.fire({
+            title: 'Error!',
+            text: response.msg,
+            icon: 'error',
+            position: 'top',
+        })
+    }
+
+
+}
 
 const onClickAdd = () => router.push('/warehouse/purchasing/meqs/create')
 const onClickUpdate = (id: string) => router.push('/warehouse/purchasing/meqs/' + id)
