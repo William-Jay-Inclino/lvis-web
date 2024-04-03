@@ -159,12 +159,12 @@
                             </small>
                         </div>
 
-                        <div class="mb-3">
+                        <!-- <div class="mb-3">
                             <label class="form-label">
                                 Order
                             </label>
                             <input type="number" class="form-control" :value="addApproverData.order" disabled>
-                        </div>
+                        </div> -->
 
                     </div>
                     <div class="modal-footer">

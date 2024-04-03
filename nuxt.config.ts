@@ -34,5 +34,8 @@ export default defineNuxtConfig({
     css: [
         '~/assets/css/main.css',
         'bootstrap/dist/css/bootstrap.min.css'
-    ]
+    ],
+    build: {
+        transpile: ['vue-toastification']
+    }
 })
