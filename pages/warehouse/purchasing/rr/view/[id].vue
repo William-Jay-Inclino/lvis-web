@@ -361,7 +361,7 @@
                 vatType: rrItem.meqs_supplier_item.vat_type
             })
         )
-                                            }}
+    }}
                                         </td>
                                         <td v-show="showNetTotal" class="text-muted text-center align-middle">
                                             {{
@@ -413,7 +413,8 @@
                 <hr>
                 <div class="d-flex justify-content-end">
                     <div class="me-2">
-                        <nuxt-link class="btn btn-secondary me-2" to="/warehouse/purchasing/rr">
+                        <nuxt-link v-if="canSearch(authUser, 'canManageRR')" class="btn btn-secondary me-2"
+                            to="/warehouse/purchasing/rr">
                             <i class="fas fa-search"></i> Search RR
                         </nuxt-link>
                         <button class="btn btn-danger">

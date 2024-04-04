@@ -79,7 +79,7 @@ import type { Department } from '~/composables/system/department/department';
 import { departmentStatus } from '~/utils/constants'
 
 definePageMeta({
-    name: ROUTES.DEPARTMENT_INDEX,
+    name: ROUTES.DEPARTMENT_VIEW,
     layout: "layout-system",
     middleware: ['auth'],
 })

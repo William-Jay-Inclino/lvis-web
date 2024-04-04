@@ -92,6 +92,18 @@ export function canRead(authUser: AuthUser, permission: string, service?: SERVIC
 
 }
 
+export function canSearch(authUser: AuthUser, permission: string, service?: SERVICES) {
+    if (isAdmin(authUser)) return true
+
+    if (!authUser.user.permissions) return false
+
+    const _service = (service || SERVICES.WAREHOUSE).toLowerCase()
+
+    // @ts-ignore
+    return !!authUser.user.permissions[_service][permission].search
+
+}
+
 export function canViewDetails(authUser: AuthUser, permission: string, service?: SERVICES) {
     if (isAdmin(authUser)) return true
 

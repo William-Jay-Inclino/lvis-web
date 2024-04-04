@@ -170,7 +170,8 @@
                     <div class="col">
                         <div class="d-flex justify-content-end">
                             <div class="me-2">
-                                <nuxt-link class="btn btn-secondary me-2" to="/warehouse/purchasing/spr">
+                                <nuxt-link v-if="canSearch(authUser, 'canManageSPR')" class="btn btn-secondary me-2"
+                                    to="/warehouse/purchasing/spr">
                                     <i class="fas fa-search"></i> Search SPR
                                 </nuxt-link>
                                 <button class="btn btn-danger">

@@ -56,7 +56,7 @@ import type { CreateDepartmentInput, Department } from '~/composables/system/dep
 import Swal from 'sweetalert2'
 
 definePageMeta({
-    name: ROUTES.DEPARTMENT_INDEX,
+    name: ROUTES.DEPARTMENT_UPDATE,
     layout: "layout-system",
     middleware: ['auth'],
 })

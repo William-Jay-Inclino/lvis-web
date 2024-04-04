@@ -215,7 +215,8 @@
                     <div class="col">
                         <div class="d-flex justify-content-end">
                             <div class="me-2">
-                                <nuxt-link class="btn btn-secondary me-2" to="/warehouse/purchasing/jo">
+                                <nuxt-link v-if="canSearch(authUser, 'canManageJO')" class="btn btn-secondary me-2"
+                                    to="/warehouse/purchasing/jo">
                                     <i class="fas fa-search"></i> Search JO
                                 </nuxt-link>
                                 <button class="btn btn-danger">
