@@ -273,7 +273,7 @@
                                     to="/warehouse/purchasing/canvass">
                                     <i class="fas fa-search"></i> Search Canvass
                                 </nuxt-link>
-                                <button class="btn btn-danger">
+                                <button @click="generatePdf" class="btn btn-danger">
                                     <i class="fas fa-print"></i> Print Canvass
                                 </button>
                             </div>
@@ -307,6 +307,7 @@
 
 import * as api from '~/composables/warehouse/canvass/canvass.api'
 import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
+import { generateCanvassPdf } from '~/composables/warehouse/canvass/canvass.pdf'
 import { MOBILE_WIDTH } from '~/utils/config';
 import { ROUTES } from '~/utils/constants';
 
@@ -384,6 +385,9 @@ const hasPO = computed(() => {
 
 })
 
+
+
+const generatePdf = () => generateCanvassPdf(item.value!)
 
 
 
