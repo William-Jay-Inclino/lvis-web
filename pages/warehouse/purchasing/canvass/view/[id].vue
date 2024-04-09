@@ -314,7 +314,6 @@
 
 import * as api from '~/composables/warehouse/canvass/canvass.api'
 import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
-import { generateCanvassPdf } from '~/composables/warehouse/canvass/canvass.pdf'
 import { MOBILE_WIDTH } from '~/utils/config';
 import { ROUTES } from '~/utils/constants';
 import axios from 'axios';
@@ -327,9 +326,11 @@ definePageMeta({
 
 const isLoadingPage = ref(true)
 
+const config = useRuntimeConfig()
+const WAREHOUSE_API_URL = config.public.warehouseApiUrl
+
 const authUser = ref<AuthUser>({} as AuthUser)
 const route = useRoute()
-const router = useRouter()
 const item = ref<Canvass | undefined>()
 const isMobile = ref(false)
 
@@ -404,7 +405,7 @@ const hasPO = computed(() => {
 async function onClickPrint() {
     console.log('onClickPrint()')
     try {
-        const response = await axios.get('http://192.168.1.9:4002/canvass/pdf', {
+        const response = await axios.get(WAREHOUSE_API_URL + '/canvass/pdf/' + item.value?.id, {
             responseType: 'blob',
         });
 

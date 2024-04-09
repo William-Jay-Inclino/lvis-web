@@ -3,6 +3,7 @@ export default defineNuxtConfig({
     runtimeConfig: {
         public: {
             apiUrl: process.env.API_URL,
+            warehouseApiUrl: process.env.WAREHOUSE_API_URL,
             graphqlApiUrl: process.env.GRAPHQL_API_URL,
             chatGptApiKey: process.env.CHATGPT_API_KEY
         }
