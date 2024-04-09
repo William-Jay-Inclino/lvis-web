@@ -3,6 +3,7 @@ export default defineNuxtConfig({
     runtimeConfig: {
         public: {
             apiUrl: process.env.API_URL,
+            warehouseApiUrl: process.env.WAREHOUSE_API_URL,
             graphqlApiUrl: process.env.GRAPHQL_API_URL,
             chatGptApiKey: process.env.CHATGPT_API_KEY
         }
@@ -30,6 +31,7 @@ export default defineNuxtConfig({
         { src: '~/plugins/vue-toastification.ts', mode: 'client' },
         { src: '~/plugins/vue-select.ts', mode: 'client' },
         { src: '~/plugins/vuedraggable.ts', mode: 'client' },
+        { src: '~/plugins/jspdf.ts', mode: 'client' },
     ],
     css: [
         '~/assets/css/main.css',

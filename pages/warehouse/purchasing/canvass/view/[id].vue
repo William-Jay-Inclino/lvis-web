@@ -273,7 +273,12 @@
                                     to="/warehouse/purchasing/canvass">
                                     <i class="fas fa-search"></i> Search Canvass
                                 </nuxt-link>
-                                <button class="btn btn-danger">
+                                <!-- <nuxt-link class="btn btn-danger me-2" target="_blank"
+                                    :to="'/warehouse/purchasing/canvass/pdf/' + item.id">
+                                    <i class="fas fa-print"></i> Print Canvass
+                                </nuxt-link> -->
+                                <button @click="onClickPrint" class="btn btn-danger" data-bs-toggle="modal"
+                                    data-bs-target="#canvassPdfModal">
                                     <i class="fas fa-print"></i> Print Canvass
                                 </button>
                             </div>
@@ -300,6 +305,8 @@
         <LoaderSpinner />
     </div>
 
+    <WarehouseCanvassPdfModal :pdf-url="pdfUrl" />
+
 </template>
 
 
@@ -309,6 +316,7 @@ import * as api from '~/composables/warehouse/canvass/canvass.api'
 import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
 import { MOBILE_WIDTH } from '~/utils/config';
 import { ROUTES } from '~/utils/constants';
+import axios from 'axios';
 
 definePageMeta({
     name: ROUTES.CANVASS_VIEW,
@@ -318,10 +326,15 @@ definePageMeta({
 
 const isLoadingPage = ref(true)
 
+const config = useRuntimeConfig()
+const WAREHOUSE_API_URL = config.public.warehouseApiUrl
+
 const authUser = ref<AuthUser>({} as AuthUser)
 const route = useRoute()
 const item = ref<Canvass | undefined>()
 const isMobile = ref(false)
+
+const pdfUrl = ref('')
 
 onMounted(async () => {
 
@@ -386,5 +399,23 @@ const hasPO = computed(() => {
 
 
 
+// const generatePdf = () => generateCanvassPdf(item.value!)
+
+
+async function onClickPrint() {
+    console.log('onClickPrint()')
+    try {
+        const response = await axios.get(WAREHOUSE_API_URL + '/canvass/pdf/' + item.value?.id, {
+            responseType: 'blob',
+        });
+
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        pdfUrl.value = window.URL.createObjectURL(blob);
+    } catch (error) {
+        console.error('Error loading PDF:', error);
+    }
+
+
+}
 
 </script>
