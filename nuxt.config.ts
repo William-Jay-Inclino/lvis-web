@@ -10,6 +10,7 @@ export default defineNuxtConfig({
     },
     devtools: { enabled: false },
     app: {
+        baseURL: '/lvis/',
         head: {
             title: "Leyeco V Integrated System",
             meta: [
@@ -31,7 +32,6 @@ export default defineNuxtConfig({
         { src: '~/plugins/vue-toastification.ts', mode: 'client' },
         { src: '~/plugins/vue-select.ts', mode: 'client' },
         { src: '~/plugins/vuedraggable.ts', mode: 'client' },
-        { src: '~/plugins/jspdf.ts', mode: 'client' },
     ],
     css: [
         '~/assets/css/main.css',
