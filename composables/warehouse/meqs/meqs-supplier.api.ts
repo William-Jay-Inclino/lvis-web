@@ -16,13 +16,13 @@ export async function create(input: CreateMeqsSupplierInput): Promise<MutationRe
     }).join(', ');
 
 
-    const attachments = input.attachments.map(attachment => {
-        return `
-        {
-          src: "${attachment.src}"
-          filename: "${attachment.filename}"
-        }`;
-    })
+    // const attachments = input.attachments.map(attachment => {
+    //     return `
+    //     {
+    //       src: "${attachment.src}"
+    //       filename: "${attachment.filename}"
+    //     }`;
+    // })
 
 
     const mutation = `
@@ -33,7 +33,6 @@ export async function create(input: CreateMeqsSupplierInput): Promise<MutationRe
                     supplier_id: "${input.supplier_id}"
                     payment_terms: "${input.payment_terms}"
                     meqs_supplier_items: [${meqs_supplier_items}]
-                    attachments: [${attachments}]
                 }
             ) {
                 id

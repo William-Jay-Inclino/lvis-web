@@ -25,7 +25,7 @@ export interface CreateMeqsSupplierInput {
   supplier_id: string
   payment_terms: string
   meqs_supplier_items: CreateMeqsSupplierItemInput[]
-  attachments: CreateMeqsSupplierAttachmentSubInput[]
+  // attachments: CreateMeqsSupplierAttachmentSubInput[]
 }
 
 export interface CreateMeqsSupplierItemInput {

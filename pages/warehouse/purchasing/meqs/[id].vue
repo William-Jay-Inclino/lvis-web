@@ -404,7 +404,7 @@ async function addSupplier(payload: MeqsSupplier) {
         supplier_id: payload.supplier!.id,
         payment_terms: payload.payment_terms,
         meqs_supplier_items,
-        attachments
+        // attachments
 
     }
 

@@ -265,7 +265,8 @@
                                 to="/warehouse/purchasing/meqs">
                                 <i class="fas fa-search"></i> Search MEQS
                             </nuxt-link>
-                            <button class="btn btn-danger">
+                            <button @click="onClickPrint" class="btn btn-danger" data-bs-toggle="modal"
+                                data-bs-target="#purchasingPdfModal">
                                 <i class="fas fa-print"></i> Print MEQS
                             </button>
                         </div>
@@ -315,6 +316,10 @@
     <div v-else>
         <LoaderSpinner />
     </div>
+
+    <WarehousePdfModal :is-loading-pdf="isLoadingPdf" :pdf-url="pdfUrl" />
+
+
 </template>
 
 
@@ -326,6 +331,7 @@ import * as meqsApi from '~/composables/warehouse/meqs/meqs.api'
 import type { MEQS } from '~/composables/warehouse/meqs/meqs.types';
 import { useToast } from "vue-toastification";
 import Swal from 'sweetalert2'
+import axios from 'axios';
 
 definePageMeta({
     name: ROUTES.MEQS_VIEW,
@@ -334,18 +340,23 @@ definePageMeta({
 })
 const isLoadingPage = ref(true)
 const authUser = ref<AuthUser>({} as AuthUser)
+const isLoadingPdf = ref(false)
+
+const config = useRuntimeConfig()
+const WAREHOUSE_API_URL = config.public.warehouseApiUrl
 
 const router = useRouter()
 const route = useRoute()
 const toast = useToast();
 
 const item = ref<MEQS | undefined>()
-const config = useRuntimeConfig()
 const API_FILE_ENDPOINT = config.public.apiUrl + '/api/v1/file-upload'
 
 const selectedAttachment = ref('')
 const selectedNote = ref('')
 const modalToShow = ref<'attachment' | 'note'>('attachment')
+
+const pdfUrl = ref('')
 
 onMounted(async () => {
 
@@ -478,6 +489,31 @@ async function cancelMeqs() {
     }
 
 
+}
+
+
+async function onClickPrint() {
+    console.log('onClickPrint()');
+    try {
+
+        const accessToken = authUser.value.access_token
+
+        isLoadingPdf.value = true
+
+        const response = await axios.get(WAREHOUSE_API_URL + '/meqs/pdf/' + item.value?.id, {
+            responseType: 'blob',
+            headers: {
+                Authorization: `Bearer ${accessToken}`, // Include Authorization header
+            },
+        });
+
+        isLoadingPdf.value = false
+
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        pdfUrl.value = window.URL.createObjectURL(blob);
+    } catch (error) {
+        console.error('Error loading PDF:', error);
+    }
 }
 
 const onClickAdd = () => router.push('/warehouse/purchasing/meqs/create')
