@@ -186,7 +186,8 @@
                                     to="/warehouse/purchasing/rv">
                                     <i class="fas fa-search"></i> Search RV
                                 </nuxt-link>
-                                <button class="btn btn-danger">
+                                <button @click="onClickPrint" class="btn btn-danger" data-bs-toggle="modal"
+                                    data-bs-target="#purchasingPdfModal">
                                     <i class="fas fa-print"></i> Print RV
                                 </button>
                             </div>
@@ -216,6 +217,9 @@
     <div v-else>
         <LoaderSpinner />
     </div>
+
+    <WarehousePdfModal :is-loading-pdf="isLoadingPdf" :pdf-url="pdfUrl" />
+
 </template>
 
 
@@ -226,6 +230,7 @@ import type { RV } from '~/composables/warehouse/rv/rv.types';
 import { approvalStatus } from '~/utils/constants'
 import { useToast } from "vue-toastification";
 import Swal from 'sweetalert2'
+import axios from 'axios';
 
 definePageMeta({
     name: ROUTES.RV_VIEW,
@@ -235,14 +240,20 @@ definePageMeta({
 
 const isLoadingPage = ref(true)
 const authUser = ref<AuthUser>({} as AuthUser)
+const isLoadingPdf = ref(false)
+
+const config = useRuntimeConfig()
+const WAREHOUSE_API_URL = config.public.warehouseApiUrl
 
 const router = useRouter()
 const route = useRoute()
 
 const toast = useToast();
 
-
 const item = ref<RV | undefined>()
+
+const pdfUrl = ref('')
+
 
 onMounted(async () => {
 
@@ -325,6 +336,31 @@ async function cancelRv() {
 
 
 }
+
+async function onClickPrint() {
+    console.log('onClickPrint()');
+    try {
+
+        const accessToken = authUser.value.access_token
+
+        isLoadingPdf.value = true
+
+        const response = await axios.get(WAREHOUSE_API_URL + '/rv/pdf/' + item.value?.id, {
+            responseType: 'blob',
+            headers: {
+                Authorization: `Bearer ${accessToken}`, // Include Authorization header
+            },
+        });
+
+        isLoadingPdf.value = false
+
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        pdfUrl.value = window.URL.createObjectURL(blob);
+    } catch (error) {
+        console.error('Error loading PDF:', error);
+    }
+}
+
 
 const onClickAdd = () => router.push('/warehouse/purchasing/rv/create')
 const onClickUpdate = (id: string) => router.push('/warehouse/purchasing/rv/' + id)

@@ -164,48 +164,6 @@
                             </table>
                         </div>
 
-                        <!-- <div v-else>
-
-                            <div class="h5wrapper mb-3">
-                                <hr class="result">
-                                <h5 class="text-warning fst-italic">
-                                    <i class="fas fa-users"></i> Approvers
-                                </h5>
-                                <hr class="result">
-                            </div>
-
-                            <div v-for="i, count in item.jo_approvers" class="table-responsive">
-
-                                <table class="table table-hover table-bordered">
-                                    <tbody>
-                                        <tr>
-                                            <td width="50%" class="bg-secondary text-white"> Order </td>
-                                            <td class="bg-secondary text-white"> {{ i.order }} </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-muted"> Label </td>
-                                            <td> {{ i.label }} </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-muted"> Approver </td>
-                                            <td> {{ getFullname(i.approver!.firstname, i.approver!.middlename,
-        i.approver!.lastname) }} </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-muted"> Status </td>
-                                            <td>
-                                                <span :class="{ [`badge bg-${approvalStatus[i.status].color}`]: true}">
-                                                    {{ approvalStatus[i.status].label }}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-
-                            </div>
-
-                        </div> -->
-
                     </div>
                 </div>
 
@@ -219,7 +177,8 @@
                                     to="/warehouse/purchasing/jo">
                                     <i class="fas fa-search"></i> Search JO
                                 </nuxt-link>
-                                <button class="btn btn-danger">
+                                <button @click="onClickPrint" class="btn btn-danger" data-bs-toggle="modal"
+                                    data-bs-target="#purchasingPdfModal">
                                     <i class="fas fa-print"></i> Print JO
                                 </button>
                             </div>
@@ -250,6 +209,8 @@
         <LoaderSpinner />
     </div>
 
+    <WarehousePdfModal :is-loading-pdf="isLoadingPdf" :pdf-url="pdfUrl" />
+
 </template>
 
 
@@ -260,6 +221,7 @@ import type { JO } from '~/composables/warehouse/jo/jo.types';
 import { approvalStatus } from '~/utils/constants'
 import { useToast } from "vue-toastification";
 import Swal from 'sweetalert2'
+import axios from 'axios';
 
 definePageMeta({
     name: ROUTES.JO_VIEW,
@@ -269,12 +231,18 @@ definePageMeta({
 
 const isLoadingPage = ref(true)
 const authUser = ref<AuthUser>({} as AuthUser)
+const isLoadingPdf = ref(false)
+
+const config = useRuntimeConfig()
+const WAREHOUSE_API_URL = config.public.warehouseApiUrl
 
 const router = useRouter()
 const toast = useToast();
 
 const route = useRoute()
 const item = ref<JO | undefined>()
+
+const pdfUrl = ref('')
 
 onMounted(async () => {
 
@@ -354,6 +322,30 @@ async function cancelJo() {
     }
 
 
+}
+
+async function onClickPrint() {
+    console.log('onClickPrint()');
+    try {
+
+        const accessToken = authUser.value.access_token
+
+        isLoadingPdf.value = true
+
+        const response = await axios.get(WAREHOUSE_API_URL + '/jo/pdf/' + item.value?.id, {
+            responseType: 'blob',
+            headers: {
+                Authorization: `Bearer ${accessToken}`, // Include Authorization header
+            },
+        });
+
+        isLoadingPdf.value = false
+
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        pdfUrl.value = window.URL.createObjectURL(blob);
+    } catch (error) {
+        console.error('Error loading PDF:', error);
+    }
 }
 
 const onClickAdd = () => router.push('/warehouse/purchasing/jo/create')

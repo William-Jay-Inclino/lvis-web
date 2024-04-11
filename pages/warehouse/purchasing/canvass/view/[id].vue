@@ -273,12 +273,8 @@
                                     to="/warehouse/purchasing/canvass">
                                     <i class="fas fa-search"></i> Search Canvass
                                 </nuxt-link>
-                                <!-- <nuxt-link class="btn btn-danger me-2" target="_blank"
-                                    :to="'/warehouse/purchasing/canvass/pdf/' + item.id">
-                                    <i class="fas fa-print"></i> Print Canvass
-                                </nuxt-link> -->
                                 <button @click="onClickPrint" class="btn btn-danger" data-bs-toggle="modal"
-                                    data-bs-target="#canvassPdfModal">
+                                    data-bs-target="#purchasingPdfModal">
                                     <i class="fas fa-print"></i> Print Canvass
                                 </button>
                             </div>
@@ -305,7 +301,7 @@
         <LoaderSpinner />
     </div>
 
-    <WarehouseCanvassPdfModal :pdf-url="pdfUrl" />
+    <WarehousePdfModal :is-loading-pdf="isLoadingPdf" :pdf-url="pdfUrl" />
 
 </template>
 
@@ -325,6 +321,7 @@ definePageMeta({
 })
 
 const isLoadingPage = ref(true)
+const isLoadingPdf = ref(false)
 
 const config = useRuntimeConfig()
 const WAREHOUSE_API_URL = config.public.warehouseApiUrl
@@ -398,15 +395,13 @@ const hasPO = computed(() => {
 })
 
 
-
-// const generatePdf = () => generateCanvassPdf(item.value!)
-
-
 async function onClickPrint() {
     console.log('onClickPrint()');
     try {
 
         const accessToken = authUser.value.access_token
+
+        isLoadingPdf.value = true
 
         const response = await axios.get(WAREHOUSE_API_URL + '/canvass/pdf/' + item.value?.id, {
             responseType: 'blob',
@@ -414,6 +409,8 @@ async function onClickPrint() {
                 Authorization: `Bearer ${accessToken}`, // Include Authorization header
             },
         });
+
+        isLoadingPdf.value = false
 
         const blob = new Blob([response.data], { type: 'application/pdf' });
         pdfUrl.value = window.URL.createObjectURL(blob);

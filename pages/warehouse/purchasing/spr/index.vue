@@ -46,7 +46,7 @@
             </button>
         </div>
 
-        <div class="h6wrapper mb-3 mt-3" v-show="!isInitialLoad && !isSearching && !isPaginating">
+        <div class="h5wrapper mb-3 mt-3" v-show="!isInitialLoad && !isSearching && !isPaginating">
             <hr class="result">
             <h6 class="text-warning"><i>Search results...</i></h6>
             <hr class="result">
