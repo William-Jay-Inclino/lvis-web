@@ -403,10 +403,16 @@ const hasPO = computed(() => {
 
 
 async function onClickPrint() {
-    console.log('onClickPrint()')
+    console.log('onClickPrint()');
     try {
+
+        const accessToken = authUser.value.access_token
+
         const response = await axios.get(WAREHOUSE_API_URL + '/canvass/pdf/' + item.value?.id, {
             responseType: 'blob',
+            headers: {
+                Authorization: `Bearer ${accessToken}`, // Include Authorization header
+            },
         });
 
         const blob = new Blob([response.data], { type: 'application/pdf' });
@@ -414,8 +420,6 @@ async function onClickPrint() {
     } catch (error) {
         console.error('Error loading PDF:', error);
     }
-
-
 }
 
 </script>
