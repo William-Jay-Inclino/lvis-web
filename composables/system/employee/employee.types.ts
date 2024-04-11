@@ -5,6 +5,7 @@ export interface Employee {
     firstname: string
     middlename: string
     lastname: string
+    position: string
 
     // derived / resolvers 
 
@@ -26,6 +27,7 @@ export interface CreateEmployeeInput {
     firstname: string
     middlename: string
     lastname: string
+    position: string
 }
 
 export interface MutationResponse {

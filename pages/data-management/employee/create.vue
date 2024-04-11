@@ -27,6 +27,12 @@
                         </label>
                         <input type="text" class="form-control" v-model="formData.lastname" required>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Position
+                        </label>
+                        <input type="text" class="form-control" v-model="formData.position">
+                    </div>
                 </div>
             </div>
 
@@ -69,6 +75,7 @@ const _initialFormData: CreateEmployeeInput = {
     firstname: '',
     middlename: '',
     lastname: '',
+    position: '',
 }
 
 const formData = ref({ ..._initialFormData })

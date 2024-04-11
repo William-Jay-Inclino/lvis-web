@@ -30,6 +30,10 @@
                                     <td class="text-muted">Lastname</td>
                                     <td> {{ item.lastname }} </td>
                                 </tr>
+                                <tr>
+                                    <td class="text-muted">Position</td>
+                                    <td> {{ item.position || 'N/A' }} </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>

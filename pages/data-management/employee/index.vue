@@ -15,7 +15,7 @@
         </div>
 
         <div class="row justify-content-center pt-5">
-            <div class="col-lg-9">
+            <div class="col-lg-10">
                 <div class="input-group mb-3">
                     <input @keyup.enter="search()" type="text" class="form-control" placeholder="Enter name..."
                         v-model="searchValue">
@@ -32,7 +32,7 @@
                 Loading please wait...
             </div>
 
-            <div v-show="items.length > 0" class="col-lg-9">
+            <div v-show="items.length > 0" class="col-lg-10">
 
                 <div class="row">
                     <div class="col">
@@ -43,6 +43,7 @@
                                         <th class="bg-secondary text-white">Firstname</th>
                                         <th class="bg-secondary text-white">Middlename</th>
                                         <th class="bg-secondary text-white">Lastname</th>
+                                        <th class="bg-secondary text-white">Position</th>
                                         <th class="text-center bg-secondary text-white">
                                             <i class="fas fa-cog"></i>
                                         </th>
@@ -53,6 +54,7 @@
                                         <td class="text-muted"> {{ i.firstname }} </td>
                                         <td class="text-muted"> {{ i.middlename }} </td>
                                         <td class="text-muted"> {{ i.lastname }} </td>
+                                        <td class="text-muted"> {{ i.position }} </td>
                                         <td class="text-center">
                                             <button
                                                 :disabled="!canDelete(authUser, 'canManageEmployee', SERVICES.SYSTEM)"

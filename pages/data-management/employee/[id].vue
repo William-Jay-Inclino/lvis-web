@@ -27,6 +27,12 @@
                         </label>
                         <input type="text" class="form-control" v-model="item.lastname" required>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Position
+                        </label>
+                        <input type="text" class="form-control" v-model="item.position">
+                    </div>
                 </div>
             </div>
 
@@ -100,6 +106,7 @@ async function onSubmit() {
         firstname: item.value.firstname,
         middlename: item.value.middlename,
         lastname: item.value.lastname,
+        position: item.value.position,
     }
 
     isSaving.value = true

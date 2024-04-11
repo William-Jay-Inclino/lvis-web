@@ -26,6 +26,7 @@ export async function findAll(payload: { page: number, pageSize: number, searchV
                     firstname
                     middlename
                     lastname
+                    position
                 }
                 totalItems
                 currentPage
@@ -52,6 +53,7 @@ export async function findOne(id: string): Promise<Employee | undefined> {
                 firstname
                 middlename
                 lastname
+                position
             }
         }
     `;
@@ -85,6 +87,7 @@ export async function create(input: CreateEmployeeInput): Promise<MutationRespon
                 firstname
                 middlename
                 lastname
+                position
             }
         }`;
 
@@ -127,6 +130,7 @@ export async function update(id: string, input: CreateEmployeeInput): Promise<Mu
                 firstname
                 middlename
                 lastname
+                position
             }
         }`;
 
