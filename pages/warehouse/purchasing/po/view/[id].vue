@@ -242,9 +242,10 @@
                             to="/warehouse/purchasing/po">
                             <i class="fas fa-search"></i> Search PO
                         </nuxt-link>
-                        <button class="btn btn-danger">
-                            <i class="fas fa-print"></i> Print PO
-                        </button>
+                        <button @click="onClickPrint" class="btn btn-danger" data-bs-toggle="modal"
+                                data-bs-target="#purchasingPdfModal">
+                                <i class="fas fa-print"></i> Print PO
+                            </button>
                     </div>
                     <div v-if="!item.cancelled_at">
                         <button v-if="isAdminOrOwner(item.created_by, authUser)" class="btn btn-warning me-2"
@@ -269,6 +270,9 @@
         <LoaderSpinner />
     </div>
 
+    <WarehousePdfModal :is-loading-pdf="isLoadingPdf" :pdf-url="pdfUrl" />
+
+
 </template>
 
 
@@ -280,6 +284,7 @@ import { approvalStatus } from '~/utils/constants'
 import { getTotalNetPrice, getVatAmount } from '~/utils/helpers';
 import { useToast } from "vue-toastification";
 import Swal from 'sweetalert2'
+import axios from 'axios';
 
 definePageMeta({
     name: ROUTES.PO_VIEW,
@@ -289,12 +294,18 @@ definePageMeta({
 
 const isLoadingPage = ref(true)
 const authUser = ref<AuthUser>({} as AuthUser)
+const isLoadingPdf = ref(false)
+
+const config = useRuntimeConfig()
+const WAREHOUSE_API_URL = config.public.warehouseApiUrl
 
 const router = useRouter()
 const route = useRoute()
 const toast = useToast();
 
 const item = ref<PO | undefined>()
+
+const pdfUrl = ref('')
 
 onMounted(async () => {
 
@@ -399,6 +410,32 @@ async function cancelPo() {
 
 
 }
+
+
+async function onClickPrint() {
+    console.log('onClickPrint()');
+    try {
+
+        const accessToken = authUser.value.access_token
+
+        isLoadingPdf.value = true
+
+        const response = await axios.get(WAREHOUSE_API_URL + '/po/pdf/' + item.value?.id, {
+            responseType: 'blob',
+            headers: {
+                Authorization: `Bearer ${accessToken}`, // Include Authorization header
+            },
+        });
+
+        isLoadingPdf.value = false
+
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        pdfUrl.value = window.URL.createObjectURL(blob);
+    } catch (error) {
+        console.error('Error loading PDF:', error);
+    }
+}
+
 
 const onClickAdd = () => router.push('/warehouse/purchasing/po/create')
 const onClickUpdate = (id: string) => router.push('/warehouse/purchasing/po/' + id)

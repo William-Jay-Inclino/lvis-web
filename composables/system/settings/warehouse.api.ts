@@ -24,7 +24,12 @@ export async function findAllDefaultApprovers(model: string): Promise<ApproverSe
         const response = await sendRequest(query);
         console.log('response', response)
 
-        return response.data.data[model]
+        const approvers = response.data.data[model] as ApproverSetting[]
+
+        return approvers.map(i => {
+            i.approver!['fullname'] = getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname)
+            return i
+        })
 
     } catch (error) {
         console.error(error);
@@ -38,7 +43,7 @@ export async function initPurchasingTabData(): Promise<{
 
     const query = `
         query {
-            employees(page: 1, pageSize: 20) {
+            employees(page: 1, pageSize: 100) {
                 data {
                     id 
                     firstname

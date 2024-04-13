@@ -401,7 +401,7 @@ async function editApprover(
 
     purchasing.value.isEditingApprover = true
     const response = await warehouseApi.updateApprover(payload, transaction)
-    purchasing.value.isEditingApprover = true
+    purchasing.value.isEditingApprover = false
 
     if (response.success && response.data) {
         toast.success(response.msg)
