@@ -23,6 +23,18 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
+                            Address <span class="text-danger">*</span>
+                        </label>
+                        <textarea class="form-control" v-model="formData.address" rows="3" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Tin Number <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" v-model="formData.tin_no" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
                             VAT <span class="text-danger">*</span>
                         </label>
                         <select v-model="formData.vat_type" class="form-select" aria-label="Default select example">
@@ -74,6 +86,8 @@ const isSaving = ref(false)
 const _initialFormData: CreateSupplierInput = {
     name: '',
     contact: '',
+    tin_no: '',
+    address: '',
     vat_type: VAT_TYPE.NONE,
 }
 

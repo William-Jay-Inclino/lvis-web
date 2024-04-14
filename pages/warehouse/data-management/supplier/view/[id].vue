@@ -27,6 +27,14 @@
                                     <td> {{ item.contact }} </td>
                                 </tr>
                                 <tr>
+                                    <td class="text-muted">Address</td>
+                                    <td> {{ item.address }} </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Tin Number</td>
+                                    <td> {{ item.tin_no }} </td>
+                                </tr>
+                                <tr>
                                     <td class="text-muted">VAT</td>
                                     <td> {{ VAT[item.vat_type].label }} </td>
                                 </tr>

@@ -11,6 +11,8 @@ export async function findAll(): Promise<Supplier[]> {
                 id
                 name
                 contact
+                tin_no
+                address
                 vat_type
             }
         }
@@ -33,6 +35,8 @@ export async function findOne(id: string): Promise<Supplier | undefined> {
                 id
                 name
                 contact
+                tin_no
+                address
                 vat_type
             }
         }
@@ -70,6 +74,8 @@ export async function create(input: CreateSupplierInput): Promise<MutationRespon
                 id
                 name
                 contact
+                tin_no
+                address
                 vat_type
             }
         }`;
@@ -116,6 +122,8 @@ export async function update(id: string, input: CreateSupplierInput): Promise<Mu
                 id
                 name
                 contact
+                tin_no
+                address
                 vat_type
             }
         }`;

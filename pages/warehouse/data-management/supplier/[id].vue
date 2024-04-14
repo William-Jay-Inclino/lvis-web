@@ -23,6 +23,18 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">
+                            Address <span class="text-danger">*</span>
+                        </label>
+                        <textarea class="form-control" v-model="item.address" rows="3" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Tin Number <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" v-model="item.tin_no" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
                             VAT <span class="text-danger">*</span>
                         </label>
                         <select v-model="item.vat_type" class="form-select" aria-label="Default select example">
@@ -102,6 +114,8 @@ async function onSubmit() {
     const data: CreateSupplierInput = {
         name: item.value.name,
         contact: item.value.contact,
+        address: item.value.address,
+        tin_no: item.value.tin_no,
         vat_type: item.value.vat_type,
     }
 

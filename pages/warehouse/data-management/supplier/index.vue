@@ -15,7 +15,7 @@
         </div>
 
         <div class="row justify-content-center pt-5">
-            <div class="col-lg-6">
+            <div class="col-lg-10">
                 <div class="input-group mb-3">
                     <input type="text" class="form-control" placeholder="search for name..." v-model="searchValue">
                 </div>
@@ -24,7 +24,7 @@
 
         <div class="row justify-content-center pt-3">
 
-            <div v-show="items.length > 0" class="col-lg-6">
+            <div v-show="items.length > 0" class="col-lg-10">
 
                 <div class="row">
                     <div class="col">
@@ -34,7 +34,9 @@
                                     <tr>
                                         <th class="bg-secondary text-white">Name</th>
                                         <th class="bg-secondary text-white">Contact</th>
+                                        <th class="bg-secondary text-white">Address</th>
                                         <th class="bg-secondary text-white">Vat Type</th>
+                                        <th class="bg-secondary text-white">Tin No.</th>
                                         <th class="text-center bg-secondary text-white">
                                             <i class="fas fa-cog"></i>
                                         </th>
@@ -44,7 +46,9 @@
                                     <tr v-for="i in filteredItems">
                                         <td class="text-muted"> {{ i.name }} </td>
                                         <td class="text-muted"> {{ i.contact }} </td>
+                                        <td class="text-muted"> {{ i.address }} </td>
                                         <td class="text-muted"> {{ VAT[i.vat_type].label }} </td>
+                                        <td class="text-muted"> {{ i.tin_no }} </td>
                                         <td class="text-center">
                                             <button :disabled="!canDelete(authUser, 'canManageSupplier')"
                                                 @click="onClickDelete(i.id)" class="btn btn-sm btn-light me-3">
