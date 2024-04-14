@@ -1,5 +1,6 @@
 import { sendRequest } from "~/utils/api"
 import type { Employee, CreateEmployeeInput, MutationResponse, FindAllResponse } from "./employee.types";
+import axios from "axios";
 
 
 
@@ -54,6 +55,7 @@ export async function findOne(id: string): Promise<Employee | undefined> {
                 middlename
                 lastname
                 position
+                signature_src
             }
         }
     `;
@@ -186,4 +188,40 @@ export async function remove(id: string): Promise<{ success: boolean, msg: strin
             msg: 'Failed to remove Employee. Please contact system administrator'
         }
     }
+}
+
+export async function uploadSingleAttachment(attachment: any, apiUrl: string): Promise<string | null> {
+
+    console.log('uploadSingleAttachment', attachment)
+
+    const image = attachment
+
+    console.log('image', image)
+
+    const formData = new FormData();
+
+    formData.append('file', image)
+
+    const fileUploadApi = apiUrl + '/api/v1/file-upload/system/employee/single'
+
+    try {
+        const response = await axios.post(fileUploadApi, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+
+        console.log('response', response.data);
+
+        if (response.data && response.data.success && response.data.data) {
+            return response.data.data as string
+        }
+
+        return null
+
+    } catch (error) {
+        console.error('Error uploading image:', error);
+        return null
+    }
+
 }

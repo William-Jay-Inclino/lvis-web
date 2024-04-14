@@ -33,6 +33,12 @@
                         </label>
                         <input type="text" class="form-control" v-model="formData.position">
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Signature
+                        </label>
+                        <input class="form-control" type="file" @change="handleFileUpload">
+                    </div>
                 </div>
             </div>
 
@@ -71,21 +77,36 @@ definePageMeta({
 const router = useRouter()
 const isSaving = ref(false)
 
+const config = useRuntimeConfig()
+const API_URL = config.public.apiUrl
+
+
 const _initialFormData: CreateEmployeeInput = {
     firstname: '',
     middlename: '',
     lastname: '',
     position: '',
+    signature_src: null,
 }
 
 const formData = ref({ ..._initialFormData })
 
+const signatureFile = ref<File>()
 
 async function onSubmit() {
 
     console.log('saving...')
 
     isSaving.value = true
+
+    // upload signature first
+    if(signatureFile.value) {
+        const fileSrc = await api.uploadSingleAttachment(signatureFile.value, API_URL)
+        console.log('fileSrc', fileSrc);
+        formData.value.signature_src = fileSrc
+    }
+
+    
     const response = await api.create(formData.value)
     isSaving.value = false
 
@@ -113,6 +134,9 @@ async function onSubmit() {
 
 }
 
+function handleFileUpload(event: any) {
+    signatureFile.value = event.target.files[0];
+}
 
 
 const onClickGoToList = () => router.push('/data-management/employee')

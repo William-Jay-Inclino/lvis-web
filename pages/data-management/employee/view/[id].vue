@@ -34,6 +34,17 @@
                                     <td class="text-muted">Position</td>
                                     <td> {{ item.position || 'N/A' }} </td>
                                 </tr>
+                                <tr>
+                                    <td class="text-muted">Signature</td>
+                                    <td>
+                                        <div v-if="item.signature_src">
+                                            <img :src="getUploadsPath(item.signature_src)" class="img-thumbnail">
+                                        </div>
+                                        <div v-else>
+                                            N/A
+                                        </div>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -84,6 +95,10 @@ import type { Employee } from '~/composables/system/employee/employee.types';
 const isLoadingPage = ref(true)
 const authUser = ref<AuthUser>({} as AuthUser)
 
+const config = useRuntimeConfig()
+const API_FILE_ENDPOINT = config.public.apiUrl + '/api/v1/file-upload'
+
+
 const router = useRouter()
 const route = useRoute()
 const item = ref<Employee | undefined>()
@@ -95,6 +110,16 @@ onMounted(async () => {
 
 })
 
+
+function getUploadsPath(src: string) {
+
+    const path = src.replace(UPLOADS_PATH, '')
+    console.log('PATH', path)
+
+    const uploadsPath = API_FILE_ENDPOINT + path
+    return uploadsPath
+
+}
 
 const onClickGoToList = () => router.push(`/data-management/employee`);
 const onClickAddNew = () => router.push(`/data-management/employee/create`);

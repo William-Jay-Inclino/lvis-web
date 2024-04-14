@@ -33,6 +33,12 @@
                         </label>
                         <input type="text" class="form-control" v-model="item.position">
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Signature
+                        </label>
+                        <input class="form-control" type="file" @change="handleFileUpload">
+                    </div>
                 </div>
             </div>
 
@@ -79,7 +85,13 @@ const route = useRoute()
 const router = useRouter()
 const isSaving = ref(false)
 
+const config = useRuntimeConfig()
+const API_URL = config.public.apiUrl
+
 const item = ref<Employee>()
+
+const signatureFile = ref<File>()
+
 
 onMounted(async () => {
 
@@ -106,10 +118,20 @@ async function onSubmit() {
         firstname: item.value.firstname,
         middlename: item.value.middlename,
         lastname: item.value.lastname,
-        position: item.value.position,
+        position: item.value.position
     }
 
     isSaving.value = true
+
+    console.log('signatureFile.value', signatureFile.value);
+
+    // upload signature first
+    if(!!signatureFile.value) {
+        const fileSrc = await api.uploadSingleAttachment(signatureFile.value, API_URL)
+        console.log('fileSrc', fileSrc);
+        data['signature_src'] = fileSrc
+    }
+
     const response = await api.update(item.value.id, data)
     isSaving.value = false
 
@@ -137,7 +159,9 @@ async function onSubmit() {
 
 }
 
-
+function handleFileUpload(event: any) {
+    signatureFile.value = event.target.files[0];
+}
 
 const onClickGoToList = () => router.push('/data-management/employee')
 
