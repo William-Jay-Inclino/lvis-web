@@ -417,7 +417,8 @@
                             to="/warehouse/purchasing/rr">
                             <i class="fas fa-search"></i> Search RR
                         </nuxt-link>
-                        <button class="btn btn-danger">
+                        <button @click="onClickPrint" class="btn btn-danger" data-bs-toggle="modal"
+                            data-bs-target="#purchasingPdfModal">
                             <i class="fas fa-print"></i> Print RR
                         </button>
                     </div>
@@ -443,6 +444,9 @@
     <div v-else>
         <LoaderSpinner />
     </div>
+
+    <WarehousePdfModal :is-loading-pdf="isLoadingPdf" :pdf-url="pdfUrl" />
+
 </template>
 
 
@@ -454,6 +458,7 @@ import { approvalStatus } from '~/utils/constants'
 import { getTotalNetPrice, getVatAmount, getNetPrice, getGrossTotal, getVatTotal } from '~/utils/helpers';
 import { useToast } from "vue-toastification";
 import Swal from 'sweetalert2'
+import axios from 'axios';
 
 definePageMeta({
     name: ROUTES.RR_VIEW,
@@ -463,6 +468,10 @@ definePageMeta({
 
 const isLoadingPage = ref(true)
 const authUser = ref<AuthUser>({} as AuthUser)
+const isLoadingPdf = ref(false)
+
+const config = useRuntimeConfig()
+const WAREHOUSE_API_URL = config.public.warehouseApiUrl
 
 const router = useRouter()
 const route = useRoute()
@@ -483,6 +492,8 @@ const showNetPrice = ref(true)
 const showGrossTotal = ref(true)
 const showVatTotal = ref(true)
 const showNetTotal = ref(true)
+
+const pdfUrl = ref('')
 
 onMounted(async () => {
     authUser.value = getAuthUser()
@@ -562,6 +573,31 @@ async function cancelRr() {
     }
 
 
+}
+
+
+async function onClickPrint() {
+    console.log('onClickPrint()');
+    try {
+
+        const accessToken = authUser.value.access_token
+
+        isLoadingPdf.value = true
+
+        const response = await axios.get(WAREHOUSE_API_URL + '/rr/pdf/' + item.value?.id, {
+            responseType: 'blob',
+            headers: {
+                Authorization: `Bearer ${accessToken}`, // Include Authorization header
+            },
+        });
+
+        isLoadingPdf.value = false
+
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        pdfUrl.value = window.URL.createObjectURL(blob);
+    } catch (error) {
+        console.error('Error loading PDF:', error);
+    }
 }
 
 
