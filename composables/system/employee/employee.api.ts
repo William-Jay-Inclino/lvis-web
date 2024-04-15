@@ -28,6 +28,7 @@ export async function findAll(payload: { page: number, pageSize: number, searchV
                     middlename
                     lastname
                     position
+                    signature_src
                 }
                 totalItems
                 currentPage

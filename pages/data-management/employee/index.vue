@@ -44,6 +44,7 @@
                                         <th class="bg-secondary text-white">Middlename</th>
                                         <th class="bg-secondary text-white">Lastname</th>
                                         <th class="bg-secondary text-white">Position</th>
+                                        <th class="bg-secondary text-white">Signature</th>
                                         <th class="text-center bg-secondary text-white">
                                             <i class="fas fa-cog"></i>
                                         </th>
@@ -55,6 +56,14 @@
                                         <td class="text-muted"> {{ i.middlename }} </td>
                                         <td class="text-muted"> {{ i.lastname }} </td>
                                         <td class="text-muted"> {{ i.position }} </td>
+                                        <td class="text-muted">
+                                            <div v-if="i.signature_src">
+                                                <img :src="getUploadsPath(i.signature_src)" style="max-width: 100px; height: auto;">
+                                            </div>
+                                            <div v-else>
+                                                N/A
+                                            </div>
+                                        </td>
                                         <td class="text-center">
                                             <button
                                                 :disabled="!canDelete(authUser, 'canManageEmployee', SERVICES.SYSTEM)"
@@ -129,6 +138,10 @@ const authUser = ref<AuthUser>({} as AuthUser)
 
 const toast = useToast();
 const router = useRouter()
+const config = useRuntimeConfig()
+
+const API_FILE_ENDPOINT = config.public.apiUrl + '/api/v1/file-upload'
+
 
 const items = ref<Employee[]>([])
 const _paginationInitial = {
@@ -248,6 +261,15 @@ async function onClickDelete(id: string) {
     })
 }
 
+function getUploadsPath(src: string) {
+
+    const path = src.replace(UPLOADS_PATH, '')
+    console.log('PATH', path)
+
+    const uploadsPath = API_FILE_ENDPOINT + path
+    return uploadsPath
+
+}
 
 const onClickCreate = () => router.push('/data-management/employee/create')
 const onClickEdit = (id: string) => router.push('/data-management/employee/' + id)
