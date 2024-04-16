@@ -186,7 +186,7 @@
                                     to="/warehouse/purchasing/rv">
                                     <i class="fas fa-search"></i> Search RV
                                 </nuxt-link>
-                                <button @click="onClickPrint" class="btn btn-danger" data-bs-toggle="modal"
+                                <button :disabled="item.status !== APPROVAL_STATUS.APPROVED" @click="onClickPrint" class="btn btn-danger" data-bs-toggle="modal"
                                     data-bs-target="#purchasingPdfModal">
                                     <i class="fas fa-print"></i> Print RV
                                 </button>

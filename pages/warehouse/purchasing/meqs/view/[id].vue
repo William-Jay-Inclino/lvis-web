@@ -265,7 +265,7 @@
                                 to="/warehouse/purchasing/meqs">
                                 <i class="fas fa-search"></i> Search MEQS
                             </nuxt-link>
-                            <button @click="onClickPrint" class="btn btn-danger" data-bs-toggle="modal"
+                            <button :disabled="item.status !== APPROVAL_STATUS.APPROVED" @click="onClickPrint" class="btn btn-danger" data-bs-toggle="modal"
                                 data-bs-target="#purchasingPdfModal">
                                 <i class="fas fa-print"></i> Print MEQS
                             </button>
