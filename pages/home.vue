@@ -1,107 +1,100 @@
 <template>
-    <div class="container-custom">
-        <div class="container">
-            <div v-if="authUser" class="row justify-content-center align-items-center">
+    <div class="container">
+        <div v-if="authUser" class="row justify-content-center align-items-center">
 
-                <!-- Card 1 -->
-                <!-- <div class="col-md-4 mb-4">
-                    <div class="card shadow bg-secondary text-white">
-                        <div class="card-body">
-                            <h5 class="card-title">POWERSERVE</h5>
-                            <a href="#" class="stretched-link"></a>
-                        </div>
-                    </div>
-                </div> -->
-
-                <!-- Card 2 -->
-                <div class="col-md-4 mb-4">
-                    <div class="card shadow text-white"
-                        :class="{ 'bg-primary': canViewSystem, 'bg-secondary': !canViewSystem }">
-                        <div class="card-body">
-                            <h5 class="card-title">SYSTEM</h5>
-                            <nuxt-link v-if="canViewSystem" to="/system" class="stretched-link"></nuxt-link>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 3 -->
-                <!-- <div class="col-md-4 mb-4">
-                    <div class="card shadow bg-secondary text-white">
-                        <div class="card-body">
-                            <h5 class="card-title">e-FORMS</h5>
-                            <nuxt-link to="/e-forms" class="stretched-link"></nuxt-link>
-                        </div>
-                    </div>
-                </div> -->
-
-                <!-- Card 4 -->
-                <!-- <div class="col-md-4 mb-4">
-                    <div class="card shadow bg-secondary text-white">
-                        <div class="card-body">
-                            <h5 class="card-title">eCONNECT</h5>
-                            <a href="econnect.html" class="stretched-link"></a>
-                        </div>
-                    </div>
-                </div> -->
-
-                <!-- Card 5 -->
-                <!-- <div class="col-md-4 mb-4">
-                    <div class="card shadow bg-secondary text-white">
-                        <div class="card-body">
-                            <h5 class="card-title">POWERBILL</h5>
-                            <a href="powerbill.html" class="stretched-link"></a>
-                        </div>
-                    </div>
-                </div> -->
-
-                <!-- Card 6 -->
-                <!-- <div class="col-md-4 mb-4">
-                    <div class="card shadow bg-secondary text-white">
-                        <div class="card-body">
-                            <h5 class="card-title">LPS</h5>
-                            <a href="lps.html" class="stretched-link"></a>
-                        </div>
-                    </div>
-                </div> -->
-
-                <!-- Card 7 -->
-                <div class="col-md-4 mb-4">
-                    <div class="card shadow text-white"
-                        :class="{ 'bg-primary': canViewWarehouse, 'bg-secondary': !canViewWarehouse }">
-                        <div class="card-body">
-                            <h5 class="card-title">POWERHOUSE</h5>
-                            <nuxt-link to="/warehouse" class="stretched-link"></nuxt-link>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 8 -->
-                <!-- <div class="col-md-4 mb-4">
-                    <div class="card shadow bg-secondary text-white">
-                        <div class="card-body">
-                            <h5 class="card-title">ACCOUNTING</h5>
-                            <a href="accounting.html" class="stretched-link"></a>
-                        </div>
-                    </div>
-                </div> -->
-
-                <!-- Card 9 -->
-                <!-- <div class="col-md-4 mb-4">
-                    <div class="card shadow bg-secondary text-white">
-                        <div class="card-body">
-                            <h5 class="card-title">POWERPAY</h5>
-                            <a href="powerpay.html" class="stretched-link"></a>
-                        </div>
-                    </div>
-                </div> -->
-
+            <div class="mb-3 mt-5">
+                <h2 class="text-warning">
+                    Welcome, {{ authUser.user.username }}! Start your day with a smile
+                    <i class="fas fa-smile"></i></h2>
             </div>
 
-            <div v-else>
-                <LoaderSpinner />
+            <div class="col-md-4 mb-4 mt-3">
+                <div class="card shadow" style="width: 18rem;">
+                    <img src="~/assets/img/powerserve2.png" class="card-img-top" height="270">
+                    <div class="card-footer text-center">
+                        <button class="btn btn-primary"> POWERSERVE </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card shadow" style="width: 18rem;">
+                    <img src="~/assets/img/settings.png" class="card-img-top" height="270">
+                    <div class="card-footer text-center">
+                        <button @click="goToSystem" class="btn btn-primary"> SYSTEM </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card shadow" style="width: 18rem;">
+                    <img src="~/assets/img/eforms.png" class="card-img-top" height="270">
+                    <div class="card-footer text-center">
+                        <button class="btn btn-primary"> e-FORMS </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card shadow" style="width: 18rem;">
+                    <img src="~/assets/img/econnect.png" class="card-img-top" height="270">
+                    <div class="card-footer text-center">
+                        <button class="btn btn-primary"> e-CONNECT </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card shadow" style="width: 18rem;">
+                    <img src="~/assets/img/powerbill.png" class="card-img-top" height="270">
+                    <div class="card-footer text-center">
+                        <button class="btn btn-primary"> POWERBILL </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card shadow" style="width: 18rem;">
+                    <img src="~/assets/img/lps.png" class="card-img-top" height="270">
+                    <div class="card-footer text-center">
+                        <button class="btn btn-primary"> LPS </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card shadow" style="width: 18rem;">
+                    <img src="~/assets/img/warehouse.png" class="card-img-top" height="270">
+                    <div class="card-footer text-center">
+                        <button @click="goToWarehouse" class="btn btn-primary"> WAREHOUSE </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card shadow" style="width: 18rem;">
+                    <img src="~/assets/img/accounting2.png" class="card-img-top" height="270">
+                    <div class="card-footer text-center">
+                        <button class="btn btn-primary"> ACCOUNTING </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card shadow" style="width: 18rem;">
+                    <img src="~/assets/img/powerpay.png" class="card-img-top" height="270">
+                    <div class="card-footer text-center">
+                        <button class="btn btn-primary"> POWERPAY </button>
+                    </div>
+                </div>
             </div>
 
         </div>
+
+        <div v-else>
+            <LoaderSpinner />
+        </div>
+
     </div>
 </template>
 
@@ -112,6 +105,7 @@ definePageMeta({
 })
 
 const authUser = ref<AuthUser>()
+const router = useRouter()
 
 onMounted(() => {
     authUser.value = getAuthUser()
@@ -143,18 +137,34 @@ const canViewWarehouse = computed(() => {
 
 })
 
+
+const goToSystem = () => {
+    if(!canViewSystem.value) return 
+
+    router.push('/system')
+}
+
+
+const goToWarehouse =  () => {
+    if(!canViewWarehouse.value) return 
+
+    router.push('/warehouse')
+}
+
+
+
 </script>
 
 
 
 <style scoped>
-.container-custom {
+/* .container-custom {
     display: flex;
     align-items: center;
     justify-content: center;
     height: 80vh;
     margin: 0;
-}
+} */
 
 .card {
     transition: transform 0.3s, box-shadow 0.3s;
@@ -164,5 +174,9 @@ const canViewWarehouse = computed(() => {
 .card:hover {
     transform: translateY(-10px);
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+button {
+    width: 200px;
 }
 </style>

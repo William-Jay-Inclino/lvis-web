@@ -4,7 +4,7 @@
         <div class="px-0">
             <nav class="navbar sticky-top navbar-expand-lg navbar-dark" style="background-color: #1877F2;">
                 <div class="container-fluid">
-                    <a class="navbar-brand" href="#">Leyeco V - POWERHOUSE</a>
+                    <a class="navbar-brand" href="#">Leyeco V - WAREHOUSE</a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
                         data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
                         <span class="navbar-toggler-icon"></span>

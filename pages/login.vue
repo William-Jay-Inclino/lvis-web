@@ -1,110 +1,125 @@
 <template>
-    <div class="d-flex justify-content-center align-items-center" style="height: 100vh; background-color: whitesmoke;">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-6">
-                    <div v-if="error.show" class="alert alert-danger mb-4" role="alert" style="width: 100%;">
-                        {{ error.msg }}
-                    </div>
-                    <div class="card p-4">
-                        <form @submit.prevent="login" class="form-signin">
-                            <h1 class="h3 mb-3 font-weight-normal">Login</h1>
-                            <label for="inputUsername" class="sr-only">Username</label>
-                            <input type="text" id="inputUsername" v-model="email" class="form-control mb-2"
-                                placeholder="Username" required autofocus>
-                            <label for="inputPassword" class="sr-only">Password</label>
-                            <input type="password" id="inputPassword" v-model="password" class="form-control mb-3"
-                                placeholder="Password" required>
-                            <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+  <div class="wrapper">
+    <div class="form-signin">
+      <form>
+        <div class="img-container">
+          <img src="~/assets/img/leyeco-logo.png" alt="" width="72" height="57">
         </div>
+        <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+
+        <div class="form-floating">
+          <input
+            v-model="email"
+            type="email"
+            class="form-control"
+            id="floatingInput"
+            placeholder=" "
+            @focus="addFocusClass"
+            @blur="removeFocusClass"
+          >
+          <label for="floatingInput">Email address</label>
+        </div>
+        <div class="form-floating" style="margin-top: 10px;">
+          <input
+            v-model="password"
+            type="password"
+            class="form-control"
+            id="floatingPassword"
+            placeholder=" "
+            @focus="addFocusClass"
+            @blur="removeFocusClass"
+          >
+          <label for="floatingPassword">Password</label>
+        </div>
+
+        <div class="checkbox mb-3">
+          <label>
+            <input type="checkbox" value="remember-me"> Remember me
+          </label>
+        </div>
+        <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+        <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
+      </form>
     </div>
+  </div>
 </template>
 
-<script setup lang="ts">
-import { ref } from 'vue'
-import axios from 'axios'
-import { AxiosError } from 'axios'
+<script setup>
+import { ref } from 'vue';
 
-const config = useRuntimeConfig()
-const API_URL = config.public.apiUrl
-
-const router = useRouter();
 const email = ref('');
 const password = ref('');
-const error = ref({
-    show: false,
-    msg: ''
-})
 
+const addFocusClass = (event) => {
+  event.target.parentNode.classList.add('focused');
+};
 
-onMounted(() => {
-
-    localStorage.removeItem('authUser');
-
-})
-
-async function login() {
-    console.log('login()');
-    try {
-
-        const response = await axios.post(API_URL + '/auth/login', {
-            username: email.value,
-            password: password.value
-        });
-        console.log('response.data', response.data);
-
-        response.data.user.permissions = JSON.parse(response.data.user.permissions)
-
-        const authUser = JSON.stringify(response.data)
-
-        localStorage.setItem('authUser', authUser);
-
-        router.push('/home');
-
-    } catch (err) {
-        if (err && axios.isAxiosError(err)) {
-            const axiosError = err as AxiosError;
-            console.log('Error:', axiosError.response);
-
-            if (axiosError.response && (axiosError.response.status === 401 || axiosError.response.status === 404)) {
-                error.value.show = true;
-                error.value.msg = "Access denied! It appears you lack the necessary permissions to login. Consider verifying your credentials or contacting the system administrator."
-            } else {
-                error.value.show = true;
-                error.value.msg = "An error occurred. Please try again later.";
-            }
-        } else {
-            console.log('Error:', err);
-        }
-    }
-}
-
-
-
-
+const removeFocusClass = (event) => {
+  if (event.target.value === '') {
+    event.target.parentNode.classList.remove('focused');
+  }
+};
 </script>
 
 <style scoped>
-.card {
-    border: 1px solid #ccc;
-    border-radius: 5px;
+.wrapper {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center horizontally */
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #f5f5f5;
 }
 
-.form-signin .form-control {
-    position: relative;
-    box-sizing: border-box;
-    height: auto;
-    padding: 10px;
-    font-size: 16px;
+.form-signin {
+  width: 100%;
+  max-width: 330px;
+  padding: 15px;
+  text-align: center; /* Center text and child elements */
 }
 
-.form-signin .btn {
-    font-size: 16px;
-    padding: 10px;
+.form-signin .checkbox {
+  font-weight: 400;
+}
+
+.form-signin .form-floating {
+  position: relative;
+  margin-bottom: 10px; /* Added margin between fields */
+}
+
+.form-signin .form-floating input {
+  padding-top: 25px;
+}
+
+.form-signin .form-floating label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: top 0.3s, font-size 0.3s;
+}
+
+.form-signin .form-floating.focused label,
+.form-signin .form-floating input:focus + label {
+  top: -20px;
+  font-size: 1rem;
+}
+
+.form-signin input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.img-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 </style>
-~/composables/config
