@@ -287,7 +287,7 @@ import { MAX_FILE_SIZE } from '~/utils/config';
 import type { MeqsSupplier } from '~/composables/warehouse/meqs/meqs-supplier';
 import { VAT } from '~/utils/constants'
 import type { MeqsSupplierItem } from '~/composables/warehouse/meqs/meqs-supplier-item';
-import type { Supplier } from '~/composables/common.types';
+import type { Supplier } from '~/composables/warehouse/supplier/supplier'
 
 const FilePond = vueFilePond(
     FilePondPluginFileValidateType,

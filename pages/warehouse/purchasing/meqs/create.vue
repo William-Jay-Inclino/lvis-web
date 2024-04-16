@@ -323,7 +323,7 @@ const meqsData = ref<CreateMeqsInput>({
     jo: null,
     rv: null,
     spr: null,
-    notes: '',
+    notes: 'Based on the canvass of Cost and Quality of the items listed, I respectfully recommend purchase of the needed items',
     approvers: [],
     meqs_suppliers: []
 })
