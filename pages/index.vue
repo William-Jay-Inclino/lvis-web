@@ -1,126 +1,168 @@
 <template>
     <div class="wrapper">
-      <div class="form-signin">
-        <form>
-          <div class="img-container">
-            <img src="~/assets/img/leyeco-logo.png" alt="" width="72" height="57">
-          </div>
-          <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
-  
-          <div class="form-floating">
+        <div class="background-overlay"></div>
+        <div class="form-signin">
+        <div class="img-container">
+            <img src="~/assets/img/leyeco-logo.png" alt="" width="192" height="177">
+        </div>
+        <h1 class="h3 mb-3 fw-normal text-white">Please log in</h1>
+
+        <form @submit.prevent="login">
+            <div class="form-floating">
             <input
-              v-model="email"
-              type="email"
-              class="form-control"
-              id="floatingInput"
-              placeholder=" "
-              @focus="addFocusClass"
-              @blur="removeFocusClass"
+                v-model="email"
+                type="text"
+                class="form-control"
+                id="floatingInput"
+                placeholder=" "
+                @focus="addFocusClass"
+                @blur="removeFocusClass"
             >
-            <label for="floatingInput">Email address</label>
-          </div>
-          <div class="form-floating" style="margin-top: 10px;">
+            <label for="floatingInput">Username</label>
+            </div>
+    
+            <div class="form-floating" style="margin-top: 10px;">
             <input
-              v-model="password"
-              type="password"
-              class="form-control"
-              id="floatingPassword"
-              placeholder=" "
-              @focus="addFocusClass"
-              @blur="removeFocusClass"
+                v-model="password"
+                type="password"
+                class="form-control"
+                id="floatingPassword"
+                placeholder=" "
+                @focus="addFocusClass"
+                @blur="removeFocusClass"
             >
             <label for="floatingPassword">Password</label>
-          </div>
-  
-          <div class="checkbox mb-3">
-            <label>
-              <input type="checkbox" value="remember-me"> Remember me
-            </label>
-          </div>
-          <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
-          <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
+            </div>
+    
+            <div style="margin-top: 10px;" v-if="error.show" class="alert alert-danger mb-4" role="alert">
+                {{ error.msg }}
+            </div>
+    
+            <button :disabled="isLoggingIn" style="margin-top: 10px;" class="w-100 btn btn-lg btn-primary" type="submit">
+                {{ isLoggingIn ? 'Logging in...' : 'Log in' }}
+            </button>
+
         </form>
-      </div>
+
+        </div>
     </div>
-  </template>
-  
-  <script setup>
-  import { ref } from 'vue';
-  
-  const email = ref('');
-  const password = ref('');
-  
-  const addFocusClass = (event) => {
-    event.target.parentNode.classList.add('focused');
-  };
-  
-  const removeFocusClass = (event) => {
-    if (event.target.value === '') {
-      event.target.parentNode.classList.remove('focused');
+</template>
+
+
+<script setup lang="ts">
+    import { ref } from 'vue'
+    import axios from 'axios'
+    import { AxiosError } from 'axios'
+
+    const config = useRuntimeConfig()
+    const API_URL = config.public.apiUrl
+
+    const router = useRouter();
+    const email = ref('');
+    const password = ref('');
+    const error = ref({
+        show: false,
+        msg: ''
+    })
+
+    const isLoggingIn = ref(false)
+
+    onMounted(() => {
+
+        localStorage.removeItem('authUser');
+
+    })
+
+    async function login() {
+        console.log('login()');
+
+        isLoggingIn.value = true
+        
+        try {
+            const response = await axios.post(API_URL + '/auth/login', {
+                username: email.value,
+                password: password.value
+            });
+            
+            console.log('response.data', response.data);
+
+            response.data.user.permissions = JSON.parse(response.data.user.permissions)
+
+            const authUser = JSON.stringify(response.data)
+
+            localStorage.setItem('authUser', authUser);
+
+            router.push('/home');
+
+        } catch (err) {
+            if (err && axios.isAxiosError(err)) {
+                const axiosError = err as AxiosError;
+                console.log('Error:', axiosError.response);
+
+                if (axiosError.response && (axiosError.response.status === 401 || axiosError.response.status === 404)) {
+                    error.value.show = true;
+                    error.value.msg = "Invalid username or password. Please try again."
+                } else {
+                    error.value.show = true;
+                    error.value.msg = "An error occurred. Please try again later.";
+                }
+            } else {
+                console.log('Error:', err);
+            }
+        }
+
+        isLoggingIn.value = false
+
     }
-  };
-  </script>
-  
-  <style scoped>
-  .wrapper {
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center; /* Center horizontally */
-    padding-top: 40px;
-    padding-bottom: 40px;
-    background-color: #f5f5f5;
-  }
-  
-  .form-signin {
-    width: 100%;
-    max-width: 330px;
-    padding: 15px;
-    text-align: center; /* Center text and child elements */
-  }
-  
-  .form-signin .checkbox {
-    font-weight: 400;
-  }
-  
-  .form-signin .form-floating {
-    position: relative;
-    margin-bottom: 10px; /* Added margin between fields */
-  }
-  
-  .form-signin .form-floating input {
-    padding-top: 25px;
-  }
-  
-  .form-signin .form-floating label {
-    position: absolute;
-    top: 0;
-    left: 0;
-    transition: top 0.3s, font-size 0.3s;
-  }
-  
-  .form-signin .form-floating.focused label,
-  .form-signin .form-floating input:focus + label {
-    top: -20px;
-    font-size: 1rem;
-  }
-  
-  .form-signin input[type="email"] {
-    margin-bottom: -1px;
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
-  }
-  
-  .form-signin input[type="password"] {
-    margin-bottom: 10px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-  }
-  
-  .img-container {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-  }
-  </style>
-  
+
+    const addFocusClass = (event: any) => {
+        event.target.parentElement.classList.add('focused');
+    };
+
+    const removeFocusClass = (event: any) => {
+        if (event.target.value === '') {
+            event.target.parentElement.classList.remove('focused');
+        }
+    };
+
+
+</script>
+
+
+
+
+<style scoped>
+.wrapper {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column; /* Stack items vertically */
+  align-items: center; /* Center items horizontally */
+  justify-content: center; /* Center items vertically */
+}
+
+.background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('~/assets/img/loginbg15.png');
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+}
+
+.form-signin {
+  position: relative;
+  z-index: 1;
+  max-width: 330px;
+  padding: 15px;
+  margin-bottom: 50vh; /* Adjust the margin to move the form up or down */
+  text-align: center;
+}
+
+.img-container {
+  margin-bottom: 20px;
+}
+</style>

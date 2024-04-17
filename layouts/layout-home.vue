@@ -1,15 +1,18 @@
 <template>
     <div>
         <nav class="navbar sticky-top navbar-expand-lg navbar-dark" style="background-color: #1877F2;">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">Leyeco V - HOMEPAGE</a>
+            <div v-if="authUser" class="container">
+                <a class="navbar-brand" href="#">
+                    Welcome, {{ authUser.user.username }}! Have a productive day 
+                    <i class="fas fa-smile"></i>
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul v-if="authUser" class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li v-if="isApprover(authUser)" class="nav-item">
                             <nuxt-link class="nav-link me-3 text-white position-relative" to="/e-forms/pendings">
                                 Pendings
@@ -33,7 +36,7 @@
                                 <li><a class="dropdown-item" href="#">Profile</a></li>
                                 <li><a class="dropdown-item" href="#">Settings</a></li>
                                 <li><a class="dropdown-item" href="#">Activity log</a></li>
-                                <li><nuxt-link class="dropdown-item" to="/login">Logout</nuxt-link></li>
+                                <li><nuxt-link class="dropdown-item" to="/">Logout</nuxt-link></li>
                             </ul>
                         </li>
                     </ul>

@@ -3,7 +3,7 @@
     <div>
         <div class="px-0">
             <nav class="navbar sticky-top navbar-expand-lg navbar-dark" style="background-color: #1877F2;">
-                <div class="container-fluid">
+                <div class="container">
                     <a class="navbar-brand" href="#">Leyeco V - SYSTEM</a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
                         data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
@@ -70,7 +70,7 @@
                                     <li><a class="dropdown-item" href="#">Profile</a></li>
                                     <li><a class="dropdown-item" href="#">Settings</a></li>
                                     <li><a class="dropdown-item" href="#">Activity log</a></li>
-                                    <li><nuxt-link class="dropdown-item" to="/login">Logout</nuxt-link></li>
+                                    <li><nuxt-link class="dropdown-item" to="/">Logout</nuxt-link></li>
                                 </ul>
                             </li>
                         </ul>
