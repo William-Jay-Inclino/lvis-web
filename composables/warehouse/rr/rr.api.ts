@@ -23,6 +23,7 @@ export async function findByRefNumber(payload: { po_number?: string, rr_number?:
                 rr_number
                 status
                 rr_date
+                is_completed
                 created_by
                 cancelled_at
                 can_update
@@ -120,6 +121,7 @@ export async function findAll(payload: { page: number, pageSize: number, date_re
                     rr_number
                     status
                     rr_date
+                    is_completed
                     created_by
                     can_update
                     cancelled_at
@@ -545,6 +547,7 @@ export async function findOne(id: string): Promise<RR | undefined> {
                 notes
                 delivery_charge
                 status
+                is_completed
                 created_by
                 cancelled_at
                 can_update
@@ -624,6 +627,9 @@ export async function findOne(id: string): Promise<RR | undefined> {
                                 description
                             }
                         }
+                    }
+                    item_transaction {
+                        item_id
                     }
                 }
             }

@@ -116,7 +116,7 @@
                                             <button @click="onClickViewDetails(i.id)" class="btn btn-light w-50"
                                                 :disabled="!canViewDetails(authUser, 'canManageRR')">
                                                 <i class="fas fa-info-circle"
-                                                    :class="{ 'text-info': canViewDetails(authUser, 'canManageRR') }"></i>
+                                                    :class="{ 'text-info': (canViewDetails(authUser, 'canManageRR') && !isTransactionFailed(i) ), 'text-danger': isTransactionFailed(i) }"></i>
                                             </button>
                                             <button :disabled="!i.can_update" @click="onClickEdit(i.id)"
                                                 class="btn btn-light w-50">
@@ -321,6 +321,15 @@ function getRequisitionerFullname(employee?: Employee | null) {
     return getFullname(employee.firstname, employee.middlename, employee.lastname)
 }
 
+function isTransactionFailed(item: RR) {
+
+    if(item.status === APPROVAL_STATUS.APPROVED && !item.is_completed) {
+        return true 
+    }
+
+    return false 
+
+}
 
 const onClickViewDetails = (id: string) => router.push('/warehouse/purchasing/rr/view/' + id)
 const onClickEdit = (id: string) => router.push('/warehouse/purchasing/rr/' + id)
@@ -328,3 +337,13 @@ const onClickAdd = () => router.push('/warehouse/purchasing/rr/create')
 
 
 </script>
+
+
+<style scoped>
+
+.border-error {
+    border: 1px solid #ff7b7b;;
+}
+
+
+</style>

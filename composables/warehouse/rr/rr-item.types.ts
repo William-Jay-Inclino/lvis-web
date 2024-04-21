@@ -1,5 +1,6 @@
 import type { RR } from "./rr.types"
 import type { MeqsSupplierItem } from '../meqs/meqs-supplier-item'
+import type { ItemTransaction } from "../item/item-transaction.type"
 
 export interface RrItem {
 	id: string
@@ -12,7 +13,7 @@ export interface RrItem {
 	meqs_supplier_item: MeqsSupplierItem
 	isInvalidQtyAccepted: boolean
 	rr?: RR
-
+	item_transaction?: ItemTransaction
 }
 
 

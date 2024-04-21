@@ -11,6 +11,10 @@
                     <hr class="result">
                 </div>
 
+                <div v-if="item.status === APPROVAL_STATUS.APPROVED && !item.is_completed"class="alert alert-danger" role="alert">
+                    Failed to complete RR item transactions. Please contact system administrator ASAP!
+                </div>
+
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover">
                         <tbody>
@@ -308,8 +312,19 @@
                                                     disabled></textarea>
                                             </div>
                                         </td>
-                                        <td v-show="showClass" class="text-muted align-middle">
-                                            {{ rrItem.meqs_supplier_item.canvass_item.item ? 'Stock' : 'Non-Stock' }}
+                                        <td v-show="showClass" class="text-muted align-middle text-center">
+                                            <div v-if="rrItem.meqs_supplier_item.canvass_item.item">
+                                                <div> Stock </div>
+                                                <div v-if="rrItem.item_transaction">
+                                                    <nuxt-link class="btn btn-outline-light btn-sm"
+                                                        :to="'/warehouse/stock-inventory/item/view/' + rrItem.item_transaction.item_id" target="_blank">
+                                                        <small class="text-info fst-italic"> View Item </small>
+                                                    </nuxt-link>
+                                                </div>
+                                            </div>
+                                            <div v-else>
+                                                Non-Stock
+                                            </div>
                                         </td>
                                         <td v-show="showBrand" class="text-muted align-middle">
                                             {{ rrItem.meqs_supplier_item.canvass_item.brand ?
