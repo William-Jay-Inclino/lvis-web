@@ -1,117 +1,124 @@
 <template>
 
-    <div v-if="!isLoadingPage && authUser && poData && poData.meqs_supplier && !poData.cancelled_at">
-        <h2 class="text-warning">Update PO</h2>
-        <hr>
+    <div class="card">
+        <div class="card-body">
 
-        <div v-if="isAdmin(authUser)" class="row pt-3 mb-5">
-            <div class="col">
-                <ul class="nav nav-tabs justify-content-center">
-                    <li class="nav-item" @click="isPODetailForm = true">
-                        <a class="nav-link" :class="{ 'active': isPODetailForm }" href="#">
-                            <i class="fas fa-info-circle"></i> PO Info
-                        </a>
-                    </li>
-                    <li class="nav-item" @click="isPODetailForm = false">
-                        <a class="nav-link" :class="{ 'active': !isPODetailForm }" href="#">
-                            <i class="fas fa-users"></i> Approvers
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-
-        <div v-show="isPODetailForm" class="row justify-content-center">
-
-            <div class="col-lg-6">
-
-                <div class="mb-3 d-flex align-items-center">
-                    <label class="form-label me-2 mb-0">Status:</label>
-                    <div :class="{ [`badge bg-${poStatus.color}`]: true }">
-                        {{ poStatus.label }}
+            <div v-if="!isLoadingPage && authUser && poData && poData.meqs_supplier && !poData.cancelled_at">
+                <h2 class="text-warning">Update PO</h2>
+                <hr>
+        
+                <div v-if="isAdmin(authUser)" class="row pt-3 mb-5">
+                    <div class="col">
+                        <ul class="nav nav-tabs justify-content-center">
+                            <li class="nav-item" @click="isPODetailForm = true">
+                                <a class="nav-link" :class="{ 'active': isPODetailForm }" href="#">
+                                    <i class="fas fa-info-circle"></i> PO Info
+                                </a>
+                            </li>
+                            <li class="nav-item" @click="isPODetailForm = false">
+                                <a class="nav-link" :class="{ 'active': !isPODetailForm }" href="#">
+                                    <i class="fas fa-users"></i> Approvers
+                                </a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
-
-                <div class="mb-3">
-                    <label class="form-label">PO Number</label>
-                    <input type="text" class="form-control" :value="poData.po_number" disabled>
-                    <nuxt-link class="btn btn-sm btn-light text-primary"
-                        :to="'/warehouse/purchasing/po/view/' + poData.id" target="_blank">View PO details</nuxt-link>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">MEQS Number</label>
-                    <input type="text" class="form-control" :value="poData.meqs_supplier.meqs!.meqs_number" disabled>
-                    <nuxt-link class="btn btn-sm btn-light text-primary"
-                        :to="'/warehouse/purchasing/meqs/view/' + poData.meqs_supplier.meqs!.id" target="_blank">View
-                        MEQS details</nuxt-link>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Supplier</label>
-                    <input type="text" class="form-control" :value="poData.meqs_supplier.supplier!.name" disabled>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">VAT</label>
-                    <input type="text" class="form-control" :value="VAT[poData.meqs_supplier.supplier!.vat_type].label"
-                        disabled>
-                </div>
-
-                <div class="mb-3" v-if="isAdmin(authUser)">
-                    <label class="form-label">Fund Source</label>
-                    <client-only>
-                        <v-select :options="accounts" label="name" v-model="poData.fund_source"></v-select>
-                    </client-only>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Notes</label>
-                    <textarea v-model="poData.notes" class="form-control" rows="3"></textarea>
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div v-show="!isPODetailForm" class="row justify-content-center pt-5">
-
-            <div class="col-12">
-                <WarehouseApprover :approvers="poData.po_approvers" :employees="employees"
-                    :isUpdatingApproverOrder="isUpdatingApproverOrder" :isAddingApprover="isAddingApprover"
-                    :isEditingApprover="isEditingApprover" @changeApproverOrder="changeApproverOrder"
-                    @addApprover="addApprover" @editApprover="editApprover" @removeApprover="removeApprover" />
-            </div>
-
-        </div>
-
-
-        <div class="row justify-content-center pt-3">
-            <div :class="{ 'col-lg-6': isPODetailForm, 'col-12': !isPODetailForm }">
-                <div class="d-flex justify-content-between pt-3">
-                    <div>
-                        <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/meqs">
-                            <i class="fas fa-chevron-left"></i> Back to Search
-                        </nuxt-link>
+        
+        
+                <div v-show="isPODetailForm" class="row justify-content-center">
+        
+                    <div class="col-lg-6">
+        
+                        <div class="mb-3 d-flex align-items-center">
+                            <label class="form-label me-2 mb-0">Status:</label>
+                            <div :class="{ [`badge bg-${poStatus.color}`]: true }">
+                                {{ poStatus.label }}
+                            </div>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">PO Number</label>
+                            <input type="text" class="form-control" :value="poData.po_number" disabled>
+                            <nuxt-link class="btn btn-sm btn-light text-primary"
+                                :to="'/warehouse/purchasing/po/view/' + poData.id" target="_blank">View PO details</nuxt-link>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">MEQS Number</label>
+                            <input type="text" class="form-control" :value="poData.meqs_supplier.meqs!.meqs_number" disabled>
+                            <nuxt-link class="btn btn-sm btn-light text-primary"
+                                :to="'/warehouse/purchasing/meqs/view/' + poData.meqs_supplier.meqs!.id" target="_blank">View
+                                MEQS details</nuxt-link>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">Supplier</label>
+                            <input type="text" class="form-control" :value="poData.meqs_supplier.supplier!.name" disabled>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">VAT</label>
+                            <input type="text" class="form-control" :value="VAT[poData.meqs_supplier.supplier!.vat_type].label"
+                                disabled>
+                        </div>
+        
+                        <div class="mb-3" v-if="isAdmin(authUser)">
+                            <label class="form-label">Fund Source</label>
+                            <client-only>
+                                <v-select :options="accounts" label="name" v-model="poData.fund_source"></v-select>
+                            </client-only>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">Notes</label>
+                            <textarea v-model="poData.notes" class="form-control" rows="3"></textarea>
+                        </div>
+        
                     </div>
-                    <div>
-                        <button v-if="isPODetailForm" @click="updatePoInfo()" type="button" class="btn btn-success"
-                            :disabled="isUpdating">
-                            <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
-                        </button>
+        
+                </div>
+        
+        
+                <div v-show="!isPODetailForm" class="row justify-content-center pt-5">
+        
+                    <div class="col-12">
+                        <WarehouseApprover :approvers="poData.po_approvers" :employees="employees"
+                            :isUpdatingApproverOrder="isUpdatingApproverOrder" :isAddingApprover="isAddingApprover"
+                            :isEditingApprover="isEditingApprover" @changeApproverOrder="changeApproverOrder"
+                            @addApprover="addApprover" @editApprover="editApprover" @removeApprover="removeApprover" />
+                    </div>
+        
+                </div>
+        
+        
+                <div class="row justify-content-center pt-3">
+                    <div :class="{ 'col-lg-6': isPODetailForm, 'col-12': !isPODetailForm }">
+                        <div class="d-flex justify-content-between pt-3">
+                            <div>
+                                <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/meqs">
+                                    <i class="fas fa-chevron-left"></i> Back to Search
+                                </nuxt-link>
+                            </div>
+                            <div>
+                                <button v-if="isPODetailForm" @click="updatePoInfo()" type="button" class="btn btn-success"
+                                    :disabled="isUpdating">
+                                    <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
+        
+        
             </div>
+        
+            <div v-else>
+                <LoaderSpinner />
+            </div>
+            
         </div>
-
-
     </div>
 
-    <div v-else>
-        <LoaderSpinner />
-    </div>
 
 </template>
 

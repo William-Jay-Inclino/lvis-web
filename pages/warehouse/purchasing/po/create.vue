@@ -1,210 +1,217 @@
 <template>
 
-    <div v-if="!isLoadingPage && authUser">
-
-        <h2 class="text-warning">Create PO</h2>
-        <hr>
-
-        <div class="row pb-3">
-            <div class="col">
-                <div class="row justify-content-center pt-3">
-
-                    <div class="col-lg-6">
-
-                        <div class="mb-3">
-                            <label class="form-label">
-                                MEQS Number <span class="text-danger">*</span>
-                            </label>
-                            <client-only>
-                                <v-select @option:selected="onMeqsSelected" :options="meqs" label="meqs_number"
-                                    v-model="selectedMeqs" :clearable=false>
-                                    <template v-slot:option="option">
-                                        <div v-if="option.status !== APPROVAL_STATUS.APPROVED" class="row">
-                                            <div class="col">
-                                                <span class="text-danger">{{ option.meqs_number }}</span>
-                                            </div>
-                                            <div class="col text-end">
-                                                <small class="text-muted fst-italic">
-                                                    {{
-        // @ts-ignore
-        approvalStatus[option.status].label
-    }}
-                                                </small>
-                                            </div>
-                                        </div>
-                                        <div v-else-if="!option.hasAvailableSupplier" class="row">
-                                            <div class="col">
-                                                <span class="text-danger">{{ option.meqs_number }}</span>
-                                            </div>
-                                            <div class="col text-end">
-                                                <small class="text-muted fst-italic">
-                                                    No Available Supplier
-                                                </small>
-                                            </div>
-                                        </div>
-                                        <div v-else class="row">
-                                            <div class="col">
-                                                <span>{{ option.meqs_number }}</span>
-                                            </div>
-                                            <div class="col text-end">
-                                                <small class="text-success fst-italic"> Available </small>
-                                            </div>
-                                        </div>
-                                    </template>
-                                </v-select>
-                            </client-only>
-                            <nuxt-link v-if="selectedMeqs" class="btn btn-sm btn-light text-primary"
-                                :to="'/warehouse/purchasing/meqs/view/' + selectedMeqs.id" target="_blank">View MEQS
-                                details</nuxt-link>
+    <div class="card">
+        <div class="card-body">
+            
+            <div v-if="!isLoadingPage && authUser">
+        
+                <h2 class="text-warning">Create PO</h2>
+                <hr>
+        
+                <div class="row pb-3">
+                    <div class="col">
+                        <div class="row justify-content-center pt-3">
+        
+                            <div class="col-lg-6">
+        
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        MEQS Number <span class="text-danger">*</span>
+                                    </label>
+                                    <client-only>
+                                        <v-select @option:selected="onMeqsSelected" :options="meqs" label="meqs_number"
+                                            v-model="selectedMeqs" :clearable=false>
+                                            <template v-slot:option="option">
+                                                <div v-if="option.status !== APPROVAL_STATUS.APPROVED" class="row">
+                                                    <div class="col">
+                                                        <span class="text-danger">{{ option.meqs_number }}</span>
+                                                    </div>
+                                                    <div class="col text-end">
+                                                        <small class="text-muted fst-italic">
+                                                            {{
+                // @ts-ignore
+                approvalStatus[option.status].label
+            }}
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                                <div v-else-if="!option.hasAvailableSupplier" class="row">
+                                                    <div class="col">
+                                                        <span class="text-danger">{{ option.meqs_number }}</span>
+                                                    </div>
+                                                    <div class="col text-end">
+                                                        <small class="text-muted fst-italic">
+                                                            No Available Supplier
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                                <div v-else class="row">
+                                                    <div class="col">
+                                                        <span>{{ option.meqs_number }}</span>
+                                                    </div>
+                                                    <div class="col text-end">
+                                                        <small class="text-success fst-italic"> Available </small>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </v-select>
+                                    </client-only>
+                                    <nuxt-link v-if="selectedMeqs" class="btn btn-sm btn-light text-primary"
+                                        :to="'/warehouse/purchasing/meqs/view/' + selectedMeqs.id" target="_blank">View MEQS
+                                        details</nuxt-link>
+                                </div>
+        
+                                <div v-if="selectedMeqs" class="mb-3">
+                                    <label class="form-label">
+                                        Supplier <span class="text-danger">*</span>
+                                    </label>
+                                    <client-only>
+                                        <v-select @option:selected="onSupplierSelected" :options="suppliers" label="label"
+                                            v-model="poData.meqs_supplier">
+                                            <template v-slot:option="option">
+                                                <div v-if="option.is_referenced" class="row">
+                                                    <div class="col">
+                                                        <span class="text-danger">{{ option.label }}</span>
+                                                    </div>
+                                                    <div class="col text-end">
+                                                        <small class="text-muted fst-italic">
+                                                            Referenced
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                                <div v-else class="row">
+                                                    <div class="col">
+                                                        <span>{{ option.label }}</span>
+                                                    </div>
+                                                    <div class="col text-end">
+                                                        <small class="text-success fst-italic"> Available </small>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </v-select>
+                                    </client-only>
+                                </div>
+        
+                                <div v-if="poData.meqs_supplier" class="mb-3">
+                                    <label class="form-label">
+                                        Vat
+                                    </label>
+                                    <input type="text" class="form-control" disabled
+                                        :value="VAT[poData.meqs_supplier.supplier!.vat_type].label">
+                                </div>
+        
+                                <div v-if="selectedMeqs && isAdmin(authUser)">
+                                    <label class="form-label">
+                                        Fund Source
+                                    </label>
+                                    <client-only>
+                                        <v-select :options="accounts" label="name" v-model="poData.fund_source"></v-select>
+                                    </client-only>
+                                </div>
+        
+                                <div v-if="selectedMeqs" class="mb-3">
+                                    <label class="form-label">
+                                        Notes
+                                    </label>
+                                    <textarea class="form-control" rows="3"></textarea>
+                                </div>
+        
+                                <div class="d-flex justify-content-between">
+                                    <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/po">
+                                        <i class="fas fa-chevron-left"></i> Back to Search
+                                    </nuxt-link>
+                                    <button @click="save()" type="button" class="btn btn-primary"
+                                        :disabled="isSaving || !canSave">
+                                        <i class="fas fa-save"></i> {{ isSaving ? 'Saving...' : 'Save' }}
+                                    </button>
+                                </div>
+        
+                            </div>
+        
                         </div>
-
-                        <div v-if="selectedMeqs" class="mb-3">
-                            <label class="form-label">
-                                Supplier <span class="text-danger">*</span>
-                            </label>
-                            <client-only>
-                                <v-select @option:selected="onSupplierSelected" :options="suppliers" label="label"
-                                    v-model="poData.meqs_supplier">
-                                    <template v-slot:option="option">
-                                        <div v-if="option.is_referenced" class="row">
-                                            <div class="col">
-                                                <span class="text-danger">{{ option.label }}</span>
-                                            </div>
-                                            <div class="col text-end">
-                                                <small class="text-muted fst-italic">
-                                                    Referenced
-                                                </small>
-                                            </div>
-                                        </div>
-                                        <div v-else class="row">
-                                            <div class="col">
-                                                <span>{{ option.label }}</span>
-                                            </div>
-                                            <div class="col text-end">
-                                                <small class="text-success fst-italic"> Available </small>
-                                            </div>
-                                        </div>
-                                    </template>
-                                </v-select>
-                            </client-only>
-                        </div>
-
-                        <div v-if="poData.meqs_supplier" class="mb-3">
-                            <label class="form-label">
-                                Vat
-                            </label>
-                            <input type="text" class="form-control" disabled
-                                :value="VAT[poData.meqs_supplier.supplier!.vat_type].label">
-                        </div>
-
-                        <div v-if="selectedMeqs && isAdmin(authUser)">
-                            <label class="form-label">
-                                Fund Source
-                            </label>
-                            <client-only>
-                                <v-select :options="accounts" label="name" v-model="poData.fund_source"></v-select>
-                            </client-only>
-                        </div>
-
-                        <div v-if="selectedMeqs" class="mb-3">
-                            <label class="form-label">
-                                Notes
-                            </label>
-                            <textarea class="form-control" rows="3"></textarea>
-                        </div>
-
-                        <div class="d-flex justify-content-between">
-                            <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/po">
-                                <i class="fas fa-chevron-left"></i> Back to Search
-                            </nuxt-link>
-                            <button @click="save()" type="button" class="btn btn-primary"
-                                :disabled="isSaving || !canSave">
-                                <i class="fas fa-save"></i> {{ isSaving ? 'Saving...' : 'Save' }}
-                            </button>
-                        </div>
-
                     </div>
-
                 </div>
-            </div>
-        </div>
-
-        <div v-if="selectedMeqs && poData.meqs_supplier" class="h5wrapper mb-3 pt-5">
-            <hr class="result">
-            <h5 class="text-warning fst-italic">
-                <i class="fas fa-shopping-cart"></i> Items
-            </h5>
-            <hr class="result">
-        </div>
-
-        <div v-if="selectedMeqs && poData.meqs_supplier" class="row pb-3">
-            <div class="col">
-                <div class="table-responsive">
-                    <table class="table table-hover table-sm">
-                        <thead>
-                            <tr>
-                                <th class="bg-secondary text-white">No</th>
-                                <th class="bg-secondary text-white">Description</th>
-                                <th class="bg-secondary text-white">Brand</th>
-                                <th class="bg-secondary text-white">Unit</th>
-                                <th class="bg-secondary text-white">Qty</th>
-                                <th class="bg-secondary text-white">VAT</th>
-                                <th class="bg-secondary text-white">Price/Unit</th>
-                                <th class="bg-secondary text-white">Vat/Unit</th>
-                                <th class="bg-secondary text-white">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="item, i in supplierItems">
-                                <td class="text-muted"> {{ i + 1 }} </td>
-                                <td class="text-muted"> {{ item.canvass_item.description }} </td>
-                                <td class="text-muted"> {{ item.canvass_item.brand ? item.canvass_item.brand.name :
-        'N/A' }}
-                                </td>
-                                <td class="text-muted"> {{ item.canvass_item.unit ? item.canvass_item.unit.name : 'N/A'
-                                    }} </td>
-                                <td class="text-muted"> {{ item.canvass_item.quantity }} </td>
-                                <td class="text-muted"> {{ VAT[item.vat_type].label }} </td>
-                                <td class="text-muted"> {{ formatToPhpCurrency(item.price) }} </td>
-                                <td class="text-muted"> {{ formatToPhpCurrency(getVatAmount(item.price, item.vat_type))
-                                    }} </td>
-                                <td class="text-muted">
-                                    {{
-        formatToPhpCurrency(getTotalNetPrice({
-            pricePerUnit: item.price,
-            vatPerUnit: getVatAmount(item.price, item.vat_type),
-                                    quantity: item.canvass_item.quantity
-                                    }))
-                                    }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="8" class="text-end fw-bold">
-                                    Summary Total
-                                </td>
-                                <td class="fw-bold">
-                                    {{ formatToPhpCurrency(totalPriceOfAllItems) }}
-                                </td>
-                            </tr>
-                        </tbody>
-                        <tfoot v-show="supplierItems.length === 0">
-                            <tr>
-                                <td colspan="9" class="text-center">
-                                    <span class="text-muted fst-italic"> No awarded items </span>
-                                </td>
-                            </tr>
-                        </tfoot>
-                    </table>
+        
+                <div v-if="selectedMeqs && poData.meqs_supplier" class="h5wrapper mb-3 pt-5">
+                    <hr class="result">
+                    <h5 class="text-warning fst-italic">
+                        <i class="fas fa-shopping-cart"></i> Items
+                    </h5>
+                    <hr class="result">
                 </div>
+        
+                <div v-if="selectedMeqs && poData.meqs_supplier" class="row pb-3">
+                    <div class="col">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-sm">
+                                <thead>
+                                    <tr>
+                                        <th class="bg-secondary text-white">No</th>
+                                        <th class="bg-secondary text-white">Description</th>
+                                        <th class="bg-secondary text-white">Brand</th>
+                                        <th class="bg-secondary text-white">Unit</th>
+                                        <th class="bg-secondary text-white">Qty</th>
+                                        <th class="bg-secondary text-white">VAT</th>
+                                        <th class="bg-secondary text-white">Price/Unit</th>
+                                        <th class="bg-secondary text-white">Vat/Unit</th>
+                                        <th class="bg-secondary text-white">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="item, i in supplierItems">
+                                        <td class="text-muted"> {{ i + 1 }} </td>
+                                        <td class="text-muted"> {{ item.canvass_item.description }} </td>
+                                        <td class="text-muted"> {{ item.canvass_item.brand ? item.canvass_item.brand.name :
+                'N/A' }}
+                                        </td>
+                                        <td class="text-muted"> {{ item.canvass_item.unit ? item.canvass_item.unit.name : 'N/A'
+                                            }} </td>
+                                        <td class="text-muted"> {{ item.canvass_item.quantity }} </td>
+                                        <td class="text-muted"> {{ VAT[item.vat_type].label }} </td>
+                                        <td class="text-muted"> {{ formatToPhpCurrency(item.price) }} </td>
+                                        <td class="text-muted"> {{ formatToPhpCurrency(getVatAmount(item.price, item.vat_type))
+                                            }} </td>
+                                        <td class="text-muted">
+                                            {{
+                formatToPhpCurrency(getTotalNetPrice({
+                    pricePerUnit: item.price,
+                    vatPerUnit: getVatAmount(item.price, item.vat_type),
+                                            quantity: item.canvass_item.quantity
+                                            }))
+                                            }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="8" class="text-end fw-bold">
+                                            Summary Total
+                                        </td>
+                                        <td class="fw-bold">
+                                            {{ formatToPhpCurrency(totalPriceOfAllItems) }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot v-show="supplierItems.length === 0">
+                                    <tr>
+                                        <td colspan="9" class="text-center">
+                                            <span class="text-muted fst-italic"> No awarded items </span>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+        
+        
             </div>
+        
+            <div v-else>
+                <LoaderSpinner />
+            </div>
+
         </div>
-
-
     </div>
 
-    <div v-else>
-        <LoaderSpinner />
-    </div>
 
 </template>
 

@@ -1,62 +1,66 @@
 <template>
-    <div>
+    <div class="card">
 
-        <h2 class="text-warning">Create Employee</h2>
-
-        <hr>
-
-        <form @submit.prevent="onSubmit">
-
-            <div class="row justify-content-center pt-3">
-                <div class="col-lg-6">
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Firstname <span class="text-danger">*</span>
-                        </label>
-                        <input type="text" class="form-control" v-model="formData.firstname" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Middlename
-                        </label>
-                        <input type="text" class="form-control" v-model="formData.middlename">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Lastname <span class="text-danger">*</span>
-                        </label>
-                        <input type="text" class="form-control" v-model="formData.lastname" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Position
-                        </label>
-                        <input type="text" class="form-control" v-model="formData.position">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Signature
-                        </label>
-                        <input class="form-control" type="file" @change="handleFileUpload">
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="row justify-content-center pt-3">
-                <div class="col-lg-6">
-                    <div class="d-flex justify-content-between">
-                        <button type="button" @click="onClickGoToList" class="btn btn-secondary">
-                            <i class="fas fa-list"></i> Go to list
-                        </button>
-                        <button type="submit" class="btn btn-primary" :disabled="isSaving">
-                            <i class="fas fa-save"></i> {{ isSaving ? 'Saving...' : 'Save' }}
-                        </button>
+        <div class="card-body">
+    
+            <h2 class="text-warning">Create Employee</h2>
+    
+            <hr>
+    
+            <form @submit.prevent="onSubmit">
+    
+                <div class="row justify-content-center pt-3">
+                    <div class="col-lg-6">
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Firstname <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" v-model="formData.firstname" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Middlename
+                            </label>
+                            <input type="text" class="form-control" v-model="formData.middlename">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Lastname <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" v-model="formData.lastname" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Position
+                            </label>
+                            <input type="text" class="form-control" v-model="formData.position">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Signature
+                            </label>
+                            <input class="form-control" type="file" @change="handleFileUpload">
+                        </div>
                     </div>
                 </div>
-            </div>
+    
+    
+                <div class="row justify-content-center pt-3">
+                    <div class="col-lg-6">
+                        <div class="d-flex justify-content-between">
+                            <button type="button" @click="onClickGoToList" class="btn btn-secondary">
+                                <i class="fas fa-list"></i> Go to list
+                            </button>
+                            <button type="submit" class="btn btn-primary" :disabled="isSaving">
+                                <i class="fas fa-save"></i> {{ isSaving ? 'Saving...' : 'Save' }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+    
+            </form>
 
-        </form>
+        </div>
 
     </div>
 

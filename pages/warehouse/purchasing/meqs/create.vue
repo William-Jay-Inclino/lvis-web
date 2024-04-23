@@ -1,269 +1,277 @@
 <template>
-    <div v-if="!isLoadingPage">
 
-        <h2 class="text-warning">Create MEQS</h2>
-        <hr>
+    <div class="card">
+        <div class="card-body">
 
-        <div class="row pt-3">
-            <div class="col">
-                <span class="text-secondary">
-                    Step {{ currentStep }} of 3:
-                    <span v-show="currentStep === 1"> Add MEQS info </span>
-                    <span v-show="currentStep === 2"> Add Suppliers </span>
-                    <span v-show="currentStep === 3"> Award Supplier </span>
-                </span>
-            </div>
-        </div>
-
-        <div class="row mb-3">
-            <div class="col">
-                <div class="row justify-content-center pt-5">
-
-                    <div v-show="currentStep === 1" class="col-lg-6">
-                        <div class="mb-3">
-                            <label class="form-label">Reference</label>
-                            <div class="row g-0">
-                                <div class="col-4">
-                                    <client-only>
-                                        <v-select :options="transactionTypes" v-model="transactionType"
-                                            :clearable="false"></v-select>
-                                    </client-only>
-                                </div>
-                                <div class="col-8" v-if="transactionType === 'RV'">
-                                    <client-only>
-                                        <v-select @option:selected="onRvNumberSelected" :options="rvs" label="rv_number"
-                                            v-model="meqsData.rv">
-                                            <template v-slot:option="option">
-                                                <div v-if="option.status !== APPROVAL_STATUS.APPROVED" class="row">
-                                                    <div class="col">
-                                                        <span class="text-danger">{{ option.rv_number }}</span>
-                                                    </div>
-                                                    <div class="col text-end">
-                                                        <small class="text-muted fst-italic">
-                                                            {{
-        // @ts-ignore
-        approvalStatus[option.status].label
-    }}
-                                                        </small>
-                                                    </div>
-                                                </div>
-                                                <div v-else-if="option.is_referenced" class="row">
-                                                    <div class="col">
-                                                        <span class="text-danger">{{ option.rv_number }}</span>
-                                                    </div>
-                                                    <div class="col text-end">
-                                                        <small class="text-muted fst-italic">
-                                                            Referenced
-                                                        </small>
-                                                    </div>
-                                                </div>
-                                                <div v-else class="row">
-                                                    <div class="col">
-                                                        <span>{{ option.rv_number }}</span>
-                                                    </div>
-                                                    <div class="col text-end">
-                                                        <small class="text-success fst-italic"> Available </small>
-                                                    </div>
-                                                </div>
-                                            </template>
-                                        </v-select>
-                                    </client-only>
-                                    <nuxt-link v-if="meqsData.rv" class="btn btn-sm btn-light text-primary"
-                                        :to="'/warehouse/purchasing/rv/view/' + meqsData.rv.id" target="_blank">View RV
-                                        details</nuxt-link>
-                                </div>
-                                <div class="col-8" v-else-if="transactionType === 'JO'">
-                                    <client-only>
-                                        <v-select @option:selected="onJoNumberSelected" :options="jos" label="jo_number"
-                                            v-model="meqsData.jo">
-                                            <template v-slot:option="option">
-                                                <div v-if="option.status !== APPROVAL_STATUS.APPROVED" class="row">
-                                                    <div class="col">
-                                                        <span class="text-danger">{{ option.jo_number }}</span>
-                                                    </div>
-                                                    <div class="col text-end">
-                                                        <small class="text-muted fst-italic">
-                                                            {{
-        // @ts-ignore
-        approvalStatus[option.status].label
-    }}
-                                                        </small>
-                                                    </div>
-                                                </div>
-                                                <div v-else-if="option.is_referenced" class="row">
-                                                    <div class="col">
-                                                        <span class="text-danger">{{ option.jo_number }}</span>
-                                                    </div>
-                                                    <div class="col text-end">
-                                                        <small class="text-muted fst-italic">
-                                                            Referenced
-                                                        </small>
-                                                    </div>
-                                                </div>
-                                                <div v-else class="row">
-                                                    <div class="col">
-                                                        <span>{{ option.jo_number }}</span>
-                                                    </div>
-                                                    <div class="col text-end">
-                                                        <small class="text-success fst-italic"> Available </small>
-                                                    </div>
-                                                </div>
-                                            </template>
-                                        </v-select>
-                                    </client-only>
-                                    <nuxt-link v-if="meqsData.jo" class="btn btn-sm btn-light text-primary"
-                                        :to="'/warehouse/purchasing/jo/view/' + meqsData.jo.id" target="_blank">View JO
-                                        details</nuxt-link>
-                                </div>
-                                <div class="col-8" v-else-if="transactionType === 'SPR'">
-                                    <client-only>
-                                        <v-select @option:selected="onSprNumberSelected" :options="sprs"
-                                            label="spr_number" v-model="meqsData.spr">
-                                            <template v-slot:option="option">
-                                                <div v-if="option.status !== APPROVAL_STATUS.APPROVED" class="row">
-                                                    <div class="col">
-                                                        <span class="text-danger">{{ option.spr_number }}</span>
-                                                    </div>
-                                                    <div class="col text-end">
-                                                        <small class="text-muted fst-italic">
-                                                            {{
-        // @ts-ignore
-        approvalStatus[option.status].label
-    }}
-                                                        </small>
-                                                    </div>
-                                                </div>
-                                                <div v-else-if="option.is_referenced" class="row">
-                                                    <div class="col">
-                                                        <span class="text-danger">{{ option.spr_number }}</span>
-                                                    </div>
-                                                    <div class="col text-end">
-                                                        <small class="text-muted fst-italic">
-                                                            Referenced
-                                                        </small>
-                                                    </div>
-                                                </div>
-                                                <div v-else class="row">
-                                                    <div class="col">
-                                                        <span>{{ option.spr_number }}</span>
-                                                    </div>
-                                                    <div class="col text-end">
-                                                        <small class="text-success fst-italic"> Available </small>
-                                                    </div>
-                                                </div>
-                                            </template>
-                                        </v-select>
-                                    </client-only>
-                                    <nuxt-link v-if="meqsData.spr" class="btn btn-sm btn-light text-primary"
-                                        :to="'/warehouse/purchasing/spr/view/' + meqsData.spr.id" target="_blank">View
-                                        SPR details</nuxt-link>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">
-                                Requisitioner
-                            </label>
-
-                            <input type="text" :value="requisitioner" class="form-control" disabled>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">
-                                Requisitioner Purpose
-                            </label>
-                            <textarea :value="purpose" class="form-control" rows="3" disabled></textarea>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">
-                                Requisitioner Notes
-                            </label>
-                            <textarea :value="requisitionerNotes" class="form-control" rows="3" disabled></textarea>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">
-                                Notes
-                            </label>
-                            <textarea v-model="meqsData.notes" class="form-control" rows="3"></textarea>
-                            <small class="text-muted fst-italic">This note will be use during print out</small>
-                        </div>
-
-                        <div class="d-flex justify-content-between">
-                            <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/meqs">
-                                <i class="fas fa-chevron-left"></i> Back to Search
-                            </nuxt-link>
-                            <button @click="goToStep2()" type="button" class="btn btn-primary"
-                                :disabled="!canProceedStep2">
-                                <i class="fas fa-chevron-right"></i> Next
-                            </button>
-                        </div>
+            <div v-if="!isLoadingPage">
+        
+                <h2 class="text-warning">Create MEQS</h2>
+                <hr>
+        
+                <div class="row pt-3">
+                    <div class="col">
+                        <span class="text-secondary">
+                            Step {{ currentStep }} of 3:
+                            <span v-show="currentStep === 1"> Add MEQS info </span>
+                            <span v-show="currentStep === 2"> Add Suppliers </span>
+                            <span v-show="currentStep === 3"> Award Supplier </span>
+                        </span>
                     </div>
-
-                    <div v-show="currentStep === 2" class="col-lg-10 col-md-11 col-sm-12">
-
-                        <div class="row">
-                            <div class="col">
-                                <WarehouseMEQSSupplier :suppliers="suppliers" :meqs_suppliers="meqsData.meqs_suppliers"
-                                    :canvass_items="canvassItems" @add-supplier="addSupplier"
-                                    @edit-supplier="editSupplier" @remove-supplier="removeSupplier"
-                                    @add-attachment="addAttachment" @remove-attachment="removeAttachment" />
-                            </div>
-                        </div>
-
-                        <div class="d-flex justify-content-between">
-                            <button @click="goToStep1()" type="button" class="btn btn-secondary"
-                                :disabled="!hasReference">
-                                <i class="fas fa-chevron-left"></i> Back
-                            </button>
-                            <button @click="goToStep3()" type="button" class="btn btn-primary"
-                                :disabled="!canProceedStep3">
-                                <i class="fas fa-chevron-right"></i> Next
-                            </button>
-                        </div>
-
-                    </div>
-
-                    <div v-show="currentStep === 3" class="col-12">
-
-                        <div class="row">
-                            <div class="col">
-                                <WarehouseMEQSAward :is-initial="isInitialStep3"
-                                    :meqs_suppliers="meqsData.meqs_suppliers" :canvass_items="canvassItems"
-                                    @award-supplier-item="awardSupplierItem" @attach-note="attachNote" />
-                            </div>
-                        </div>
-
-                        <div class="d-flex justify-content-between mt-3">
-                            <button @click="goToStep2()" type="button" class="btn btn-secondary"
-                                :disabled="!hasReference">
-                                <i class="fas fa-chevron-left"></i> Back
-                            </button>
-                            <button @click="onSaveMeqs()" type="button" class="btn btn-primary"
-                                :disabled="isSavingMeqs">
-                                <i class="fas fa-save"></i> {{ isSavingMeqs ? 'Saving MEQS...' : 'Save MEQS' }}
-                            </button>
-                        </div>
-
-                    </div>
-
                 </div>
+        
+                <div class="row mb-3">
+                    <div class="col">
+                        <div class="row justify-content-center pt-5">
+        
+                            <div v-show="currentStep === 1" class="col-lg-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Reference</label>
+                                    <div class="row g-0">
+                                        <div class="col-4">
+                                            <client-only>
+                                                <v-select :options="transactionTypes" v-model="transactionType"
+                                                    :clearable="false"></v-select>
+                                            </client-only>
+                                        </div>
+                                        <div class="col-8" v-if="transactionType === 'RV'">
+                                            <client-only>
+                                                <v-select @option:selected="onRvNumberSelected" :options="rvs" label="rv_number"
+                                                    v-model="meqsData.rv">
+                                                    <template v-slot:option="option">
+                                                        <div v-if="option.status !== APPROVAL_STATUS.APPROVED" class="row">
+                                                            <div class="col">
+                                                                <span class="text-danger">{{ option.rv_number }}</span>
+                                                            </div>
+                                                            <div class="col text-end">
+                                                                <small class="text-muted fst-italic">
+                                                                    {{
+                // @ts-ignore
+                approvalStatus[option.status].label
+            }}
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                        <div v-else-if="option.is_referenced" class="row">
+                                                            <div class="col">
+                                                                <span class="text-danger">{{ option.rv_number }}</span>
+                                                            </div>
+                                                            <div class="col text-end">
+                                                                <small class="text-muted fst-italic">
+                                                                    Referenced
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                        <div v-else class="row">
+                                                            <div class="col">
+                                                                <span>{{ option.rv_number }}</span>
+                                                            </div>
+                                                            <div class="col text-end">
+                                                                <small class="text-success fst-italic"> Available </small>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                </v-select>
+                                            </client-only>
+                                            <nuxt-link v-if="meqsData.rv" class="btn btn-sm btn-light text-primary"
+                                                :to="'/warehouse/purchasing/rv/view/' + meqsData.rv.id" target="_blank">View RV
+                                                details</nuxt-link>
+                                        </div>
+                                        <div class="col-8" v-else-if="transactionType === 'JO'">
+                                            <client-only>
+                                                <v-select @option:selected="onJoNumberSelected" :options="jos" label="jo_number"
+                                                    v-model="meqsData.jo">
+                                                    <template v-slot:option="option">
+                                                        <div v-if="option.status !== APPROVAL_STATUS.APPROVED" class="row">
+                                                            <div class="col">
+                                                                <span class="text-danger">{{ option.jo_number }}</span>
+                                                            </div>
+                                                            <div class="col text-end">
+                                                                <small class="text-muted fst-italic">
+                                                                    {{
+                // @ts-ignore
+                approvalStatus[option.status].label
+            }}
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                        <div v-else-if="option.is_referenced" class="row">
+                                                            <div class="col">
+                                                                <span class="text-danger">{{ option.jo_number }}</span>
+                                                            </div>
+                                                            <div class="col text-end">
+                                                                <small class="text-muted fst-italic">
+                                                                    Referenced
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                        <div v-else class="row">
+                                                            <div class="col">
+                                                                <span>{{ option.jo_number }}</span>
+                                                            </div>
+                                                            <div class="col text-end">
+                                                                <small class="text-success fst-italic"> Available </small>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                </v-select>
+                                            </client-only>
+                                            <nuxt-link v-if="meqsData.jo" class="btn btn-sm btn-light text-primary"
+                                                :to="'/warehouse/purchasing/jo/view/' + meqsData.jo.id" target="_blank">View JO
+                                                details</nuxt-link>
+                                        </div>
+                                        <div class="col-8" v-else-if="transactionType === 'SPR'">
+                                            <client-only>
+                                                <v-select @option:selected="onSprNumberSelected" :options="sprs"
+                                                    label="spr_number" v-model="meqsData.spr">
+                                                    <template v-slot:option="option">
+                                                        <div v-if="option.status !== APPROVAL_STATUS.APPROVED" class="row">
+                                                            <div class="col">
+                                                                <span class="text-danger">{{ option.spr_number }}</span>
+                                                            </div>
+                                                            <div class="col text-end">
+                                                                <small class="text-muted fst-italic">
+                                                                    {{
+                // @ts-ignore
+                approvalStatus[option.status].label
+            }}
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                        <div v-else-if="option.is_referenced" class="row">
+                                                            <div class="col">
+                                                                <span class="text-danger">{{ option.spr_number }}</span>
+                                                            </div>
+                                                            <div class="col text-end">
+                                                                <small class="text-muted fst-italic">
+                                                                    Referenced
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                        <div v-else class="row">
+                                                            <div class="col">
+                                                                <span>{{ option.spr_number }}</span>
+                                                            </div>
+                                                            <div class="col text-end">
+                                                                <small class="text-success fst-italic"> Available </small>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                </v-select>
+                                            </client-only>
+                                            <nuxt-link v-if="meqsData.spr" class="btn btn-sm btn-light text-primary"
+                                                :to="'/warehouse/purchasing/spr/view/' + meqsData.spr.id" target="_blank">View
+                                                SPR details</nuxt-link>
+                                        </div>
+                                    </div>
+                                </div>
+        
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        Requisitioner
+                                    </label>
+        
+                                    <input type="text" :value="requisitioner" class="form-control" disabled>
+                                </div>
+        
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        Requisitioner Purpose
+                                    </label>
+                                    <textarea :value="purpose" class="form-control" rows="3" disabled></textarea>
+                                </div>
+        
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        Requisitioner Notes
+                                    </label>
+                                    <textarea :value="requisitionerNotes" class="form-control" rows="3" disabled></textarea>
+                                </div>
+        
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        Notes
+                                    </label>
+                                    <textarea v-model="meqsData.notes" class="form-control" rows="3"></textarea>
+                                    <small class="text-muted fst-italic">This note will be use during print out</small>
+                                </div>
+        
+                                <div class="d-flex justify-content-between">
+                                    <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/meqs">
+                                        <i class="fas fa-chevron-left"></i> Back to Search
+                                    </nuxt-link>
+                                    <button @click="goToStep2()" type="button" class="btn btn-primary"
+                                        :disabled="!canProceedStep2">
+                                        <i class="fas fa-chevron-right"></i> Next
+                                    </button>
+                                </div>
+                            </div>
+        
+                            <div v-show="currentStep === 2" class="col-lg-10 col-md-11 col-sm-12">
+        
+                                <div class="row">
+                                    <div class="col">
+                                        <WarehouseMEQSSupplier :suppliers="suppliers" :meqs_suppliers="meqsData.meqs_suppliers"
+                                            :canvass_items="canvassItems" @add-supplier="addSupplier"
+                                            @edit-supplier="editSupplier" @remove-supplier="removeSupplier"
+                                            @add-attachment="addAttachment" @remove-attachment="removeAttachment" />
+                                    </div>
+                                </div>
+        
+                                <div class="d-flex justify-content-between">
+                                    <button @click="goToStep1()" type="button" class="btn btn-secondary"
+                                        :disabled="!hasReference">
+                                        <i class="fas fa-chevron-left"></i> Back
+                                    </button>
+                                    <button @click="goToStep3()" type="button" class="btn btn-primary"
+                                        :disabled="!canProceedStep3">
+                                        <i class="fas fa-chevron-right"></i> Next
+                                    </button>
+                                </div>
+        
+                            </div>
+        
+                            <div v-show="currentStep === 3" class="col-12">
+        
+                                <div class="row">
+                                    <div class="col">
+                                        <WarehouseMEQSAward :is-initial="isInitialStep3"
+                                            :meqs_suppliers="meqsData.meqs_suppliers" :canvass_items="canvassItems"
+                                            @award-supplier-item="awardSupplierItem" @attach-note="attachNote" />
+                                    </div>
+                                </div>
+        
+                                <div class="d-flex justify-content-between mt-3">
+                                    <button @click="goToStep2()" type="button" class="btn btn-secondary"
+                                        :disabled="!hasReference">
+                                        <i class="fas fa-chevron-left"></i> Back
+                                    </button>
+                                    <button @click="onSaveMeqs()" type="button" class="btn btn-primary"
+                                        :disabled="isSavingMeqs">
+                                        <i class="fas fa-save"></i> {{ isSavingMeqs ? 'Saving MEQS...' : 'Save MEQS' }}
+                                    </button>
+                                </div>
+        
+                            </div>
+        
+                        </div>
+                    </div>
+                </div>
+        
+                <button v-show="false" ref="requiredNotesBtn" data-bs-toggle="modal"
+                    data-bs-target="#requiredNotesModal"></button>
+        
+                <WarehouseMEQSRequiredNotes :items-needing-justification="itemsNeedingJustification"
+                    :is-saving-meqs="isSavingMeqs" @update-notes="updateNotes" @save="saveMeqs" />
+        
             </div>
+        
+            <div v-else>
+                <LoaderSpinner />
+            </div>
+            
         </div>
-
-        <button v-show="false" ref="requiredNotesBtn" data-bs-toggle="modal"
-            data-bs-target="#requiredNotesModal"></button>
-
-        <WarehouseMEQSRequiredNotes :items-needing-justification="itemsNeedingJustification"
-            :is-saving-meqs="isSavingMeqs" @update-notes="updateNotes" @save="saveMeqs" />
-
     </div>
 
-    <div v-else>
-        <LoaderSpinner />
-    </div>
 </template>
 
 

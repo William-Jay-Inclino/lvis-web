@@ -1,166 +1,174 @@
 <template>
-    <div v-if="!isLoadingPage && authUser && sprData && sprData.canvass && !sprData.cancelled_at" class="mb-3">
-        <h2 class="text-warning">Update SPR</h2>
-        <hr>
 
-        <div v-if="isAdmin(authUser)" class="row pt-3 mb-5">
-            <div class="col">
-                <ul class="nav nav-tabs justify-content-center">
-                    <li class="nav-item" @click="isSPRDetailForm = true">
-                        <a class="nav-link" :class="{ 'active': isSPRDetailForm }" href="#">
-                            <i class="fas fa-info-circle"></i> SPR Info
-                        </a>
-                    </li>
-                    <li class="nav-item" @click="isSPRDetailForm = false">
-                        <a class="nav-link" :class="{ 'active': !isSPRDetailForm }" href="#">
-                            <i class="fas fa-users"></i> Approvers
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
+    <div class="card">
+        <div class="card-body">
 
-        <div v-show="isSPRDetailForm" class="row justify-content-center">
-            <div class="col-lg-6">
-
-
-                <div class="mb-3 d-flex align-items-center">
-                    <label class="form-label me-2 mb-0">Status:</label>
-                    <div :class="{ [`badge bg-${sprStatus.color}`]: true }">
-                        {{ sprStatus.label }}
+            <div v-if="!isLoadingPage && authUser && sprData && sprData.canvass && !sprData.cancelled_at" class="mb-3">
+                <h2 class="text-warning">Update SPR</h2>
+                <hr>
+        
+                <div v-if="isAdmin(authUser)" class="row pt-3 mb-5">
+                    <div class="col">
+                        <ul class="nav nav-tabs justify-content-center">
+                            <li class="nav-item" @click="isSPRDetailForm = true">
+                                <a class="nav-link" :class="{ 'active': isSPRDetailForm }" href="#">
+                                    <i class="fas fa-info-circle"></i> SPR Info
+                                </a>
+                            </li>
+                            <li class="nav-item" @click="isSPRDetailForm = false">
+                                <a class="nav-link" :class="{ 'active': !isSPRDetailForm }" href="#">
+                                    <i class="fas fa-users"></i> Approvers
+                                </a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        SPR Number
-                    </label>
-                    <input type="text" class="form-control" :value="sprData.spr_number" disabled>
-                    <nuxt-link class="btn btn-sm btn-light text-primary"
-                        :to="'/warehouse/purchasing/spr/view/' + sprData.id" target="_blank">View SPR
-                        details</nuxt-link>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        RC Number
-                    </label>
-                    <input type="text" class="form-control" :value="sprData.canvass.rc_number" disabled>
-                    <nuxt-link class="btn btn-sm btn-light text-primary"
-                        :to="'/warehouse/purchasing/canvass/view/' + sprData.canvass.id" target="_blank">View canvass
-                        details</nuxt-link>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Date
-                    </label>
-                    <input type="date" class="form-control" :value="sprData.date_requested" disabled>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Requisitioner
-                    </label>
-                    <input :value="sprData.canvass.requested_by?.fullname" type="text" class="form-control" disabled>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Purpose
-                    </label>
-                    <textarea :value="sprData.canvass.purpose" class="form-control" rows="3" disabled> </textarea>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">
-                        Requisitioner Notes
-                    </label>
-                    <textarea :value="sprData.canvass.notes" class="form-control" rows="3" disabled> </textarea>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Imd. Sup. <span class="text-danger">*</span>
-                    </label>
-                    <client-only>
-                        <v-select :options="employees" label="fullname" v-model="sprData.supervisor"
-                            :clearable="false"></v-select>
-                    </client-only>
-                    <small class="text-danger fst-italic" v-if="sprDataErrors.supervisor"> This field is required
-                    </small>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Vehicle <span class="text-danger">*</span>
-                    </label>
-                    <client-only>
-                        <v-select :options="vehicles" label="name" v-model="sprData.vehicle"
-                            :clearable="false"></v-select>
-                    </client-only>
-                    <small class="text-danger fst-italic" v-if="sprDataErrors.vehicle"> This field is required
-                    </small>
-                </div>
-
-                <div class="mb-3" v-if="isAdmin(authUser)">
-                    <label class="form-label">
-                        Classification
-                    </label>
-                    <client-only>
-                        <v-select :options="classifications" label="name" v-model="sprData.classification"></v-select>
-                    </client-only>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Notes
-                    </label>
-                    <textarea class="form-control" rows="3" v-model="sprData.notes"></textarea>
-                </div>
-
-
-            </div>
-        </div>
-
-        <div v-show="!isSPRDetailForm" class="row justify-content-center pt-5">
-
-            <div class="col-12">
-                <WarehouseApprover :approvers="sprData.spr_approvers" :employees="employees"
-                    :isUpdatingApproverOrder="isUpdatingApproverOrder" :isAddingApprover="isAddingSprApprover"
-                    :isEditingApprover="isEditingSprApprover" @changeApproverOrder="changeApproverOrder"
-                    @addApprover="addApprover" @editApprover="editApprover" @removeApprover="removeApprover" />
-            </div>
-
-
-        </div>
-
-
-        <div class="row justify-content-center pt-3">
-            <div :class="{ 'col-lg-6': isSPRDetailForm, 'col-12': !isSPRDetailForm }">
-
-                <div class="d-flex justify-content-between pt-3">
-                    <div>
-                        <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/spr">
-                            <i class="fas fa-chevron-left"></i> Back to Search
-                        </nuxt-link>
-                    </div>
-                    <div>
-                        <button v-if="isSPRDetailForm" @click="updateSprInfo()" type="button" class="btn btn-success"
-                            :disabled="isUpdating">
-                            <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
-                        </button>
+        
+                <div v-show="isSPRDetailForm" class="row justify-content-center">
+                    <div class="col-lg-6">
+        
+        
+                        <div class="mb-3 d-flex align-items-center">
+                            <label class="form-label me-2 mb-0">Status:</label>
+                            <div :class="{ [`badge bg-${sprStatus.color}`]: true }">
+                                {{ sprStatus.label }}
+                            </div>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                SPR Number
+                            </label>
+                            <input type="text" class="form-control" :value="sprData.spr_number" disabled>
+                            <nuxt-link class="btn btn-sm btn-light text-primary"
+                                :to="'/warehouse/purchasing/spr/view/' + sprData.id" target="_blank">View SPR
+                                details</nuxt-link>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                RC Number
+                            </label>
+                            <input type="text" class="form-control" :value="sprData.canvass.rc_number" disabled>
+                            <nuxt-link class="btn btn-sm btn-light text-primary"
+                                :to="'/warehouse/purchasing/canvass/view/' + sprData.canvass.id" target="_blank">View canvass
+                                details</nuxt-link>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Date
+                            </label>
+                            <input type="date" class="form-control" :value="sprData.date_requested" disabled>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Requisitioner
+                            </label>
+                            <input :value="sprData.canvass.requested_by?.fullname" type="text" class="form-control" disabled>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Purpose
+                            </label>
+                            <textarea :value="sprData.canvass.purpose" class="form-control" rows="3" disabled> </textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Requisitioner Notes
+                            </label>
+                            <textarea :value="sprData.canvass.notes" class="form-control" rows="3" disabled> </textarea>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Imd. Sup. <span class="text-danger">*</span>
+                            </label>
+                            <client-only>
+                                <v-select :options="employees" label="fullname" v-model="sprData.supervisor"
+                                    :clearable="false"></v-select>
+                            </client-only>
+                            <small class="text-danger fst-italic" v-if="sprDataErrors.supervisor"> This field is required
+                            </small>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Vehicle <span class="text-danger">*</span>
+                            </label>
+                            <client-only>
+                                <v-select :options="vehicles" label="name" v-model="sprData.vehicle"
+                                    :clearable="false"></v-select>
+                            </client-only>
+                            <small class="text-danger fst-italic" v-if="sprDataErrors.vehicle"> This field is required
+                            </small>
+                        </div>
+        
+                        <div class="mb-3" v-if="isAdmin(authUser)">
+                            <label class="form-label">
+                                Classification
+                            </label>
+                            <client-only>
+                                <v-select :options="classifications" label="name" v-model="sprData.classification"></v-select>
+                            </client-only>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Notes
+                            </label>
+                            <textarea class="form-control" rows="3" v-model="sprData.notes"></textarea>
+                        </div>
+        
+        
                     </div>
                 </div>
-
+        
+                <div v-show="!isSPRDetailForm" class="row justify-content-center pt-5">
+        
+                    <div class="col-12">
+                        <WarehouseApprover :approvers="sprData.spr_approvers" :employees="employees"
+                            :isUpdatingApproverOrder="isUpdatingApproverOrder" :isAddingApprover="isAddingSprApprover"
+                            :isEditingApprover="isEditingSprApprover" @changeApproverOrder="changeApproverOrder"
+                            @addApprover="addApprover" @editApprover="editApprover" @removeApprover="removeApprover" />
+                    </div>
+        
+        
+                </div>
+        
+        
+                <div class="row justify-content-center pt-3">
+                    <div :class="{ 'col-lg-6': isSPRDetailForm, 'col-12': !isSPRDetailForm }">
+        
+                        <div class="d-flex justify-content-between pt-3">
+                            <div>
+                                <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/spr">
+                                    <i class="fas fa-chevron-left"></i> Back to Search
+                                </nuxt-link>
+                            </div>
+                            <div>
+                                <button v-if="isSPRDetailForm" @click="updateSprInfo()" type="button" class="btn btn-success"
+                                    :disabled="isUpdating">
+                                    <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
+                                </button>
+                            </div>
+                        </div>
+        
+                    </div>
+                </div>
+        
+        
             </div>
+        
+            <div v-else>
+                <LoaderSpinner />
+            </div>
+            
         </div>
-
-
     </div>
 
-    <div v-else>
-        <LoaderSpinner />
-    </div>
 
 </template>
 

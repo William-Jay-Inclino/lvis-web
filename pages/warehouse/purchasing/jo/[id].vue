@@ -1,172 +1,180 @@
 <template>
-    <div v-if="!isLoadingPage && authUser && joData && joData.canvass && !joData.cancelled_at" class="mb-3">
-        <h2 class="text-warning">Update JO</h2>
-        <hr>
 
-        <div v-if="isAdmin(authUser)" class="row pt-3 mb-5">
-            <div class="col">
-                <ul class="nav nav-tabs justify-content-center">
-                    <li class="nav-item" @click="isJODetailForm = true">
-                        <a class="nav-link" :class="{ 'active': isJODetailForm }" href="#">
-                            <i class="fas fa-info-circle"></i> JO Info
-                        </a>
-                    </li>
-                    <li class="nav-item" @click="isJODetailForm = false">
-                        <a class="nav-link" :class="{ 'active': !isJODetailForm }" href="#">
-                            <i class="fas fa-users"></i> Approvers
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
+    <div class="card">
+        <div class="card-body">
 
-        <div v-show="isJODetailForm" class="row justify-content-center">
-            <div class="col-lg-6">
-
-
-                <div class="mb-3 d-flex align-items-center">
-                    <label class="form-label me-2 mb-0">Status:</label>
-                    <div :class="{ [`badge bg-${joStatus.color}`]: true }">
-                        {{ joStatus.label }}
+            <div v-if="!isLoadingPage && authUser && joData && joData.canvass && !joData.cancelled_at" class="mb-3">
+                <h2 class="text-warning">Update JO</h2>
+                <hr>
+        
+                <div v-if="isAdmin(authUser)" class="row pt-3 mb-5">
+                    <div class="col">
+                        <ul class="nav nav-tabs justify-content-center">
+                            <li class="nav-item" @click="isJODetailForm = true">
+                                <a class="nav-link" :class="{ 'active': isJODetailForm }" href="#">
+                                    <i class="fas fa-info-circle"></i> JO Info
+                                </a>
+                            </li>
+                            <li class="nav-item" @click="isJODetailForm = false">
+                                <a class="nav-link" :class="{ 'active': !isJODetailForm }" href="#">
+                                    <i class="fas fa-users"></i> Approvers
+                                </a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        JO Number
-                    </label>
-                    <input type="text" class="form-control" :value="joData.jo_number" disabled>
-                    <nuxt-link class="btn btn-sm btn-light text-primary"
-                        :to="'/warehouse/purchasing/jo/view/' + joData.id" target="_blank">View JO details</nuxt-link>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        RC Number
-                    </label>
-                    <input type="text" class="form-control" :value="joData.canvass.rc_number" disabled>
-                    <nuxt-link class="btn btn-sm btn-light text-primary"
-                        :to="'/warehouse/purchasing/canvass/view/' + joData.canvass.id" target="_blank">View canvass
-                        details</nuxt-link>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Date
-                    </label>
-                    <input type="date" class="form-control" :value="joData.date_requested" disabled>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Requisitioner
-                    </label>
-                    <input :value="joData.canvass.requested_by?.fullname" type="text" class="form-control" disabled>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Purpose
-                    </label>
-                    <textarea :value="joData.canvass.purpose" class="form-control" rows="3" disabled> </textarea>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">
-                        Requisitioner Notes
-                    </label>
-                    <textarea :value="joData.canvass.notes" class="form-control" rows="3" disabled> </textarea>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Imd. Sup. <span class="text-danger">*</span>
-                    </label>
-                    <client-only>
-                        <v-select :options="employees" label="fullname" v-model="joData.supervisor"
-                            :clearable="false"></v-select>
-                    </client-only>
-                    <small class="text-danger fst-italic" v-if="joDataErrors.supervisor"> This field is required
-                    </small>
-                </div>
-
-                <div class="mb-3" v-if="isAdmin(authUser)">
-                    <label class="form-label">
-                        Classification
-                    </label>
-                    <client-only>
-                        <v-select :options="classifications" label="name" v-model="joData.classification"></v-select>
-                    </client-only>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Department
-                    </label>
-                    <client-only>
-                        <v-select :options="departments" label="name" v-model="joData.department"></v-select>
-                    </client-only>
-                    <small class="text-danger fst-italic" v-if="joDataErrors.department"> This field is required
-                    </small>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Equipment
-                    </label>
-                    <input type="text" class="form-control" v-model="joData.equipment">
-                    <small class="text-danger fst-italic" v-if="joDataErrors.equipment"> This field is required </small>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Notes
-                    </label>
-                    <textarea class="form-control" rows="3" v-model="joData.notes"></textarea>
-                </div>
-
-
-            </div>
-        </div>
-
-        <div v-show="!isJODetailForm" class="row justify-content-center pt-5">
-
-            <div class="col-12">
-                <WarehouseApprover :approvers="joData.jo_approvers" :employees="employees"
-                    :isUpdatingApproverOrder="isUpdatingApproverOrder" :isAddingApprover="isAddingJoApprover"
-                    :isEditingApprover="isEditingJoApprover" @changeApproverOrder="changeApproverOrder"
-                    @addApprover="addApprover" @editApprover="editApprover" @removeApprover="removeApprover" />
-            </div>
-
-
-        </div>
-
-
-        <div class="row justify-content-center pt-3">
-            <div :class="{ 'col-lg-6': isJODetailForm, 'col-12': !isJODetailForm }">
-
-                <div class="d-flex justify-content-between pt-3">
-                    <div>
-                        <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/jo">
-                            <i class="fas fa-chevron-left"></i> Back to Search
-                        </nuxt-link>
-                    </div>
-                    <div>
-                        <button v-if="isJODetailForm" @click="updateJoInfo()" type="button" class="btn btn-success"
-                            :disabled="isUpdating">
-                            <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
-                        </button>
+        
+                <div v-show="isJODetailForm" class="row justify-content-center">
+                    <div class="col-lg-6">
+        
+        
+                        <div class="mb-3 d-flex align-items-center">
+                            <label class="form-label me-2 mb-0">Status:</label>
+                            <div :class="{ [`badge bg-${joStatus.color}`]: true }">
+                                {{ joStatus.label }}
+                            </div>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                JO Number
+                            </label>
+                            <input type="text" class="form-control" :value="joData.jo_number" disabled>
+                            <nuxt-link class="btn btn-sm btn-light text-primary"
+                                :to="'/warehouse/purchasing/jo/view/' + joData.id" target="_blank">View JO details</nuxt-link>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                RC Number
+                            </label>
+                            <input type="text" class="form-control" :value="joData.canvass.rc_number" disabled>
+                            <nuxt-link class="btn btn-sm btn-light text-primary"
+                                :to="'/warehouse/purchasing/canvass/view/' + joData.canvass.id" target="_blank">View canvass
+                                details</nuxt-link>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Date
+                            </label>
+                            <input type="date" class="form-control" :value="joData.date_requested" disabled>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Requisitioner
+                            </label>
+                            <input :value="joData.canvass.requested_by?.fullname" type="text" class="form-control" disabled>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Purpose
+                            </label>
+                            <textarea :value="joData.canvass.purpose" class="form-control" rows="3" disabled> </textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Requisitioner Notes
+                            </label>
+                            <textarea :value="joData.canvass.notes" class="form-control" rows="3" disabled> </textarea>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Imd. Sup. <span class="text-danger">*</span>
+                            </label>
+                            <client-only>
+                                <v-select :options="employees" label="fullname" v-model="joData.supervisor"
+                                    :clearable="false"></v-select>
+                            </client-only>
+                            <small class="text-danger fst-italic" v-if="joDataErrors.supervisor"> This field is required
+                            </small>
+                        </div>
+        
+                        <div class="mb-3" v-if="isAdmin(authUser)">
+                            <label class="form-label">
+                                Classification
+                            </label>
+                            <client-only>
+                                <v-select :options="classifications" label="name" v-model="joData.classification"></v-select>
+                            </client-only>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Department
+                            </label>
+                            <client-only>
+                                <v-select :options="departments" label="name" v-model="joData.department"></v-select>
+                            </client-only>
+                            <small class="text-danger fst-italic" v-if="joDataErrors.department"> This field is required
+                            </small>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Equipment
+                            </label>
+                            <input type="text" class="form-control" v-model="joData.equipment">
+                            <small class="text-danger fst-italic" v-if="joDataErrors.equipment"> This field is required </small>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Notes
+                            </label>
+                            <textarea class="form-control" rows="3" v-model="joData.notes"></textarea>
+                        </div>
+        
+        
                     </div>
                 </div>
-
+        
+                <div v-show="!isJODetailForm" class="row justify-content-center pt-5">
+        
+                    <div class="col-12">
+                        <WarehouseApprover :approvers="joData.jo_approvers" :employees="employees"
+                            :isUpdatingApproverOrder="isUpdatingApproverOrder" :isAddingApprover="isAddingJoApprover"
+                            :isEditingApprover="isEditingJoApprover" @changeApproverOrder="changeApproverOrder"
+                            @addApprover="addApprover" @editApprover="editApprover" @removeApprover="removeApprover" />
+                    </div>
+        
+        
+                </div>
+        
+        
+                <div class="row justify-content-center pt-3">
+                    <div :class="{ 'col-lg-6': isJODetailForm, 'col-12': !isJODetailForm }">
+        
+                        <div class="d-flex justify-content-between pt-3">
+                            <div>
+                                <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/jo">
+                                    <i class="fas fa-chevron-left"></i> Back to Search
+                                </nuxt-link>
+                            </div>
+                            <div>
+                                <button v-if="isJODetailForm" @click="updateJoInfo()" type="button" class="btn btn-success"
+                                    :disabled="isUpdating">
+                                    <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
+                                </button>
+                            </div>
+                        </div>
+        
+                    </div>
+                </div>
+        
+        
             </div>
+        
+            <div v-else>
+                <LoaderSpinner />
+            </div>
+
         </div>
-
-
     </div>
 
-    <div v-else>
-        <LoaderSpinner />
-    </div>
 
 </template>
 

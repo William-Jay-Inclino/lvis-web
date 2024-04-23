@@ -1,104 +1,111 @@
 <template>
-    <div v-if="!isLoadingPage">
 
-        <h2 class="text-warning">Create Item</h2>
-
-        <hr>
-
-        <form @submit.prevent="onSubmit">
-
-            <div class="row justify-content-center pt-3">
-                <div class="col-lg-6">
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Code <span class="text-danger">*</span>
-                        </label>
-                        <input type="text" class="form-control" v-model="formData.code">
-                        <small v-if="formDataErrors.code" class="text-danger fst-italic"> This field is required
-                        </small>
+    <div class="card">
+        <div class="card-body">
+            
+            <div v-if="!isLoadingPage">
+        
+                <h2 class="text-warning">Create Item</h2>
+        
+                <hr>
+        
+                <form @submit.prevent="onSubmit">
+        
+                    <div class="row justify-content-center pt-3">
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    Code <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" v-model="formData.code">
+                                <small v-if="formDataErrors.code" class="text-danger fst-italic"> This field is required
+                                </small>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    Name <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" v-model="formData.name">
+                                <small v-if="formDataErrors.name" class="text-danger fst-italic"> This field is required
+                                </small>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    Description
+                                </label>
+                                <textarea rows="3" class="form-control" v-model="formData.description"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    Initial Quantity <span class="text-danger">*</span>
+                                </label>
+                                <input type="number" class="form-control" v-model="formData.initial_quantity">
+                                <small v-if="formDataErrors.initial_quantity" class="text-danger fst-italic"> Must be greater
+                                    than or equal to 0 </small>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    Initial Average Price <span class="text-danger">*</span>
+                                </label>
+                                <input type="number" class="form-control" v-model="formData.initial_average_price">
+                                <small v-if="formDataErrors.initial_average_price" class="text-danger fst-italic"> Must be
+                                    greater than or equal to 0 </small>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Unit</label>
+                                <client-only>
+                                    <v-select :options="units" label="name" v-model="formData.unit"
+                                        :clearable="false"></v-select>
+                                </client-only>
+                                <small v-if="formDataErrors.unit" class="text-danger fst-italic"> This field is required
+                                </small>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Item Types</label>
+                                <client-only>
+                                    <v-select :options="itemTypes" label="name" v-model="formData.item_type"
+                                        :clearable="false"></v-select>
+                                </client-only>
+                                <small v-if="formDataErrors.item_type" class="text-danger fst-italic"> This field is required
+                                </small>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Alert level</label>
+                                <client-only>
+                                    <v-select :options="alertLevels" v-model="formData.alert_level"
+                                        :clearable="false"></v-select>
+                                </client-only>
+                                <small class="text-muted fst-italic">Unit is percentage</small>
+                            </div>
+        
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Name <span class="text-danger">*</span>
-                        </label>
-                        <input type="text" class="form-control" v-model="formData.name">
-                        <small v-if="formDataErrors.name" class="text-danger fst-italic"> This field is required
-                        </small>
+        
+        
+                    <div class="row justify-content-center pt-3">
+                        <div class="col-lg-6">
+                            <div class="d-flex justify-content-between">
+                                <button type="button" @click="onClickGoToList" class="btn btn-secondary">
+                                    <i class="fas fa-list"></i> Go to list
+                                </button>
+                                <button type="submit" class="btn btn-primary" :disabled="isSaving">
+                                    <i class="fas fa-save"></i> {{ isSaving ? 'Saving...' : 'Save' }}
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Description
-                        </label>
-                        <textarea rows="3" class="form-control" v-model="formData.description"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Initial Quantity <span class="text-danger">*</span>
-                        </label>
-                        <input type="number" class="form-control" v-model="formData.initial_quantity">
-                        <small v-if="formDataErrors.initial_quantity" class="text-danger fst-italic"> Must be greater
-                            than or equal to 0 </small>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Initial Average Price <span class="text-danger">*</span>
-                        </label>
-                        <input type="number" class="form-control" v-model="formData.initial_average_price">
-                        <small v-if="formDataErrors.initial_average_price" class="text-danger fst-italic"> Must be
-                            greater than or equal to 0 </small>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Unit</label>
-                        <client-only>
-                            <v-select :options="units" label="name" v-model="formData.unit"
-                                :clearable="false"></v-select>
-                        </client-only>
-                        <small v-if="formDataErrors.unit" class="text-danger fst-italic"> This field is required
-                        </small>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Item Types</label>
-                        <client-only>
-                            <v-select :options="itemTypes" label="name" v-model="formData.item_type"
-                                :clearable="false"></v-select>
-                        </client-only>
-                        <small v-if="formDataErrors.item_type" class="text-danger fst-italic"> This field is required
-                        </small>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Alert level</label>
-                        <client-only>
-                            <v-select :options="alertLevels" v-model="formData.alert_level"
-                                :clearable="false"></v-select>
-                        </client-only>
-                        <small class="text-muted fst-italic">Unit is percentage</small>
-                    </div>
-
-                </div>
+        
+                </form>
+        
+            </div>
+        
+            <div v-else>
+                <LoaderSpinner />
             </div>
 
-
-            <div class="row justify-content-center pt-3">
-                <div class="col-lg-6">
-                    <div class="d-flex justify-content-between">
-                        <button type="button" @click="onClickGoToList" class="btn btn-secondary">
-                            <i class="fas fa-list"></i> Go to list
-                        </button>
-                        <button type="submit" class="btn btn-primary" :disabled="isSaving">
-                            <i class="fas fa-save"></i> {{ isSaving ? 'Saving...' : 'Save' }}
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-        </form>
-
+        </div>
     </div>
 
-
-    <div v-else>
-        <LoaderSpinner />
-    </div>
 
 </template>
 

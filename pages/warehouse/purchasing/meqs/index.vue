@@ -1,194 +1,202 @@
 <template>
-    <div v-if="!isLoadingPage && authUser">
-        <h2 class="text-warning">Search MEQS</h2>
 
-        <hr>
-
-        <div class="row pt-3">
-            <div class="col-lg-3 col-md-6 col-sm-12">
-                <div class="mb-3">
-                    <label class="form-label">MEQS Number</label>
-                    <client-only>
-                        <v-select :options="meqsArray" label="meqs_number" v-model="meqs"></v-select>
-                    </client-only>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-12">
-                <div class="mb-3">
-                    <label class="form-label">Transaction</label>
-                    <div class="row g-0">
-                        <div class="col-4">
+    <div class="card">
+        <div class="card-body">
+            
+            <div v-if="!isLoadingPage && authUser">
+                <h2 class="text-warning">Search MEQS</h2>
+        
+                <hr>
+        
+                <div class="row pt-3">
+                    <div class="col-lg-3 col-md-6 col-sm-12">
+                        <div class="mb-3">
+                            <label class="form-label">MEQS Number</label>
                             <client-only>
-                                <v-select @option:selected="onChangeTransactionType" :options="transactionTypes"
-                                    v-model="transactionType" :clearable="false"></v-select>
-                            </client-only>
-                        </div>
-                        <div class="col-8">
-                            <client-only>
-                                <v-select :options="rvs" label="rv_number" v-model="rv"
-                                    v-show="transactionType === 'RV'"></v-select>
-                                <v-select :options="jos" label="jo_number" v-model="jo"
-                                    v-show="transactionType === 'JO'"></v-select>
-                                <v-select :options="sprs" label="spr_number" v-model="spr"
-                                    v-show="transactionType === 'SPR'"></v-select>
+                                <v-select :options="meqsArray" label="meqs_number" v-model="meqs"></v-select>
                             </client-only>
                         </div>
                     </div>
-                </div>
-            </div>
-
-
-            <div class="col-lg-3 col-md-6 col-sm-12">
-                <div class="mb-3">
-                    <label class="form-label">Date</label>
-                    <input v-model="date_requested" type="date" class="form-control">
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-12">
-                <div class="mb-3">
-                    <label class="form-label">Requisitioner</label>
-                    <client-only>
-                        <v-select :options="employees" label="fullname" v-model="requested_by"></v-select>
-                    </client-only>
-                </div>
-            </div>
-        </div>
-
-        <div class="d-flex justify-content-end gap-2">
-            <button @click="search()" class="btn btn-primary" :disabled="isSearching">
-                <i class="fas fa-search"></i> {{ isSearching ? 'Searching...' : 'Search' }}
-            </button>
-            <button v-if="canCreate(authUser, 'canManageMEQS')" @click="onClickAdd" class="btn btn-primary float-end">
-                <i class="fas fa-plus"></i> Create MEQS
-            </button>
-        </div>
-
-        <div class="h5wrapper mb-3 mt-3" v-show="!isInitialLoad && !isSearching && !isPaginating">
-            <hr class="result">
-            <h6 class="text-warning"><i>Search results...</i></h6>
-            <hr class="result">
-        </div>
-
-        <div class="row justify-content-center pt-3">
-
-            <div class="text-center text-muted fst-italic" v-show="isSearching || isPaginating">
-                Please wait...
-            </div>
-
-            <div class="text-center text-muted fst-italic"
-                v-show="items.length === 0 && (!isInitialLoad && !isSearching)">
-                No results found
-            </div>
-
-
-            <div v-show="items.length > 0" class="col-lg">
-
-                <div class="row">
-                    <div class="col">
-
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th class="bg-secondary text-white">MEQS Number</th>
-                                        <th class="bg-secondary text-white">Reference</th>
-                                        <th class="bg-secondary text-white">Requisitioner</th>
-                                        <th class="bg-secondary text-white">Date</th>
-                                        <th class="bg-secondary text-white text-center">Status</th>
-                                        <th class="text-center bg-secondary text-white">
-                                            <i class="fas fa-info-circle"></i>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="i in items">
-                                        <td class="text-muted align-middle"> {{ i.meqs_number }} </td>
-                                        <td class="text-muted align-middle" v-if="i.rv">
-                                            RV#{{ i.rv.rv_number }}
-                                        </td>
-                                        <td class="text-muted align-middle" v-else-if="i.jo">
-                                            JO#{{ i.jo.jo_number }}
-                                        </td>
-                                        <td class="text-muted align-middle" v-if="i.spr">
-                                            SPR#{{ i.spr.spr_number }}
-                                        </td>
-                                        <td class="text-muted align-middle" v-if="i.rv">
-                                            {{
-        getFullname(i.rv.canvass.requested_by!.firstname,
-            i.rv.canvass.requested_by!.middlename,
-            i.rv.canvass.requested_by!.lastname)
-    }}
-                                        </td>
-                                        <td class="text-muted align-middle" v-else-if="i.jo">
-                                            {{
-        getFullname(i.jo.canvass.requested_by!.firstname,
-            i.jo.canvass.requested_by!.middlename,
-            i.jo.canvass.requested_by!.lastname)
-    }}
-                                        </td>
-                                        <td class="text-muted align-middle" v-if="i.spr">
-                                            {{
-        getFullname(i.spr.canvass.requested_by!.firstname,
-            i.spr.canvass.requested_by!.middlename,
-            i.spr.canvass.requested_by!.lastname)
-    }}
-                                        </td>
-                                        <td class="text-muted align-middle"> {{ formatDate(i.meqs_date) }} </td>
-                                        <td class="text-center align-middle">
-                                            <div :class="{ [`badge bg-${approvalStatus[i.status].color}`]: true }">
-                                                {{ approvalStatus[i.status].label }}
-                                            </div>
-                                        </td>
-                                        <td class="text-muted align-middle">
-                                            <button @click="onClickViewDetails(i.id)" class="btn btn-light w-50"
-                                                :disabled="!canViewDetails(authUser, 'canManageMEQS')">
-                                                <i class="fas fa-info-circle"
-                                                    :class="{ 'text-info': canViewDetails(authUser, 'canManageMEQS') }"></i>
-                                            </button>
-                                            <button :disabled="!i.can_update" @click="onClickEdit(i.id)"
-                                                class="btn btn-light w-50">
-                                                <i class="fas fa-edit" :class="{ 'text-primary': !!i.can_update }"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                    <div class="col-lg-3 col-md-6 col-sm-12">
+                        <div class="mb-3">
+                            <label class="form-label">Transaction</label>
+                            <div class="row g-0">
+                                <div class="col-4">
+                                    <client-only>
+                                        <v-select @option:selected="onChangeTransactionType" :options="transactionTypes"
+                                            v-model="transactionType" :clearable="false"></v-select>
+                                    </client-only>
+                                </div>
+                                <div class="col-8">
+                                    <client-only>
+                                        <v-select :options="rvs" label="rv_number" v-model="rv"
+                                            v-show="transactionType === 'RV'"></v-select>
+                                        <v-select :options="jos" label="jo_number" v-model="jo"
+                                            v-show="transactionType === 'JO'"></v-select>
+                                        <v-select :options="sprs" label="spr_number" v-model="spr"
+                                            v-show="transactionType === 'SPR'"></v-select>
+                                    </client-only>
+                                </div>
+                            </div>
                         </div>
-
+                    </div>
+        
+        
+                    <div class="col-lg-3 col-md-6 col-sm-12">
+                        <div class="mb-3">
+                            <label class="form-label">Date</label>
+                            <input v-model="date_requested" type="date" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-12">
+                        <div class="mb-3">
+                            <label class="form-label">Requisitioner</label>
+                            <client-only>
+                                <v-select :options="employees" label="fullname" v-model="requested_by"></v-select>
+                            </client-only>
+                        </div>
                     </div>
                 </div>
-
-                <div class="row">
-                    <div class="col">
-                        <nav>
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item" :class="{ disabled: pagination.currentPage === 1 }">
-                                    <a class="page-link" @click="changePage(pagination.currentPage - 1)"
-                                        href="#">Previous</a>
-                                </li>
-                                <li v-for="page in pagination.totalPages" :key="page" class="page-item"
-                                    :class="{ active: pagination.currentPage === page }">
-                                    <a class="page-link" @click="changePage(page)" href="#">{{ page }}</a>
-                                </li>
-                                <li class="page-item"
-                                    :class="{ disabled: pagination.currentPage === pagination.totalPages }">
-                                    <a class="page-link" @click="changePage(pagination.currentPage + 1)"
-                                        href="#">Next</a>
-                                </li>
-                            </ul>
-                        </nav>
+        
+                <div class="d-flex justify-content-end gap-2">
+                    <button @click="search()" class="btn btn-primary" :disabled="isSearching">
+                        <i class="fas fa-search"></i> {{ isSearching ? 'Searching...' : 'Search' }}
+                    </button>
+                    <button v-if="canCreate(authUser, 'canManageMEQS')" @click="onClickAdd" class="btn btn-primary float-end">
+                        <i class="fas fa-plus"></i> Create MEQS
+                    </button>
+                </div>
+        
+                <div class="h5wrapper mb-3 mt-3" v-show="!isInitialLoad && !isSearching && !isPaginating">
+                    <hr class="result">
+                    <h6 class="text-warning"><i>Search results...</i></h6>
+                    <hr class="result">
+                </div>
+        
+                <div class="row justify-content-center pt-3">
+        
+                    <div class="text-center text-muted fst-italic" v-show="isSearching || isPaginating">
+                        Please wait...
+                    </div>
+        
+                    <div class="text-center text-muted fst-italic"
+                        v-show="items.length === 0 && (!isInitialLoad && !isSearching)">
+                        No results found
+                    </div>
+        
+        
+                    <div v-show="items.length > 0" class="col-lg">
+        
+                        <div class="row">
+                            <div class="col">
+        
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th class="bg-secondary text-white">MEQS Number</th>
+                                                <th class="bg-secondary text-white">Reference</th>
+                                                <th class="bg-secondary text-white">Requisitioner</th>
+                                                <th class="bg-secondary text-white">Date</th>
+                                                <th class="bg-secondary text-white text-center">Status</th>
+                                                <th class="text-center bg-secondary text-white">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="i in items">
+                                                <td class="text-muted align-middle"> {{ i.meqs_number }} </td>
+                                                <td class="text-muted align-middle" v-if="i.rv">
+                                                    RV#{{ i.rv.rv_number }}
+                                                </td>
+                                                <td class="text-muted align-middle" v-else-if="i.jo">
+                                                    JO#{{ i.jo.jo_number }}
+                                                </td>
+                                                <td class="text-muted align-middle" v-if="i.spr">
+                                                    SPR#{{ i.spr.spr_number }}
+                                                </td>
+                                                <td class="text-muted align-middle" v-if="i.rv">
+                                                    {{
+                getFullname(i.rv.canvass.requested_by!.firstname,
+                    i.rv.canvass.requested_by!.middlename,
+                    i.rv.canvass.requested_by!.lastname)
+            }}
+                                                </td>
+                                                <td class="text-muted align-middle" v-else-if="i.jo">
+                                                    {{
+                getFullname(i.jo.canvass.requested_by!.firstname,
+                    i.jo.canvass.requested_by!.middlename,
+                    i.jo.canvass.requested_by!.lastname)
+            }}
+                                                </td>
+                                                <td class="text-muted align-middle" v-if="i.spr">
+                                                    {{
+                getFullname(i.spr.canvass.requested_by!.firstname,
+                    i.spr.canvass.requested_by!.middlename,
+                    i.spr.canvass.requested_by!.lastname)
+            }}
+                                                </td>
+                                                <td class="text-muted align-middle"> {{ formatDate(i.meqs_date) }} </td>
+                                                <td class="text-center align-middle">
+                                                    <div :class="{ [`badge bg-${approvalStatus[i.status].color}`]: true }">
+                                                        {{ approvalStatus[i.status].label }}
+                                                    </div>
+                                                </td>
+                                                <td class="text-muted align-middle">
+                                                    <button @click="onClickViewDetails(i.id)" class="btn btn-light w-50"
+                                                        :disabled="!canViewDetails(authUser, 'canManageMEQS')">
+                                                        <i class="fas fa-info-circle"
+                                                            :class="{ 'text-info': canViewDetails(authUser, 'canManageMEQS') }"></i>
+                                                    </button>
+                                                    <button :disabled="!i.can_update" @click="onClickEdit(i.id)"
+                                                        class="btn btn-light w-50">
+                                                        <i class="fas fa-edit" :class="{ 'text-primary': !!i.can_update }"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+        
+                            </div>
+                        </div>
+        
+                        <div class="row">
+                            <div class="col">
+                                <nav>
+                                    <ul class="pagination justify-content-center">
+                                        <li class="page-item" :class="{ disabled: pagination.currentPage === 1 }">
+                                            <a class="page-link" @click="changePage(pagination.currentPage - 1)"
+                                                href="#">Previous</a>
+                                        </li>
+                                        <li v-for="page in pagination.totalPages" :key="page" class="page-item"
+                                            :class="{ active: pagination.currentPage === page }">
+                                            <a class="page-link" @click="changePage(page)" href="#">{{ page }}</a>
+                                        </li>
+                                        <li class="page-item"
+                                            :class="{ disabled: pagination.currentPage === pagination.totalPages }">
+                                            <a class="page-link" @click="changePage(pagination.currentPage + 1)"
+                                                href="#">Next</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+        
+        
                     </div>
                 </div>
-
-
+        
             </div>
+        
+            <div v-else>
+                <LoaderSpinner />
+            </div>
+
         </div>
-
     </div>
 
-    <div v-else>
-        <LoaderSpinner />
-    </div>
 
 </template>
 

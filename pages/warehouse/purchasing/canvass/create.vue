@@ -1,97 +1,104 @@
 <template>
-    <div v-if="!isLoadingPage">
-        <h2 class="text-warning">Create Canvass</h2>
-        <hr>
 
-        <div class="row pt-3">
-            <div class="col">
-                <span class="text-secondary">
-                    Step {{ currentStep }} of 2:
-                    <span v-if="currentStep === 1"> Fill up canvass info </span>
-                    <span v-if="currentStep === 2"> Add canvass items </span>
-                </span>
+    <div class="card">
+        <div class="card-body">
+        
+            <div v-if="!isLoadingPage">
+                <h2 class="text-warning">Create Canvass</h2>
+                <hr>
+        
+                <div class="row pt-3">
+                    <div class="col">
+                        <span class="text-secondary">
+                            Step {{ currentStep }} of 2:
+                            <span v-if="currentStep === 1"> Fill up canvass info </span>
+                            <span v-if="currentStep === 2"> Add canvass items </span>
+                        </span>
+                    </div>
+                </div>
+        
+                <div v-show="currentStep === 1" class="row justify-content-center pt-5">
+                    <div class="col-lg-6">
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Requisitioner <span class="text-danger">*</span>
+                            </label>
+                            <client-only>
+                                <v-select :options="employees" label="fullname" v-model="formData.requested_by"></v-select>
+                            </client-only>
+                            <small class="text-danger fst-italic" v-show="formDataErrors.requested_by"> This field is required
+                            </small>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Purpose <span class="text-danger">*</span>
+                            </label>
+                            <textarea v-model="formData.purpose" class="form-control" rows="3"></textarea>
+                            <small class="text-danger fst-italic" v-show="formDataErrors.purpose"> This field is required
+                            </small>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">Notes</label>
+                            <textarea v-model="formData.notes" class="form-control" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+        
+        
+        
+                <div v-show="currentStep === 2" class="row justify-content-center pt-5">
+                    <div class="col-lg-10 col-md-10 col-sm-12">
+        
+                        <WarehouseCanvassItems :canvass-items="formData.canvass_items" :brands="brands" :units="units"
+                            :items="items" @add-item="addCanvassItem" @edit-item="editCanvassItem"
+                            @remove-item="removeCanvassItem" />
+        
+                    </div>
+                </div>
+        
+        
+        
+                <div class="row justify-content-center pt-5">
+                    <div :class="{ 'col-lg-6': currentStep === 1, 'col-lg-10 col-md-10 col-sm-12': currentStep === 2 }">
+        
+                        <div v-if="currentStep === 1" class="d-flex justify-content-between">
+                            <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">
+                                <i class="fas fa-chevron-left"></i> Back to Search
+                            </nuxt-link>
+                            <button @click="onClickNextStep1()" type="button" class="btn btn-primary">
+                                <i class="fas fa-chevron-right"></i> Next
+                            </button>
+                        </div>
+        
+                        <div v-else class="d-flex justify-content-between">
+                            <button @click="currentStep--" type="button" class="btn btn-secondary">
+                                <i class="fas fa-chevron-left"></i> Back
+                            </button>
+                            <button @click="save()" :disabled="formData.canvass_items.length === 0 || isSaving" type="button"
+                                class="btn btn-primary">
+                                <i class="fas fa-save"></i> {{ isSaving ? 'Saving...' : 'Save' }}
+                            </button>
+                        </div>
+        
+        
+                    </div>
+                </div>
+        
+        
+        
+        
+        
+        
+        
             </div>
-        </div>
-
-        <div v-show="currentStep === 1" class="row justify-content-center pt-5">
-            <div class="col-lg-6">
-                <div class="mb-3">
-                    <label class="form-label">
-                        Requisitioner <span class="text-danger">*</span>
-                    </label>
-                    <client-only>
-                        <v-select :options="employees" label="fullname" v-model="formData.requested_by"></v-select>
-                    </client-only>
-                    <small class="text-danger fst-italic" v-show="formDataErrors.requested_by"> This field is required
-                    </small>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Purpose <span class="text-danger">*</span>
-                    </label>
-                    <textarea v-model="formData.purpose" class="form-control" rows="3"></textarea>
-                    <small class="text-danger fst-italic" v-show="formDataErrors.purpose"> This field is required
-                    </small>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Notes</label>
-                    <textarea v-model="formData.notes" class="form-control" rows="3"></textarea>
-                </div>
+        
+            <div v-else>
+                <LoaderSpinner />
             </div>
+
         </div>
-
-
-
-        <div v-show="currentStep === 2" class="row justify-content-center pt-5">
-            <div class="col-lg-10 col-md-10 col-sm-12">
-
-                <WarehouseCanvassItems :canvass-items="formData.canvass_items" :brands="brands" :units="units"
-                    :items="items" @add-item="addCanvassItem" @edit-item="editCanvassItem"
-                    @remove-item="removeCanvassItem" />
-
-            </div>
-        </div>
-
-
-
-        <div class="row justify-content-center pt-5">
-            <div :class="{ 'col-lg-6': currentStep === 1, 'col-lg-10 col-md-10 col-sm-12': currentStep === 2 }">
-
-                <div v-if="currentStep === 1" class="d-flex justify-content-between">
-                    <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">
-                        <i class="fas fa-chevron-left"></i> Back to Search
-                    </nuxt-link>
-                    <button @click="onClickNextStep1()" type="button" class="btn btn-primary">
-                        <i class="fas fa-chevron-right"></i> Next
-                    </button>
-                </div>
-
-                <div v-else class="d-flex justify-content-between">
-                    <button @click="currentStep--" type="button" class="btn btn-secondary">
-                        <i class="fas fa-chevron-left"></i> Back
-                    </button>
-                    <button @click="save()" :disabled="formData.canvass_items.length === 0 || isSaving" type="button"
-                        class="btn btn-primary">
-                        <i class="fas fa-save"></i> {{ isSaving ? 'Saving...' : 'Save' }}
-                    </button>
-                </div>
-
-
-            </div>
-        </div>
-
-
-
-
-
-
-
-    </div>
-
-    <div v-else>
-        <LoaderSpinner />
     </div>
 
 </template>

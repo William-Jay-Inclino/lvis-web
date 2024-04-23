@@ -1,52 +1,60 @@
 <template>
-    <div v-if="!isLoadingPage">
 
-        <h2 class="text-warning">System Variables</h2>
+    <div class="card">
+        <div class="card-body">
 
-        <hr>
-
-        <div class="row justify-content-center">
-            <div class="col-lg-6">
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Budget Officers
-                    </label>
-                    <client-only>
-                        <v-select @option:selected="addBudgetOfficer" @option:deselected="removeBudgetOfficer" multiple
-                            label="fullname" v-model="budgetOfficers" :options="employees"
-                            :disabled="isAddingBudgetOfficer || isRemovingBudgetOfficer" />
-                    </client-only>
-                    <small v-show="isAddingBudgetOfficer" class="text-muted fst-italic">Adding Budget
-                        Officer...</small>
-                    <small v-show="isRemovingBudgetOfficer" class="text-muted fst-italic">Removing Budget
-                        Officer...</small>
+            <div v-if="!isLoadingPage">
+        
+                <h2 class="text-warning">System Variables</h2>
+        
+                <hr>
+        
+                <div class="row justify-content-center">
+                    <div class="col-lg-6">
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Budget Officers
+                            </label>
+                            <client-only>
+                                <v-select @option:selected="addBudgetOfficer" @option:deselected="removeBudgetOfficer" multiple
+                                    label="fullname" v-model="budgetOfficers" :options="employees"
+                                    :disabled="isAddingBudgetOfficer || isRemovingBudgetOfficer" />
+                            </client-only>
+                            <small v-show="isAddingBudgetOfficer" class="text-muted fst-italic">Adding Budget
+                                Officer...</small>
+                            <small v-show="isRemovingBudgetOfficer" class="text-muted fst-italic">Removing Budget
+                                Officer...</small>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Finance Managers
+                            </label>
+                            <client-only>
+                                <v-select @option:selected="addFinanceManager" @option:deselected="removeFinanceManager"
+                                    multiple label="fullname" v-model="financeManagers" :options="employees"
+                                    :disabled="isAddingFinanceManager || isRemovingFinanceManager" />
+                            </client-only>
+                            <small v-show="isAddingFinanceManager" class="text-muted fst-italic">Adding Finance
+                                Manager...</small>
+                            <small v-show="isRemovingFinanceManager" class="text-muted fst-italic">Removing Finance
+                                Manager...</small>
+                        </div>
+        
+                    </div>
                 </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Finance Managers
-                    </label>
-                    <client-only>
-                        <v-select @option:selected="addFinanceManager" @option:deselected="removeFinanceManager"
-                            multiple label="fullname" v-model="financeManagers" :options="employees"
-                            :disabled="isAddingFinanceManager || isRemovingFinanceManager" />
-                    </client-only>
-                    <small v-show="isAddingFinanceManager" class="text-muted fst-italic">Adding Finance
-                        Manager...</small>
-                    <small v-show="isRemovingFinanceManager" class="text-muted fst-italic">Removing Finance
-                        Manager...</small>
-                </div>
-
+        
+        
             </div>
+        
+            <div v-else>
+                <LoaderSpinner />
+            </div>
+            
         </div>
-
-
     </div>
 
-    <div v-else>
-        <LoaderSpinner />
-    </div>
 
 </template>
 

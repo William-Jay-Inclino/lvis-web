@@ -224,7 +224,12 @@ function canView(module: string, authUser: AuthUser) {
 
 
 
-<style scoped>
+<style>
+
+body {
+    color: whitesmoke;
+}
+
 .nav-item {
     padding: 0.5rem 1rem;
     transition: background-color 0.3s;

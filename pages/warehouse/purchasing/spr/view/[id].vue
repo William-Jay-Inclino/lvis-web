@@ -1,212 +1,219 @@
 <template>
 
-    <div v-if="!isLoadingPage && authUser" class="row justify-content-center">
+    <div class="card">
+        <div class="card-body">
 
-        <div class="col-lg-10">
-
-            <div v-if="item">
-
-                <div class="row pt-3">
-                    <div class="col">
-                        <div class="h5wrapper mb-3">
-                            <hr class="result">
-                            <h5 class="text-warning fst-italic">
-                                <i class="fas fa-info-circle"></i> SPR Info
-                            </h5>
-                            <hr class="result">
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-hover">
-                                <tbody>
-                                    <tr>
-                                        <td class="text-muted">Status</td>
-                                        <td>
-                                            <div :class="{ [`badge bg-${approvalStatus[item.status].color}`]: true }">
-                                                {{ approvalStatus[item.status].label }}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-muted">RC Number</td>
-                                        <td>
-                                            <nuxt-link :to="'/warehouse/purchasing/canvass/view/' + item.canvass.id">{{
-        item.canvass.rc_number }}</nuxt-link>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-muted">SPR Number</td>
-                                        <td> {{ item.spr_number }} </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-muted">MEQS Number</td>
-                                        <td>
-                                            <div v-if="item.meqs">
-                                                <nuxt-link :to="'/warehouse/purchasing/meqs/view/' + item.meqs.id">{{
-        item.meqs.meqs_number }}</nuxt-link>
-                                            </div>
-                                            <div v-else>
-                                                N/A
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-muted">PO Number/s</td>
-                                        <td>
-                                            <div v-if="hasPO">
-                                                <div v-for="meqsSupplier in item.meqs!.meqs_suppliers">
-                                                    <nuxt-link v-if="meqsSupplier.po"
-                                                        :to="'/warehouse/purchasing/po/view/' + meqsSupplier.po.id">{{
-        meqsSupplier.po.po_number }}</nuxt-link>
-                                                </div>
-                                            </div>
-                                            <div v-else>
-                                                N/A
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-muted">RR Number/s</td>
-                                        <td>
-                                            <div v-if="hasPO">
-                                                <div v-for="meqsSupplier in item.meqs?.meqs_suppliers">
-                                                    <div v-if="meqsSupplier.po && meqsSupplier.po.rrs.length > 0">
-                                                        <div v-for="rr in meqsSupplier.po.rrs">
-                                                            <nuxt-link :to="'/warehouse/purchasing/rr/view/' + rr.id">{{
-        rr.rr_number }}</nuxt-link>
+            <div v-if="!isLoadingPage && authUser" class="row justify-content-center">
+        
+                <div class="col-lg-10">
+        
+                    <div v-if="item">
+        
+                        <div class="row pt-3">
+                            <div class="col">
+                                <div class="h5wrapper mb-3">
+                                    <hr class="result">
+                                    <h5 class="text-warning fst-italic">
+                                        <i class="fas fa-info-circle"></i> SPR Info
+                                    </h5>
+                                    <hr class="result">
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover">
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-muted">Status</td>
+                                                <td>
+                                                    <div :class="{ [`badge bg-${approvalStatus[item.status].color}`]: true }">
+                                                        {{ approvalStatus[item.status].label }}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted">RC Number</td>
+                                                <td>
+                                                    <nuxt-link :to="'/warehouse/purchasing/canvass/view/' + item.canvass.id">{{
+                item.canvass.rc_number }}</nuxt-link>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted">SPR Number</td>
+                                                <td> {{ item.spr_number }} </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted">MEQS Number</td>
+                                                <td>
+                                                    <div v-if="item.meqs">
+                                                        <nuxt-link :to="'/warehouse/purchasing/meqs/view/' + item.meqs.id">{{
+                item.meqs.meqs_number }}</nuxt-link>
+                                                    </div>
+                                                    <div v-else>
+                                                        N/A
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted">PO Number/s</td>
+                                                <td>
+                                                    <div v-if="hasPO">
+                                                        <div v-for="meqsSupplier in item.meqs!.meqs_suppliers">
+                                                            <nuxt-link v-if="meqsSupplier.po"
+                                                                :to="'/warehouse/purchasing/po/view/' + meqsSupplier.po.id">{{
+                meqsSupplier.po.po_number }}</nuxt-link>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div v-else>
-                                                N/A
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-muted">Date</td>
-                                        <td> {{ formatDate(item.date_requested) }} </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-muted">Imd. Sup.</td>
-                                        <td> {{ getFullname(item.supervisor.firstname, item.supervisor.middlename,
-        item.supervisor.lastname) }} </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-muted">Vehicle</td>
-                                        <td> {{ item.vehicle.name }} </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-muted">Classification</td>
-                                        <td> {{ item.classification?.name }} </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-muted">Notes</td>
-                                        <td> {{ item.notes }} </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-
-
-                <div class="row pt-3">
-                    <div class="col">
-
-
-                        <div class="h5wrapper mb-3">
-                            <hr class="result">
-                            <h5 class="text-warning fst-italic">
-                                <i class="fas fa-users"></i> Approvers
-                            </h5>
-                            <hr class="result">
-                        </div>
-
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-hover">
-                                <thead>
-                                    <tr>
-                                        <th class="bg-secondary text-white"> Order </th>
-                                        <th class="bg-secondary text-white"> Label </th>
-                                        <th class="bg-secondary text-white"> Approver </th>
-                                        <th class="bg-secondary text-white"> Status </th>
-                                        <th class="bg-secondary text-white"> Notes </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="i, count in item.spr_approvers">
-                                        <td class="align-middle"> {{ i.order }} </td>
-                                        <td class="align-middle"> {{ i.label }} </td>
-                                        <td class="align-middle"> {{ getFullname(i.approver!.firstname,
-        i.approver!.middlename, i.approver!.lastname) }} </td>
-                                        <td class="text-muted text-center align-middle">
-                                            <div :class="{ [`badge bg-${approvalStatus[i.status].color}`]: true }">
-                                                {{ approvalStatus[i.status].label }}
-                                            </div>
-                                            <div class="fst-italic" v-if="i.date_approval">
-                                                <small> {{ formatDate(i.date_approval) }} </small>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <textarea rows="3" class="form-control" disabled
-                                                :value="i.notes"></textarea>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-
-                    </div>
-                </div>
-
-                <hr>
-
-                <div class="row mb-3 pt-3">
-                    <div class="col">
-                        <div class="d-flex justify-content-end">
-                            <div class="me-2">
-                                <nuxt-link v-if="canSearch(authUser, 'canManageSPR')" class="btn btn-secondary me-2"
-                                    to="/warehouse/purchasing/spr">
-                                    <i class="fas fa-search"></i> Search SPR
-                                </nuxt-link>
-                                <button :disabled="item.status !== APPROVAL_STATUS.APPROVED" @click="onClickPrint" class="btn btn-danger" data-bs-toggle="modal"
-                                    data-bs-target="#purchasingPdfModal">
-                                    <i class="fas fa-print"></i> Print SPR
-                                </button>
+                                                    <div v-else>
+                                                        N/A
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted">RR Number/s</td>
+                                                <td>
+                                                    <div v-if="hasPO">
+                                                        <div v-for="meqsSupplier in item.meqs?.meqs_suppliers">
+                                                            <div v-if="meqsSupplier.po && meqsSupplier.po.rrs.length > 0">
+                                                                <div v-for="rr in meqsSupplier.po.rrs">
+                                                                    <nuxt-link :to="'/warehouse/purchasing/rr/view/' + rr.id">{{
+                rr.rr_number }}</nuxt-link>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div v-else>
+                                                        N/A
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted">Date</td>
+                                                <td> {{ formatDate(item.date_requested) }} </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted">Imd. Sup.</td>
+                                                <td> {{ getFullname(item.supervisor.firstname, item.supervisor.middlename,
+                item.supervisor.lastname) }} </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted">Vehicle</td>
+                                                <td> {{ item.vehicle.name }} </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted">Classification</td>
+                                                <td> {{ item.classification?.name }} </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted">Notes</td>
+                                                <td> {{ item.notes }} </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+        
                             </div>
-                            <div v-if="!item.cancelled_at">
-                                <button v-if="isAdminOrOwner(item.created_by, authUser)" class="btn btn-warning me-2"
-                                    @click="onCancelSpr()">
-                                    <i class="fas fa-times-circle"></i> Cancel SPR
-                                </button>
-                                <button v-if="!!item.can_update" class="btn btn-success me-2"
-                                    @click="onClickUpdate(item.id)">
-                                    <i class="fas fa-sync"></i> Update SPR
-                                </button>
-                                <button v-if="canCreate(authUser, 'canManageSPR')" class="btn btn-primary me-2"
-                                    @click="onClickAdd">
-                                    <i class="fas fa-plus"></i> Add New SPR
-                                </button>
+        
+                        </div>
+        
+        
+        
+        
+                        <div class="row pt-3">
+                            <div class="col">
+        
+        
+                                <div class="h5wrapper mb-3">
+                                    <hr class="result">
+                                    <h5 class="text-warning fst-italic">
+                                        <i class="fas fa-users"></i> Approvers
+                                    </h5>
+                                    <hr class="result">
+                                </div>
+        
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th class="bg-secondary text-white"> Order </th>
+                                                <th class="bg-secondary text-white"> Label </th>
+                                                <th class="bg-secondary text-white"> Approver </th>
+                                                <th class="bg-secondary text-white"> Status </th>
+                                                <th class="bg-secondary text-white"> Notes </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="i, count in item.spr_approvers">
+                                                <td class="align-middle"> {{ i.order }} </td>
+                                                <td class="align-middle"> {{ i.label }} </td>
+                                                <td class="align-middle"> {{ getFullname(i.approver!.firstname,
+                i.approver!.middlename, i.approver!.lastname) }} </td>
+                                                <td class="text-muted text-center align-middle">
+                                                    <div :class="{ [`badge bg-${approvalStatus[i.status].color}`]: true }">
+                                                        {{ approvalStatus[i.status].label }}
+                                                    </div>
+                                                    <div class="fst-italic" v-if="i.date_approval">
+                                                        <small> {{ formatDate(i.date_approval) }} </small>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <textarea rows="3" class="form-control" disabled
+                                                        :value="i.notes"></textarea>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+        
+        
                             </div>
                         </div>
+        
+                        <hr>
+        
+                        <div class="row mb-3 pt-3">
+                            <div class="col">
+                                <div class="d-flex justify-content-end">
+                                    <div class="me-2">
+                                        <nuxt-link v-if="canSearch(authUser, 'canManageSPR')" class="btn btn-secondary me-2"
+                                            to="/warehouse/purchasing/spr">
+                                            <i class="fas fa-search"></i> Search SPR
+                                        </nuxt-link>
+                                        <button :disabled="item.status !== APPROVAL_STATUS.APPROVED" @click="onClickPrint" class="btn btn-danger" data-bs-toggle="modal"
+                                            data-bs-target="#purchasingPdfModal">
+                                            <i class="fas fa-print"></i> Print SPR
+                                        </button>
+                                    </div>
+                                    <div v-if="!item.cancelled_at">
+                                        <button v-if="isAdminOrOwner(item.created_by, authUser)" class="btn btn-warning me-2"
+                                            @click="onCancelSpr()">
+                                            <i class="fas fa-times-circle"></i> Cancel SPR
+                                        </button>
+                                        <button v-if="!!item.can_update" class="btn btn-success me-2"
+                                            @click="onClickUpdate(item.id)">
+                                            <i class="fas fa-sync"></i> Update SPR
+                                        </button>
+                                        <button v-if="canCreate(authUser, 'canManageSPR')" class="btn btn-primary me-2"
+                                            @click="onClickAdd">
+                                            <i class="fas fa-plus"></i> Add New SPR
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+        
                     </div>
+        
                 </div>
-
             </div>
-
+        
+            <div v-else>
+                <LoaderSpinner />
+            </div>
+        
+            <WarehousePdfModal :is-loading-pdf="isLoadingPdf" :pdf-url="pdfUrl" />
+            
         </div>
     </div>
 
-    <div v-else>
-        <LoaderSpinner />
-    </div>
-
-    <WarehousePdfModal :is-loading-pdf="isLoadingPdf" :pdf-url="pdfUrl" />
 
 
 </template>

@@ -1,166 +1,172 @@
 <template>
-    <div v-if="!isLoadingPage">
 
-        <h2 class="text-warning">Update User</h2>
-
-        <hr>
-
-        <div class="row pt-3">
-            <div class="col">
-                <ul class="nav nav-tabs justify-content-center">
-                    <li class="nav-item" @click="formType = FORM_TYPE.USER_INFO">
-                        <a class="nav-link" :class="{ 'active': formType === FORM_TYPE.USER_INFO }" href="#">
-                            <i class="fas fa-info-circle"></i> User Info
-                        </a>
-                    </li>
-                    <li class="nav-item" @click="formType = FORM_TYPE.LOGIN_CREDENTIALS">
-                        <a class="nav-link" :class="{ 'active': formType === FORM_TYPE.LOGIN_CREDENTIALS }" href="#">
-                            <i class="fas fa-lock"></i> Login Credentials
-                        </a>
-                    </li>
-                    <li class="nav-item" @click="formType = FORM_TYPE.USER_PERMISSIONS">
-                        <a class="nav-link" :class="{ 'active': formType === FORM_TYPE.USER_PERMISSIONS }" href="#">
-                            <i class="fas fa-key"></i> User Permissions
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-
-        <div v-if="formType === FORM_TYPE.USER_INFO" class="row justify-content-center pt-5">
-
-            <div class="col-lg-6">
-
-                <form v-if="item" @submit.prevent="updateUserInfo">
-
-                    <div v-if="item.user_employee" class="alert alert-info" role="alert">
-                        User is Employee
+    <div class="card">
+        <div class="card-body">
+            <div v-if="!isLoadingPage">
+        
+                <h2 class="text-warning">Update User</h2>
+        
+                <hr>
+        
+                <div class="row pt-3">
+                    <div class="col">
+                        <ul class="nav nav-tabs justify-content-center">
+                            <li class="nav-item" @click="formType = FORM_TYPE.USER_INFO">
+                                <a class="nav-link" :class="{ 'active': formType === FORM_TYPE.USER_INFO }" href="#">
+                                    <i class="fas fa-info-circle"></i> User Info
+                                </a>
+                            </li>
+                            <li class="nav-item" @click="formType = FORM_TYPE.LOGIN_CREDENTIALS">
+                                <a class="nav-link" :class="{ 'active': formType === FORM_TYPE.LOGIN_CREDENTIALS }" href="#">
+                                    <i class="fas fa-lock"></i> Login Credentials
+                                </a>
+                            </li>
+                            <li class="nav-item" @click="formType = FORM_TYPE.USER_PERMISSIONS">
+                                <a class="nav-link" :class="{ 'active': formType === FORM_TYPE.USER_PERMISSIONS }" href="#">
+                                    <i class="fas fa-key"></i> User Permissions
+                                </a>
+                            </li>
+                        </ul>
                     </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Role
-                        </label>
-                        <select class="form-select" v-model="item.role">
-                            <option :value="ROLE.ADMIN">Admin</option>
-                            <option :value="ROLE.USER">User</option>
-                        </select>
-                    </div>
-
-                    <div v-if="item.user_employee">
-                        <div class="mb-3">
-                            <label class="form-label">
-                                Firstname <span class="text-danger">*</span>
-                            </label>
-                            <input type="text" class="form-control" :value="item.user_employee.employee.firstname"
-                                disabled>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">
-                                Middlename
-                            </label>
-                            <input type="text" class="form-control" :value="item.user_employee.employee.middlename"
-                                disabled>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">
-                                Lastname <span class="text-danger">*</span>
-                            </label>
-                            <input type="text" class="form-control" :value="item.user_employee.employee.lastname"
-                                disabled>
-                        </div>
-                    </div>
-
-                    <div v-else>
-                        <div class="mb-3">
-                            <label class="form-label">
-                                Firstname <span class="text-danger">*</span>
-                            </label>
-                            <input type="text" class="form-control" v-model="item.firstname" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">
-                                Middlename
-                            </label>
-                            <input type="text" class="form-control" v-model="item.middlename">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">
-                                Lastname <span class="text-danger">*</span>
-                            </label>
-                            <input type="text" class="form-control" v-model="item.lastname" required>
-                        </div>
-                    </div>
-
-
-
-                    <div class="d-flex justify-content-between pt-3">
-                        <button type="button" @click="onClickGoToList" class="btn btn-secondary">
-                            <i class="fas fa-list"></i> Go to list
-                        </button>
-                        <button type="submit" class="btn btn-success" :disabled="isUpdatingUserInfo">
-                            <i class="fas fa-sync"></i> {{ isUpdatingUserInfo ? 'Updating...' : 'Update' }}
-                        </button>
-                    </div>
-
-                </form>
-
-            </div>
-
-        </div>
-
-
-        <div v-else-if="formType === FORM_TYPE.LOGIN_CREDENTIALS" class="row justify-content-center pt-5">
-
-            <div class="col-lg-6">
-
-                <SystemUserLoginCredentials :username="item.username" :password="item.password"
-                    :can-update-username="false" @update-password="onUpdatePassword" />
-
-
-                <div class="d-flex justify-content-between pt-3">
-                    <button type="button" @click="onClickGoToList" class="btn btn-secondary">
-                        <i class="fas fa-list"></i> Go to list
-                    </button>
-                    <button type="button" @click="updatePassword" class="btn btn-success"
-                        :disabled="isUpdatingPassword">
-                        <i class="fas fa-sync"></i> {{ isUpdatingPassword ? 'Updating...' : 'Update' }}
-                    </button>
                 </div>
-
-            </div>
-
-        </div>
-
-
-        <div v-else-if="formType === FORM_TYPE.USER_PERMISSIONS" class="row justify-content-center pt-5">
-
-            <div class="col-lg-6">
-
-                <SystemUserPermissions :permissions="item.permissions" />
-
-
-                <div class="d-flex justify-content-between pt-3">
-                    <button type="button" @click="onClickGoToList" class="btn btn-secondary">
-                        <i class="fas fa-list"></i> Go to list
-                    </button>
-                    <button type="button" @click="updatePermissions" class="btn btn-success"
-                        :disabled="isUpdatingPermissions">
-                        <i class="fas fa-sync"></i> {{ isUpdatingPermissions ? 'Updating...' : 'Update' }}
-                    </button>
+        
+        
+                <div v-if="formType === FORM_TYPE.USER_INFO" class="row justify-content-center pt-5">
+        
+                    <div class="col-lg-6">
+        
+                        <form v-if="item" @submit.prevent="updateUserInfo">
+        
+                            <div v-if="item.user_employee" class="alert alert-info" role="alert">
+                                User is Employee
+                            </div>
+        
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    Role
+                                </label>
+                                <select class="form-select" v-model="item.role">
+                                    <option :value="ROLE.ADMIN">Admin</option>
+                                    <option :value="ROLE.USER">User</option>
+                                </select>
+                            </div>
+        
+                            <div v-if="item.user_employee">
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        Firstname <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" :value="item.user_employee.employee.firstname"
+                                        disabled>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        Middlename
+                                    </label>
+                                    <input type="text" class="form-control" :value="item.user_employee.employee.middlename"
+                                        disabled>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        Lastname <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" :value="item.user_employee.employee.lastname"
+                                        disabled>
+                                </div>
+                            </div>
+        
+                            <div v-else>
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        Firstname <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" v-model="item.firstname" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        Middlename
+                                    </label>
+                                    <input type="text" class="form-control" v-model="item.middlename">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        Lastname <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" v-model="item.lastname" required>
+                                </div>
+                            </div>
+        
+        
+        
+                            <div class="d-flex justify-content-between pt-3">
+                                <button type="button" @click="onClickGoToList" class="btn btn-secondary">
+                                    <i class="fas fa-list"></i> Go to list
+                                </button>
+                                <button type="submit" class="btn btn-success" :disabled="isUpdatingUserInfo">
+                                    <i class="fas fa-sync"></i> {{ isUpdatingUserInfo ? 'Updating...' : 'Update' }}
+                                </button>
+                            </div>
+        
+                        </form>
+        
+                    </div>
+        
                 </div>
-
+        
+        
+                <div v-else-if="formType === FORM_TYPE.LOGIN_CREDENTIALS" class="row justify-content-center pt-5">
+        
+                    <div class="col-lg-6">
+        
+                        <SystemUserLoginCredentials :username="item.username" :password="item.password"
+                            :can-update-username="false" @update-password="onUpdatePassword" />
+        
+        
+                        <div class="d-flex justify-content-between pt-3">
+                            <button type="button" @click="onClickGoToList" class="btn btn-secondary">
+                                <i class="fas fa-list"></i> Go to list
+                            </button>
+                            <button type="button" @click="updatePassword" class="btn btn-success"
+                                :disabled="isUpdatingPassword">
+                                <i class="fas fa-sync"></i> {{ isUpdatingPassword ? 'Updating...' : 'Update' }}
+                            </button>
+                        </div>
+        
+                    </div>
+        
+                </div>
+        
+        
+                <div v-else-if="formType === FORM_TYPE.USER_PERMISSIONS" class="row justify-content-center pt-5">
+        
+                    <div class="col-lg-6">
+        
+                        <SystemUserPermissions :permissions="item.permissions" />
+        
+        
+                        <div class="d-flex justify-content-between pt-3">
+                            <button type="button" @click="onClickGoToList" class="btn btn-secondary">
+                                <i class="fas fa-list"></i> Go to list
+                            </button>
+                            <button type="button" @click="updatePermissions" class="btn btn-success"
+                                :disabled="isUpdatingPermissions">
+                                <i class="fas fa-sync"></i> {{ isUpdatingPermissions ? 'Updating...' : 'Update' }}
+                            </button>
+                        </div>
+        
+                    </div>
+        
+                </div>
+        
+        
             </div>
-
+        
+            <div v-else>
+                <LoaderSpinner />
+            </div>
         </div>
-
-
     </div>
 
-    <div v-else>
-        <LoaderSpinner />
-    </div>
 
 </template>
 

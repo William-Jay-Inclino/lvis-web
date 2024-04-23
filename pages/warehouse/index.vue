@@ -1,23 +1,26 @@
 <template>
     
-    <div v-if="authUser" class="background-container">
+    <div v-if="authUser" class="card">
         
-        <div class="background-overlay"></div>
+        <div class="card-body">
 
-        <div class="container border border-info">
-
-            <h1 class="text-white mt-5"> WELCOME TO WAREHOUSE MANAGEMENT</h1>
-
-            <div class="row text-white mb-5 mt-4">
-                <div class="col-lg-6 col-md-6 col-12">
-                    "Welcome to our Warehouse Management! Your hub for seamless purchasing, efficient warehousing, reliable motorpool management, and precise stock inventory control. Let's optimize your operations together!" 
-                    <br />
-                    <br />
-                    -Joseph Ken Estrera
+            <div class="container">
+    
+                <h1 class="text-warning mt-5"> WELCOME TO WAREHOUSE MANAGEMENT</h1>
+    
+                <div class="row text-muted mb-5 mt-4">
+                    <div class="col-lg-6 col-md-6 col-12">
+                        "Welcome to our Warehouse Management! Your hub for seamless purchasing, efficient warehousing, reliable motorpool management, and precise stock inventory control. Let's optimize your operations together!" 
+                        <br />
+                        <br />
+                        -Joseph Ken Estrera
+                    </div>
                 </div>
+    
             </div>
 
         </div>
+
 
     </div>
 
@@ -47,9 +50,7 @@ onMounted(() => {
 
 <style scoped>
 
-.background-container {
-    /* display: grid;
-    place-items: center; */
+/* .background-container {
     height: 100vh;
     overflow: auto;
     padding-top: 40px;
@@ -65,6 +66,6 @@ onMounted(() => {
     background-size: cover;
     background-position: center;
     z-index: -1;
-}
+} */
 
 </style>

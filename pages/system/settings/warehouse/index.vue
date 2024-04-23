@@ -1,163 +1,168 @@
 <template>
-    <div>
+    <div class="card">
 
-        <h2 class="text-warning">Warehouse Settings</h2>
-        <hr>
-
-        <div class="row">
-            <div class="col">
-                <ul class="nav nav-tabs justify-content-center">
-                    <li class="nav-item" @click="rootTab = ROOT_TABS.PURCHASING">
-                        <a class="nav-link" :class="{ 'active': rootTab === ROOT_TABS.PURCHASING }" href="#">
-                            <i class="fas fa-shopping-cart"></i>
-                            Purchasing
-                        </a>
-                    </li>
-                    <li class="nav-item" @click="rootTab = ROOT_TABS.WAREHOUSING">
-                        <a class="nav-link" :class="{ 'active': rootTab === ROOT_TABS.WAREHOUSING }" href="#">
-                            <i class="fas fa-warehouse"></i>
-                            Warehousing
-                        </a>
-                    </li>
-                    <li class="nav-item" @click="rootTab = ROOT_TABS.MOTORPOOL">
-                        <a class="nav-link" :class="{ 'active': rootTab === ROOT_TABS.MOTORPOOL }" href="#">
-
-                            <i class="fas fa-car"></i>
-                            Motorpool
-                        </a>
-                    </li>
-                    <li class="nav-item" @click="rootTab = ROOT_TABS.PROJECT">
-                        <a class="nav-link" :class="{ 'active': rootTab === ROOT_TABS.PROJECT }" href="#">
-                            <i class="fas fa-folder-open"></i>
-                            Project
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <div v-if="rootTab === ROOT_TABS.PURCHASING">
-
-            <div class="h5wrapper mb-3 pt-5">
-                <hr class="result">
-                <h5 class="text-warning fst-italic">
-                    <i class="fas fa-users"></i> Default {{ purchasingTab }} Approvers
-                </h5>
-                <hr class="result">
-            </div>
-
-            <div class="row pt-2 justify-content-center">
-                <div class="col-3 border-end pe-5">
-                    <ul class="nav nav-pills flex-column">
-                        <li @click="onChangePurchasingTab(PURCHASING_TABS.RV_APPROVERS)" class="nav-item">
-                            <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.RV_APPROVERS }"
-                                href="#">RV</a>
+        <div class="card-body">
+            
+            <h2 class="text-warning">Warehouse Settings</h2>
+            <hr>
+    
+            <div class="row">
+                <div class="col">
+                    <ul class="nav nav-tabs justify-content-center">
+                        <li class="nav-item" @click="rootTab = ROOT_TABS.PURCHASING">
+                            <a class="nav-link" :class="{ 'active': rootTab === ROOT_TABS.PURCHASING }" href="#">
+                                <i class="fas fa-shopping-cart"></i>
+                                Purchasing
+                            </a>
                         </li>
-                        <li @click="onChangePurchasingTab(PURCHASING_TABS.SPR_APPROVERS)" class="nav-item">
-                            <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.SPR_APPROVERS }"
-                                href="#">SPR</a>
+                        <li class="nav-item" @click="rootTab = ROOT_TABS.WAREHOUSING">
+                            <a class="nav-link" :class="{ 'active': rootTab === ROOT_TABS.WAREHOUSING }" href="#">
+                                <i class="fas fa-warehouse"></i>
+                                Warehousing
+                            </a>
                         </li>
-                        <li @click="onChangePurchasingTab(PURCHASING_TABS.JO_APPROVERS)" class="nav-item">
-                            <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.JO_APPROVERS }"
-                                href="#">JO</a>
+                        <li class="nav-item" @click="rootTab = ROOT_TABS.MOTORPOOL">
+                            <a class="nav-link" :class="{ 'active': rootTab === ROOT_TABS.MOTORPOOL }" href="#">
+    
+                                <i class="fas fa-car"></i>
+                                Motorpool
+                            </a>
                         </li>
-                        <li @click="onChangePurchasingTab(PURCHASING_TABS.MEQS_APPROVERS)" class="nav-item">
-                            <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.MEQS_APPROVERS }"
-                                href="#">MEQS</a>
-                        </li>
-                        <li @click="onChangePurchasingTab(PURCHASING_TABS.PO_APPROVERS)" class="nav-item">
-                            <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.PO_APPROVERS }"
-                                href="#">PO</a>
-                        </li>
-                        <li @click="onChangePurchasingTab(PURCHASING_TABS.RR_APPROVERS)" class="nav-item">
-                            <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.RR_APPROVERS }"
-                                href="#">RR</a>
+                        <li class="nav-item" @click="rootTab = ROOT_TABS.PROJECT">
+                            <a class="nav-link" :class="{ 'active': rootTab === ROOT_TABS.PROJECT }" href="#">
+                                <i class="fas fa-folder-open"></i>
+                                Project
+                            </a>
                         </li>
                     </ul>
                 </div>
-
-                <div class="col-1 vertical-line"></div>
-
-                <div class="col-8">
-
-                    <div v-show="isLoadingMainContent">
-                        <LoaderSpinner />
-                    </div>
-
-
-                    <div v-show="!isLoadingMainContent">
-                        <div v-if="isPurchasingApproversTab">
-                            <SystemSettingsApprover @add-approver="addApprover" @remove-approver="removeApprover"
-                                @change-approver-order="changeApproverOrder" @edit-approver="editApprover"
-                                :approvers="approvers" :employees="employees"
-                                :is-adding-approver="purchasing.isAddingApprover"
-                                :is-editing-approver="purchasing.isEditingApprover"
-                                :is-updating-approver-order="purchasing.isUpdatingApproverOrder" />
-                        </div>
-                    </div>
-
-
+            </div>
+    
+            <div v-if="rootTab === ROOT_TABS.PURCHASING">
+    
+                <div class="h5wrapper mb-3 pt-5">
+                    <hr class="result">
+                    <h5 class="text-warning fst-italic">
+                        <i class="fas fa-users"></i> Default {{ purchasingTab }} Approvers
+                    </h5>
+                    <hr class="result">
                 </div>
-
-            </div>
-
-
-            <div class="h5wrapper mb-3 pt-5">
-                <hr class="result">
-                <h5 class="text-warning fst-italic">
-                    <i class="fas fa-wrench"></i> MEQS Configurations
-                </h5>
-                <hr class="result">
-            </div>
-
-
-            <div class="row pt-2 justify-content-center">
-
-                <div class="col-4">
-
-                    <div class="mb-3">
-                        <label class="form-label">
-                            No. of suppliers
-                        </label>
-                        <div class="row">
-                            <div class="col">
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text">Min</span>
-                                    <input type="number" class="form-control" value="3">
+    
+                <div class="row pt-2 justify-content-center">
+                    <div class="col-3 border-end pe-5">
+                        <ul class="nav nav-pills flex-column">
+                            <li @click="onChangePurchasingTab(PURCHASING_TABS.RV_APPROVERS)" class="nav-item">
+                                <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.RV_APPROVERS }"
+                                    href="#">RV</a>
+                            </li>
+                            <li @click="onChangePurchasingTab(PURCHASING_TABS.SPR_APPROVERS)" class="nav-item">
+                                <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.SPR_APPROVERS }"
+                                    href="#">SPR</a>
+                            </li>
+                            <li @click="onChangePurchasingTab(PURCHASING_TABS.JO_APPROVERS)" class="nav-item">
+                                <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.JO_APPROVERS }"
+                                    href="#">JO</a>
+                            </li>
+                            <li @click="onChangePurchasingTab(PURCHASING_TABS.MEQS_APPROVERS)" class="nav-item">
+                                <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.MEQS_APPROVERS }"
+                                    href="#">MEQS</a>
+                            </li>
+                            <li @click="onChangePurchasingTab(PURCHASING_TABS.PO_APPROVERS)" class="nav-item">
+                                <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.PO_APPROVERS }"
+                                    href="#">PO</a>
+                            </li>
+                            <li @click="onChangePurchasingTab(PURCHASING_TABS.RR_APPROVERS)" class="nav-item">
+                                <a class="nav-link" :class="{ 'active': purchasingTab === PURCHASING_TABS.RR_APPROVERS }"
+                                    href="#">RR</a>
+                            </li>
+                        </ul>
+                    </div>
+    
+                    <div class="col-1 vertical-line"></div>
+    
+                    <div class="col-8">
+    
+                        <div v-show="isLoadingMainContent">
+                            <LoaderSpinner />
+                        </div>
+    
+    
+                        <div v-show="!isLoadingMainContent">
+                            <div v-if="isPurchasingApproversTab">
+                                <SystemSettingsApprover @add-approver="addApprover" @remove-approver="removeApprover"
+                                    @change-approver-order="changeApproverOrder" @edit-approver="editApprover"
+                                    :approvers="approvers" :employees="employees"
+                                    :is-adding-approver="purchasing.isAddingApprover"
+                                    :is-editing-approver="purchasing.isEditingApprover"
+                                    :is-updating-approver-order="purchasing.isUpdatingApproverOrder" />
+                            </div>
+                        </div>
+    
+    
+                    </div>
+    
+                </div>
+    
+    
+                <div class="h5wrapper mb-3 pt-5">
+                    <hr class="result">
+                    <h5 class="text-warning fst-italic">
+                        <i class="fas fa-wrench"></i> MEQS Configurations
+                    </h5>
+                    <hr class="result">
+                </div>
+    
+    
+                <div class="row pt-2 justify-content-center">
+    
+                    <div class="col-4">
+    
+                        <div class="mb-3">
+                            <label class="form-label">
+                                No. of suppliers
+                            </label>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text">Min</span>
+                                        <input type="number" class="form-control" value="3">
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text">Max</span>
+                                        <input type="number" class="form-control" value="5">
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col">
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text">Max</span>
-                                    <input type="number" class="form-control" value="5">
-                                </div>
+                        </div>
+    
+                        <div class="mb-3">
+                            <label class="form-label">
+                                File upload limit (MB)
+                            </label>
+                            <input type="number" class="form-control" value="5">
+                        </div>
+    
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Require remarks for the lowest-priced supplier
+                            </label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" checked>
+                                <label class="form-check-label">Enabled</label>
                             </div>
                         </div>
+    
                     </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">
-                            File upload limit (MB)
-                        </label>
-                        <input type="number" class="form-control" value="5">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Require remarks for the lowest-priced supplier
-                        </label>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" checked>
-                            <label class="form-check-label">Enabled</label>
-                        </div>
-                    </div>
-
+    
                 </div>
-
+    
+    
             </div>
-
-
+            
         </div>
+
 
 
     </div>

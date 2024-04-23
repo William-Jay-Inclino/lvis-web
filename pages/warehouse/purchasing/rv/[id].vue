@@ -1,167 +1,175 @@
 <template>
-    <div v-if="!isLoadingPage && authUser && rvData && rvData.canvass && !rvData.cancelled_at" class="mb-3">
-        <h2 class="text-warning">Update RV</h2>
-        <hr>
 
-        <div v-if="isAdmin(authUser)" class="row pt-3 mb-5">
-            <div class="col">
-                <ul class="nav nav-tabs justify-content-center">
-                    <li class="nav-item" @click="isRVDetailForm = true">
-                        <a class="nav-link" :class="{ 'active': isRVDetailForm }" href="#">
-                            <i class="fas fa-info-circle"></i> RV Info
-                        </a>
-                    </li>
-                    <li class="nav-item" @click="isRVDetailForm = false">
-                        <a class="nav-link" :class="{ 'active': !isRVDetailForm }" href="#">
-                            <i class="fas fa-users"></i> Approvers
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
+    <div class="card">
+        <div class="card-body">
 
-        <div v-show="isRVDetailForm" class="row justify-content-center">
-            <div class="col-lg-6">
-
-
-                <div class="mb-3 d-flex align-items-center">
-                    <label class="form-label me-2 mb-0">Status:</label>
-                    <div :class="{ [`badge bg-${rvStatus.color}`]: true }">
-                        {{ rvStatus.label }}
+            <div v-if="!isLoadingPage && authUser && rvData && rvData.canvass && !rvData.cancelled_at" class="mb-3">
+                <h2 class="text-warning">Update RV</h2>
+                <hr>
+        
+                <div v-if="isAdmin(authUser)" class="row pt-3 mb-5">
+                    <div class="col">
+                        <ul class="nav nav-tabs justify-content-center">
+                            <li class="nav-item" @click="isRVDetailForm = true">
+                                <a class="nav-link" :class="{ 'active': isRVDetailForm }" href="#">
+                                    <i class="fas fa-info-circle"></i> RV Info
+                                </a>
+                            </li>
+                            <li class="nav-item" @click="isRVDetailForm = false">
+                                <a class="nav-link" :class="{ 'active': !isRVDetailForm }" href="#">
+                                    <i class="fas fa-users"></i> Approvers
+                                </a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        RV Number
-                    </label>
-                    <input type="text" class="form-control" :value="rvData.rv_number" disabled>
-                    <nuxt-link class="btn btn-sm btn-light text-primary"
-                        :to="'/warehouse/purchasing/rv/view/' + rvData.id" target="_blank">View RV details</nuxt-link>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        RC Number
-                    </label>
-                    <input type="text" class="form-control" :value="rvData.canvass.rc_number" disabled>
-                    <nuxt-link class="btn btn-sm btn-light text-primary"
-                        :to="'/warehouse/purchasing/canvass/view/' + rvData.canvass.id" target="_blank">View canvass
-                        details</nuxt-link>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Date
-                    </label>
-                    <input type="date" class="form-control" :value="rvData.date_requested" disabled>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Requisitioner
-                    </label>
-                    <input :value="rvData.canvass.requested_by?.fullname" type="text" class="form-control" disabled>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Purpose
-                    </label>
-                    <textarea :value="rvData.canvass.purpose" class="form-control" rows="3" disabled> </textarea>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">
-                        Requisitioner Notes
-                    </label>
-                    <textarea :value="rvData.canvass.notes" class="form-control" rows="3" disabled> </textarea>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Imd. Sup. <span class="text-danger">*</span>
-                    </label>
-                    <client-only>
-                        <v-select :options="employees" label="fullname" v-model="rvData.supervisor"
-                            :clearable="false"></v-select>
-                    </client-only>
-                    <small class="text-danger fst-italic" v-if="rvDataErrors.supervisor"> This field is required
-                    </small>
-                </div>
-
-                <div class="mb-3" v-if="isAdmin(authUser)">
-                    <label class="form-label">
-                        Classification
-                    </label>
-                    <client-only>
-                        <v-select :options="classifications" label="name" v-model="rvData.classification"></v-select>
-                    </client-only>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Work Order No.
-                    </label>
-                    <input type="text" class="form-control" v-model="rvData.work_order_no">
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Work Order Date
-                    </label>
-                    <input type="date" class="form-control" v-model="rvData.work_order_date">
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Notes
-                    </label>
-                    <textarea class="form-control" rows="3" v-model="rvData.notes"></textarea>
-                </div>
-
-
-            </div>
-        </div>
-
-        <div v-show="!isRVDetailForm" class="row justify-content-center pt-5">
-
-            <div class="col-12">
-                <WarehouseApprover :approvers="rvData.rv_approvers" :employees="employees"
-                    :isUpdatingApproverOrder="isUpdatingApproverOrder" :isAddingApprover="isAddingRvApprover"
-                    :isEditingApprover="isEditingRvApprover" @changeApproverOrder="changeApproverOrder"
-                    @addApprover="addApprover" @editApprover="editApprover" @removeApprover="removeApprover" />
-            </div>
-
-
-        </div>
-
-
-        <div class="row justify-content-center pt-3">
-            <div :class="{ 'col-lg-6': isRVDetailForm, 'col-12': !isRVDetailForm }">
-
-                <div class="d-flex justify-content-between pt-3">
-                    <div>
-                        <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rv">
-                            <i class="fas fa-chevron-left"></i> Back to Search
-                        </nuxt-link>
-                    </div>
-                    <div>
-                        <button v-if="isRVDetailForm" @click="updateRvInfo()" type="button" class="btn btn-success"
-                            :disabled="isUpdating">
-                            <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
-                        </button>
+        
+                <div v-show="isRVDetailForm" class="row justify-content-center">
+                    <div class="col-lg-6">
+        
+        
+                        <div class="mb-3 d-flex align-items-center">
+                            <label class="form-label me-2 mb-0">Status:</label>
+                            <div :class="{ [`badge bg-${rvStatus.color}`]: true }">
+                                {{ rvStatus.label }}
+                            </div>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                RV Number
+                            </label>
+                            <input type="text" class="form-control" :value="rvData.rv_number" disabled>
+                            <nuxt-link class="btn btn-sm btn-light text-primary"
+                                :to="'/warehouse/purchasing/rv/view/' + rvData.id" target="_blank">View RV details</nuxt-link>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                RC Number
+                            </label>
+                            <input type="text" class="form-control" :value="rvData.canvass.rc_number" disabled>
+                            <nuxt-link class="btn btn-sm btn-light text-primary"
+                                :to="'/warehouse/purchasing/canvass/view/' + rvData.canvass.id" target="_blank">View canvass
+                                details</nuxt-link>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Date
+                            </label>
+                            <input type="date" class="form-control" :value="rvData.date_requested" disabled>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Requisitioner
+                            </label>
+                            <input :value="rvData.canvass.requested_by?.fullname" type="text" class="form-control" disabled>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Purpose
+                            </label>
+                            <textarea :value="rvData.canvass.purpose" class="form-control" rows="3" disabled> </textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Requisitioner Notes
+                            </label>
+                            <textarea :value="rvData.canvass.notes" class="form-control" rows="3" disabled> </textarea>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Imd. Sup. <span class="text-danger">*</span>
+                            </label>
+                            <client-only>
+                                <v-select :options="employees" label="fullname" v-model="rvData.supervisor"
+                                    :clearable="false"></v-select>
+                            </client-only>
+                            <small class="text-danger fst-italic" v-if="rvDataErrors.supervisor"> This field is required
+                            </small>
+                        </div>
+        
+                        <div class="mb-3" v-if="isAdmin(authUser)">
+                            <label class="form-label">
+                                Classification
+                            </label>
+                            <client-only>
+                                <v-select :options="classifications" label="name" v-model="rvData.classification"></v-select>
+                            </client-only>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Work Order No.
+                            </label>
+                            <input type="text" class="form-control" v-model="rvData.work_order_no">
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Work Order Date
+                            </label>
+                            <input type="date" class="form-control" v-model="rvData.work_order_date">
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Notes
+                            </label>
+                            <textarea class="form-control" rows="3" v-model="rvData.notes"></textarea>
+                        </div>
+        
+        
                     </div>
                 </div>
-
+        
+                <div v-show="!isRVDetailForm" class="row justify-content-center pt-5">
+        
+                    <div class="col-12">
+                        <WarehouseApprover :approvers="rvData.rv_approvers" :employees="employees"
+                            :isUpdatingApproverOrder="isUpdatingApproverOrder" :isAddingApprover="isAddingRvApprover"
+                            :isEditingApprover="isEditingRvApprover" @changeApproverOrder="changeApproverOrder"
+                            @addApprover="addApprover" @editApprover="editApprover" @removeApprover="removeApprover" />
+                    </div>
+        
+        
+                </div>
+        
+        
+                <div class="row justify-content-center pt-3">
+                    <div :class="{ 'col-lg-6': isRVDetailForm, 'col-12': !isRVDetailForm }">
+        
+                        <div class="d-flex justify-content-between pt-3">
+                            <div>
+                                <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rv">
+                                    <i class="fas fa-chevron-left"></i> Back to Search
+                                </nuxt-link>
+                            </div>
+                            <div>
+                                <button v-if="isRVDetailForm" @click="updateRvInfo()" type="button" class="btn btn-success"
+                                    :disabled="isUpdating">
+                                    <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
+                                </button>
+                            </div>
+                        </div>
+        
+                    </div>
+                </div>
+        
+        
             </div>
+        
+            <div v-else>
+                <LoaderSpinner />
+            </div>
+            
         </div>
-
-
     </div>
 
-    <div v-else>
-        <LoaderSpinner />
-    </div>
 
 </template>
 

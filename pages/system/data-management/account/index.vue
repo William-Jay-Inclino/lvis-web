@@ -1,79 +1,85 @@
 <template>
-    <div v-if="!isLoadingPage">
 
-        <h2 class="text-warning">Account</h2>
-
-        <hr>
-
-        <div class="row">
-            <div class="col">
-                <button v-if="canCreate(authUser, 'canManageAccount')" @click="onClickCreate"
-                    class="btn btn-primary float-end">
-                    <i class="fas fa-plus"></i> Create
-                </button>
-            </div>
-        </div>
-
-        <div class="row justify-content-center pt-5">
-            <div class="col-lg-8">
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="search for code..." v-model="searchValue">
-                </div>
-            </div>
-        </div>
-
-        <div class="row justify-content-center pt-3">
-
-            <div v-show="items.length > 0" class="col-lg-8">
-
+    <div class="card">
+        <div class="card-body">
+            <div v-if="!isLoadingPage">
+        
+                <h2 class="text-warning">Account</h2>
+        
+                <hr>
+        
                 <div class="row">
                     <div class="col">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th class="bg-secondary text-white">Code</th>
-                                        <th class="bg-secondary text-white">Name</th>
-                                        <th class="bg-secondary text-white">Description</th>
-                                        <th class="text-center bg-secondary text-white">
-                                            <i class="fas fa-cog"></i>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="i in filteredItems">
-                                        <td class="text-muted"> {{ i.code }} </td>
-                                        <td class="text-muted"> {{ i.name }} </td>
-                                        <td class="text-muted"> {{ i.description }} </td>
-                                        <td class="text-center">
-                                            <button :disabled="!canDelete(authUser, 'canManageAccount')"
-                                                @click="onClickDelete(i.id)" class="btn btn-sm btn-light me-3">
-                                                <i class="fas fa-trash"
-                                                    :class="{ 'text-danger': canDelete(authUser, 'canManageAccount') }"></i>
-                                            </button>
-                                            <button :disabled="!canEdit(authUser, 'canManageAccount')"
-                                                @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
-                                                <i class="fas fa-edit"
-                                                    :class="{ 'text-primary': canEdit(authUser, 'canManageAccount') }"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <button v-if="canCreate(authUser, 'canManageAccount')" @click="onClickCreate"
+                            class="btn btn-primary float-end">
+                            <i class="fas fa-plus"></i> Create
+                        </button>
+                    </div>
+                </div>
+        
+                <div class="row justify-content-center pt-5">
+                    <div class="col-lg-8">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" placeholder="search for code..." v-model="searchValue">
                         </div>
                     </div>
                 </div>
-
-
+        
+                <div class="row justify-content-center pt-3">
+        
+                    <div v-show="items.length > 0" class="col-lg-8">
+        
+                        <div class="row">
+                            <div class="col">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th class="bg-secondary text-white">Code</th>
+                                                <th class="bg-secondary text-white">Name</th>
+                                                <th class="bg-secondary text-white">Description</th>
+                                                <th class="text-center bg-secondary text-white">
+                                                    <i class="fas fa-cog"></i>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="i in filteredItems">
+                                                <td class="text-muted"> {{ i.code }} </td>
+                                                <td class="text-muted"> {{ i.name }} </td>
+                                                <td class="text-muted"> {{ i.description }} </td>
+                                                <td class="text-center">
+                                                    <button :disabled="!canDelete(authUser, 'canManageAccount')"
+                                                        @click="onClickDelete(i.id)" class="btn btn-sm btn-light me-3">
+                                                        <i class="fas fa-trash"
+                                                            :class="{ 'text-danger': canDelete(authUser, 'canManageAccount') }"></i>
+                                                    </button>
+                                                    <button :disabled="!canEdit(authUser, 'canManageAccount')"
+                                                        @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
+                                                        <i class="fas fa-edit"
+                                                            :class="{ 'text-primary': canEdit(authUser, 'canManageAccount') }"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+        
+        
+                    </div>
+                </div>
+        
+        
+            </div>
+        
+            <div v-else>
+                <LoaderSpinner />
             </div>
         </div>
-
-
     </div>
 
-    <div v-else>
-        <LoaderSpinner />
-    </div>
 
 </template>
 

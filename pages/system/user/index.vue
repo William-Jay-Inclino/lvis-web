@@ -1,109 +1,112 @@
 <template>
-    <div>
+    <div class="card">
 
-        <h2 class="text-warning">Users</h2>
-
-        <hr>
-
-        <div class="row">
-            <div class="col">
-                <button @click="onClickCreate" class="btn btn-primary float-end">
-                    <i class="fas fa-plus"></i> Create
-                </button>
-            </div>
-        </div>
-
-        <div class="row justify-content-center pt-5">
-            <div class="col-lg-10">
-                <div class="input-group mb-3">
-                    <input @keyup.enter="search()" type="text" class="form-control" placeholder="Enter username..."
-                        v-model="searchValue">
-                    <button class="btn btn-primary" @click="search()">
-                        <i class="fas fa-search"></i> Search
+        <div class="card-body">
+            <h2 class="text-warning">Users</h2>
+    
+            <hr>
+    
+            <div class="row">
+                <div class="col">
+                    <button @click="onClickCreate" class="btn btn-primary float-end">
+                        <i class="fas fa-plus"></i> Create
                     </button>
                 </div>
             </div>
-        </div>
-
-        <div class="row justify-content-center pt-3">
-
-            <div class="text-center text-muted fst-italic" v-show="isSearching">
-                Loading please wait...
+    
+            <div class="row justify-content-center pt-5">
+                <div class="col-lg-10">
+                    <div class="input-group mb-3">
+                        <input @keyup.enter="search()" type="text" class="form-control" placeholder="Enter username..."
+                            v-model="searchValue">
+                        <button class="btn btn-primary" @click="search()">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                    </div>
+                </div>
             </div>
-
-            <div v-show="items.length > 0" class="col-lg-10">
-
-                <div class="row">
-                    <div class="col">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th class="bg-secondary text-white">Username</th>
-                                        <th class="bg-secondary text-white">User's Fullname</th>
-                                        <th class="bg-secondary text-white text-center">Status</th>
-                                        <th class="bg-secondary text-white">Role</th>
-                                        <th class="text-center bg-secondary text-white">
-                                            <i class="fas fa-cog"></i>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="i in items">
-                                        <td class="text-muted"> {{ i.username }} </td>
-                                        <td class="text-muted" v-if="i.user_employee">
-                                            {{ getFullname(i.user_employee.employee.firstname,
-                    i.user_employee.employee.middlename, i.user_employee.employee.lastname) }}
-                                        </td>
-                                        <td class="text-muted" v-else>
-                                            {{ getFullname(i.firstname, i.middlename, i.lastname) }}
-                                        </td>
-                                        <td class="text-center align-middle">
-                                            <div :class="{ [`badge bg-${userStatus[i.status].color}`]: true }">
-                                                {{ userStatus[i.status].label }}
-                                            </div>
-                                        </td>
-                                        <td class="text-muted"> {{ i.role }} </td>
-                                        <td class="text-center">
-                                            <button @click="onClickDelete(i.id)" class="btn btn-sm btn-light me-3">
-                                                <i class="fas fa-trash text-danger"></i>
-                                            </button>
-                                            <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
-                                                <i class="fas fa-edit text-primary"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+    
+            <div class="row justify-content-center pt-3">
+    
+                <div class="text-center text-muted fst-italic" v-show="isSearching">
+                    Loading please wait...
+                </div>
+    
+                <div v-show="items.length > 0" class="col-lg-10">
+    
+                    <div class="row">
+                        <div class="col">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="bg-secondary text-white">Username</th>
+                                            <th class="bg-secondary text-white">User's Fullname</th>
+                                            <th class="bg-secondary text-white text-center">Status</th>
+                                            <th class="bg-secondary text-white">Role</th>
+                                            <th class="text-center bg-secondary text-white">
+                                                <i class="fas fa-cog"></i>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="i in items">
+                                            <td class="text-muted"> {{ i.username }} </td>
+                                            <td class="text-muted" v-if="i.user_employee">
+                                                {{ getFullname(i.user_employee.employee.firstname,
+                        i.user_employee.employee.middlename, i.user_employee.employee.lastname) }}
+                                            </td>
+                                            <td class="text-muted" v-else>
+                                                {{ getFullname(i.firstname, i.middlename, i.lastname) }}
+                                            </td>
+                                            <td class="text-center align-middle">
+                                                <div :class="{ [`badge bg-${userStatus[i.status].color}`]: true }">
+                                                    {{ userStatus[i.status].label }}
+                                                </div>
+                                            </td>
+                                            <td class="text-muted"> {{ i.role }} </td>
+                                            <td class="text-center">
+                                                <button @click="onClickDelete(i.id)" class="btn btn-sm btn-light me-3">
+                                                    <i class="fas fa-trash text-danger"></i>
+                                                </button>
+                                                <button @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
+                                                    <i class="fas fa-edit text-primary"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="row">
-                    <div class="col">
-                        <nav>
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item" :class="{ disabled: pagination.currentPage === 1 }">
-                                    <a class="page-link" @click="changePage(pagination.currentPage - 1)"
-                                        href="#">Previous</a>
-                                </li>
-                                <li v-for="page in pagination.totalPages" :key="page" class="page-item"
-                                    :class="{ active: pagination.currentPage === page }">
-                                    <a class="page-link" @click="changePage(page)" href="#">{{ page }}</a>
-                                </li>
-                                <li class="page-item"
-                                    :class="{ disabled: pagination.currentPage === pagination.totalPages }">
-                                    <a class="page-link" @click="changePage(pagination.currentPage + 1)"
-                                        href="#">Next</a>
-                                </li>
-                            </ul>
-                        </nav>
+    
+                    <div class="row">
+                        <div class="col">
+                            <nav>
+                                <ul class="pagination justify-content-center">
+                                    <li class="page-item" :class="{ disabled: pagination.currentPage === 1 }">
+                                        <a class="page-link" @click="changePage(pagination.currentPage - 1)"
+                                            href="#">Previous</a>
+                                    </li>
+                                    <li v-for="page in pagination.totalPages" :key="page" class="page-item"
+                                        :class="{ active: pagination.currentPage === page }">
+                                        <a class="page-link" @click="changePage(page)" href="#">{{ page }}</a>
+                                    </li>
+                                    <li class="page-item"
+                                        :class="{ disabled: pagination.currentPage === pagination.totalPages }">
+                                        <a class="page-link" @click="changePage(pagination.currentPage + 1)"
+                                            href="#">Next</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
                     </div>
+    
+    
                 </div>
-
-
             </div>
         </div>
+
 
 
     </div>

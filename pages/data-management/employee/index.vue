@@ -1,121 +1,127 @@
 <template>
-    <div v-if="!isLoadingPage && authUser">
 
-        <h2 class="text-warning">Employee</h2>
-
-        <hr>
-
-        <div class="row">
-            <div class="col">
-                <button v-if="canCreate(authUser, 'canManageEmployee', SERVICES.SYSTEM)" @click="onClickCreate"
-                    class="btn btn-primary float-end">
-                    <i class="fas fa-plus"></i> Create
-                </button>
-            </div>
-        </div>
-
-        <div class="row justify-content-center pt-5">
-            <div class="col-lg-10">
-                <div class="input-group mb-3">
-                    <input @keyup.enter="search()" type="text" class="form-control" placeholder="Enter name..."
-                        v-model="searchValue">
-                    <button class="btn btn-primary" @click="search()">
-                        <i class="fas fa-search"></i> Search
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div class="row justify-content-center pt-3">
-
-            <div class="text-center text-muted fst-italic" v-show="isSearching">
-                Loading please wait...
-            </div>
-
-            <div v-show="items.length > 0" class="col-lg-10">
-
+    <div class="card">
+        <div class="card-body">
+            <div v-if="!isLoadingPage && authUser">
+        
+                <h2 class="text-warning">Employee</h2>
+        
+                <hr>
+        
                 <div class="row">
                     <div class="col">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th class="bg-secondary text-white">Firstname</th>
-                                        <th class="bg-secondary text-white">Middlename</th>
-                                        <th class="bg-secondary text-white">Lastname</th>
-                                        <th class="bg-secondary text-white">Position</th>
-                                        <th class="bg-secondary text-white">Signature</th>
-                                        <th class="text-center bg-secondary text-white">
-                                            <i class="fas fa-cog"></i>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="i in items">
-                                        <td class="text-muted"> {{ i.firstname }} </td>
-                                        <td class="text-muted"> {{ i.middlename }} </td>
-                                        <td class="text-muted"> {{ i.lastname }} </td>
-                                        <td class="text-muted"> {{ i.position }} </td>
-                                        <td class="text-muted">
-                                            <div v-if="i.signature_src">
-                                                <img :src="getUploadsPath(i.signature_src)" style="max-width: 100px; height: auto;">
-                                            </div>
-                                            <div v-else>
-                                                N/A
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <button
-                                                :disabled="!canDelete(authUser, 'canManageEmployee', SERVICES.SYSTEM)"
-                                                @click="onClickDelete(i.id)" class="btn btn-sm btn-light me-3">
-                                                <i class="fas fa-trash"
-                                                    :class="{ 'text-danger': canDelete(authUser, 'canManageEmployee', SERVICES.SYSTEM) }"></i>
-                                            </button>
-                                            <button :disabled="!canEdit(authUser, 'canManageEmployee', SERVICES.SYSTEM)"
-                                                @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
-                                                <i class="fas fa-edit"
-                                                    :class="{ 'text-primary': canEdit(authUser, 'canManageEmployee', SERVICES.SYSTEM) }"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <button v-if="canCreate(authUser, 'canManageEmployee', SERVICES.SYSTEM)" @click="onClickCreate"
+                            class="btn btn-primary float-end">
+                            <i class="fas fa-plus"></i> Create
+                        </button>
+                    </div>
+                </div>
+        
+                <div class="row justify-content-center pt-5">
+                    <div class="col-lg-10">
+                        <div class="input-group mb-3">
+                            <input @keyup.enter="search()" type="text" class="form-control" placeholder="Enter name..."
+                                v-model="searchValue">
+                            <button class="btn btn-primary" @click="search()">
+                                <i class="fas fa-search"></i> Search
+                            </button>
                         </div>
                     </div>
                 </div>
-
-                <div class="row">
-                    <div class="col">
-                        <nav>
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item" :class="{ disabled: pagination.currentPage === 1 }">
-                                    <a class="page-link" @click="changePage(pagination.currentPage - 1)"
-                                        href="#">Previous</a>
-                                </li>
-                                <li v-for="page in pagination.totalPages" :key="page" class="page-item"
-                                    :class="{ active: pagination.currentPage === page }">
-                                    <a class="page-link" @click="changePage(page)" href="#">{{ page }}</a>
-                                </li>
-                                <li class="page-item"
-                                    :class="{ disabled: pagination.currentPage === pagination.totalPages }">
-                                    <a class="page-link" @click="changePage(pagination.currentPage + 1)"
-                                        href="#">Next</a>
-                                </li>
-                            </ul>
-                        </nav>
+        
+                <div class="row justify-content-center pt-3">
+        
+                    <div class="text-center text-muted fst-italic" v-show="isSearching">
+                        Loading please wait...
+                    </div>
+        
+                    <div v-show="items.length > 0" class="col-lg-10">
+        
+                        <div class="row">
+                            <div class="col">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th class="bg-secondary text-white">Firstname</th>
+                                                <th class="bg-secondary text-white">Middlename</th>
+                                                <th class="bg-secondary text-white">Lastname</th>
+                                                <th class="bg-secondary text-white">Position</th>
+                                                <th class="bg-secondary text-white">Signature</th>
+                                                <th class="text-center bg-secondary text-white">
+                                                    <i class="fas fa-cog"></i>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="i in items">
+                                                <td class="text-muted"> {{ i.firstname }} </td>
+                                                <td class="text-muted"> {{ i.middlename }} </td>
+                                                <td class="text-muted"> {{ i.lastname }} </td>
+                                                <td class="text-muted"> {{ i.position }} </td>
+                                                <td class="text-muted">
+                                                    <div v-if="i.signature_src">
+                                                        <img :src="getUploadsPath(i.signature_src)" style="max-width: 100px; height: auto;">
+                                                    </div>
+                                                    <div v-else>
+                                                        N/A
+                                                    </div>
+                                                </td>
+                                                <td class="text-center">
+                                                    <button
+                                                        :disabled="!canDelete(authUser, 'canManageEmployee', SERVICES.SYSTEM)"
+                                                        @click="onClickDelete(i.id)" class="btn btn-sm btn-light me-3">
+                                                        <i class="fas fa-trash"
+                                                            :class="{ 'text-danger': canDelete(authUser, 'canManageEmployee', SERVICES.SYSTEM) }"></i>
+                                                    </button>
+                                                    <button :disabled="!canEdit(authUser, 'canManageEmployee', SERVICES.SYSTEM)"
+                                                        @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
+                                                        <i class="fas fa-edit"
+                                                            :class="{ 'text-primary': canEdit(authUser, 'canManageEmployee', SERVICES.SYSTEM) }"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+        
+                        <div class="row">
+                            <div class="col">
+                                <nav>
+                                    <ul class="pagination justify-content-center">
+                                        <li class="page-item" :class="{ disabled: pagination.currentPage === 1 }">
+                                            <a class="page-link" @click="changePage(pagination.currentPage - 1)"
+                                                href="#">Previous</a>
+                                        </li>
+                                        <li v-for="page in pagination.totalPages" :key="page" class="page-item"
+                                            :class="{ active: pagination.currentPage === page }">
+                                            <a class="page-link" @click="changePage(page)" href="#">{{ page }}</a>
+                                        </li>
+                                        <li class="page-item"
+                                            :class="{ disabled: pagination.currentPage === pagination.totalPages }">
+                                            <a class="page-link" @click="changePage(pagination.currentPage + 1)"
+                                                href="#">Next</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+        
+        
                     </div>
                 </div>
-
-
+        
+        
+            </div>
+        
+            <div v-else>
+                <LoaderSpinner />
             </div>
         </div>
-
-
     </div>
 
-    <div v-else>
-        <LoaderSpinner />
-    </div>
 </template>
 
 

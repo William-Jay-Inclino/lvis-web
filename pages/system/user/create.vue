@@ -1,158 +1,159 @@
 <template>
-    <div>
+    <div class="card">
 
-        <h2 class="text-warning">Create User</h2>
-
-        <hr>
-
-
-        <div class="row pt-3">
-            <div class="col">
-                <span class="text-secondary">
-                    Step {{ currentStep }} of {{ formData.role === ROLE.ADMIN ? '2' : '3' }}:
-                    <span v-show="currentStep === 1"> Add User info </span>
-                    <span v-show="currentStep === 2"> Add Login credentials </span>
-                    <span v-show="currentStep === 3"> Add User Permissions </span>
-                </span>
-            </div>
+        <div class="card-header">
+            <h2 class="text-warning">Create User</h2>
         </div>
 
-
-        <div v-show="currentStep === 1" class="row justify-content-center pt-3">
-
-            <div class="col-lg-6">
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Role
-                    </label>
-                    <select class="form-select" v-model="formData.role">
-                        <option :value="ROLE.ADMIN">Admin</option>
-                        <option :value="ROLE.USER">User</option>
-                    </select>
+        <div class="card-body">
+            <div class="row pt-3">
+                <div class="col">
+                    <span class="text-secondary">
+                        Step {{ currentStep }} of {{ formData.role === ROLE.ADMIN ? '2' : '3' }}:
+                        <span v-show="currentStep === 1"> Add User info </span>
+                        <span v-show="currentStep === 2"> Add Login credentials </span>
+                        <span v-show="currentStep === 3"> Add User Permissions </span>
+                    </span>
                 </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Is employee?
-                    </label>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" v-model="isEmployee">
-                        <label class="form-check-label">
-                            {{ isEmployee ? 'Yes' : 'No' }}
+            </div>
+    
+    
+            <div v-show="currentStep === 1" class="row justify-content-center pt-3">
+    
+                <div class="col-lg-6">
+    
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Role
                         </label>
+                        <select class="form-select" v-model="formData.role">
+                            <option :value="ROLE.ADMIN">Admin</option>
+                            <option :value="ROLE.USER">User</option>
+                        </select>
                     </div>
-                </div>
-
-                <div v-if="isEmployee" class="mb-3">
-                    <label class="form-label">
-                        Select Employee <span class="text-danger">*</span>
-                    </label>
-                    <client-only>
-                        <v-select @option:selected="onEmployeeSelected" :options="employees" label="fullname"
-                            v-model="formData.employee">
-                            <template v-slot:option="option">
-                                <div v-if="option.user_employee" class="row">
-                                    <div class="col">
-                                        <span class="text-danger">{{ option.fullname }}</span>
+    
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Is employee?
+                        </label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" v-model="isEmployee">
+                            <label class="form-check-label">
+                                {{ isEmployee ? 'Yes' : 'No' }}
+                            </label>
+                        </div>
+                    </div>
+    
+                    <div v-if="isEmployee" class="mb-3">
+                        <label class="form-label">
+                            Select Employee <span class="text-danger">*</span>
+                        </label>
+                        <client-only>
+                            <v-select @option:selected="onEmployeeSelected" :options="employees" label="fullname"
+                                v-model="formData.employee">
+                                <template v-slot:option="option">
+                                    <div v-if="option.user_employee" class="row">
+                                        <div class="col">
+                                            <span class="text-danger">{{ option.fullname }}</span>
+                                        </div>
+                                        <div class="col text-end">
+                                            <small class="text-muted fst-italic">
+                                                Already has user account
+                                            </small>
+                                        </div>
                                     </div>
-                                    <div class="col text-end">
-                                        <small class="text-muted fst-italic">
-                                            Already has user account
-                                        </small>
+                                    <div v-else class="row">
+                                        <div class="col">
+                                            <span>{{ option.fullname }}</span>
+                                        </div>
+                                        <div class="col text-end">
+                                            <small class="text-success fst-italic"> Available </small>
+                                        </div>
                                     </div>
-                                </div>
-                                <div v-else class="row">
-                                    <div class="col">
-                                        <span>{{ option.fullname }}</span>
-                                    </div>
-                                    <div class="col text-end">
-                                        <small class="text-success fst-italic"> Available </small>
-                                    </div>
-                                </div>
-                            </template>
-                        </v-select>
-                    </client-only>
+                                </template>
+                            </v-select>
+                        </client-only>
+                    </div>
+    
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Firstname <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" v-model="formData.firstname" required
+                            :disabled="isEmployee">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Middlename
+                        </label>
+                        <input type="text" class="form-control" v-model="formData.middlename" :disabled="isEmployee">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Lastname <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" v-model="formData.lastname" required :disabled="isEmployee">
+                    </div>
+    
+                    <div class="d-flex justify-content-between pt-3">
+                        <button @click="onClickGoToList" type="button" class="btn btn-secondary">
+                            <i class="fas fa-list"></i> Go to list
+                        </button>
+                        <button @click="goToStep2()" type="button" class="btn btn-primary" :disabled="!canProceedStep2">
+                            <i class="fas fa-chevron-right"></i> Next
+                        </button>
+                    </div>
+    
                 </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Firstname <span class="text-danger">*</span>
-                    </label>
-                    <input type="text" class="form-control" v-model="formData.firstname" required
-                        :disabled="isEmployee">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">
-                        Middlename
-                    </label>
-                    <input type="text" class="form-control" v-model="formData.middlename" :disabled="isEmployee">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">
-                        Lastname <span class="text-danger">*</span>
-                    </label>
-                    <input type="text" class="form-control" v-model="formData.lastname" required :disabled="isEmployee">
-                </div>
-
-                <div class="d-flex justify-content-between pt-3">
-                    <button @click="onClickGoToList" type="button" class="btn btn-secondary">
-                        <i class="fas fa-list"></i> Go to list
-                    </button>
-                    <button @click="goToStep2()" type="button" class="btn btn-primary" :disabled="!canProceedStep2">
-                        <i class="fas fa-chevron-right"></i> Next
-                    </button>
-                </div>
-
+    
             </div>
-
-        </div>
-
-
-        <div v-show="currentStep === 2" class="row justify-content-center pt-3">
-
-            <div class="col-lg-6">
-
-                <SystemUserLoginCredentials :username="formData.username" :password="formData.password"
-                    :is-username-exist="isUsernameExist" :is-checking-un-availability="isCheckingUnAvailability"
-                    @check-username-availability="checkUsernameAvailability" @update-username="onUpdateUsername"
-                    @update-password="onUpdatePassword" />
-
-                <div class="d-flex justify-content-between pt-3">
-                    <button @click="goToStep1()" type="button" class="btn btn-secondary">
-                        <i class="fas fa-chevron-left"></i> Back
-                    </button>
-                    <button v-if="formData.role === ROLE.USER" @click="goToStep3()" type="button"
-                        class="btn btn-primary" :disabled="!canProceedStep3 || isCheckingUnAvailability">
-                        <i class="fas fa-chevron-right"></i> Next
-                    </button>
-                    <button v-else @click="save" type="button" class="btn btn-primary" :disabled="isSaving">
-                        <i class="fas fa-save"></i> {{ isSaving ? 'Saving...' : 'Save' }}
-                    </button>
+    
+    
+            <div v-show="currentStep === 2" class="row justify-content-center pt-3">
+    
+                <div class="col-lg-6">
+    
+                    <SystemUserLoginCredentials :username="formData.username" :password="formData.password"
+                        :is-username-exist="isUsernameExist" :is-checking-un-availability="isCheckingUnAvailability"
+                        @check-username-availability="checkUsernameAvailability" @update-username="onUpdateUsername"
+                        @update-password="onUpdatePassword" />
+    
+                    <div class="d-flex justify-content-between pt-3">
+                        <button @click="goToStep1()" type="button" class="btn btn-secondary">
+                            <i class="fas fa-chevron-left"></i> Back
+                        </button>
+                        <button v-if="formData.role === ROLE.USER" @click="goToStep3()" type="button"
+                            class="btn btn-primary" :disabled="!canProceedStep3 || isCheckingUnAvailability">
+                            <i class="fas fa-chevron-right"></i> Next
+                        </button>
+                        <button v-else @click="save" type="button" class="btn btn-primary" :disabled="isSaving">
+                            <i class="fas fa-save"></i> {{ isSaving ? 'Saving...' : 'Save' }}
+                        </button>
+                    </div>
+    
                 </div>
-
+    
             </div>
-
-        </div>
-
-
-        <div v-show="currentStep === 3" class="row justify-content-center pt-3">
-
-            <div class="col-lg-6">
-
-                <SystemUserPermissions :permissions="formData.permissions" />
-
-                <div class="d-flex justify-content-between pt-3">
-                    <button @click="goToStep2()" type="button" class="btn btn-secondary">
-                        <i class="fas fa-chevron-left"></i> Back
-                    </button>
-                    <button @click="save" type="button" class="btn btn-primary" :disabled="isSaving">
-                        <i class="fas fa-save"></i> {{ isSaving ? 'Saving...' : 'Save' }}
-                    </button>
+    
+    
+            <div v-show="currentStep === 3" class="row justify-content-center pt-3">
+    
+                <div class="col-lg-6">
+    
+                    <SystemUserPermissions :permissions="formData.permissions" />
+    
+                    <div class="d-flex justify-content-between pt-3">
+                        <button @click="goToStep2()" type="button" class="btn btn-secondary">
+                            <i class="fas fa-chevron-left"></i> Back
+                        </button>
+                        <button @click="save" type="button" class="btn btn-primary" :disabled="isSaving">
+                            <i class="fas fa-save"></i> {{ isSaving ? 'Saving...' : 'Save' }}
+                        </button>
+                    </div>
+    
                 </div>
-
+    
             </div>
-
         </div>
 
 

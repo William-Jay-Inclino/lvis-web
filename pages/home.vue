@@ -1,10 +1,10 @@
 <template>
 
-    <div v-if="authUser" class="background-container">
-        <div class="background-overlay"></div>
+    <!-- <div class="background-container"> -->
+        <!-- <div class="background-overlay"></div> -->
 
 
-        <div class="container" style="width: 70%">
+        <div v-if="authUser" class="container" style="width: 70%; padding-top: 50px;">
     
             <div class="row justify-content-center align-items-center">
 
@@ -12,7 +12,7 @@
                     <div class="card shadow" style="width: 12rem;">
                         <img src="~/assets/img/powerserve2.png" class="card-img-top" height="180">
                         <div class="card-footer text-center">
-                            <button class="btn btn-primary btn-sm"> POWERSERVE </button>
+                            <button class="btn btn-primary"> POWERSERVE </button>
                         </div>
                     </div>
                 </div>
@@ -93,7 +93,7 @@
 
         </div>
 
-    </div>
+    <!-- </div> -->
 
         
     <div v-else>
@@ -178,7 +178,7 @@ const goToWarehouse =  () => {
     padding-top: 40px;
 }
 
-.background-overlay {
+/* .background-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -188,7 +188,7 @@ const goToWarehouse =  () => {
     background-size: cover;
     background-position: center;
     z-index: -1;
-}
+} */
 
 .card {
     border: none;

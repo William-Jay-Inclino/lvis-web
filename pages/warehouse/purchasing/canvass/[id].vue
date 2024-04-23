@@ -1,113 +1,121 @@
 <template>
-    <div v-if="!isLoadingPage && canvass" class="mb-3">
 
-        <h2 class="text-warning">Update Canvass</h2>
-        <hr>
+    <div class="card">
+        <div class="card-body">
 
-        <div class="row">
-            <div class="col">
-                <ul class="nav nav-tabs justify-content-center">
-                    <li class="nav-item" @click="isCanvassDetailForm = true">
-                        <a class="nav-link" :class="{ 'active': isCanvassDetailForm }" href="#">
-                            <i class="fas fa-info-circle"></i> Canvass Info
-                        </a>
-                    </li>
-                    <li class="nav-item" @click="isCanvassDetailForm = false">
-                        <a class="nav-link" :class="{ 'active': !isCanvassDetailForm }" href="#">
-                            <i class="fas fa-shopping-cart"></i> Canvass Items
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-
-        <div v-show="isCanvassDetailForm" class="row justify-content-center pt-5">
-            <div class="col-lg-6">
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        RC Number
-                    </label>
-                    <input type="text" :value="canvass.rc_number" class="form-control" disabled>
-                    <nuxt-link class="btn btn-sm btn-light text-primary"
-                        :to="'/warehouse/purchasing/canvass/view/' + canvass.id" target="_blank">View canvass
-                        details</nuxt-link>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Date
-                    </label>
-                    <input type="date" :value="canvass.date_requested" class="form-control" disabled>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Requisitioner <span class="text-danger">*</span>
-                    </label>
-                    <client-only>
-                        <v-select :options="employees" label="fullname" v-model="canvass.requested_by"></v-select>
-                    </client-only>
-                    <small class="text-danger fst-italic" v-if="canvassErrors.requisitioner"> This field is required
-                    </small>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Purpose <span class="text-danger">*</span>
-                    </label>
-                    <textarea class="form-control" rows="3" v-model="canvass.purpose"></textarea>
-                    <small class="text-danger fst-italic" v-show="canvassErrors.purpose"> This field is required
-                    </small>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Notes</label>
-                    <textarea class="form-control" rows="3" v-model="canvass.notes"></textarea>
-                </div>
-
-            </div>
-        </div>
-
-        <div v-show="!isCanvassDetailForm" class="row justify-content-center pt-5">
-            <div class="col-lg-10 col-md-10 col-sm-12">
-
-                <WarehouseCanvassItems :canvass-is-reference-in-r-r="canvass.is_reference_in_rr"
-                    :canvass-items="canvass.canvass_items" :brands="brands" :units="units" :items="items"
-                    :is-adding="isAddingItem" :is-editing="isEditingItem" @add-item="addCanvassItem"
-                    @edit-item="editCanvassItem" @remove-item="removeCanvassItem" />
-
-            </div>
-
-        </div>
-
-
-        <div class="row justify-content-center">
-            <div
-                :class="{ 'col-lg-6 col-md-8 col-sm-12': isCanvassDetailForm, 'col-lg-10 col-md-10 col-sm-12': !isCanvassDetailForm }">
-                <div class="d-flex justify-content-between pt-3">
-                    <div>
-                        <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">
-                            <i class="fas fa-chevron-left"></i> Back to Search
-                        </nuxt-link>
-                    </div>
-                    <div v-if="isCanvassDetailForm">
-                        <button @click="updateCanvassDetail()" class="btn btn-success" :disabled="isUpdating">
-                            <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
-                        </button>
+            <div v-if="!isLoadingPage && canvass" class="mb-3">
+        
+                <h2 class="text-warning">Update Canvass</h2>
+                <hr>
+        
+                <div class="row">
+                    <div class="col">
+                        <ul class="nav nav-tabs justify-content-center">
+                            <li class="nav-item" @click="isCanvassDetailForm = true">
+                                <a class="nav-link" :class="{ 'active': isCanvassDetailForm }" href="#">
+                                    <i class="fas fa-info-circle"></i> Canvass Info
+                                </a>
+                            </li>
+                            <li class="nav-item" @click="isCanvassDetailForm = false">
+                                <a class="nav-link" :class="{ 'active': !isCanvassDetailForm }" href="#">
+                                    <i class="fas fa-shopping-cart"></i> Canvass Items
+                                </a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
+        
+        
+                <div v-show="isCanvassDetailForm" class="row justify-content-center pt-5">
+                    <div class="col-lg-6">
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                RC Number
+                            </label>
+                            <input type="text" :value="canvass.rc_number" class="form-control" disabled>
+                            <nuxt-link class="btn btn-sm btn-light text-primary"
+                                :to="'/warehouse/purchasing/canvass/view/' + canvass.id" target="_blank">View canvass
+                                details</nuxt-link>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Date
+                            </label>
+                            <input type="date" :value="canvass.date_requested" class="form-control" disabled>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Requisitioner <span class="text-danger">*</span>
+                            </label>
+                            <client-only>
+                                <v-select :options="employees" label="fullname" v-model="canvass.requested_by"></v-select>
+                            </client-only>
+                            <small class="text-danger fst-italic" v-if="canvassErrors.requisitioner"> This field is required
+                            </small>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Purpose <span class="text-danger">*</span>
+                            </label>
+                            <textarea class="form-control" rows="3" v-model="canvass.purpose"></textarea>
+                            <small class="text-danger fst-italic" v-show="canvassErrors.purpose"> This field is required
+                            </small>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">Notes</label>
+                            <textarea class="form-control" rows="3" v-model="canvass.notes"></textarea>
+                        </div>
+        
+                    </div>
+                </div>
+        
+                <div v-show="!isCanvassDetailForm" class="row justify-content-center pt-5">
+                    <div class="col-lg-10 col-md-10 col-sm-12">
+        
+                        <WarehouseCanvassItems :canvass-is-reference-in-r-r="canvass.is_reference_in_rr"
+                            :canvass-items="canvass.canvass_items" :brands="brands" :units="units" :items="items"
+                            :is-adding="isAddingItem" :is-editing="isEditingItem" @add-item="addCanvassItem"
+                            @edit-item="editCanvassItem" @remove-item="removeCanvassItem" />
+        
+                    </div>
+        
+                </div>
+        
+        
+                <div class="row justify-content-center">
+                    <div
+                        :class="{ 'col-lg-6 col-md-8 col-sm-12': isCanvassDetailForm, 'col-lg-10 col-md-10 col-sm-12': !isCanvassDetailForm }">
+                        <div class="d-flex justify-content-between pt-3">
+                            <div>
+                                <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/canvass">
+                                    <i class="fas fa-chevron-left"></i> Back to Search
+                                </nuxt-link>
+                            </div>
+                            <div v-if="isCanvassDetailForm">
+                                <button @click="updateCanvassDetail()" class="btn btn-success" :disabled="isUpdating">
+                                    <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+        
             </div>
+        
+        
+            <div v-else>
+                <LoaderSpinner />
+            </div>
+            
         </div>
-
-
     </div>
 
-
-    <div v-else>
-        <LoaderSpinner />
-    </div>
 
 </template>
 

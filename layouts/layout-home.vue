@@ -80,3 +80,12 @@ const isApprover = (authUser: AuthUser) => {
 }
 
 </script>
+
+
+<style>
+
+body{
+    background-color: whitesmoke;
+}
+
+</style>

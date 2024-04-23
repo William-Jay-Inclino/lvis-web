@@ -1,75 +1,83 @@
 <template>
-    <div v-if="!isLoadingPage">
 
-        <h2 class="text-warning">Item Brand</h2>
+    <div class="card">
+        <div class="card-body">
 
-        <hr>
-
-        <div class="row">
-            <div class="col">
-                <button v-if="canCreate(authUser, 'canManageItemBrand')" @click="onClickCreate"
-                    class="btn btn-primary float-end">
-                    <i class="fas fa-plus"></i> Create
-                </button>
-            </div>
-        </div>
-
-        <div class="row justify-content-center pt-5">
-            <div class="col-lg-6">
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="search for name..." v-model="searchValue">
-                </div>
-            </div>
-        </div>
-
-        <div class="row justify-content-center pt-3">
-
-            <div v-show="items.length > 0" class="col-lg-6">
-
+            <div v-if="!isLoadingPage">
+        
+                <h2 class="text-warning">Item Brand</h2>
+        
+                <hr>
+        
                 <div class="row">
                     <div class="col">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th class="bg-secondary text-white">Name</th>
-                                        <th class="text-center bg-secondary text-white">
-                                            <i class="fas fa-cog"></i>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="i in filteredItems">
-                                        <td class="text-muted"> {{ i.name }} </td>
-                                        <td class="text-center">
-                                            <button :disabled="!canDelete(authUser, 'canManageItemBrand')"
-                                                @click="onClickDelete(i.id)" class="btn btn-sm btn-light me-3">
-                                                <i class="fas fa-trash"
-                                                    :class="{ 'text-danger': canDelete(authUser, 'canManageItemBrand') }"></i>
-                                            </button>
-                                            <button :disabled="!canEdit(authUser, 'canManageItemBrand')"
-                                                @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
-                                                <i class="fas fa-edit"
-                                                    :class="{ 'text-primary': canEdit(authUser, 'canManageItemBrand') }"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <button v-if="canCreate(authUser, 'canManageItemBrand')" @click="onClickCreate"
+                            class="btn btn-primary float-end">
+                            <i class="fas fa-plus"></i> Create
+                        </button>
+                    </div>
+                </div>
+        
+                <div class="row justify-content-center pt-5">
+                    <div class="col-lg-6">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" placeholder="search for name..." v-model="searchValue">
                         </div>
                     </div>
                 </div>
-
-
+        
+                <div class="row justify-content-center pt-3">
+        
+                    <div v-show="items.length > 0" class="col-lg-6">
+        
+                        <div class="row">
+                            <div class="col">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th class="bg-secondary text-white">Name</th>
+                                                <th class="text-center bg-secondary text-white">
+                                                    <i class="fas fa-cog"></i>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="i in filteredItems">
+                                                <td class="text-muted"> {{ i.name }} </td>
+                                                <td class="text-center">
+                                                    <button :disabled="!canDelete(authUser, 'canManageItemBrand')"
+                                                        @click="onClickDelete(i.id)" class="btn btn-sm btn-light me-3">
+                                                        <i class="fas fa-trash"
+                                                            :class="{ 'text-danger': canDelete(authUser, 'canManageItemBrand') }"></i>
+                                                    </button>
+                                                    <button :disabled="!canEdit(authUser, 'canManageItemBrand')"
+                                                        @click="onClickEdit(i.id)" class="btn btn-sm btn-light">
+                                                        <i class="fas fa-edit"
+                                                            :class="{ 'text-primary': canEdit(authUser, 'canManageItemBrand') }"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+        
+        
+                    </div>
+                </div>
+        
+        
             </div>
+        
+            <div v-else>
+                <LoaderSpinner />
+            </div>
+            
         </div>
-
-
     </div>
 
-    <div v-else>
-        <LoaderSpinner />
-    </div>
 
 </template>
 

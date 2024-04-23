@@ -1,151 +1,159 @@
 <template>
-    <div v-if="!isLoadingPage && rrData && rrData.po && !rrData.cancelled_at">
-        <h2 class="text-warning">Update RR</h2>
-        <hr>
 
-        <div v-if="isAdmin(authUser)" class="row pt-3 mb-5">
-            <div class="col">
-                <ul class="nav nav-tabs justify-content-center">
-                    <li class="nav-item" @click="form = FORM_TYPE.RR_INFO">
-                        <a class="nav-link" :class="{ 'active': form === FORM_TYPE.RR_INFO }" href="#">
-                            <i class="fas fa-info-circle"></i> RR Info
-                        </a>
-                    </li>
-                    <li class="nav-item" @click="form = FORM_TYPE.ITEM">
-                        <a class="nav-link" :class="{ 'active': form === FORM_TYPE.ITEM }" href="#">
-                            <i class="fas fa-shopping-cart"></i> Items
-                        </a>
-                    </li>
-                    <li class="nav-item" @click="form = FORM_TYPE.APPROVER">
-                        <a class="nav-link" :class="{ 'active': form === FORM_TYPE.APPROVER }" href="#">
-                            <i class="fas fa-users"></i> Approvers
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
+    <div class="card">
+        <div class="card-body">
 
-
-        <div v-show="form === FORM_TYPE.RR_INFO" class="row justify-content-center">
-
-            <div class="col-lg-6">
-
-                <div class="mb-3 d-flex align-items-center">
-                    <label class="form-label me-2 mb-0">Status:</label>
-                    <div :class="{ [`badge bg-${rrStatus.color}`]: true }">
-                        {{ rrStatus.label }}
+            <div v-if="!isLoadingPage && rrData && rrData.po && !rrData.cancelled_at">
+                <h2 class="text-warning">Update RR</h2>
+                <hr>
+        
+                <div v-if="isAdmin(authUser)" class="row pt-3 mb-5">
+                    <div class="col">
+                        <ul class="nav nav-tabs justify-content-center">
+                            <li class="nav-item" @click="form = FORM_TYPE.RR_INFO">
+                                <a class="nav-link" :class="{ 'active': form === FORM_TYPE.RR_INFO }" href="#">
+                                    <i class="fas fa-info-circle"></i> RR Info
+                                </a>
+                            </li>
+                            <li class="nav-item" @click="form = FORM_TYPE.ITEM">
+                                <a class="nav-link" :class="{ 'active': form === FORM_TYPE.ITEM }" href="#">
+                                    <i class="fas fa-shopping-cart"></i> Items
+                                </a>
+                            </li>
+                            <li class="nav-item" @click="form = FORM_TYPE.APPROVER">
+                                <a class="nav-link" :class="{ 'active': form === FORM_TYPE.APPROVER }" href="#">
+                                    <i class="fas fa-users"></i> Approvers
+                                </a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
-
-                <div class="mb-3">
-                    <label class="form-label">RR Number</label>
-                    <input type="text" class="form-control" :value="rrData.rr_number" disabled>
-                    <nuxt-link class="btn btn-sm btn-light text-primary"
-                        :to="'/warehouse/purchasing/rr/view/' + rrData.id" target="_blank">View RR details</nuxt-link>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">PO Number</label>
-                    <input type="text" class="form-control" :value="rrData.po.po_number" disabled>
-                    <nuxt-link class="btn btn-sm btn-light text-primary"
-                        :to="'/warehouse/purchasing/po/view/' + rrData.po.id" target="_blank">View PO
-                        details</nuxt-link>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Delivery Number
-                    </label>
-                    <input type="text" class="form-control" v-model="rrData.delivery_number">
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Delivery Charge
-                    </label>
-                    <input type="number" class="form-control" v-model="rrData.delivery_charge">
-                    <small class="text-danger fst-italic" v-if="rrDataErrors.delivery_charge"> This field is invalid
-                    </small>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Invoice <span class="text-danger">*</span>
-                    </label>
-                    <input type="text" class="form-control" v-model="rrData.invoice_number">
-                    <small class="text-danger fst-italic" v-if="rrDataErrors.invoice_number"> This field is required
-                    </small>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Received By <span class="text-danger">*</span>
-                    </label>
-                    <client-only>
-                        <v-select :options="employees" label="fullname" v-model="rrData.received_by"
-                            :clearable="false"></v-select>
-                    </client-only>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Notes</label>
-                    <textarea v-model="rrData.notes" class="form-control" rows="3"></textarea>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div v-show="form === FORM_TYPE.ITEM" class="row justify-content-center pt-5">
-
-            <div class="col-12">
-
-                <WarehouseRRItems :rr-items="rrData.rr_items" />
-
-            </div>
-
-        </div>
-
-        <div v-show="form === FORM_TYPE.APPROVER" class="row justify-content-center pt-5">
-
-            <div class="col-12">
-                <WarehouseApprover :approvers="rrData.rr_approvers" :employees="employees"
-                    :isUpdatingApproverOrder="isUpdatingApproverOrder" :isAddingApprover="isAddingApprover"
-                    :isEditingApprover="isEditingApprover" @changeApproverOrder="changeApproverOrder"
-                    @addApprover="addApprover" @editApprover="editApprover" @removeApprover="removeApprover" />
-            </div>
-
-        </div>
-
-
-        <div class="row justify-content-center pt-3">
-            <div :class="{ 'col-lg-6': form === FORM_TYPE.RR_INFO, 'col-12': form !== FORM_TYPE.RR_INFO }">
-                <div class="d-flex justify-content-between pt-3">
-                    <div>
-                        <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rr">
-                            <i class="fas fa-chevron-left"></i> Back to Search
-                        </nuxt-link>
+        
+        
+                <div v-show="form === FORM_TYPE.RR_INFO" class="row justify-content-center">
+        
+                    <div class="col-lg-6">
+        
+                        <div class="mb-3 d-flex align-items-center">
+                            <label class="form-label me-2 mb-0">Status:</label>
+                            <div :class="{ [`badge bg-${rrStatus.color}`]: true }">
+                                {{ rrStatus.label }}
+                            </div>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">RR Number</label>
+                            <input type="text" class="form-control" :value="rrData.rr_number" disabled>
+                            <nuxt-link class="btn btn-sm btn-light text-primary"
+                                :to="'/warehouse/purchasing/rr/view/' + rrData.id" target="_blank">View RR details</nuxt-link>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">PO Number</label>
+                            <input type="text" class="form-control" :value="rrData.po.po_number" disabled>
+                            <nuxt-link class="btn btn-sm btn-light text-primary"
+                                :to="'/warehouse/purchasing/po/view/' + rrData.po.id" target="_blank">View PO
+                                details</nuxt-link>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Delivery Number
+                            </label>
+                            <input type="text" class="form-control" v-model="rrData.delivery_number">
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Delivery Charge
+                            </label>
+                            <input type="number" class="form-control" v-model="rrData.delivery_charge">
+                            <small class="text-danger fst-italic" v-if="rrDataErrors.delivery_charge"> This field is invalid
+                            </small>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Invoice <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" v-model="rrData.invoice_number">
+                            <small class="text-danger fst-italic" v-if="rrDataErrors.invoice_number"> This field is required
+                            </small>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Received By <span class="text-danger">*</span>
+                            </label>
+                            <client-only>
+                                <v-select :options="employees" label="fullname" v-model="rrData.received_by"
+                                    :clearable="false"></v-select>
+                            </client-only>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">Notes</label>
+                            <textarea v-model="rrData.notes" class="form-control" rows="3"></textarea>
+                        </div>
+        
                     </div>
-                    <div>
-                        <button v-if="form === FORM_TYPE.RR_INFO" @click="updateRrInfo()" type="button"
-                            class="btn btn-success" :disabled="isUpdating">
-                            <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
-                        </button>
-                        <button v-else-if="form === FORM_TYPE.ITEM" type="button" @click="updateRrItems()"
-                            class="btn btn-success" :disabled="isUpdatingRrItems">
-                            <i class="fas fa-sync"></i> {{ isUpdatingRrItems ? 'Updating...' : 'Update' }}
-                        </button>
+        
+                </div>
+        
+                <div v-show="form === FORM_TYPE.ITEM" class="row justify-content-center pt-5">
+        
+                    <div class="col-12">
+        
+                        <WarehouseRRItems :rr-items="rrData.rr_items" />
+        
+                    </div>
+        
+                </div>
+        
+                <div v-show="form === FORM_TYPE.APPROVER" class="row justify-content-center pt-5">
+        
+                    <div class="col-12">
+                        <WarehouseApprover :approvers="rrData.rr_approvers" :employees="employees"
+                            :isUpdatingApproverOrder="isUpdatingApproverOrder" :isAddingApprover="isAddingApprover"
+                            :isEditingApprover="isEditingApprover" @changeApproverOrder="changeApproverOrder"
+                            @addApprover="addApprover" @editApprover="editApprover" @removeApprover="removeApprover" />
+                    </div>
+        
+                </div>
+        
+        
+                <div class="row justify-content-center pt-3">
+                    <div :class="{ 'col-lg-6': form === FORM_TYPE.RR_INFO, 'col-12': form !== FORM_TYPE.RR_INFO }">
+                        <div class="d-flex justify-content-between pt-3">
+                            <div>
+                                <nuxt-link class="btn btn-secondary" to="/warehouse/purchasing/rr">
+                                    <i class="fas fa-chevron-left"></i> Back to Search
+                                </nuxt-link>
+                            </div>
+                            <div>
+                                <button v-if="form === FORM_TYPE.RR_INFO" @click="updateRrInfo()" type="button"
+                                    class="btn btn-success" :disabled="isUpdating">
+                                    <i class="fas fa-sync"></i> {{ isUpdating ? 'Updating...' : 'Update' }}
+                                </button>
+                                <button v-else-if="form === FORM_TYPE.ITEM" type="button" @click="updateRrItems()"
+                                    class="btn btn-success" :disabled="isUpdatingRrItems">
+                                    <i class="fas fa-sync"></i> {{ isUpdatingRrItems ? 'Updating...' : 'Update' }}
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
+        
+        
             </div>
+        
+            <div v-else>
+                <LoaderSpinner />
+            </div>
+            
         </div>
-
-
     </div>
 
-    <div v-else>
-        <LoaderSpinner />
-    </div>
 
 </template>
 

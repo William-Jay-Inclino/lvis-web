@@ -1,185 +1,193 @@
 <template>
-    <div v-if="!isLoadingPage">
 
-        <h2 class="text-warning">Create RR</h2>
-        <hr>
+    <div class="card">
+        <div class="card-body">
 
-        <div class="row pt-3">
-            <div class="col">
-                <span class="text-secondary">
-                    Step {{ currentStep }} of 2:
-                    <span v-if="currentStep === 1"> Fill up RR info </span>
-                    <span v-if="currentStep === 2"> Add Items </span>
-                </span>
-            </div>
-        </div>
-
-        <div v-show="currentStep === 1" class="row justify-content-center pt-5">
-            <div class="col-lg-6">
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        PO Number <span class="text-danger">*</span>
-                    </label>
-                    <client-only>
-                        <v-select @option:selected="onPoSelected" :options="pos" label="po_number" v-model="rrData.po"
-                            :clearable="false">
-                            <template v-slot:option="option">
-                                <div v-if="option.status !== APPROVAL_STATUS.APPROVED" class="row">
-                                    <div class="col">
-                                        <span class="text-danger">{{ option.po_number }}</span>
-                                    </div>
-                                    <div class="col text-end">
-                                        <small class="text-muted fst-italic">
-                                            {{
-        // @ts-ignore
-        approvalStatus[option.status].label
-    }}
-                                        </small>
-                                    </div>
-                                </div>
-                                <div v-else class="row">
-                                    <div class="col">
-                                        <span>{{ option.po_number }}</span>
-                                    </div>
-                                    <div class="col text-end">
-                                        <small class="text-success fst-italic"> Available </small>
-                                    </div>
-                                </div>
-                            </template>
-                        </v-select>
-                    </client-only>
-                    <div>
-                        <nuxt-link v-if="rrData.po" class="btn btn-sm btn-light text-primary"
-                            :to="'/warehouse/purchasing/po/view/' + rrData.po.id" target="_blank">View PO
-                            details</nuxt-link>
+            <div v-if="!isLoadingPage">
+        
+                <h2 class="text-warning">Create RR</h2>
+                <hr>
+        
+                <div class="row pt-3">
+                    <div class="col">
+                        <span class="text-secondary">
+                            Step {{ currentStep }} of 2:
+                            <span v-if="currentStep === 1"> Fill up RR info </span>
+                            <span v-if="currentStep === 2"> Add Items </span>
+                        </span>
                     </div>
-                    <div v-if="rrData.po && rrData.po.rrs.length > 0">
-                        <small class="text-muted fst-italic"> Other assigned RR: </small>
-                        <ul>
-                            <li v-for="rr in rrData.po.rrs">
-                                <nuxt-link :to="'/warehouse/purchasing/rr/view/' + rr.id" target="_blank">
-                                    {{ rr.rr_number }}
+                </div>
+        
+                <div v-show="currentStep === 1" class="row justify-content-center pt-5">
+                    <div class="col-lg-6">
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                PO Number <span class="text-danger">*</span>
+                            </label>
+                            <client-only>
+                                <v-select @option:selected="onPoSelected" :options="pos" label="po_number" v-model="rrData.po"
+                                    :clearable="false">
+                                    <template v-slot:option="option">
+                                        <div v-if="option.status !== APPROVAL_STATUS.APPROVED" class="row">
+                                            <div class="col">
+                                                <span class="text-danger">{{ option.po_number }}</span>
+                                            </div>
+                                            <div class="col text-end">
+                                                <small class="text-muted fst-italic">
+                                                    {{
+                // @ts-ignore
+                approvalStatus[option.status].label
+            }}
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div v-else class="row">
+                                            <div class="col">
+                                                <span>{{ option.po_number }}</span>
+                                            </div>
+                                            <div class="col text-end">
+                                                <small class="text-success fst-italic"> Available </small>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </v-select>
+                            </client-only>
+                            <div>
+                                <nuxt-link v-if="rrData.po" class="btn btn-sm btn-light text-primary"
+                                    :to="'/warehouse/purchasing/po/view/' + rrData.po.id" target="_blank">View PO
+                                    details</nuxt-link>
+                            </div>
+                            <div v-if="rrData.po && rrData.po.rrs.length > 0">
+                                <small class="text-muted fst-italic"> Other assigned RR: </small>
+                                <ul>
+                                    <li v-for="rr in rrData.po.rrs">
+                                        <nuxt-link :to="'/warehouse/purchasing/rr/view/' + rr.id" target="_blank">
+                                            {{ rr.rr_number }}
+                                        </nuxt-link>
+                                    </li>
+                                </ul>
+                            </div>
+                            <small class="text-danger fst-italic" v-if="rrDataErrors.po"> This field is required </small>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Delivery Number
+                            </label>
+                            <input type="text" class="form-control" v-model="rrData.delivery_number">
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Delivery Charge
+                            </label>
+                            <input type="number" class="form-control" v-model="rrData.delivery_charge">
+                            <small class="text-danger fst-italic" v-if="rrDataErrors.delivery_charge"> This field is invalid
+                            </small>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Invoice <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" v-model="rrData.invoice_number">
+                            <small class="text-danger fst-italic" v-if="rrDataErrors.invoice_number"> This field is required
+                            </small>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Received By <span class="text-danger">*</span>
+                            </label>
+                            <client-only>
+                                <v-select :options="employees" label="fullname" v-model="rrData.received_by"></v-select>
+                            </client-only>
+                            <small class="text-danger fst-italic" v-if="rrDataErrors.received_by"> This field is required
+                            </small>
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Notes
+                            </label>
+                            <textarea class="form-control" rows="3" v-model="rrData.notes"></textarea>
+                        </div>
+        
+                    </div>
+                </div>
+        
+                <div v-show="currentStep === 2" class="row justify-content-center pt-5">
+                    <div class="col-12">
+        
+                        <WarehouseRRItems :rr-items="rrData.rr_items" />
+        
+                    </div>
+                </div>
+        
+                <hr v-show="currentStep === 2">
+        
+                <div v-show="currentStep === 2" class="row justify-content-end">
+                    <div class="col-4">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered table-striped">
+                                <tbody>
+                                    <tr>
+                                        <td class="fst-italic"> Summary (Gross Total) </td>
+                                        <td class="fw-bold">
+                                            {{ formatToPhpCurrency(grossTotalSummary) }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fst-italic"> Delivery Charge </td>
+                                        <td class="fw-bold"> {{ formatToPhpCurrency(rrData.delivery_charge) }} </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fst-italic"> Total </td>
+                                        <td class="fw-bold">
+                                            {{ formatToPhpCurrency(totalPriceSummary) }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="row justify-content-center pt-3">
+                    <div :class="{ 'col-6': currentStep === 1, 'col-12': currentStep === 2 }">
+                        <div class="d-flex justify-content-between">
+        
+                            <div>
+                                <nuxt-link v-show="currentStep === 1" class="btn btn-secondary" to="/warehouse/purchasing/rr">
+                                    <i class="fas fa-chevron-left"></i> Back to Search
                                 </nuxt-link>
-                            </li>
-                        </ul>
+        
+                                <button v-show="currentStep === 2" @click="goToStep1" class="btn btn-secondary">
+                                    <i class="fas fa-chevron-left"></i> Back
+                                </button>
+        
+                            </div>
+        
+                            <button v-show="currentStep === 1" @click="goToStep2" class="btn btn-primary">
+                                <i class="fas fa-chevron-right"></i> Next
+                            </button>
+                            <button @click="save()" v-show="currentStep === 2" class="btn btn-primary" :disabled="isSaving">
+                                <i class="fas fa-save"></i> {{ isSaving ? 'Saving...' : 'Save' }}
+                            </button>
+                        </div>
                     </div>
-                    <small class="text-danger fst-italic" v-if="rrDataErrors.po"> This field is required </small>
                 </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Delivery Number
-                    </label>
-                    <input type="text" class="form-control" v-model="rrData.delivery_number">
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Delivery Charge
-                    </label>
-                    <input type="number" class="form-control" v-model="rrData.delivery_charge">
-                    <small class="text-danger fst-italic" v-if="rrDataErrors.delivery_charge"> This field is invalid
-                    </small>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Invoice <span class="text-danger">*</span>
-                    </label>
-                    <input type="text" class="form-control" v-model="rrData.invoice_number">
-                    <small class="text-danger fst-italic" v-if="rrDataErrors.invoice_number"> This field is required
-                    </small>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Received By <span class="text-danger">*</span>
-                    </label>
-                    <client-only>
-                        <v-select :options="employees" label="fullname" v-model="rrData.received_by"></v-select>
-                    </client-only>
-                    <small class="text-danger fst-italic" v-if="rrDataErrors.received_by"> This field is required
-                    </small>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Notes
-                    </label>
-                    <textarea class="form-control" rows="3" v-model="rrData.notes"></textarea>
-                </div>
-
+        
             </div>
-        </div>
-
-        <div v-show="currentStep === 2" class="row justify-content-center pt-5">
-            <div class="col-12">
-
-                <WarehouseRRItems :rr-items="rrData.rr_items" />
-
+        
+            <div v-else>
+                <LoaderSpinner />
             </div>
+            
         </div>
-
-        <hr v-show="currentStep === 2">
-
-        <div v-show="currentStep === 2" class="row justify-content-end">
-            <div class="col-4">
-                <div class="table-responsive">
-                    <table class="table table-hover table-bordered table-striped">
-                        <tbody>
-                            <tr>
-                                <td class="fst-italic"> Summary (Gross Total) </td>
-                                <td class="fw-bold">
-                                    {{ formatToPhpCurrency(grossTotalSummary) }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="fst-italic"> Delivery Charge </td>
-                                <td class="fw-bold"> {{ formatToPhpCurrency(rrData.delivery_charge) }} </td>
-                            </tr>
-                            <tr>
-                                <td class="fst-italic"> Total </td>
-                                <td class="fw-bold">
-                                    {{ formatToPhpCurrency(totalPriceSummary) }}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div class="row justify-content-center pt-3">
-            <div :class="{ 'col-6': currentStep === 1, 'col-12': currentStep === 2 }">
-                <div class="d-flex justify-content-between">
-
-                    <div>
-                        <nuxt-link v-show="currentStep === 1" class="btn btn-secondary" to="/warehouse/purchasing/rr">
-                            <i class="fas fa-chevron-left"></i> Back to Search
-                        </nuxt-link>
-
-                        <button v-show="currentStep === 2" @click="goToStep1" class="btn btn-secondary">
-                            <i class="fas fa-chevron-left"></i> Back
-                        </button>
-
-                    </div>
-
-                    <button v-show="currentStep === 1" @click="goToStep2" class="btn btn-primary">
-                        <i class="fas fa-chevron-right"></i> Next
-                    </button>
-                    <button @click="save()" v-show="currentStep === 2" class="btn btn-primary" :disabled="isSaving">
-                        <i class="fas fa-save"></i> {{ isSaving ? 'Saving...' : 'Save' }}
-                    </button>
-                </div>
-            </div>
-        </div>
-
     </div>
 
-    <div v-else>
-        <LoaderSpinner />
-    </div>
 
 </template>
 
