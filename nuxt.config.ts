@@ -34,8 +34,8 @@ export default defineNuxtConfig({
         { src: '~/plugins/vuedraggable.ts', mode: 'client' },
     ],
     css: [
-        '~/assets/css/main.css',
-        'bootstrap/dist/css/bootstrap.min.css'
+        'bootstrap/dist/css/bootstrap.min.css',
+        '~/assets/css/main.css'
     ],
     build: {
         transpile: ['vue-toastification']

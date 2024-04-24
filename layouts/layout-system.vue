@@ -1,100 +1,95 @@
 <template>
 
-    <div>
-        <div class="px-0">
-            <nav class="navbar sticky-top navbar-expand-lg navbar-dark" style="background-color: #1877F2;">
-                <div class="container">
-                    <a class="navbar-brand" href="#">Leyeco V - SYSTEM</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
-                        data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul v-if="authUser" class="navbar-nav ms-auto mb-2 mb-lg-0">
-                            <li class="nav-item">
-                                <nuxt-link class="nav-link text-white" to="/home">Home</nuxt-link>
-                            </li>
-                            <li v-if="isApprover(authUser)" class="nav-item">
-                                <nuxt-link class="nav-link text-white position-relative" to="/e-forms/pendings">
-                                    Pendings
-                                    <span
-                                        class="position-absolute top-1 start-100 translate-middle badge rounded-pill bg-danger">
-                                        {{ totalPendings }}
-                                    </span>
-                                </nuxt-link>
-                            </li>
-                            <li v-if="isAdmin(authUser)" class="nav-item">
-                                <nuxt-link class="nav-link text-white" to="/system/user">Users</nuxt-link>
-                            </li>
-                            <li v-if="canViewDataManagement(authUser)" class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown"
-                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Data Management
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li v-if="canView('canManageEmployee', authUser)"><nuxt-link class="dropdown-item"
-                                            to="/data-management/employee">Employee</nuxt-link></li>
-                                    <li v-if="canView('canManageDepartment', authUser)"><nuxt-link class="dropdown-item"
-                                            to="/system/data-management/department">Department</nuxt-link></li>
-                                    <li v-if="canView('canManageAccount', authUser)"><nuxt-link class="dropdown-item"
-                                            to="/system/data-management/account">Account</nuxt-link></li>
-                                    <li v-if="canView('canManageClassification', authUser)"><nuxt-link
-                                            class="dropdown-item"
-                                            to="/system/data-management/classification">Classification</nuxt-link></li>
-                                </ul>
-                            </li>
-                            <li v-if="isAdmin(authUser)" class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown"
-                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Settings
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><nuxt-link class="dropdown-item" to="/system/settings/system-variables">System
-                                            Variables</nuxt-link></li>
-                                    <li><nuxt-link class="dropdown-item"
-                                            to="/system/settings/warehouse">Warehouse</nuxt-link></li>
-                                </ul>
-                            </li>
-                            <li v-if="authUser" class="nav-item dropdown">
-                                <a style="color: #FFFF00;" class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
-                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-user-circle"></i>
-                                    <span class="fw-bold fst-italic ms-1">
-
-                                        {{ authUser.user.username }}
-
-                                    </span>
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><a class="dropdown-item" href="#">Profile</a></li>
-                                    <li><a class="dropdown-item" href="#">Settings</a></li>
-                                    <li><a class="dropdown-item" href="#">Activity log</a></li>
-                                    <li><nuxt-link class="dropdown-item" to="/">Logout</nuxt-link></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
-
-                </div>
-            </nav>
-
+    <div id="wrapper">
+        <nav class="navbar sticky-top navbar-expand-lg navbar-dark" style="background-color: #1877F2;">
             <div class="container">
+                <a class="navbar-brand" href="#">Leyeco V - SYSTEM</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-                <div class="mt-3">
-                    <!-- <div class="card"> -->
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul v-if="authUser" class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <nuxt-link class="nav-link text-white" to="/home">Home</nuxt-link>
+                        </li>
+                        <li v-if="isApprover(authUser)" class="nav-item">
+                            <nuxt-link class="nav-link text-white position-relative" to="/e-forms/pendings">
+                                Pendings
+                                <span
+                                    class="position-absolute top-1 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ totalPendings }}
+                                </span>
+                            </nuxt-link>
+                        </li>
+                        <li v-if="isAdmin(authUser)" class="nav-item">
+                            <nuxt-link class="nav-link text-white" to="/system/user">Users</nuxt-link>
+                        </li>
+                        <li v-if="canViewDataManagement(authUser)" class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown"
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Data Management
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li v-if="canView('canManageEmployee', authUser)"><nuxt-link class="dropdown-item"
+                                        to="/data-management/employee">Employee</nuxt-link></li>
+                                <li v-if="canView('canManageDepartment', authUser)"><nuxt-link class="dropdown-item"
+                                        to="/system/data-management/department">Department</nuxt-link></li>
+                                <li v-if="canView('canManageAccount', authUser)"><nuxt-link class="dropdown-item"
+                                        to="/system/data-management/account">Account</nuxt-link></li>
+                                <li v-if="canView('canManageClassification', authUser)"><nuxt-link
+                                        class="dropdown-item"
+                                        to="/system/data-management/classification">Classification</nuxt-link></li>
+                            </ul>
+                        </li>
+                        <li v-if="isAdmin(authUser)" class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown"
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Settings
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><nuxt-link class="dropdown-item" to="/system/settings/system-variables">System
+                                        Variables</nuxt-link></li>
+                                <li><nuxt-link class="dropdown-item"
+                                        to="/system/settings/warehouse">Warehouse</nuxt-link></li>
+                            </ul>
+                        </li>
+                        <li v-if="authUser" class="nav-item dropdown">
+                            <a style="color: #FFFF00;" class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle"></i>
+                                <span class="fw-bold fst-italic ms-1">
 
-                    <!-- <div class="card-body"> -->
-                    <slot />
+                                    {{ authUser.user.username }}
 
-                    <!-- </div> -->
-                    <!-- </div> -->
-
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="#">Profile</a></li>
+                                <li><a class="dropdown-item" href="#">Settings</a></li>
+                                <li><a class="dropdown-item" href="#">Activity log</a></li>
+                                <li><nuxt-link class="dropdown-item" to="/">Logout</nuxt-link></li>
+                            </ul>
+                        </li>
+                    </ul>
                 </div>
+
+            </div>
+        </nav>
+
+        <div class="container main-content">
+
+            <div class="mt-3">
+                <slot />
 
             </div>
 
         </div>
+
+        <br />
+        <br />
+        <Footer />
 
         <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample"
             aria-labelledby="offcanvasExampleLabel">
@@ -151,10 +146,8 @@
                 </div>
             </div>
         </div>
+
     </div>
-
-
-
 
 </template>
 
@@ -224,11 +217,7 @@ function canView(module: string, authUser: AuthUser) {
 
 
 
-<style>
-
-body {
-    color: whitesmoke;
-}
+<style scoped>
 
 .nav-item {
     padding: 0.5rem 1rem;
@@ -251,13 +240,4 @@ body {
     transition: color 0.3s;
 }
 
-/* .custom-card {
-    background-color: white;
-    border-radius: 10px;
-    border: 0;
-    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
-    height: 100vh;
-    padding: 0px 20px 20px 20px;
-    overflow-y: auto;
-} */
 </style>

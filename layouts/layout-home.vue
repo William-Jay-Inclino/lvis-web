@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div id="wrapper">
         <nav class="navbar sticky-top navbar-expand-lg navbar-dark" style="background-color: #1877F2;">
             <div v-if="authUser" class="container">
                 <a class="navbar-brand" href="#">
@@ -44,10 +44,14 @@
             </div>
         </nav>
 
-        <div class="container">
+        <div class="container main-content">
             <slot />
 
         </div>
+
+        <br />
+        <br />
+        <Footer />
 
     </div>
 </template>
@@ -80,12 +84,3 @@ const isApprover = (authUser: AuthUser) => {
 }
 
 </script>
-
-
-<style>
-
-body{
-    background-color: whitesmoke;
-}
-
-</style>

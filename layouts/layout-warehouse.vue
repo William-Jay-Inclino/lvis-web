@@ -1,134 +1,129 @@
 <template>
 
-    <div>
-        <div class="px-0">
-            <nav class="navbar sticky-top navbar-expand-lg navbar-dark" style="background-color: #1877F2;">
-                <div class="container">
-                    <a class="navbar-brand" href="#">Leyeco V - WAREHOUSE</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
-                        data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul v-if="authUser" class="navbar-nav ms-auto mb-2 mb-lg-0">
-                            <li class="nav-item">
-                                <nuxt-link class="nav-link text-white" to="/home">Home</nuxt-link>
-                            </li>
-                            <li v-if="isApprover(authUser)" class="nav-item">
-                                <nuxt-link class="nav-link text-white position-relative" to="/e-forms/pendings">
-                                    Pendings
-                                    <span
-                                        class="position-absolute top-1 start-100 translate-middle badge rounded-pill bg-danger">
-                                        {{ totalPendings }}
-                                    </span>
-                                </nuxt-link>
-                            </li>
-                            <li v-if="canViewPurchasing(authUser)" class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown"
-                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Purchasing
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li v-if="canView('canManageCanvass', authUser)"><nuxt-link class="dropdown-item"
-                                            to="/warehouse/purchasing/canvass">Canvass</nuxt-link></li>
-                                    <li v-if="canView('canManageRV', authUser)"><nuxt-link class="dropdown-item"
-                                            to="/warehouse/purchasing/rv">RV</nuxt-link>
-                                    </li>
-                                    <li v-if="canView('canManageJO', authUser)"><nuxt-link class="dropdown-item"
-                                            to="/warehouse/purchasing/jo">JO</nuxt-link>
-                                    </li>
-                                    <li v-if="canView('canManageSPR', authUser)"><nuxt-link class="dropdown-item"
-                                            to="/warehouse/purchasing/spr">SPR</nuxt-link>
-                                    </li>
-                                    <li v-if="canView('canManageMEQS', authUser)"><nuxt-link class="dropdown-item"
-                                            to="/warehouse/purchasing/meqs">MEQS</nuxt-link></li>
-                                    <li v-if="canView('canManagePO', authUser)"><nuxt-link class="dropdown-item"
-                                            to="/warehouse/purchasing/po">PO</nuxt-link>
-                                    </li>
-                                    <li v-if="canView('canManageRR', authUser)"><nuxt-link class="dropdown-item"
-                                            to="/warehouse/purchasing/rr">RR</nuxt-link>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li v-if="canViewStockInventory(authUser)" class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown"
-                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Stock Inventory
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li v-if="canView('canManageItem', authUser)">
-                                        <nuxt-link class="dropdown-item"
-                                            to="/warehouse/stock-inventory/item">Item</nuxt-link>
-                                    </li>
-                                    <li v-if="canView('canManageItemType', authUser)">
-                                        <nuxt-link class="dropdown-item" to="/warehouse/stock-inventory/item-type">Item
-                                            Type</nuxt-link>
-                                    </li>
-                                    <li v-if="canView('canManageItemBrand', authUser)">
-                                        <nuxt-link class="dropdown-item" to="/warehouse/stock-inventory/item-brand">Item
-                                            Brand</nuxt-link>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li v-if="canViewDataManagement(authUser)" class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown"
-                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Data Management
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li v-if="canView('canManageUnit', authUser)"><nuxt-link class="dropdown-item"
-                                            to="/warehouse/data-management/unit">Unit</nuxt-link></li>
-                                    <li v-if="canView('canManageVehicle', authUser)">
-                                        <nuxt-link class="dropdown-item"
-                                            to="/warehouse/data-management/vehicle">Vehicle</nuxt-link>
-                                    </li>
-                                    <li v-if="canView('canManageSupplier', authUser)">
-                                        <nuxt-link class="dropdown-item"
-                                            to="/warehouse/data-management/supplier">Supplier</nuxt-link>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a style="color: #FFFF00;" class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
-                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-user-circle"></i>
-                                    <span class="fw-bold fst-italic ms-1">
-
-                                        {{ authUser.user.username }}
-
-                                    </span>
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><a class="dropdown-item" href="#">Profile</a></li>
-                                    <li><a class="dropdown-item" href="#">Settings</a></li>
-                                    <li><a class="dropdown-item" href="#">Activity log</a></li>
-                                    <li><nuxt-link class="dropdown-item" to="/">Logout</nuxt-link></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
-
-                </div>
-            </nav>
-
+    <div id="wrapper">
+        <nav class="navbar sticky-top navbar-expand-lg navbar-dark" style="background-color: #1877F2;">
             <div class="container">
+                <a class="navbar-brand" href="#">Leyeco V - WAREHOUSE</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-                <div class="mt-3">
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul v-if="authUser" class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <nuxt-link class="nav-link text-white" to="/home">Home</nuxt-link>
+                        </li>
+                        <li v-if="isApprover(authUser)" class="nav-item">
+                            <nuxt-link class="nav-link text-white position-relative" to="/e-forms/pendings">
+                                Pendings
+                                <span
+                                    class="position-absolute top-1 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ totalPendings }}
+                                </span>
+                            </nuxt-link>
+                        </li>
+                        <li v-if="canViewPurchasing(authUser)" class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown"
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Purchasing
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li v-if="canView('canManageCanvass', authUser)"><nuxt-link class="dropdown-item"
+                                        to="/warehouse/purchasing/canvass">Canvass</nuxt-link></li>
+                                <li v-if="canView('canManageRV', authUser)"><nuxt-link class="dropdown-item"
+                                        to="/warehouse/purchasing/rv">RV</nuxt-link>
+                                </li>
+                                <li v-if="canView('canManageJO', authUser)"><nuxt-link class="dropdown-item"
+                                        to="/warehouse/purchasing/jo">JO</nuxt-link>
+                                </li>
+                                <li v-if="canView('canManageSPR', authUser)"><nuxt-link class="dropdown-item"
+                                        to="/warehouse/purchasing/spr">SPR</nuxt-link>
+                                </li>
+                                <li v-if="canView('canManageMEQS', authUser)"><nuxt-link class="dropdown-item"
+                                        to="/warehouse/purchasing/meqs">MEQS</nuxt-link></li>
+                                <li v-if="canView('canManagePO', authUser)"><nuxt-link class="dropdown-item"
+                                        to="/warehouse/purchasing/po">PO</nuxt-link>
+                                </li>
+                                <li v-if="canView('canManageRR', authUser)"><nuxt-link class="dropdown-item"
+                                        to="/warehouse/purchasing/rr">RR</nuxt-link>
+                                </li>
+                            </ul>
+                        </li>
+                        <li v-if="canViewStockInventory(authUser)" class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown"
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Stock Inventory
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li v-if="canView('canManageItem', authUser)">
+                                    <nuxt-link class="dropdown-item"
+                                        to="/warehouse/stock-inventory/item">Item</nuxt-link>
+                                </li>
+                                <li v-if="canView('canManageItemType', authUser)">
+                                    <nuxt-link class="dropdown-item" to="/warehouse/stock-inventory/item-type">Item
+                                        Type</nuxt-link>
+                                </li>
+                                <li v-if="canView('canManageItemBrand', authUser)">
+                                    <nuxt-link class="dropdown-item" to="/warehouse/stock-inventory/item-brand">Item
+                                        Brand</nuxt-link>
+                                </li>
+                            </ul>
+                        </li>
+                        <li v-if="canViewDataManagement(authUser)" class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown"
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Data Management
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li v-if="canView('canManageUnit', authUser)"><nuxt-link class="dropdown-item"
+                                        to="/warehouse/data-management/unit">Unit</nuxt-link></li>
+                                <li v-if="canView('canManageVehicle', authUser)">
+                                    <nuxt-link class="dropdown-item"
+                                        to="/warehouse/data-management/vehicle">Vehicle</nuxt-link>
+                                </li>
+                                <li v-if="canView('canManageSupplier', authUser)">
+                                    <nuxt-link class="dropdown-item"
+                                        to="/warehouse/data-management/supplier">Supplier</nuxt-link>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a style="color: #FFFF00;" class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle"></i>
+                                <span class="fw-bold fst-italic ms-1">
 
-                    <!-- <div class="card"> -->
+                                    {{ authUser.user.username }}
 
-                    <!-- <div class="card-body"> -->
-                    <slot />
-
-                    <!-- </div> -->
-                    <!-- </div> -->
-
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="#">Profile</a></li>
+                                <li><a class="dropdown-item" href="#">Settings</a></li>
+                                <li><a class="dropdown-item" href="#">Activity log</a></li>
+                                <li><nuxt-link class="dropdown-item" to="/">Logout</nuxt-link></li>
+                            </ul>
+                        </li>
+                    </ul>
                 </div>
+
+            </div>
+        </nav>
+
+        <div class="container main-content">
+
+            <div class="mt-3">
+                <slot />
 
             </div>
 
         </div>
+
+        <br />
+        <br />
+        <Footer />
+
 
         <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample"
             aria-labelledby="offcanvasExampleLabel">
@@ -343,16 +338,4 @@ function canView(module: string, authUser: AuthUser) {
     color: #343a40;
     transition: color 0.3s;
 }
-
-/*
-.custom-card {
-    background-color: white;
-    border-radius: 10px;
-    border: 0;
-    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
-    height: 100vh;
-    padding: 0px 20px 20px 20px;
-    overflow-y: auto;
-}
-*/
 </style>

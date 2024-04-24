@@ -1,8 +1,17 @@
-/* body {
-    background-color: #F8F8FF;
-} */
+body {
+    background-color: whitesmoke;
+}
 
-
+#wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+  
+.main-content {
+    flex: 1;
+}
+  
 hr.result {
     flex: 1;
     margin: 0 10px;
@@ -23,3 +32,13 @@ h5 {
 .bg-orange {
     background-color: #cc6600 !important;
 }
+
+a {
+    text-decoration: none;
+}
+
+/* Optionally, you can add a hover effect */
+a:hover {
+    text-decoration: none; /* Remove underline on hover */
+}
+
