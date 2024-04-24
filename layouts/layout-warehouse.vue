@@ -14,15 +14,6 @@
                         <li class="nav-item">
                             <nuxt-link class="nav-link text-white" to="/home">Home</nuxt-link>
                         </li>
-                        <li v-if="isApprover(authUser)" class="nav-item">
-                            <nuxt-link class="nav-link text-white position-relative" to="/e-forms/pendings">
-                                Pendings
-                                <span
-                                    class="position-absolute top-1 start-100 translate-middle badge rounded-pill bg-danger">
-                                    {{ totalPendings }}
-                                </span>
-                            </nuxt-link>
-                        </li>
                         <li v-if="canViewPurchasing(authUser)" class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown"
                                 role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -87,6 +78,15 @@
                                         to="/warehouse/data-management/supplier">Supplier</nuxt-link>
                                 </li>
                             </ul>
+                        </li>
+                        <li v-if="isApprover(authUser)" class="nav-item">
+                            <nuxt-link class="nav-link text-white position-relative" to="/e-forms/pendings">
+                                <i class="fas fa-bell"></i>
+                                <span
+                                    class="position-absolute top-1 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ totalPendings }}
+                                </span>
+                            </nuxt-link>
                         </li>
                         <li class="nav-item dropdown">
                             <a style="color: #FFFF00;" class="nav-link dropdown-toggle" href="#" id="navbarDropdown"

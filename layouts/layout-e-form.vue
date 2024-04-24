@@ -1,56 +1,58 @@
 <template>
 
-    <div>
-        <div class="px-0">
-            <nav class="navbar sticky-top navbar-expand-lg navbar-dark" style="background-color: #1877F2;">
-                <div class="container">
-                    <a class="navbar-brand" href="#">Leyeco V - eFORMS</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
-                        data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                            <li class="nav-item">
-                                <nuxt-link class="nav-link text-white" to="/home">Home</nuxt-link>
-                            </li>
-                            <!-- <li class="nav-item">
-                                <nuxt-link class="nav-link text-white" to="/e-forms/pendings">Pending Forms</nuxt-link>
-                            </li> -->
-                            <li v-if="authUser" class="nav-item dropdown">
-                                <a style="color: #FFFF00;" class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
-                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-user-circle"></i>
-                                    <span class="fw-bold fst-italic ms-1">
-
-                                        {{ authUser.user.username }}
-
-                                    </span>
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><a class="dropdown-item" href="#">Profile</a></li>
-                                    <li><a class="dropdown-item" href="#">Settings</a></li>
-                                    <li><a class="dropdown-item" href="#">Activity log</a></li>
-                                    <li><nuxt-link class="dropdown-item" to="/">Logout</nuxt-link></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
-
-                </div>
-            </nav>
-
+    <div id="wrapper">
+        <nav class="navbar sticky-top navbar-expand-lg navbar-dark" style="background-color: #1877F2;">
             <div class="container">
+                <a class="navbar-brand" href="#">Leyeco V - eFORMS</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-                <div class="mt-3">
-                    <slot />
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <nuxt-link class="nav-link text-white" to="/home">Home</nuxt-link>
+                        </li>
+                        <!-- <li class="nav-item">
+                            <nuxt-link class="nav-link text-white" to="/e-forms/pendings">Pending Forms</nuxt-link>
+                        </li> -->
+                        <li v-if="authUser" class="nav-item dropdown">
+                            <a style="color: #FFFF00;" class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle"></i>
+                                <span class="fw-bold fst-italic ms-1">
 
+                                    {{ authUser.user.username }}
+
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="#">Profile</a></li>
+                                <li><a class="dropdown-item" href="#">Settings</a></li>
+                                <li><a class="dropdown-item" href="#">Activity log</a></li>
+                                <li><nuxt-link class="dropdown-item" to="/">Logout</nuxt-link></li>
+                            </ul>
+                        </li>
+                    </ul>
                 </div>
+
+            </div>
+        </nav>
+
+        <div class="container main-content">
+
+            <div class="mt-3">
+                <slot />
 
             </div>
 
         </div>
+
+        <br />
+        <br />
+        <Footer />
+
 
         <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample"
             aria-labelledby="offcanvasExampleLabel">

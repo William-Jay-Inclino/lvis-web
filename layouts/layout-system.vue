@@ -16,7 +16,7 @@
                         </li>
                         <li v-if="isApprover(authUser)" class="nav-item">
                             <nuxt-link class="nav-link text-white position-relative" to="/e-forms/pendings">
-                                Pendings
+                                <i class="fas fa-bell"></i>
                                 <span
                                     class="position-absolute top-1 start-100 translate-middle badge rounded-pill bg-danger">
                                     {{ totalPendings }}
