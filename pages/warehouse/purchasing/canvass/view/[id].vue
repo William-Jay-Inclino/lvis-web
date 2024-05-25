@@ -69,12 +69,12 @@
                                                             {{ item.rv.meqs.meqs_number }}
                                                         </nuxt-link>
                                                     </div>
-                                                    <div v-if="item.jo && item.jo.meqs">
+                                                    <div v-else-if="item.jo && item.jo.meqs">
                                                         <nuxt-link :to="'/warehouse/purchasing/meqs/view/' + item.jo.meqs.id">
                                                             {{ item.jo.meqs.meqs_number }}
                                                         </nuxt-link>
                                                     </div>
-                                                    <div v-if="item.spr && item.spr.meqs">
+                                                    <div v-else-if="item.spr && item.spr.meqs">
                                                         <nuxt-link :to="'/warehouse/purchasing/meqs/view/' + item.spr.meqs.id">
                                                             {{ item.spr.meqs.meqs_number }}
                                                         </nuxt-link>

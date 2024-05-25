@@ -189,10 +189,11 @@
                                             to="/warehouse/purchasing/rv">
                                             <i class="fas fa-search"></i> Search RV
                                         </nuxt-link>
-                                        <button :disabled="item.status !== APPROVAL_STATUS.APPROVED" @click="onClickPrint" class="btn btn-danger" data-bs-toggle="modal"
-                                            data-bs-target="#purchasingPdfModal">
+                                        <button :disabled="item.status !== APPROVAL_STATUS.APPROVED" @click="onClickPrint" class="btn btn-danger">
                                             <i class="fas fa-print"></i> Print RV
                                         </button>
+                                        <button ref="printBtn" v-show="false" data-bs-toggle="modal"
+                                            data-bs-target="#purchasingPdfModal">print</button>
                                     </div>
                                     <div v-if="!item.cancelled_at">
                                         <button v-if="isAdminOrOwner(item.created_by, authUser)" class="btn btn-warning me-2"
@@ -256,6 +257,8 @@ const router = useRouter()
 const route = useRoute()
 
 const toast = useToast();
+
+const printBtn = ref<HTMLButtonElement>()
 
 const item = ref<RV | undefined>()
 
@@ -346,6 +349,21 @@ async function cancelRv() {
 
 async function onClickPrint() {
     console.log('onClickPrint()');
+
+    if(!item.value?.classification) {
+
+        Swal.fire({
+            icon: "error",
+            title: "Unable to print",
+            text: "Classification is required!",
+        });
+
+        return
+
+    }
+
+    printBtn.value?.click()
+    
     try {
 
         const accessToken = authUser.value.access_token

@@ -310,7 +310,7 @@
                         <label class="form-label">
                             Date {{ editApproverData.status.id === APPROVAL_STATUS.APPROVED ? 'Approved' : 'Disapproved' }} <span class="text-danger">*</span>
                         </label>
-                        <input type="date" class="form-control" v-model="editApproverData.date_approval">
+                        <input type="datetime-local" class="form-control" v-model="editApproverData.date_approval">
                         <small class="text-danger fst-italic" v-show="editApproverErrors.date_approval">
                             Invalid Date
                         </small>
@@ -342,6 +342,8 @@
 
 
 <script setup lang="ts">
+import type { Employee } from '~/composables/system/employee/employee.types';
+
 
 
     const emits = defineEmits(['changeApproverOrder', 'addApprover', 'editApprover', 'removeApprover']);
@@ -459,7 +461,7 @@
         editApproverData.value = {
             id: item.id,
             approver: item.approver,
-            date_approval: item.date_approval || formatToValidHtmlDate(new Date()),
+            date_approval: item.date_approval || formatToValidHtmlDate(new Date(), true),
             notes: currentData.notes,
             status: {
                 id: currentData.status,
@@ -543,6 +545,7 @@
             editApproverData.value.date_approval = null
         }
 
+        console.log('editApproverData.value', editApproverData.value);
         emits('editApprover', editApproverData.value, closeEditApproverModal.value)
 
     }
@@ -590,6 +593,8 @@
         }
 
         if(editApproverData.value.status.id !== APPROVAL_STATUS.PENDING) {
+            
+            console.log('editApproverData.value.date_approval', editApproverData.value.date_approval);
 
             if(!isValidDate(editApproverData.value.date_approval)) {
                 editApproverErrors.value.date_approval = true

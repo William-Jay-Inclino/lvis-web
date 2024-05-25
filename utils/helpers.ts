@@ -34,17 +34,29 @@ export function formatDate(d: any) {
     return moment(date).format('DD MMM YYYY');
 }
 
-export function formatToValidHtmlDate(d: any): string {
+// export function formatToValidHtmlDate(d: any): string {
 
-    console.log('d', d)
+//     console.log('d', d)
+
+//     let date = d;
+//     if (!isNaN(d)) {
+//         date = Number(d) < 10000000000 ? Number(d) * 1000 : Number(d);
+//     }
+
+//     return moment(date).format('YYYY-MM-DD')
+
+// }
+
+export function formatToValidHtmlDate(d: any, hasTime: boolean = false): string {
+    console.log('d', d);
 
     let date = d;
     if (!isNaN(d)) {
         date = Number(d) < 10000000000 ? Number(d) * 1000 : Number(d);
     }
 
-    return moment(date).format('YYYY-MM-DD')
-
+    const formatString = hasTime ? 'YYYY-MM-DDTHH:mm' : 'YYYY-MM-DD';
+    return moment(date).format(formatString);
 }
 
 export function isValidDate(dateString: string | null): boolean {
