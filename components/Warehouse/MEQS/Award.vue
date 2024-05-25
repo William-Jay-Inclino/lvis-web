@@ -4,7 +4,7 @@
 
         <div class="row">
             <div class="col">
-                <small class="text-secondary fst-italic">1. Click the star icon to award the supplier </small>
+                <small class="text-secondary fst-italic">Click the star icon to award the supplier </small>
             </div>
         </div>
 

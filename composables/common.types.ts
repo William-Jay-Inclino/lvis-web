@@ -75,13 +75,13 @@ export interface UpdateApproverInput {
 
 
 
-export interface Employee {
-    id: string
-    firstname: string
-    middlename: string
-    lastname: string
-    fullname?: string
-}
+// export interface Employee {
+//     id: string
+//     firstname: string
+//     middlename: string
+//     lastname: string
+//     fullname?: string
+// }
 
 export interface ItemType {
     id: string;

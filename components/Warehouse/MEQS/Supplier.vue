@@ -224,8 +224,7 @@
 
                         <div class="mb-3" v-if="formAttachment.supplierIndx !== -1">
 
-                            <small class="text-muted fst-italic">(Max files: {{ maxFileLimit }} & Max size per file:
-                                5mb)</small>
+                            <small class="text-muted fst-italic">(Max size: 5mb)</small>
 
                             <client-only>
                                 <file-pond name="test" ref="filepond" label-idle="Drop file here..."
@@ -283,7 +282,6 @@ import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
 
 import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
-import { MAX_FILE_SIZE } from '~/utils/config';
 import type { MeqsSupplier } from '~/composables/warehouse/meqs/meqs-supplier';
 import { VAT } from '~/utils/constants'
 import type { MeqsSupplierItem } from '~/composables/warehouse/meqs/meqs-supplier-item';

@@ -1,70 +1,78 @@
 <template>
     <div v-if="!isLoadingPage && authUser && authUser.user.user_employee">
 
-        <h3 class="text-warning">Pending for Approval/Disapproval</h3>
+        <div class="card">
 
-        <hr>
+            <div class="card-body">
 
-        <div class="row justify-content-center pt-3">
-            <div class="col-lg-10">
+                <h3 class="text-warning">Pending for Approval/Disapproval</h3>
+                
+                <hr>
 
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th class="bg-secondary text-white"> No </th>
-                                <th class="bg-secondary text-white"> Transaction </th>
-                                <th class="bg-secondary text-white"> Date </th>
-                                <th class="text-center bg-secondary text-white">
-                                    Approve / Disapprove
-                                </th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            <tr v-for="item, i in pendings" :key="i">
-                                <td class="text-muted align-middle"> {{ i + 1 }} </td>
-                                <td class="text-muted align-middle">
-                                    {{ item.description }}
-                                    <nuxt-link class="btn btn-outline-light btn-sm"
-                                        :to="getLink(item.type, item.reference_id)" target="_blank">
-                                        <small class="text-info fst-italic"> View details </small>
-                                    </nuxt-link>
-                                </td>
-                                <td class="text-muted align-middle"> {{ formatDate(item.transaction_date) }} </td>
-                                <td v-if="!isDefaultApproval(item)" class="text-center align-middle">
-                                    <button @click="onClickApprove(i)" class="btn btn-light w-50" data-bs-toggle="modal"
-                                        data-bs-target="#pendingModal">
-                                        <i class="fas fa-check-circle text-success"></i>
-                                    </button>
-                                    <button @click="onClickDisapprove(i)" class="btn btn-light w-50"
-                                        data-bs-toggle="modal" data-bs-target="#pendingModal">
-                                        <i class="fas fa-times-circle text-danger"></i>
-                                    </button>
-                                </td>
-                                <td v-else class="text-center align-middle">
-                                    <button @click="onDefaultApprove(i)" class="btn btn-light w-50">
-                                        <i class="fas fa-check-circle text-success"></i>
-                                    </button>
-                                    <button @click="onDefaultDisapprove(i)" class="btn btn-light w-50">
-                                        <i class="fas fa-times-circle text-danger"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-
-                    </table>
+                <div class="row justify-content-center pt-3">
+                    <div class="col-lg-12">
+        
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="bg-secondary text-white"> No </th>
+                                        <th class="bg-secondary text-white"> Transaction </th>
+                                        <th class="bg-secondary text-white"> Date </th>
+                                        <th class="text-center bg-secondary text-white">
+                                            Approve / Disapprove
+                                        </th>
+                                    </tr>
+                                </thead>
+        
+                                <tbody>
+                                    <tr v-for="item, i in pendings" :key="i">
+                                        <td class="text-muted align-middle"> {{ i + 1 }} </td>
+                                        <td class="text-muted align-middle">
+                                            {{ item.description }}
+                                            <nuxt-link class="btn btn-outline-light btn-sm"
+                                                :to="getLink(item.type, item.reference_id)" target="_blank">
+                                                <small class="text-info fst-italic"> View details </small>
+                                            </nuxt-link>
+                                        </td>
+                                        <td class="text-muted align-middle"> {{ formatDate(item.transaction_date) }} </td>
+                                        <td v-if="!isDefaultApproval(item)" class="text-center align-middle">
+                                            <button @click="onClickApprove(i)" class="btn btn-light w-50" data-bs-toggle="modal"
+                                                data-bs-target="#pendingModal">
+                                                <i class="fas fa-check-circle text-success"></i>
+                                            </button>
+                                            <button @click="onClickDisapprove(i)" class="btn btn-light w-50"
+                                                data-bs-toggle="modal" data-bs-target="#pendingModal">
+                                                <i class="fas fa-times-circle text-danger"></i>
+                                            </button>
+                                        </td>
+                                        <td v-else class="text-center align-middle">
+                                            <button @click="onDefaultApprove(i)" class="btn btn-light w-50">
+                                                <i class="fas fa-check-circle text-success"></i>
+                                            </button>
+                                            <button @click="onDefaultDisapprove(i)" class="btn btn-light w-50">
+                                                <i class="fas fa-times-circle text-danger"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+        
+                            </table>
+                        </div>
+        
+                    </div>
                 </div>
-
+        
+                <EformsPendingModal v-if="isBudgetOfficer || isFinanceManager" :employee="authUser.user.user_employee.employee"
+                    :pending-approval="modalData.pendingApproval" :pending-transaction="modalData.pendingTransaction"
+                    :accounts="accounts" :classifications="classifications" :is-approving="isApproving"
+                    :is-disapproving="isDisapproving" @approve-budget-officer="onApproveBudgetOfficer"
+                    @disapprove-budget-officer="onDisapproveBudgetOfficer" @approve-finance-manager="onApproveFinanceManager"
+                    @disapprove-finance-manager="onDisapproveFinanceManager" />
+    
             </div>
-        </div>
 
-        <EformsPendingModal v-if="isBudgetOfficer || isFinanceManager" :employee="authUser.user.user_employee.employee"
-            :pending-approval="modalData.pendingApproval" :pending-transaction="modalData.pendingTransaction"
-            :accounts="accounts" :classifications="classifications" :is-approving="isApproving"
-            :is-disapproving="isDisapproving" @approve-budget-officer="onApproveBudgetOfficer"
-            @disapprove-budget-officer="onDisapproveBudgetOfficer" @approve-finance-manager="onApproveFinanceManager"
-            @disapprove-finance-manager="onDisapproveFinanceManager" />
+        </div>
 
     </div>
 
