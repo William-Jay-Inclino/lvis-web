@@ -179,7 +179,6 @@ definePageMeta({
 
 import * as api from '~/composables/system/user/user.api'
 import type { UpdateUserInput, User } from '~/composables/system/user/user.types'
-import type { UserPermissions } from '~/composables/system/user/user.types'
 import { mergeUserPermissions } from '~/composables/system/user/user.helpers'
 import { permissions } from '~/composables/system/user/user.permissions'
 import Swal from 'sweetalert2'
@@ -201,7 +200,8 @@ const formType = ref(FORM_TYPE.USER_INFO)
 const item = ref<User>({} as User)
 const isLoadingPage = ref(true)
 
-const defaultPermissions = { ...permissions }
+// const defaultPermissions = { ...permissions }
+const defaultPermissions = JSON.parse(JSON.stringify(permissions));
 
 
 onMounted(async () => {
