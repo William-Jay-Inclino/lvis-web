@@ -13,7 +13,7 @@
                         "Welcome to our Warehouse Management! Your hub for seamless purchasing, efficient warehousing, reliable motorpool management, and precise stock inventory control. Let's optimize your operations together!" 
                         <br />
                         <br />
-                        -Joseph Ken Estrera
+                        -Admin
                     </div>
                 </div>
     
