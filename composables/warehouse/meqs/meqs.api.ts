@@ -4,6 +4,7 @@ import type { CreateMeqsInput, FindAllResponse, MEQS, MeqsApproverSettings, Muta
 import type { SPR } from "../spr/spr.types";
 import type { JO } from "../jo/jo.types";
 import type { Supplier } from "../supplier/supplier";
+import type { Employee } from "~/composables/system/employee/employee.types";
 
 
 export async function fetchDataInSearchFilters(): Promise<{
@@ -35,7 +36,7 @@ export async function fetchDataInSearchFilters(): Promise<{
                     jo_number
                 }
             }
-            employees(page: 1, pageSize: 50) {
+            employees(page: 1, pageSize: 100) {
                 data {
                     id
                     firstname
@@ -859,7 +860,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                     }
                 }
             },
-            employees(page: 1, pageSize: 50) {
+            employees(page: 1, pageSize: 100) {
                 data {
                     id
                     firstname

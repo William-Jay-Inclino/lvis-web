@@ -22,7 +22,7 @@ export async function fetchDataInSearchFilters(): Promise<{
                     rv_number
                 }
             }
-            employees(page: 1, pageSize: 50) {
+            employees(page: 1, pageSize: 100) {
                 data {
                     id
                     firstname
@@ -315,7 +315,7 @@ export async function fetchFormDataInCreate(): Promise<{
                     is_referenced
                 }
             },
-            employees(page: 1, pageSize: 50) {
+            employees(page: 1, pageSize: 100) {
                 data{
                     id
                     firstname
@@ -448,7 +448,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 }
 
             },
-            employees(page: 1, pageSize: 50) {
+            employees(page: 1, pageSize: 100) {
                 data {
                     id
                     firstname

@@ -185,7 +185,7 @@
                                     </div>
                                     <div v-if="!item.cancelled_at">
                                         <button v-if="isAdminOrOwner(item.created_by, authUser)" class="btn btn-warning me-2"
-                                            @click="onCancelSpr()">
+                                            @click="onCancelSpr()" :disabled="!!item.meqs">
                                             <i class="fas fa-times-circle"></i> Cancel SPR
                                         </button>
                                         <button v-if="!!item.can_update" class="btn btn-success me-2"

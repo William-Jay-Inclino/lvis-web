@@ -1,3 +1,4 @@
+import type { Employee } from "~/composables/system/employee/employee.types"
 import type { Item } from "../item/item.type"
 import type { PO } from "../po/po.types"
 import type { RrApproverSettings } from "./rr-approver.types"
@@ -206,7 +207,7 @@ export async function fetchDataInSearchFilters(): Promise<{
                     rr_number
                 }
             },
-            employees(page: 1, pageSize: 50) {
+            employees(page: 1, pageSize: 100) {
                 data {
                     id
                     firstname
@@ -336,7 +337,7 @@ export async function fetchFormDataInCreate(): Promise<{
                 id
                 name
             },
-            employees(page: 1, pageSize: 10) {
+            employees(page: 1, pageSize: 100) {
                 data {
                     id
                     firstname
@@ -488,7 +489,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                     po_number
                 }
             },
-            employees(page: 1, pageSize: 50) {
+            employees(page: 1, pageSize: 100) {
                 data {
                     id
                     firstname

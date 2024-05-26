@@ -1,6 +1,6 @@
 <template>
 
-    <div id="wrapper">
+    <div v-if="authUser" id="wrapper">
         <nav class="navbar sticky-top navbar-expand-lg navbar-dark" style="background-color: #1877F2;">
             <div class="container">
                 <a class="navbar-brand" href="#">Leyeco V - SYSTEM</a>
@@ -10,7 +10,7 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul v-if="authUser" class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li class="nav-item">
                             <nuxt-link class="nav-link text-white" to="/home">Home</nuxt-link>
                         </li>
@@ -95,17 +95,17 @@
             aria-labelledby="offcanvasExampleLabel">
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             <div class="offcanvas-header">
-                <img src="/Me.jpg" alt="Profile Picture" class="img-fluid">
+                <img src="/avatar.jpg" alt="Profile Picture" class="img-fluid">
             </div>
             <div class="offcanvas-body d-flex flex-column">
                 <ul class="nav flex-column mb-3">
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link" href="#">User Account</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Activity Log</a>
-                    </li>
-                    <li class="nav-item dropdown">
+                    </li> -->
+                    <!-- <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
                             Security
@@ -114,6 +114,17 @@
                             <li><a class="dropdown-item" href="#">User Access Control</a></li>
                             <li><a class="dropdown-item" href="#">Activity Log</a></li>
                         </ul>
+                    </li> -->
+                    <li class="nav-item">
+                        <a href="javascript:void(0)" class="nav-link text-warning fst-italic fw-bold">
+                            {{ authUser.user.username }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <nuxt-link class="nav-link" to="/home">Home</nuxt-link>
+                    </li>
+                    <li v-if="isAdmin(authUser)" class="nav-item">
+                        <nuxt-link class="nav-link" to="/system/user">Users</nuxt-link>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -137,7 +148,10 @@
                             Settings
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Purchasing</a></li>
+                            <li><nuxt-link class="dropdown-item" to="/system/settings/system-variables">System
+                                    Variables</nuxt-link></li>
+                            <li><nuxt-link class="dropdown-item"
+                                    to="/system/settings/warehouse">Warehouse</nuxt-link></li>
                         </ul>
                     </li>
                 </ul>

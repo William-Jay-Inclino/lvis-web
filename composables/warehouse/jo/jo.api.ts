@@ -3,6 +3,7 @@ import type { Canvass } from "../canvass/canvass.types";
 import type { CreateJoInput, FindAllResponse, MutationResponse, JO, UpdateJoInput } from "./jo.types";
 import { sendRequest } from "~/utils/api"
 import type { JoApproverSettings } from "./jo-approver.types";
+import type { Employee } from "~/composables/system/employee/employee.types";
 
 export async function fetchDataInSearchFilters(): Promise<{
     canvasses: Canvass[],
@@ -21,7 +22,7 @@ export async function fetchDataInSearchFilters(): Promise<{
                     jo_number
                 }
             }
-            employees(page: 1, pageSize: 50) {
+            employees(page: 1, pageSize: 100) {
                 data {
                     id
                     firstname
@@ -319,7 +320,7 @@ export async function fetchFormDataInCreate(): Promise<{
                     is_referenced
                 }
             },
-            employees(page: 1, pageSize: 50) {
+            employees(page: 1, pageSize: 100) {
                 data{
                     id
                     firstname
@@ -469,7 +470,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 }
 
             },
-            employees(page: 1, pageSize: 50) {
+            employees(page: 1, pageSize: 100) {
                 data {
                     id
                     firstname

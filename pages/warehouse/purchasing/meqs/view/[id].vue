@@ -275,7 +275,7 @@
                                 </div>
                                 <div v-if="!item.cancelled_at">
                                     <button v-if="isAdminOrOwner(item.created_by, authUser)" class="btn btn-warning me-2"
-                                        @click="onCancelMeqs()">
+                                        @click="onCancelMeqs()" :disabled="hasPO">
                                         <i class="fas fa-times-circle"></i> Cancel MEQS
                                     </button>
                                     <button v-if="!!item.can_update" class="btn btn-success me-2"

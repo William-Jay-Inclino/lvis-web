@@ -1,3 +1,4 @@
+import type { Employee } from "~/composables/system/employee/employee.types";
 import type { Item } from "../item/item.type";
 import type { Canvass, CreateCanvassInput, FindAllResponse, MutationResponse, UpdateCanvassInput } from "./canvass.types";
 import { sendRequest } from "~/utils/api"
@@ -210,7 +211,7 @@ export async function fetchFormDataInCreate(): Promise<{
 
     const query = `
         query {
-            employees(page: 1, pageSize: 10) {
+            employees(page: 1, pageSize: 100) {
             data {
                 id
                 firstname
@@ -337,7 +338,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                     }
                 }
             },
-            employees(page: 1, pageSize: 50) {
+            employees(page: 1, pageSize: 100) {
                 data {
                     id
                     firstname
@@ -436,7 +437,7 @@ export async function fetchDataInSearchFilters(): Promise<{
                     rc_number
                 }
             },
-            employees(page: 1, pageSize: 50) {
+            employees(page: 1, pageSize: 100) {
                 data {
                     id
                     firstname

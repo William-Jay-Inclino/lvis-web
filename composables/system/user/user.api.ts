@@ -1,5 +1,6 @@
 import { sendRequest } from "~/utils/api"
 import type { User, CreateUserInput, MutationResponse, FindAllResponse, UpdateUserInput, UserPermissions } from "./user.types";
+import type { Employee } from "../employee/employee.types";
 
 
 
@@ -308,7 +309,7 @@ export async function fetchFormDataInCreate(): Promise<{
 
     const query = `
         query {
-            employees(page: 1, pageSize: 25) {
+            employees(page: 1, pageSize: 100) {
                 data {
                     id
                     firstname

@@ -2,6 +2,7 @@ import type { Account } from "~/composables/system/account/account";
 import type { MEQS } from "../meqs/meqs.types";
 import type { PoApproverSettings } from "./po-approver.types";
 import type { CreatePoInput, FindAllResponse, MutationResponse, PO, UpdatePoInput } from "./po.types";
+import type { Employee } from "~/composables/system/employee/employee.types";
 
 export async function findByRefNumber(payload: { po_number?: string, meqs_number?: string }): Promise<PO | undefined> {
 
@@ -193,7 +194,7 @@ export async function fetchDataInSearchFilters(): Promise<{
                     meqs_number
                 }
             },
-            employees(page: 1, pageSize: 50) {
+            employees(page: 1, pageSize: 100) {
                 data {
                     id
                     firstname
@@ -447,7 +448,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                     order
                 }
             },
-            employees(page: 1, pageSize: 50) {
+            employees(page: 1, pageSize: 100) {
                 data {
                     id
                     firstname

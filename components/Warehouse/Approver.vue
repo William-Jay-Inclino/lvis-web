@@ -461,7 +461,8 @@ import type { Employee } from '~/composables/system/employee/employee.types';
         editApproverData.value = {
             id: item.id,
             approver: item.approver,
-            date_approval: item.date_approval || formatToValidHtmlDate(new Date(), true),
+            date_approval: formatToValidHtmlDate(item.date_approval, true) || formatToValidHtmlDate(new Date(), true),
+            // date_approval: item.date_approval || formatToValidHtmlDate(new Date(), true),
             notes: currentData.notes,
             status: {
                 id: currentData.status,

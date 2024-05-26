@@ -252,7 +252,7 @@
                             </div>
                             <div v-if="!item.cancelled_at">
                                 <button v-if="isAdminOrOwner(item.created_by, authUser)" class="btn btn-warning me-2"
-                                    @click="onCancelPo()">
+                                    @click="onCancelPo()" :disabled="item.rrs.length >= 1">
                                     <i class="fas fa-times-circle"></i> Cancel PO
                                 </button>
                                 <button v-if="!!item.can_update" class="btn btn-success me-2" @click="onClickUpdate(item.id)">

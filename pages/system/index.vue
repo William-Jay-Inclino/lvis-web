@@ -13,7 +13,7 @@
                         "Welcome to our System Management! Here, you can fine-tune your settings, define system variables, manage user permissions, and oversee data management. Empower your system's capabilities and tailor it to your unique needs."
                         <br />
                         <br />
-                        -Admin
+                        - Admin
                     </div>
                 </div>
     

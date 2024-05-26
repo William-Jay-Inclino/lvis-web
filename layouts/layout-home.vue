@@ -1,14 +1,13 @@
 <template>
-    <div id="wrapper">
+    <div v-if="authUser" id="wrapper">
         <nav class="navbar sticky-top navbar-expand-lg navbar-dark" style="background-color: #1877F2;">
-            <div v-if="authUser" class="container">
+            <div class="container">
                 <a class="navbar-brand" href="#">
-                    Welcome, {{ authUser.user.username }}! Have a productive day 
+                    Welcome, {{ authUser.user.username }}! <span v-if="!isMobile"> Have a productive day </span> 
                     <i class="fas fa-smile"></i>
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -53,6 +52,26 @@
         <br />
         <Footer />
 
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample"
+            aria-labelledby="offcanvasExampleLabel">
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            <div class="offcanvas-header">
+                <img src="/avatar.jpg" alt="Profile Picture" class="img-fluid">
+            </div>
+            <div class="offcanvas-body d-flex flex-column">
+                <ul class="nav flex-column mb-3">
+                    <li class="nav-item">
+                        <a href="javascript:void(0)" class="nav-link text-warning fst-italic fw-bold">
+                            {{ authUser.user.username }}
+                        </a>
+                    </li>
+                </ul>
+                <div class="mt-auto d-grid">
+                    <nuxt-link class="btn btn-outline-danger btn-block" to="/login">Logout</nuxt-link>
+                </div>
+            </div>
+        </div>
+
     </div>
 </template>
 
@@ -62,8 +81,14 @@
 
 const authUser = ref<AuthUser>()
 
+const isMobile = ref(false)
+
 onMounted(() => {
     authUser.value = getAuthUser()
+
+    isMobile.value = window.innerWidth < MOBILE_WIDTH
+
+    window.addEventListener('resize', checkMobile);
 })
 
 const totalPendings = computed(() => {
@@ -81,6 +106,12 @@ const isApprover = (authUser: AuthUser) => {
         return true
     }
 
+}
+
+
+
+function checkMobile() {
+    isMobile.value = window.innerWidth < MOBILE_WIDTH
 }
 
 </script>
