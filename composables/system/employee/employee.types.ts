@@ -15,6 +15,9 @@ export interface Employee {
     total_pending_approvals?: number
     is_budget_officer?: boolean
     is_finance_manager?: boolean
+
+    // set programmatically
+    fullname?: string
 }
 
 export interface FindAllResponse {

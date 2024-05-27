@@ -184,6 +184,7 @@ import * as meqsSupplierAttachmentApi from '~/composables/warehouse/meqs/meqs-su
 import type { CreateMeqsSupplierAttachmentSubInput, CreateMeqsSupplierInput, CreateMeqsSupplierItemInput, MeqsSupplier, UpdateMeqsSupplierInput, UpdateMeqsSupplierItemInput } from '~/composables/warehouse/meqs/meqs-supplier';
 import type { CreateMeqsSupplierAttachmentInput } from '~/composables/warehouse/meqs/meqs-supplier-attachment';
 import type { Supplier } from '~/composables/warehouse/supplier/supplier';
+import type { Employee } from '~/composables/system/employee/employee.types';
 
 definePageMeta({
     name: ROUTES.MEQS_UPDATE,
@@ -307,7 +308,7 @@ function populateForm(data: MEQS) {
     console.log('populateForm', data)
 
     data.meqs_approvers.map(i => {
-        i.date_approval = i.date_approval ? formatToValidHtmlDate(i.date_approval) : null
+        i.date_approval = i.date_approval ? formatToValidHtmlDate(i.date_approval, true) : null
         i.approver!['fullname'] = getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname)
         return i
     })
@@ -682,7 +683,7 @@ async function addApprover(
 
         approver!.fullname = getFullname(approver!.firstname, approver!.middlename, approver!.lastname)
 
-        response.data.date_approval = response.data.date_approval ? formatToValidHtmlDate(response.data.date_approval) : null
+        response.data.date_approval = response.data.date_approval ? formatToValidHtmlDate(response.data.date_approval, true) : null
 
         meqsData.value.meqs_approvers.push(response.data)
         modalCloseBtn.click()
@@ -709,7 +710,7 @@ async function editApprover(
 
         const prevApproverItemIndx = meqsData.value.meqs_approvers.findIndex(i => i.id === data.id)
 
-        response.data.date_approval = response.data.date_approval ? formatToValidHtmlDate(response.data.date_approval) : null
+        response.data.date_approval = response.data.date_approval ? formatToValidHtmlDate(response.data.date_approval, true) : null
 
         const a = response.data.approver
 
@@ -793,7 +794,7 @@ async function changeApproverOrder(
         toast.success(response.msg)
 
         meqsData.value.meqs_approvers = response.approvers.map(i => {
-            i.date_approval = i.date_approval ? formatToValidHtmlDate(i.date_approval) : null
+            i.date_approval = i.date_approval ? formatToValidHtmlDate(i.date_approval, true) : null
             i.approver!['fullname'] = getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname)
             return i
         })

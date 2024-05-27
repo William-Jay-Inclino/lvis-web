@@ -169,6 +169,7 @@ import type { RR } from '~/composables/warehouse/rr/rr.types';
 import * as rrApi from '~/composables/warehouse/rr/rr.api'
 import * as rrApproverApi from '~/composables/warehouse/rr/rr-approver.api'
 import * as rrItemApi from '~/composables/warehouse/rr/rr-item.api'
+import type { Employee } from '~/composables/system/employee/employee.types';
 
 definePageMeta({
     name: ROUTES.RR_UPDATE,
@@ -276,7 +277,7 @@ function populateForm(data: RR) {
     rrData.value = data
 
     data.rr_approvers.map(i => {
-        i.date_approval = i.date_approval ? formatToValidHtmlDate(i.date_approval) : null
+        i.date_approval = i.date_approval ? formatToValidHtmlDate(i.date_approval, true) : null
         i.approver!['fullname'] = getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname)
         return i
     })
@@ -397,7 +398,7 @@ async function addApprover(
 
         approver!.fullname = getFullname(approver!.firstname, approver!.middlename, approver!.lastname)
 
-        response.data.date_approval = response.data.date_approval ? formatToValidHtmlDate(response.data.date_approval) : null
+        response.data.date_approval = response.data.date_approval ? formatToValidHtmlDate(response.data.date_approval, true) : null
 
         rrData.value.rr_approvers.push(response.data)
         modalCloseBtn.click()
@@ -424,7 +425,7 @@ async function editApprover(
 
         const prevApproverItemIndx = rrData.value.rr_approvers.findIndex(i => i.id === data.id)
 
-        response.data.date_approval = response.data.date_approval ? formatToValidHtmlDate(response.data.date_approval) : null
+        response.data.date_approval = response.data.date_approval ? formatToValidHtmlDate(response.data.date_approval, true) : null
 
         const a = response.data.approver
 
@@ -508,7 +509,7 @@ async function changeApproverOrder(
         toast.success(response.msg)
 
         rrData.value.rr_approvers = response.approvers.map(i => {
-            i.date_approval = i.date_approval ? formatToValidHtmlDate(i.date_approval) : null
+            i.date_approval = i.date_approval ? formatToValidHtmlDate(i.date_approval, true) : null
             i.approver!['fullname'] = getFullname(i.approver!.firstname, i.approver!.middlename, i.approver!.lastname)
             return i
         })
