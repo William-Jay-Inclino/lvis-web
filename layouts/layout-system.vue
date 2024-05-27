@@ -81,8 +81,8 @@
         <div class="container main-content">
 
             <div class="mt-3">
-                <slot />
-
+                <!-- <slot /> -->
+                <NuxtPage />
             </div>
 
         </div>
@@ -156,7 +156,7 @@
                     </li>
                 </ul>
                 <div class="mt-auto d-grid">
-                    <nuxt-link class="btn btn-outline-danger btn-block" to="/login">Logout</nuxt-link>
+                    <nuxt-link class="btn btn-outline-danger btn-block" to="/">Logout</nuxt-link>
                 </div>
             </div>
         </div>

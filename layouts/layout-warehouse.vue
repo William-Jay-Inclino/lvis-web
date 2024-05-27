@@ -114,8 +114,8 @@
         <div class="container main-content">
 
             <div class="mt-3">
-                <slot />
-
+                <!-- <slot /> -->
+                <NuxtPage />
             </div>
 
         </div>
