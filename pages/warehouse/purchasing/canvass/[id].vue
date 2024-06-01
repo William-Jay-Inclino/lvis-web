@@ -129,6 +129,7 @@ import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.t
 import { useToast } from "vue-toastification";
 import { formatToValidHtmlDate, redirectTo401Page } from '~/utils/helpers'
 import type { Item } from '~/composables/warehouse/item/item.type';
+import type { Employee } from '~/composables/system/employee/employee.types';
 
 definePageMeta({
     name: ROUTES.CANVASS_UPDATE,
@@ -341,6 +342,16 @@ async function editCanvassItem(data: CanvassItem, closeBtnModal: HTMLInputElemen
 }
 
 async function removeCanvassItem(indx: number) {
+
+    if(canvass.value.canvass_items.length <= 1) {
+        Swal.fire({
+            title: 'Unable to remove!',
+            text: 'There should be atleast 1 item',
+            icon: 'warning',
+            position: 'top',
+        })
+        return 
+    }
 
     const item = canvass.value.canvass_items[indx]
 

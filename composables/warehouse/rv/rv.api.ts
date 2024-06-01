@@ -525,13 +525,19 @@ export async function create(input: CreateRvInput): Promise<MutationResponse> {
     }
 
 
-    // set the supervisor as the 1st approver
-    input.approvers.push({
-        approver_id: input.supervisor!.id,
-        approver: input.supervisor,
-        label: APPROVER_SUPERVISOR_LABEL,
-        order: 1
-    })
+    // if supervisor is already in default approvers, should not add as approver to avoid double approvals
+    const isSupervisorInApprovers = input.approvers.find(i => i.approver?.id)
+
+    if(!isSupervisorInApprovers) {
+        // set the supervisor as the 1st approver
+        input.approvers.push({
+            approver_id: input.supervisor!.id,
+            approver: input.supervisor,
+            label: APPROVER_SUPERVISOR_LABEL,
+            order: 1
+        })
+    }
+
 
     const approvers = input.approvers.map(item => {
         return `

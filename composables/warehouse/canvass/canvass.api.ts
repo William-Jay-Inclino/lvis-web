@@ -345,15 +345,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                     middlename
                     lastname
                 }
-                },
-                brands{
-                    id
-                    name
-                }
-                units{
-                    id
-                    name
-                }
+            },
             items(page: 1, pageSize: 10){
                 data {
                     id
@@ -365,6 +357,14 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                         name
                     }
                 }
+            }
+            brands{
+                id
+                name
+            }
+            units{
+                id
+                name
             }
         }
     `;
@@ -394,12 +394,12 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
             employees = response.data.data.employees.data
         }
 
-        if (data.brands) { // temp
+        if (data.brands) { 
             brands = data.brands
         }
 
-        if (data.units && data.units.data) {
-            units = response.data.data.units.data
+        if (data.units) {
+            units = data.units
         }
 
         if (data.items && data.items.data) {

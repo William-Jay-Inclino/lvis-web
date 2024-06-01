@@ -1,3 +1,4 @@
+import type { UserEmployee } from "../user/user.types"
 
 
 export interface Employee {
@@ -18,6 +19,7 @@ export interface Employee {
 
     // set programmatically
     fullname?: string
+    user_employee?: UserEmployee
 }
 
 export interface FindAllResponse {

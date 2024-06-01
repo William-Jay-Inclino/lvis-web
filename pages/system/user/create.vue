@@ -173,6 +173,7 @@ import * as api from '~/composables/system/user/user.api'
 import type { CreateUserInput, User } from '~/composables/system/user/user.types'
 import { permissions } from '~/composables/system/user/user.permissions'
 import Swal from 'sweetalert2'
+import type { Employee } from '~/composables/system/employee/employee.types';
 
 const router = useRouter()
 const isSaving = ref(false)
@@ -196,7 +197,8 @@ const _initialFormData: CreateUserInput = {
     middlename: '',
     lastname: '',
     role: ROLE.USER,
-    permissions: { ...permissions }
+    permissions: JSON.parse(JSON.stringify(permissions)),
+    // permissions: { ...permissions }
 }
 
 const formData = ref({ ..._initialFormData })
@@ -301,7 +303,7 @@ function onChangeEmployee() {
 
 }
 
-function onEmployeeSelected(payload: User) {
+function onEmployeeSelected(payload: Employee) {
     console.log('onEmployeeSelected()', payload)
     if (payload.user_employee) {
         if (currentEmployee) {

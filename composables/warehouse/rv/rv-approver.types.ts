@@ -1,4 +1,5 @@
 import { APPROVAL_STATUS } from "#imports"
+import type { Employee } from "~/composables/system/employee/employee.types"
 
 export interface RvApproverSettings {
   approver_id: string,

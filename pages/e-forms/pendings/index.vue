@@ -92,7 +92,7 @@ import { PENDING_APPROVAL_TYPE, PENDING_TRANSACTION, type PendingApproval } from
 import * as pendingsApi from '~/composables/e-forms/pendings/pendings.api'
 import Swal from 'sweetalert2'
 import { useToast } from "vue-toastification";
-import { APPROVAL_STATUS } from '#imports';
+import { APPROVAL_STATUS, type AuthUser } from '#imports';
 import type { Account } from '~/composables/system/account/account';
 import type { Classification } from '~/composables/system/classification/classification';
 
@@ -145,6 +145,7 @@ onMounted(async () => {
             pendings.value = response.pendings
         }
 
+        updateTotalPendingsOfUser(authUser.value, pendings.value.length)
 
         isLoadingPage.value = false
 
@@ -164,6 +165,13 @@ const isFinanceManager = computed(() => {
     if (!authUser.value.user.user_employee) return
     return !!authUser.value.user.user_employee.employee.is_finance_manager
 })
+
+function updateTotalPendingsOfUser(authUser: AuthUser, totalPendings: number) {
+    console.log('updateTotalPendingsOfUser()', authUser, totalPendings)
+    authUser.user.user_employee!.employee.total_pending_approvals = totalPendings
+    const updatedAuthUser = JSON.stringify(authUser)
+    localStorage.setItem('authUser', updatedAuthUser);
+}
 
 function isDefaultApproval(pending: PendingApproval) {
 
@@ -280,6 +288,8 @@ async function onApproveBudgetOfficer(payload: {
 
         pendings.value.splice(indx, 1)
 
+        updateTotalPendingsOfUser(authUser.value!, pendings.value.length)
+
     } else {
         Swal.fire({
             title: 'Error!',
@@ -345,6 +355,8 @@ async function onDisapproveBudgetOfficer(payload: {
 
         pendings.value.splice(indx, 1)
 
+        updateTotalPendingsOfUser(authUser.value!, pendings.value.length)
+
     } else {
         Swal.fire({
             title: 'Error!',
@@ -397,6 +409,8 @@ async function onApproveFinanceManager(payload: {
 
         pendings.value.splice(indx, 1)
 
+        updateTotalPendingsOfUser(authUser.value!, pendings.value.length)
+
     } else {
         Swal.fire({
             title: 'Error!',
@@ -448,6 +462,9 @@ async function onDisapproveFinanceManager(payload: {
         });
 
         pendings.value.splice(indx, 1)
+
+        updateTotalPendingsOfUser(authUser.value!, pendings.value.length)
+
 
     } else {
         Swal.fire({
@@ -575,6 +592,8 @@ async function executeTransaction(type: PENDING_APPROVAL_TYPE, indx: number, pay
         });
 
         pendings.value.splice(indx, 1)
+
+        updateTotalPendingsOfUser(authUser.value!, pendings.value.length)
 
     } else {
 
