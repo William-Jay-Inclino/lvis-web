@@ -211,7 +211,7 @@
                                             <tbody>
                                                 <tr v-for="i, count in item.canvass_items">
                                                     <td> {{ count + 1 }} </td>
-                                                    <td> {{ i.description }} </td>
+                                                    <td> {{ i.item ? `${ i.item.code } - ${ i.description }` : i.description }} </td>
                                                     <td> {{ i.item ? 'Stock' : 'Non-Stock' }} </td>
                                                     <td> {{ i.brand ? i.brand.name : 'N/A' }} </td>
                                                     <td> {{ i.unit ? i.unit.name : 'N/A' }} </td>
@@ -221,47 +221,6 @@
                                         </table>
                                     </div>
                                 </div>
-        
-                                <!-- <div v-else>
-        
-                                    <div class="h5wrapper mb-3">
-                                        <hr class="result">
-                                        <h5 class="text-warning fst-italic">
-                                            <i class="fas fa-shopping-cart"></i> Canvass Items
-                                        </h5>
-                                        <hr class="result">
-                                    </div>
-        
-                                    <div v-for="i, count in item.canvass_items" class="table-responsive">
-        
-                                        <table class="table table-hover table-bordered">
-                                            <tbody>
-                                                <tr>
-                                                    <td class="bg-secondary text-white"> No. </td>
-                                                    <td class="bg-secondary text-white"> {{ count + 1 }} </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="text-muted"> Description </td>
-                                                    <td> {{ i.description }} </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="text-muted"> Brand </td>
-                                                    <td> {{ i.brand ? i.brand.name : 'N/A' }} </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="text-muted"> Unit </td>
-                                                    <td> {{ i.unit ? i.unit.name : 'N/A' }} </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="text-muted"> Quantity </td>
-                                                    <td> {{ i.description }} </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-        
-                                    </div>
-        
-                                </div> -->
         
                             </div>
                         </div>

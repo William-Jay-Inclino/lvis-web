@@ -312,7 +312,7 @@
                                                     <div class="input-group input-group-sm">
                                                         {{ i + 1 }}.
                                                         <textarea class="form-control ms-2" rows="3"
-                                                            :value="rrItem.meqs_supplier_item.canvass_item.description"
+                                                            :value="rrItem.meqs_supplier_item.canvass_item.item ? rrItem.meqs_supplier_item.canvass_item.item.code + ' - ' + rrItem.meqs_supplier_item.canvass_item.description : rrItem.meqs_supplier_item.canvass_item.description"
                                                             disabled></textarea>
                                                     </div>
                                                 </td>
