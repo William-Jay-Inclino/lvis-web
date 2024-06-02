@@ -70,15 +70,15 @@
                                     <div class="col-6">
                                         <div class="form-check form-switch">
                                             <input v-model="showGrossPrice" class="form-check-input" type="checkbox">
-                                            <label class="form-check-label">Gross Price</label>
+                                            <label class="form-check-label">Unit Price</label>
                                         </div>
                                     </div>
-                                    <div class="col-6">
+                                    <!-- <div class="col-6">
                                         <div class="form-check form-switch">
                                             <input v-model="showNetPrice" class="form-check-input" type="checkbox">
                                             <label class="form-check-label">Net Price</label>
                                         </div>
-                                    </div>
+                                    </div> -->
                                     <div class="col-6">
                                         <div class="form-check form-switch">
                                             <input v-model="showGrossTotal" class="form-check-input" type="checkbox">
@@ -121,9 +121,9 @@
                                     Qty Accepted <span class="text-danger"> * </span>
                                 </th>
                                 <th v-show="showVat" class="bg-secondary text-white">VAT</th>
-                                <th v-show="showGrossPrice" class="bg-secondary text-white">Gross Price</th>
+                                <th v-show="showGrossPrice" class="bg-secondary text-white">Unit Price</th>
                                 <th v-show="showNetPrice" class="bg-secondary text-white">Net Price</th>
-                                <th v-show="showGrossTotal" class="bg-secondary text-white">Gross Total</th>
+                                <th v-show="showGrossTotal" class="bg-secondary text-white">Total Price</th>
                                 <th v-show="showVatTotal" class="bg-secondary text-white">VAT Total</th>
                                 <th v-show="showNetTotal" class="bg-secondary text-white">Net Total</th>
                             </tr>
@@ -252,7 +252,7 @@ const showDelivered = ref(true)
 const showAccepted = ref(true)
 const showVat = ref(true)
 const showGrossPrice = ref(true)
-const showNetPrice = ref(true)
+const showNetPrice = ref(false)
 const showGrossTotal = ref(true)
 const showVatTotal = ref(true)
 const showNetTotal = ref(true)

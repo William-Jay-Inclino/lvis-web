@@ -133,7 +133,7 @@
                             <table class="table table-hover table-bordered table-striped">
                                 <tbody>
                                     <tr>
-                                        <td class="fst-italic"> Summary (Gross Total) </td>
+                                        <td class="fst-italic"> Summary (Total Price) </td>
                                         <td class="fw-bold">
                                             {{ formatToPhpCurrency(grossTotalSummary) }}
                                         </td>
@@ -204,6 +204,7 @@ import Swal from 'sweetalert2'
 import { useToast } from "vue-toastification";
 import { getNetPrice } from '~/utils/helpers';
 import type { Item } from '~/composables/warehouse/item/item.type';
+import type { Employee } from '~/composables/system/employee/employee.types';
 
 definePageMeta({
     name: ROUTES.RR_CREATE,
@@ -294,7 +295,7 @@ const grossTotalSummary = computed(() => {
 
 })
 
-const totalPriceSummary = computed(() => grossTotalSummary.value - rrData.value.delivery_charge)
+const totalPriceSummary = computed(() => grossTotalSummary.value + rrData.value.delivery_charge)
 
 watch(poId, () => {
 
@@ -423,7 +424,10 @@ function isValidStep2(): boolean {
 
         item.isInvalidQtyAccepted = false
 
-        if (!item.quantity_accepted || item.quantity_accepted < 0) {
+        console.log('item.quantity_accepted', item.quantity_accepted);
+        console.log('item.meqs_supplier_item.canvass_item.quantity', item.meqs_supplier_item.canvass_item.quantity);
+
+        if (!item.quantity_accepted || item.quantity_accepted < 0 || (item.quantity_accepted > item.meqs_supplier_item.canvass_item.quantity)) {
             item.isInvalidQtyAccepted = true
             isValid = false
         }

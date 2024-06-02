@@ -109,6 +109,35 @@
                     </div>
         
                 </div>
+
+                <hr v-show="form === FORM_TYPE.ITEM">
+        
+                <div v-show="form === FORM_TYPE.ITEM" class="row justify-content-end">
+                    <div class="col-4">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered table-striped">
+                                <tbody>
+                                    <tr>
+                                        <td class="fst-italic"> Summary (Total Price) </td>
+                                        <td class="fw-bold">
+                                            {{ formatToPhpCurrency(grossTotalSummary) }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fst-italic"> Delivery Charge </td>
+                                        <td class="fw-bold"> {{ formatToPhpCurrency(rrData.delivery_charge) }} </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fst-italic"> Total </td>
+                                        <td class="fw-bold">
+                                            {{ formatToPhpCurrency(totalPriceSummary) }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
         
                 <div v-show="form === FORM_TYPE.APPROVER" class="row justify-content-center pt-5">
         
@@ -265,6 +294,21 @@ const rrStatus = computed(() => {
 
 })
 
+const grossTotalSummary = computed(() => {
+
+    let ctr = 0
+
+    for (let item of rrData.value.rr_items) {
+        ctr += item.meqs_supplier_item.price * item.quantity_accepted
+    }
+
+    return ctr
+
+})
+
+
+const totalPriceSummary = computed(() => grossTotalSummary.value + rrData.value.delivery_charge)
+
 
 // ======================== FUNCTIONS ========================  
 function populateForm(data: RR) {
@@ -308,25 +352,6 @@ async function updateRrInfo() {
 
 }
 
-// async function cancelRr() {
-//     const response = await rrApi.cancel(rrData.value.id)
-
-//     if (response.success) {
-//         toast.success(response.msg)
-//         rrData.value.cancelled_at = response.cancelled_at!
-
-//         router.push('/warehouse/purchasing/rr')
-
-//     } else {
-//         Swal.fire({
-//             title: 'Error!',
-//             text: response.msg,
-//             icon: 'error',
-//             position: 'top',
-//         })
-//     }
-// }
-
 
 // ======================== CHILD EVENTS: <WarehouseRRItems> ========================  
 
@@ -341,7 +366,7 @@ async function updateRrItems() {
 
         item.isInvalidQtyAccepted = false
 
-        if (!item.quantity_accepted || item.quantity_accepted < 0) {
+        if (!item.quantity_accepted || item.quantity_accepted < 0 || (item.quantity_accepted > item.meqs_supplier_item.canvass_item.quantity)) {
             item.isInvalidQtyAccepted = true
             hasError = true
 
@@ -525,32 +550,5 @@ async function changeApproverOrder(
     }
 }
 
-
-
-
-// ======================== UTILS ========================  
-
-// async function onCancelRr() {
-//     Swal.fire({
-//         title: "Are you sure?",
-//         text: `This RR will be cancelled!`,
-//         position: "top",
-//         icon: "warning",
-//         showCancelButton: true,
-//         confirmButtonColor: "#e74a3b",
-//         cancelButtonColor: "#6c757d",
-//         confirmButtonText: "Yes, cancel it!",
-//         reverseButtons: true,
-//         showLoaderOnConfirm: true,
-//         preConfirm: async (remove) => {
-
-//             if (remove) {
-//                 await cancelRr()
-//             }
-
-//         },
-//         allowOutsideClick: () => !Swal.isLoading()
-//     })
-// }
 
 </script>
