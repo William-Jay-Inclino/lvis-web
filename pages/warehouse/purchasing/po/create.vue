@@ -284,11 +284,17 @@ onMounted(async () => {
 })
 
 
+// filter supplier that has awarded items only 
+
 const suppliers = computed(() => {
 
     if (!selectedMeqs.value) return []
 
-    return selectedMeqs.value.meqs_suppliers.map(i => ({ ...i, label: i.supplier?.name }))
+    const supplierThatHasAwardedItems = selectedMeqs.value.meqs_suppliers.filter(i => i.meqs_supplier_items.some(j => j.is_awarded))
+
+    return supplierThatHasAwardedItems.map(i => ({ ...i, label: i.supplier?.name }))
+
+    // return selectedMeqs.value.meqs_suppliers.map(i => ({ ...i, label: i.supplier?.name }))
 
 })
 
