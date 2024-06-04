@@ -118,11 +118,12 @@
                                         <input type="text" class="form-control" :value="formData.supplier?.name"
                                             disabled>
                                     </div>
+                                    <small class="fst-italic text-muted" v-if="formData.supplier"> {{ formData.supplier.is_vat_registered ? 'VAT Registered' : 'Non-VAT Registered' }} </small>
                                 </div>
-                                <div class="mb-3">
+                                <!-- <div class="mb-3">
                                     <label class="form-label"> Vat </label>
                                     <input type="text" class="form-control" :value="vat" disabled>
-                                </div>
+                                </div> -->
                                 <div class="mb-3">
                                     <label class="form-label">
                                         Payment Terms <span class="text-danger">*</span>
@@ -140,7 +141,7 @@
                             <hr class="result">
                         </div>
 
-                        <div class="row" v-show="formData.supplier">
+                        <div class="row" v-if="formData.supplier">
                             <div class="col">
 
                                 <div class="alert alert-info" role="alert">
@@ -176,9 +177,9 @@
                                                         disabled>
                                                 </td>
                                                 <td class="text-muted">
-                                                    <select class="form-select" v-model="item.vat">
+                                                    <select class="form-select" v-model="item.vat" :disabled="!formData.supplier.is_vat_registered">
                                                         <option :value="item" :key="item.value"
-                                                            v-for="item in vatArray">
+                                                            v-for="item in vatTypes">
                                                             {{ item.label }}
                                                         </option>
                                                     </select>
@@ -334,20 +335,24 @@ const props = defineProps({
 const config = useRuntimeConfig()
 const API_FILE_ENDPOINT = config.public.apiUrl + '/api/v1/file-upload'
 
-const vatArray = ref([
-    {
-        value: VAT_TYPE.NONE,
-        label: VAT[VAT_TYPE.NONE].label
-    },
-    {
-        value: VAT_TYPE.INC,
-        label: VAT[VAT_TYPE.INC].label
-    },
-    {
-        value: VAT_TYPE.EXC,
-        label: VAT[VAT_TYPE.EXC].label
-    }
-])
+// const vatArray = ref([
+//     {
+//         value: VAT_TYPE.NONE,
+//         label: VAT[VAT_TYPE.NONE].label
+//     },
+//     {
+//         value: VAT_TYPE.INC,
+//         label: VAT[VAT_TYPE.INC].label
+//     },
+//     {
+//         value: VAT_TYPE.EXC,
+//         label: VAT[VAT_TYPE.EXC].label
+//     },
+//     {
+//         value: VAT_TYPE.EXEMPT,
+//         label: VAT[VAT_TYPE.EXEMPT].label
+//     }
+// ])
 
 const formIsAdd = ref(true)
 const editingIndx = ref()
@@ -381,6 +386,32 @@ const formAttachment = ref({
 
 const filepond = ref()
 
+
+const vatTypes = computed( () => {
+
+    if(!formData.value.supplier) return []
+
+    if(!formData.value.supplier.is_vat_registered) {
+        return [{ value: VAT_TYPE.NONE, label: VAT[VAT_TYPE.NONE].label }]
+    }
+
+    return [
+        {
+            value: VAT_TYPE.INC,
+            label: VAT[VAT_TYPE.INC].label
+        },
+        {
+            value: VAT_TYPE.EXC,
+            label: VAT[VAT_TYPE.EXC].label
+        },
+        {
+            value: VAT_TYPE.EXEMPT,
+            label: VAT[VAT_TYPE.EXEMPT].label
+        }
+    ]
+
+})
+
 const meqs_supplier_items = computed((): MeqsSupplierItem[] => {
 
     const clonedCanvassItems = props.canvass_items.map(i => ({ ...i }))
@@ -391,12 +422,9 @@ const meqs_supplier_items = computed((): MeqsSupplierItem[] => {
         value: VAT_TYPE.NONE,
         label: VAT[VAT_TYPE.NONE].label
     }
-    if (formData.value.supplier) {
-        vat.value = formData.value.supplier.vat_type
-        vat.label = VAT[formData.value.supplier.vat_type].label
-    }
 
     for (let item of clonedCanvassItems) {
+
         items.push({
             id: '',
             canvass_item: item,
@@ -429,13 +457,13 @@ const canAddSupplier = computed(() => {
 
 })
 
-const vat = computed(() => {
+// const vat = computed(() => {
 
-    if (!formData.value.supplier) return ''
+//     if (!formData.value.supplier) return ''
 
-    return VAT[formData.value.supplier.vat_type].label
+//     return VAT[formData.value.supplier.vat_type].label
 
-})
+// })
 
 const maxFileLimit = computed(() => props.canvass_items.length)
 
@@ -495,7 +523,7 @@ function onClickEdit(indx: number) {
 
 function onClickAdd() {
     formIsAdd.value = true
-    formData.value.meqs_supplier_items = meqs_supplier_items.value
+    formData.value.meqs_supplier_items = meqs_supplier_items.value.map(i => ({ ...i }))
 }
 
 function onCloseModal() {
@@ -543,10 +571,15 @@ function onChangeSupplier() {
 
     const supplier = formData.value.supplier
 
+    if(!supplier) return 
+
+    let vatType = supplier.is_vat_registered ? VAT_TYPE.INC : VAT_TYPE.NONE
+
     for (let item of formData.value.meqs_supplier_items) {
+        item.vat_type = vatType
         item.vat = {
-            value: supplier!.vat_type,
-            label: VAT[supplier!.vat_type].label
+            value: vatType,
+            label: VAT[vatType].label
         }
     }
 

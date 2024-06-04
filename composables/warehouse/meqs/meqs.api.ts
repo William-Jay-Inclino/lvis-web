@@ -627,7 +627,7 @@ export async function fetchFormDataInCreate(): Promise<{
             suppliers{
                 id 
                 name
-                vat_type
+                is_vat_registered
             },
             meqsApproverSettings{
                 approver_id
@@ -825,7 +825,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                     supplier {
                         id 
                         name 
-                        vat_type
+                        is_vat_registered
                     }
                     attachments {
                         id 
@@ -871,7 +871,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
             suppliers{
                 id 
                 name
-                vat_type
+                is_vat_registered
             }
         }
     `;

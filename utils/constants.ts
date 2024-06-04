@@ -52,7 +52,7 @@ export const departmentStatus = {
 export const VAT = {
     [VAT_TYPE.NONE]: {
         value: VAT_TYPE.NONE,
-        label: 'None'
+        label: 'Non-VAT'
     },
     [VAT_TYPE.INC]: {
         value: VAT_TYPE.INC,
@@ -61,6 +61,10 @@ export const VAT = {
     [VAT_TYPE.EXC]: {
         value: VAT_TYPE.EXC,
         label: 'EXC'
+    },
+    [VAT_TYPE.EXEMPT]: {
+        value: VAT_TYPE.EXC,
+        label: 'VAT-Exempt'
     }
 }
 
