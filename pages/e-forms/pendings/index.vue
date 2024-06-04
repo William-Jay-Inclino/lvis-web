@@ -41,8 +41,11 @@
                                                 data-bs-target="#pendingModal">
                                                 <i class="fas fa-check-circle text-success"></i>
                                             </button>
-                                            <button @click="onClickDisapprove(i)" class="btn btn-light w-50"
+                                            <!-- <button @click="onClickDisapprove(i)" class="btn btn-light w-50"
                                                 data-bs-toggle="modal" data-bs-target="#pendingModal">
+                                                <i class="fas fa-times-circle text-danger"></i>
+                                            </button> -->
+                                            <button @click="onDefaultDisapprove(i)" class="btn btn-light w-50">
                                                 <i class="fas fa-times-circle text-danger"></i>
                                             </button>
                                         </td>
