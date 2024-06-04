@@ -1,7 +1,8 @@
 <template>
     <div>
 
-        <div v-if="!isMobile">
+        <div>
+        <!-- <div v-if="!isMobile"> -->
             
             <div class="table-responsive">
                 <table class="table table-hover">
@@ -33,7 +34,7 @@
                                     {{ approvalStatus[item.status].label }} 
                                 </div>
                                 <div class="fst-italic" v-if="item.date_approval">
-                                    <small> {{ formatDate(item.date_approval) }} </small>
+                                    <small> {{ formatDate(item.date_approval, true) }} </small>
                                 </div>
                             </td>
                             <td class="text-muted align-middle">
@@ -69,7 +70,7 @@
 
         </div>
 
-        <div v-else>
+        <!-- <div v-else>
 
             <div class="row">
                 <div class="col-sm-12">
@@ -99,7 +100,7 @@
                                             {{ approvalStatus[item.status].label }} 
                                         </div>
                                         <div class="fst-italic" v-if="item.date_approval">
-                                            <small> {{ formatDate(item.date_approval) }} </small>
+                                            <small> {{ formatDate(item.date_approval, true) }} </small>
                                         </div>
                                     </td>
                                 </tr>
@@ -143,7 +144,7 @@
 
             <hr>
 
-        </div>
+        </div> -->
 
         <!-- Change approver order modal-->
         <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="changeApproverOrderModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

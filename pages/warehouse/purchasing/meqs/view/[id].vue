@@ -135,7 +135,7 @@
                                                     {{ approvalStatus[i.status].label }}
                                                 </div>
                                                 <div class="fst-italic" v-if="i.date_approval">
-                                                    <small> {{ formatDate(i.date_approval) }} </small>
+                                                    <small> {{ formatDate(i.date_approval, true) }} </small>
                                                 </div>
                                             </td>
                                             <td>

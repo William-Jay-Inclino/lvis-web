@@ -82,19 +82,19 @@
                                     <div class="col-6">
                                         <div class="form-check form-switch">
                                             <input v-model="showGrossTotal" class="form-check-input" type="checkbox">
-                                            <label class="form-check-label">Gross Total</label>
+                                            <label class="form-check-label">Amount</label>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-check form-switch">
                                             <input v-model="showVatTotal" class="form-check-input" type="checkbox">
-                                            <label class="form-check-label">VAT Total</label>
+                                            <label class="form-check-label">VAT Amount</label>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-check form-switch">
                                             <input v-model="showNetTotal" class="form-check-input" type="checkbox">
-                                            <label class="form-check-label">Net Total</label>
+                                            <label class="form-check-label">Net Amount</label>
                                         </div>
                                     </div>
                                 </div>
@@ -122,10 +122,10 @@
                                 </th>
                                 <th v-show="showVat" class="bg-secondary text-white">VAT</th>
                                 <th v-show="showGrossPrice" class="bg-secondary text-white">Unit Price</th>
-                                <th v-show="showNetPrice" class="bg-secondary text-white">Net Price</th>
-                                <th v-show="showGrossTotal" class="bg-secondary text-white">Total Price</th>
-                                <th v-show="showVatTotal" class="bg-secondary text-white">VAT Total</th>
-                                <th v-show="showNetTotal" class="bg-secondary text-white">Net Total</th>
+                                <!-- <th v-show="showNetPrice" class="bg-secondary text-white">Net Price</th> -->
+                                <th v-show="showGrossTotal" class="bg-secondary text-white">Total Amount</th>
+                                <th v-show="showVatTotal" class="bg-secondary text-white">VAT Amount</th>
+                                <th v-show="showNetTotal" class="bg-secondary text-white">Net Amount</th>
                             </tr>
                         </thead>
                         <tbody>

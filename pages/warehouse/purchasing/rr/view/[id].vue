@@ -149,7 +149,7 @@
                                                 {{ approvalStatus[i.status].label }}
                                             </div>
                                             <div class="fst-italic" v-if="i.date_approval">
-                                                <small> {{ formatDate(i.date_approval) }} </small>
+                                                <small> {{ formatDate(i.date_approval, true) }} </small>
                                             </div>
                                         </td>
                                         <td>
@@ -226,14 +226,14 @@
                                                         <div class="form-check form-switch">
                                                             <input v-model="showDelivered" class="form-check-input"
                                                                 type="checkbox">
-                                                            <label class="form-check-label">Delivered</label>
+                                                            <label class="form-check-label">Qty Request</label>
                                                         </div>
                                                     </div>
                                                     <div class="col-6">
                                                         <div class="form-check form-switch">
                                                             <input v-model="showAccepted" class="form-check-input"
                                                                 type="checkbox">
-                                                            <label class="form-check-label">Accepted</label>
+                                                            <label class="form-check-label">Qty Accepted</label>
                                                         </div>
                                                     </div>
                                                     <div class="col-6">
@@ -246,35 +246,35 @@
                                                         <div class="form-check form-switch">
                                                             <input v-model="showGrossPrice" class="form-check-input"
                                                                 type="checkbox">
-                                                            <label class="form-check-label">Gross Price</label>
+                                                            <label class="form-check-label">Unit Price</label>
                                                         </div>
                                                     </div>
-                                                    <div class="col-6">
+                                                    <!-- <div class="col-6">
                                                         <div class="form-check form-switch">
                                                             <input v-model="showNetPrice" class="form-check-input"
                                                                 type="checkbox">
                                                             <label class="form-check-label">Net Price</label>
                                                         </div>
-                                                    </div>
+                                                    </div> -->
                                                     <div class="col-6">
                                                         <div class="form-check form-switch">
                                                             <input v-model="showGrossTotal" class="form-check-input"
                                                                 type="checkbox">
-                                                            <label class="form-check-label">Gross Total</label>
+                                                            <label class="form-check-label">Total Amount</label>
                                                         </div>
                                                     </div>
                                                     <div class="col-6">
                                                         <div class="form-check form-switch">
                                                             <input v-model="showVatTotal" class="form-check-input"
                                                                 type="checkbox">
-                                                            <label class="form-check-label">VAT Total</label>
+                                                            <label class="form-check-label">VAT Amount</label>
                                                         </div>
                                                     </div>
                                                     <div class="col-6">
                                                         <div class="form-check form-switch">
                                                             <input v-model="showNetTotal" class="form-check-input"
                                                                 type="checkbox">
-                                                            <label class="form-check-label">Net Total</label>
+                                                            <label class="form-check-label">Net Amount</label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -299,11 +299,11 @@
                                                 <th v-show="showDelivered" class="bg-secondary text-white">Qty Request</th>
                                                 <th v-show="showAccepted" class="bg-secondary text-white">Qty Accepted</th>
                                                 <th v-show="showVat" class="bg-secondary text-white">VAT</th>
-                                                <th v-show="showGrossPrice" class="bg-secondary text-white">Gross Price</th>
-                                                <th v-show="showNetPrice" class="bg-secondary text-white">Net Price</th>
-                                                <th v-show="showGrossTotal" class="bg-secondary text-white">Gross Total</th>
-                                                <th v-show="showVatTotal" class="bg-secondary text-white">VAT Total</th>
-                                                <th v-show="showNetTotal" class="bg-secondary text-white">Net Total</th>
+                                                <th v-show="showGrossPrice" class="bg-secondary text-white">Unit Price</th>
+                                                <th v-show="showGrossTotal" class="bg-secondary text-white">Total Amount</th>
+                                                <th v-show="showVatTotal" class="bg-secondary text-white">VAT Amount</th>
+                                                <!-- <th v-show="showNetPrice" class="bg-secondary text-white">Net Amount</th> -->
+                                                <th v-show="showNetTotal" class="bg-secondary text-white">Net Amount</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -350,7 +350,17 @@
                                                 <td v-show="showGrossPrice" class="text-muted text-center align-middle">
                                                     {{ formatToPhpCurrency(rrItem.meqs_supplier_item.price) }}
                                                 </td>
-                                                <td v-show="showNetPrice" class="text-muted text-center align-middle">
+                                                <td v-show="showGrossTotal" class="text-muted text-center align-middle">
+                                                    {{
+                                                        formatToPhpCurrency(
+                                                        getGrossTotal({
+                                                        price: rrItem.meqs_supplier_item.price,
+                                                        quantity: rrItem.quantity_accepted
+                                                        })
+                                                        )
+                                                    }}
+                                                </td>
+                                                <!-- <td v-show="showNetPrice" class="text-muted text-center align-middle">
                                                     {{
                 formatToPhpCurrency(
                     getNetPrice({
@@ -360,17 +370,7 @@
                     })
                 )
             }}
-                                                </td>
-                                                <td v-show="showGrossTotal" class="text-muted text-center align-middle">
-                                                    {{
-                formatToPhpCurrency(
-                    getGrossTotal({
-                        price: rrItem.meqs_supplier_item.price,
-                        quantity: rrItem.quantity_accepted
-                    })
-                )
-            }}
-                                                </td>
+                                                </td> -->
                                                 <td v-show="showVatTotal" class="text-muted text-center align-middle">
                                                     {{
                 formatToPhpCurrency(

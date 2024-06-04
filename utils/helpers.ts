@@ -17,7 +17,7 @@ export function convertMiddleNameToInitial(middleName: string) {
     }
 }
 
-export function formatDate(d: any) {
+export function formatDate(d: any, withTime: boolean = false) {
 
     console.log('d', d)
 
@@ -30,8 +30,7 @@ export function formatDate(d: any) {
         date = Number(d) < 10000000000 ? Number(d) * 1000 : Number(d);
     }
 
-    // return moment(date).format('YYYY-MM-DD');
-    return moment(date).format('DD MMM YYYY');
+    return withTime ? moment(date).format('DD MMM YYYY, h:mm A') : moment(date).format('DD MMM YYYY');
 }
 
 // export function formatToValidHtmlDate(d: any): string {
