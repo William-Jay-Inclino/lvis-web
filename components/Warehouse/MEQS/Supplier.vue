@@ -176,7 +176,7 @@
                                                         disabled>
                                                 </td>
                                                 <td class="text-muted">
-                                                    <select class="form-select" v-model="item.vat" disabled>
+                                                    <select class="form-select" v-model="item.vat">
                                                         <option :value="item" :key="item.value"
                                                             v-for="item in vatArray">
                                                             {{ item.label }}

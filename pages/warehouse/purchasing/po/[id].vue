@@ -263,26 +263,6 @@ async function updatePoInfo() {
 
 }
 
-// async function cancelPo() {
-//     const response = await poApi.cancel(poData.value.id)
-
-//     if (response.success) {
-//         toast.success(response.msg)
-//         poData.value.cancelled_at = response.cancelled_at!
-
-//         router.push('/warehouse/purchasing/po')
-
-//     } else {
-//         Swal.fire({
-//             title: 'Error!',
-//             text: response.msg,
-//             icon: 'error',
-//             position: 'top',
-//         })
-//     }
-// }
-
-
 
 
 // ======================== CHILD EVENTS: <WarehouseApprover> ========================  
@@ -432,31 +412,5 @@ async function changeApproverOrder(
 }
 
 
-
-
-// ======================== UTILS ========================  
-
-// async function onCancelPo() {
-//     Swal.fire({
-//         title: "Are you sure?",
-//         text: `This PO will be cancelled!`,
-//         position: "top",
-//         icon: "warning",
-//         showCancelButton: true,
-//         confirmButtonColor: "#e74a3b",
-//         cancelButtonColor: "#6c757d",
-//         confirmButtonText: "Yes, cancel it!",
-//         reverseButtons: true,
-//         showLoaderOnConfirm: true,
-//         preConfirm: async (remove) => {
-
-//             if (remove) {
-//                 await cancelPo()
-//             }
-
-//         },
-//         allowOutsideClick: () => !Swal.isLoading()
-//     })
-// }
 
 </script>

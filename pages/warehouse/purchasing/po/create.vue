@@ -152,9 +152,10 @@
                                         <th class="bg-secondary text-white">Unit</th>
                                         <th class="bg-secondary text-white">Qty</th>
                                         <th class="bg-secondary text-white">VAT</th>
-                                        <th class="bg-secondary text-white">Price/Unit</th>
-                                        <th class="bg-secondary text-white">Vat/Unit</th>
-                                        <th class="bg-secondary text-white">Total</th>
+                                        <th class="bg-secondary text-white">Unit Price</th>
+                                        <th class="bg-secondary text-white">Total Amount</th>
+                                        <th class="bg-secondary text-white">Vat Amount</th>
+                                        <th class="bg-secondary text-white">Net Amount</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -169,11 +170,13 @@
                                         <td class="text-muted"> {{ item.canvass_item.quantity }} </td>
                                         <td class="text-muted"> {{ VAT[item.vat_type].label }} </td>
                                         <td class="text-muted"> {{ formatToPhpCurrency(item.price) }} </td>
-                                        <td class="text-muted"> {{ formatToPhpCurrency(getVatAmount(item.price, item.vat_type))
+                                        <td class="text-muted"> {{ formatToPhpCurrency(item.price * item.canvass_item.quantity) }} </td>
+                                        <td class="text-muted"> {{ formatToPhpCurrency(getVatAmount(item.price * item.canvass_item.quantity, item.vat_type))
                                             }} </td>
                                         <td class="text-muted">
                                             {{
                 formatToPhpCurrency(getTotalNetPrice({
+                    vatType: item.vat_type,
                     pricePerUnit: item.price,
                     vatPerUnit: getVatAmount(item.price, item.vat_type),
                                             quantity: item.canvass_item.quantity
@@ -327,6 +330,7 @@ const totalPriceOfAllItems = computed(() => {
     for (let item of supplierItems.value) {
 
         const totalPriceOfItem = getTotalNetPrice({
+            vatType: item.vat_type,
             pricePerUnit: item.price,
             vatPerUnit: getVatAmount(item.price, item.vat_type),
             quantity: item.canvass_item.quantity
