@@ -151,11 +151,11 @@
                                         <th class="bg-secondary text-white">Brand</th>
                                         <th class="bg-secondary text-white">Unit</th>
                                         <th class="bg-secondary text-white">Qty</th>
+                                        <th class="bg-secondary text-white">VAT Type</th>
+                                        <th class="bg-secondary text-white">Unit Cost</th>
+                                        <th class="bg-secondary text-white">Vatable Amount</th>
                                         <th class="bg-secondary text-white">VAT</th>
-                                        <th class="bg-secondary text-white">Unit Price</th>
-                                        <th class="bg-secondary text-white">Total Amount</th>
-                                        <th class="bg-secondary text-white">Vat Amount</th>
-                                        <th class="bg-secondary text-white">Net Amount</th>
+                                        <th class="bg-secondary text-white">Total Cost</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -170,9 +170,6 @@
                                         <td class="text-muted"> {{ item.canvass_item.quantity }} </td>
                                         <td class="text-muted"> {{ VAT[item.vat_type].label }} </td>
                                         <td class="text-muted"> {{ formatToPhpCurrency(item.price) }} </td>
-                                        <td class="text-muted"> {{ formatToPhpCurrency(item.price * item.canvass_item.quantity) }} </td>
-                                        <td class="text-muted"> {{ formatToPhpCurrency(getVatAmount(item.price * item.canvass_item.quantity, item.vat_type))
-                                            }} </td>
                                         <td class="text-muted">
                                             {{
                 formatToPhpCurrency(getTotalNetPrice({
@@ -183,6 +180,9 @@
                                             }))
                                             }}
                                         </td>
+                                        <td class="text-muted"> {{ formatToPhpCurrency(getVatAmount(item.price * item.canvass_item.quantity, item.vat_type))
+                                            }} </td>
+                                        <td class="text-muted"> {{ formatToPhpCurrency(item.price * item.canvass_item.quantity) }} </td>
                                     </tr>
                                     <tr>
                                         <td colspan="8" class="text-end fw-bold">

@@ -330,10 +330,11 @@ function populateRrItems(items: MeqsSupplierItem[]) {
         if (!item.is_awarded) continue
 
         const vatAmount = getVatAmount(item.price, item.vat_type)
-        const netPrice = getNetPrice({
-            grossPrice: item.price,
-            vatAmount
-        })
+        // const netPrice = getNetPrice({
+        //     vatType: item.vat_type,
+        //     grossPrice: item.price,
+        //     vatAmount
+        // })
 
         const rrItem: RrItem = {
             id: '',

@@ -239,14 +239,14 @@
                                                     <div class="col-6">
                                                         <div class="form-check form-switch">
                                                             <input v-model="showVat" class="form-check-input" type="checkbox">
-                                                            <label class="form-check-label">VAT</label>
+                                                            <label class="form-check-label">VAT Type</label>
                                                         </div>
                                                     </div>
                                                     <div class="col-6">
                                                         <div class="form-check form-switch">
                                                             <input v-model="showGrossPrice" class="form-check-input"
                                                                 type="checkbox">
-                                                            <label class="form-check-label">Unit Price</label>
+                                                            <label class="form-check-label">Unit Cost</label>
                                                         </div>
                                                     </div>
                                                     <!-- <div class="col-6">
@@ -260,21 +260,21 @@
                                                         <div class="form-check form-switch">
                                                             <input v-model="showGrossTotal" class="form-check-input"
                                                                 type="checkbox">
-                                                            <label class="form-check-label">Total Amount</label>
+                                                            <label class="form-check-label">Total Cost</label>
                                                         </div>
                                                     </div>
                                                     <div class="col-6">
                                                         <div class="form-check form-switch">
                                                             <input v-model="showVatTotal" class="form-check-input"
                                                                 type="checkbox">
-                                                            <label class="form-check-label">VAT Amount</label>
+                                                            <label class="form-check-label">VAT</label>
                                                         </div>
                                                     </div>
                                                     <div class="col-6">
                                                         <div class="form-check form-switch">
                                                             <input v-model="showNetTotal" class="form-check-input"
                                                                 type="checkbox">
-                                                            <label class="form-check-label">Net Amount</label>
+                                                            <label class="form-check-label">Vatable Amount</label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -298,12 +298,12 @@
                                                 <th v-show="showUnit" class="bg-secondary text-white">Unit</th>
                                                 <th v-show="showDelivered" class="bg-secondary text-white">Qty Request</th>
                                                 <th v-show="showAccepted" class="bg-secondary text-white">Qty Accepted</th>
-                                                <th v-show="showVat" class="bg-secondary text-white">VAT</th>
-                                                <th v-show="showGrossPrice" class="bg-secondary text-white">Unit Price</th>
-                                                <th v-show="showGrossTotal" class="bg-secondary text-white">Total Amount</th>
-                                                <th v-show="showVatTotal" class="bg-secondary text-white">VAT Amount</th>
+                                                <th v-show="showVat" class="bg-secondary text-white">VAT Type</th>
+                                                <th v-show="showGrossPrice" class="bg-secondary text-white">Unit Cost</th>
+                                                <th v-show="showNetTotal" class="bg-secondary text-white">Vatable Amount</th>
+                                                <th v-show="showVatTotal" class="bg-secondary text-white">VAT</th>
+                                                <th v-show="showGrossTotal" class="bg-secondary text-white">Total Cost</th>
                                                 <!-- <th v-show="showNetPrice" class="bg-secondary text-white">Net Amount</th> -->
-                                                <th v-show="showNetTotal" class="bg-secondary text-white">Net Amount</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -350,6 +350,30 @@
                                                 <td v-show="showGrossPrice" class="text-muted text-center align-middle">
                                                     {{ formatToPhpCurrency(rrItem.meqs_supplier_item.price) }}
                                                 </td>
+                                                <td v-show="showNetTotal" class="text-muted text-center align-middle">
+                                                    {{
+                                                    formatToPhpCurrency(
+                                                    getTotalNetPrice({
+                                                    vatType: rrItem.meqs_supplier_item.vat_type, 
+                                                    pricePerUnit: rrItem.meqs_supplier_item.price,
+                                                    vatPerUnit: getVatAmount(rrItem.meqs_supplier_item.price,
+                                                    rrItem.meqs_supplier_item.vat_type),
+                                                    quantity: rrItem.quantity_accepted
+                                                    })
+                                                    )
+                                                    }}
+                                                </td>
+                                                <td v-show="showVatTotal" class="text-muted text-center align-middle">
+                                                    {{
+                                                        formatToPhpCurrency(
+                                                            getVatTotal({
+                                                                price: rrItem.meqs_supplier_item.price,
+                                                                quantity: rrItem.quantity_accepted,
+                                                                vatType: rrItem.meqs_supplier_item.vat_type
+                                                            })
+                                                        )
+                                                    }}
+                                                </td>
                                                 <td v-show="showGrossTotal" class="text-muted text-center align-middle">
                                                     {{
                                                         formatToPhpCurrency(
@@ -358,40 +382,6 @@
                                                         quantity: rrItem.quantity_accepted
                                                         })
                                                         )
-                                                    }}
-                                                </td>
-                                                <!-- <td v-show="showNetPrice" class="text-muted text-center align-middle">
-                                                    {{
-                formatToPhpCurrency(
-                    getNetPrice({
-                        grossPrice: rrItem.meqs_supplier_item.price,
-                        vatAmount: getVatAmount(rrItem.meqs_supplier_item.price,
-                            rrItem.meqs_supplier_item.vat_type)
-                    })
-                )
-            }}
-                                                </td> -->
-                                                <td v-show="showVatTotal" class="text-muted text-center align-middle">
-                                                    {{
-                formatToPhpCurrency(
-                    getVatTotal({
-                        price: rrItem.meqs_supplier_item.price,
-                        quantity: rrItem.quantity_accepted,
-                        vatType: rrItem.meqs_supplier_item.vat_type
-                    })
-                )
-            }}
-                                                </td>
-                                                <td v-show="showNetTotal" class="text-muted text-center align-middle">
-                                                    {{
-                                                    formatToPhpCurrency(
-                                                    getTotalNetPrice({
-                                                    pricePerUnit: rrItem.meqs_supplier_item.price,
-                                                    vatPerUnit: getVatAmount(rrItem.meqs_supplier_item.price,
-                                                    rrItem.meqs_supplier_item.vat_type),
-                                                    quantity: rrItem.quantity_accepted
-                                                    })
-                                                    )
                                                     }}
                                                 </td>
                                             </tr>

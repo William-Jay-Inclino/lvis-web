@@ -120,12 +120,11 @@
                                 <th v-show="showAccepted" class="bg-secondary text-white">
                                     Qty Accepted <span class="text-danger"> * </span>
                                 </th>
-                                <th v-show="showVat" class="bg-secondary text-white">VAT</th>
-                                <th v-show="showGrossPrice" class="bg-secondary text-white">Unit Price</th>
-                                <!-- <th v-show="showNetPrice" class="bg-secondary text-white">Net Price</th> -->
-                                <th v-show="showGrossTotal" class="bg-secondary text-white">Total Amount</th>
-                                <th v-show="showVatTotal" class="bg-secondary text-white">VAT Amount</th>
-                                <th v-show="showNetTotal" class="bg-secondary text-white">Net Amount</th>
+                                <th v-show="showVat" class="bg-secondary text-white">VAT Type</th>
+                                <th v-show="showGrossPrice" class="bg-secondary text-white">Unit Cost</th>
+                                <th v-show="showNetTotal" class="bg-secondary text-white">Vatable Amount</th>
+                                <th v-show="showVatTotal" class="bg-secondary text-white">VAT</th>
+                                <th v-show="showGrossTotal" class="bg-secondary text-white">Total Cost</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -166,22 +165,14 @@
                                 <td v-show="showGrossPrice" class="text-muted text-center align-middle">
                                     {{ formatToPhpCurrency(rrItem.meqs_supplier_item.price) }}
                                 </td>
-                                <td v-show="showNetPrice" class="text-muted text-center align-middle">
+                                <td v-show="showNetTotal" class="text-muted text-center align-middle">
                                     {{
                                                 formatToPhpCurrency(
-                                                    getNetPrice({
-                                                        grossPrice: rrItem.meqs_supplier_item.price,
-                                                        vatAmount: getVatAmount(rrItem.meqs_supplier_item.price,
-                                                            rrItem.meqs_supplier_item.vat_type)
-                                                    })
-                                                )
-                                            }}
-                                </td>
-                                <td v-show="showGrossTotal" class="text-muted text-center align-middle">
-                                    {{
-                                                formatToPhpCurrency(
-                                                    getGrossTotal({
-                                                        price: rrItem.meqs_supplier_item.price,
+                                                    getTotalNetPrice({
+                                                        vatType: rrItem.meqs_supplier_item.vat_type,
+                                                        pricePerUnit: rrItem.meqs_supplier_item.price,
+                                                        vatPerUnit: getVatAmount(rrItem.meqs_supplier_item.price,
+                                                            rrItem.meqs_supplier_item.vat_type),
                                                         quantity: rrItem.quantity_accepted
                                                     })
                                                 )
@@ -198,13 +189,11 @@
                                                 )
                                             }}
                                 </td>
-                                <td v-show="showNetTotal" class="text-muted text-center align-middle">
+                                <td v-show="showGrossTotal" class="text-muted text-center align-middle">
                                     {{
                                                 formatToPhpCurrency(
-                                                    getTotalNetPrice({
-                                                        pricePerUnit: rrItem.meqs_supplier_item.price,
-                                                        vatPerUnit: getVatAmount(rrItem.meqs_supplier_item.price,
-                                                            rrItem.meqs_supplier_item.vat_type),
+                                                    getGrossTotal({
+                                                        price: rrItem.meqs_supplier_item.price,
                                                         quantity: rrItem.quantity_accepted
                                                     })
                                                 )
