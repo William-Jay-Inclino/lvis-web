@@ -38,8 +38,8 @@
                                             <td> {{ item.tin_no }} </td>
                                         </tr>
                                         <tr>
-                                            <td class="text-muted">VAT</td>
-                                            <td> {{ VAT[item.vat_type].label }} </td>
+                                            <td class="text-muted">VAT Status</td>
+                                            <td> {{ item.is_vat_registered ? 'VAT Registered' : 'Non-VAT Registered' }} </td>
                                         </tr>
                                     </tbody>
                                 </table>

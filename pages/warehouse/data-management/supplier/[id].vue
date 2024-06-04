@@ -39,13 +39,20 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">
-                                    VAT <span class="text-danger">*</span>
+                                    VAT Status <span class="text-danger">*</span>
                                 </label>
-                                <select v-model="item.vat_type" class="form-select" aria-label="Default select example">
-                                    <option selected :value="VAT_TYPE.NONE"> {{ VAT[VAT_TYPE.NONE].label }} </option>
-                                    <option :value="VAT_TYPE.INC"> {{ VAT[VAT_TYPE.INC].label }} </option>
-                                    <option :value="VAT_TYPE.EXC"> {{ VAT[VAT_TYPE.EXC].label }} </option>
-                                </select>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" v-model="item.is_vat_registered" :value="false">
+                                    <label class="form-check-label" for="exampleRadios1">
+                                        Non-VAT Registered
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio"  v-model="item.is_vat_registered" :value="true">
+                                    <label class="form-check-label" for="exampleRadios1">
+                                        VAT Registered
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -124,7 +131,7 @@ async function onSubmit() {
         contact: item.value.contact,
         address: item.value.address,
         tin_no: item.value.tin_no,
-        vat_type: item.value.vat_type,
+        is_vat_registered: item.value.is_vat_registered,
     }
 
     isSaving.value = true

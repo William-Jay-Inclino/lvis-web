@@ -13,7 +13,7 @@ export async function findAll(): Promise<Supplier[]> {
                 contact
                 tin_no
                 address
-                vat_type
+                is_vat_registered
             }
         }
     `;
@@ -37,7 +37,7 @@ export async function findOne(id: string): Promise<Supplier | undefined> {
                 contact
                 tin_no
                 address
-                vat_type
+                is_vat_registered
             }
         }
     `;
@@ -63,7 +63,7 @@ export async function create(input: CreateSupplierInput): Promise<MutationRespon
     const inputFields = Object.keys(input)
         .map(field => {
             const value = input[field as keyof CreateSupplierInput];
-            const formattedValue = typeof value === 'number' ? value : `"${value}"`;
+            const formattedValue = typeof value !== 'string' ? value : `"${value}"`;
             return `${field}: ${formattedValue}`;
         })
         .join(', ');
@@ -76,7 +76,7 @@ export async function create(input: CreateSupplierInput): Promise<MutationRespon
                 contact
                 tin_no
                 address
-                vat_type
+                is_vat_registered
             }
         }`;
 
@@ -111,7 +111,7 @@ export async function update(id: string, input: CreateSupplierInput): Promise<Mu
     const inputFields = Object.keys(input)
         .map(field => {
             const value = input[field as keyof CreateSupplierInput];
-            const formattedValue = typeof value === 'number' ? value : `"${value}"`;
+            const formattedValue = typeof value !== 'string' ? value : `"${value}"`;
             return `${field}: ${formattedValue}`;
         })
         .join(', ');
@@ -124,7 +124,7 @@ export async function update(id: string, input: CreateSupplierInput): Promise<Mu
                 contact
                 tin_no
                 address
-                vat_type
+                is_vat_registered
             }
         }`;
 

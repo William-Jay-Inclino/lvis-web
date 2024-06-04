@@ -6,8 +6,8 @@ export interface Supplier {
     name: string;
     contact: string;
     address: string;
-    vat_type: VAT_TYPE;
     tin_no: string;
+    is_vat_registered: boolean;
 }
 
 
@@ -16,7 +16,7 @@ export interface CreateSupplierInput {
     contact: string;
     address: string;
     tin_no: string;
-    vat_type: VAT_TYPE;
+    is_vat_registered: boolean;
 }
 
 export interface MutationResponse {

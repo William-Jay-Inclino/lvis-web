@@ -1,3 +1,4 @@
+import type { Employee } from "./system/employee/employee.types"
 import type { User } from "./system/user/user.types"
 
 export enum USER_STATUS {
@@ -30,7 +31,8 @@ export enum APPROVAL_STATUS {
 export enum VAT_TYPE {
     NONE = 1,
     INC = 2,
-    EXC = 3
+    EXC = 3,
+    EXEMPT = 4
 }
 
 export enum ITEM_CLASS {
