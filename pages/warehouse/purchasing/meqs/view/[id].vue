@@ -161,7 +161,7 @@
                             </div>
         
                             <div class="alert alert-info" role="alert">
-                                <small class="text-muted fst-italic">Click the attachment to view it in a larger size</small>
+                                <small class="text-muted fst-italic">Click the attachment to view it in a larger size.</small>
                             </div>
         
                             <div class="table-responsive">
@@ -208,8 +208,11 @@
                             </div>
                             <div class="alert alert-info" role="alert">
                                 <div>
-                                    <small class="text-muted fst-italic">The awarded supplier is indicated by a yellow
-                                        star</small>
+                                    <small class="text-muted fst-italic">1. The awarded supplier is indicated by a yellow
+                                        star.</small>
+                                </div>
+                                <div>
+                                    <small class="text-muted fst-italic">2. The highlighted row needs some review.</small>
                                 </div>
                             </div>
                             <div class="table-responsive">
@@ -228,7 +231,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="canvassItem, i in referenceData?.canvass.canvass_items">
+                                        <tr :class="{'table-danger': hasRemarks(canvassItem.id)}" v-for="canvassItem, i in referenceData?.canvass.canvass_items">
                                             <td class="text-muted"> {{ i + 1 }} </td>
                                             <td class="text-muted"> {{ canvassItem.description }} </td>
                                             <td class="text-muted"> {{ canvassItem.unit ? canvassItem.unit.name : 'N/A' }} </td>
@@ -427,6 +430,24 @@ function onClickNote(canvass_item_id: string) {
 
     }
 
+}
+
+function hasRemarks(canvass_item_id: string): boolean {
+
+    for (let supplier of item.value!.meqs_suppliers) {
+
+        const item = supplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
+
+        if (item) {
+            const isNotEmpty = (!!item.notes || item.notes.trim() !== '')
+            if(isNotEmpty){
+                return true 
+            }
+        }
+
+    }
+
+    return false 
 }
 
 const hasPO = computed(() => {
