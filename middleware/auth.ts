@@ -40,6 +40,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
             const isAccountModule = to.name?.toString().includes(MODULES.ACCOUNT)
             const isClassificationModule = to.name?.toString().includes(MODULES.CLASSIFICATION)
             const isDepartmentModule = to.name?.toString().includes(MODULES.DEPARTMENT)
+            const isPositionModule = to.name?.toString().includes(MODULES.POSITION)
 
 
             if (isEmployeeModule) {
@@ -61,6 +62,12 @@ export default defineNuxtRouteMiddleware((to, from) => {
 
             if (isDepartmentModule) {
                 if (!canAccessDepartment(to.name as ROUTES, permissions)) return redirectTo401Page()
+                return
+
+            }
+
+            if (isPositionModule) {
+                if (!canAccessPosition(to.name as ROUTES, permissions)) return redirectTo401Page()
                 return
 
             }
@@ -249,7 +256,20 @@ function canAccessDepartment(route: ROUTES, permissions: SystemPermissions) {
 
 }
 
+function canAccessPosition(route: ROUTES, permissions: SystemPermissions) {
 
+    console.log('canAccessPosition', route, permissions)
+
+    if (!permissions.canManagePosition) return false
+
+    if (route === ROUTES.POSITION_INDEX) return !!permissions.canManagePosition.read
+    if (route === ROUTES.POSITION_CREATE) return !!permissions.canManagePosition.create
+    if (route === ROUTES.POSITION_UPDATE) return !!permissions.canManagePosition.update
+
+
+    return true
+
+}
 
 // ============================================== WAREHOUSE ============================================== 
 

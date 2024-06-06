@@ -28,6 +28,12 @@ export const systemPermissions: SystemPermissions = {
         update: false,
         delete: false,
     },
+    canManagePosition: {
+        create: false,
+        read: false,
+        update: false,
+        delete: false,
+    },
 }
 
 export const warehousePermissions: WarehousePermissions = {

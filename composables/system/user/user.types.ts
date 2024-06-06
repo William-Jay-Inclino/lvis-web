@@ -106,7 +106,12 @@ export interface SystemPermissions {
         update?: boolean,
         delete?: boolean,
     },
-
+    canManagePosition?: {
+        create?: boolean,
+        read?: boolean,
+        update?: boolean,
+        delete?: boolean,
+    },
 }
 
 export interface WarehousePermissions {

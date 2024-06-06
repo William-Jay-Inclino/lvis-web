@@ -117,6 +117,7 @@ export enum MODULES {
     CLASSIFICATION = 'CLASSIFICATION',
     DEPARTMENT = 'DEPARTMENT',
     PENDINGS = 'PENDINGS',
+    POSITION = 'POSITION',
 
     // ==============================================   WAREHOUSE ============================================== 
 
@@ -174,9 +175,11 @@ export enum ROUTES {
     DEPARTMENT_UPDATE = `${SERVICES.SYSTEM}_DEPARTMENT_UPDATE`,
     DEPARTMENT_VIEW = `${SERVICES.SYSTEM}_DEPARTMENT_VIEW`,
 
-
-
-
+    // =======================  DEPARTMENT ======================= 
+    POSITION_INDEX = `${SERVICES.SYSTEM}_POSITION_INDEX`,
+    POSITION_CREATE = `${SERVICES.SYSTEM}_POSITION_CREATE`,
+    POSITION_UPDATE = `${SERVICES.SYSTEM}_POSITION_UPDATE`,
+    POSITION_VIEW = `${SERVICES.SYSTEM}_POSITION_VIEW`,
 
 
     // ==============================================   WAREHOUSE ============================================== 

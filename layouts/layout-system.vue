@@ -41,6 +41,9 @@
                                 <li v-if="canView('canManageClassification', authUser)"><nuxt-link
                                         class="dropdown-item"
                                         to="/system/data-management/classification">Classification</nuxt-link></li>
+                                <li v-if="canView('canManagePosition', authUser)"><nuxt-link
+                                        class="dropdown-item"
+                                        to="/system/data-management/position">Position</nuxt-link></li>
                             </ul>
                         </li>
                         <li v-if="isAdmin(authUser)" class="nav-item dropdown">
@@ -99,22 +102,6 @@
             </div>
             <div class="offcanvas-body d-flex flex-column">
                 <ul class="nav flex-column mb-3">
-                    <!-- <li class="nav-item">
-                        <a class="nav-link" href="#">User Account</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Activity Log</a>
-                    </li> -->
-                    <!-- <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            Security
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">User Access Control</a></li>
-                            <li><a class="dropdown-item" href="#">Activity Log</a></li>
-                        </ul>
-                    </li> -->
                     <li class="nav-item">
                         <a href="javascript:void(0)" class="nav-link text-warning fst-italic fw-bold">
                             {{ authUser.user.username }}
@@ -140,6 +127,8 @@
                                     to="/system/data-management/classification">Classification</nuxt-link></li>
                             <li><nuxt-link class="dropdown-item"
                                     to="/system/data-management/account">Account</nuxt-link></li>
+                            <li><nuxt-link class="dropdown-item"
+                                to="/system/data-management/position">Position</nuxt-link></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
