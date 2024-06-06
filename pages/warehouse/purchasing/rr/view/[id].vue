@@ -426,7 +426,7 @@
                                     to="/warehouse/purchasing/rr">
                                     <i class="fas fa-search"></i> Search RR
                                 </nuxt-link>
-                                <button :disabled="item.status !== APPROVAL_STATUS.APPROVED" @click="onClickPrint" class="btn btn-danger" data-bs-toggle="modal"
+                                <button v-if="item.status === APPROVAL_STATUS.APPROVED && canPrint(authUser, 'canManageRR')" @click="onClickPrint" class="btn btn-danger" data-bs-toggle="modal"
                                     data-bs-target="#purchasingPdfModal">
                                     <i class="fas fa-print"></i> Print RR
                                 </button>

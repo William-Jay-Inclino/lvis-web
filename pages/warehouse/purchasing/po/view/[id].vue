@@ -99,8 +99,8 @@
                                         <td> {{ item.meqs_supplier.supplier!.name }} </td>
                                     </tr>
                                     <tr>
-                                        <td class="text-muted">Vat</td>
-                                        <td> {{ VAT[item.meqs_supplier.supplier!.vat_type].label }} </td>
+                                        <td class="text-muted">VAT Status</td>
+                                        <td> {{ item.meqs_supplier.supplier?.is_vat_registered ? 'VAT Registered' : 'Non-VAT Registered' }} </td>
                                     </tr>
                                     <tr>
                                         <td class="text-muted">Fund Source</td>
@@ -248,11 +248,7 @@
                                     to="/warehouse/purchasing/po">
                                     <i class="fas fa-search"></i> Search PO
                                 </nuxt-link>
-                                <!-- <button :disabled="item.status !== APPROVAL_STATUS.APPROVED" @click="onClickPrint" class="btn btn-danger" data-bs-toggle="modal"
-                                        data-bs-target="#purchasingPdfModal">
-                                        <i class="fas fa-print"></i> Print PO
-                                </button> -->
-                                <button :disabled="item.status !== APPROVAL_STATUS.APPROVED" @click="onClickPrint" class="btn btn-danger">
+                                <button v-if="item.status === APPROVAL_STATUS.APPROVED && canPrint(authUser, 'canManagePO')" @click="onClickPrint" class="btn btn-danger">
                                     <i class="fas fa-print"></i> Print PO
                                 </button>
                                 <button ref="printBtn" v-show="false" data-bs-toggle="modal"

@@ -180,7 +180,7 @@
                                             to="/warehouse/purchasing/jo">
                                             <i class="fas fa-search"></i> Search JO
                                         </nuxt-link>
-                                        <button :disabled="item.status !== APPROVAL_STATUS.APPROVED" @click="onClickPrint" class="btn btn-danger">
+                                        <button v-if="item.status === APPROVAL_STATUS.APPROVED && canPrint(authUser, 'canManageJO')" @click="onClickPrint" class="btn btn-danger">
                                             <i class="fas fa-print"></i> Print JO
                                         </button>
                                         <button ref="printBtn" v-show="false" data-bs-toggle="modal"

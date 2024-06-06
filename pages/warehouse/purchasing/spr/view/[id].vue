@@ -177,7 +177,7 @@
                                             to="/warehouse/purchasing/spr">
                                             <i class="fas fa-search"></i> Search SPR
                                         </nuxt-link>
-                                        <button :disabled="item.status !== APPROVAL_STATUS.APPROVED" @click="onClickPrint" class="btn btn-danger">
+                                        <button v-if="item.status === APPROVAL_STATUS.APPROVED && canPrint(authUser, 'canManageSPR')" @click="onClickPrint" class="btn btn-danger">
                                             <i class="fas fa-print"></i> Print SPR
                                         </button>
                                         <button ref="printBtn" v-show="false" data-bs-toggle="modal"

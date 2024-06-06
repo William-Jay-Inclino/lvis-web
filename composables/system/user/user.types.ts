@@ -115,37 +115,44 @@ export interface WarehousePermissions {
     canManageCanvass?: {
         create?: boolean,
         search?: boolean,
-        viewDetails?: boolean
+        viewDetails?: boolean,
+        print?: boolean,
     },
     canManageRV?: {
         create?: boolean,
         search?: boolean,
-        viewDetails?: boolean
+        viewDetails?: boolean,
+        print?: boolean,
     },
     canManageSPR?: {
         create?: boolean,
         search?: boolean,
-        viewDetails?: boolean
+        viewDetails?: boolean,
+        print?: boolean,
     },
     canManageJO?: {
         create?: boolean,
         search?: boolean,
-        viewDetails?: boolean
+        viewDetails?: boolean,
+        print?: boolean,
     },
     canManageMEQS?: {
         create?: boolean,
         search?: boolean,
-        viewDetails?: boolean
+        viewDetails?: boolean,
+        print?: boolean,
     },
     canManagePO?: {
         create?: boolean,
         search?: boolean,
-        viewDetails?: boolean
+        viewDetails?: boolean,
+        print?: boolean,
     },
     canManageRR?: {
         create?: boolean,
         search?: boolean,
-        viewDetails?: boolean
+        viewDetails?: boolean,
+        print?: boolean,
     },
 
 

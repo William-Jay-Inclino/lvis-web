@@ -115,3 +115,16 @@ export function canViewDetails(authUser: AuthUser, permission: string, service?:
     return !!authUser.user.permissions[_service][permission].viewDetails
 
 }
+
+
+export function canPrint(authUser: AuthUser, permission: string, service?: SERVICES) {
+    if (isAdmin(authUser)) return true
+
+    if (!authUser.user.permissions) return false
+
+    const _service = (service || SERVICES.WAREHOUSE).toLowerCase()
+
+    // @ts-ignore
+    return !!authUser.user.permissions[_service][permission].print
+
+}

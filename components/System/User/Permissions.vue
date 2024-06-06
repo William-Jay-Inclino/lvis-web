@@ -209,6 +209,13 @@
                                     View Details
                                 </label>
                             </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" :class="{ 'non-clickable': isViewOnly }" type="checkbox"
+                                    v-model="permissions.warehouse.canManageCanvass.print">
+                                <label class="form-check-label">
+                                    Print
+                                </label>
+                            </div>
                         </td>
                     </tr>
                     <tr v-if="permissions.warehouse.canManageRV">
@@ -233,6 +240,13 @@
                                     v-model="permissions.warehouse.canManageRV.viewDetails">
                                 <label class="form-check-label">
                                     View Details
+                                </label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" :class="{ 'non-clickable': isViewOnly }" type="checkbox"
+                                    v-model="permissions.warehouse.canManageRV.print">
+                                <label class="form-check-label">
+                                    Print
                                 </label>
                             </div>
                         </td>
@@ -261,6 +275,13 @@
                                     View Details
                                 </label>
                             </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" :class="{ 'non-clickable': isViewOnly }" type="checkbox"
+                                    v-model="permissions.warehouse.canManageSPR.print">
+                                <label class="form-check-label">
+                                    Print
+                                </label>
+                            </div>
                         </td>
                     </tr>
                     <tr v-if="permissions.warehouse.canManageJO">
@@ -285,6 +306,13 @@
                                     v-model="permissions.warehouse.canManageJO.viewDetails">
                                 <label class="form-check-label">
                                     View Details
+                                </label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" :class="{ 'non-clickable': isViewOnly }" type="checkbox"
+                                    v-model="permissions.warehouse.canManageJO.print">
+                                <label class="form-check-label">
+                                    Print
                                 </label>
                             </div>
                         </td>
@@ -313,6 +341,13 @@
                                     View Details
                                 </label>
                             </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" :class="{ 'non-clickable': isViewOnly }" type="checkbox"
+                                    v-model="permissions.warehouse.canManageMEQS.print">
+                                <label class="form-check-label">
+                                    Print
+                                </label>
+                            </div>
                         </td>
                     </tr>
                     <tr v-if="permissions.warehouse.canManagePO">
@@ -339,6 +374,13 @@
                                     View Details
                                 </label>
                             </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" :class="{ 'non-clickable': isViewOnly }" type="checkbox"
+                                    v-model="permissions.warehouse.canManagePO.print">
+                                <label class="form-check-label">
+                                    Print
+                                </label>
+                            </div>
                         </td>
                     </tr>
                     <tr v-if="permissions.warehouse.canManageRR">
@@ -363,6 +405,13 @@
                                     v-model="permissions.warehouse.canManageRR.viewDetails">
                                 <label class="form-check-label">
                                     View Details
+                                </label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" :class="{ 'non-clickable': isViewOnly }" type="checkbox"
+                                    v-model="permissions.warehouse.canManageRR.print">
+                                <label class="form-check-label">
+                                    Print
                                 </label>
                             </div>
                         </td>

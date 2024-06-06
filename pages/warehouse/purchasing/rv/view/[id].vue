@@ -189,7 +189,7 @@
                                             to="/warehouse/purchasing/rv">
                                             <i class="fas fa-search"></i> Search RV
                                         </nuxt-link>
-                                        <button :disabled="item.status !== APPROVAL_STATUS.APPROVED" @click="onClickPrint" class="btn btn-danger">
+                                        <button v-if="item.status === APPROVAL_STATUS.APPROVED && canPrint(authUser, 'canManageRV')" @click="onClickPrint" class="btn btn-danger">
                                             <i class="fas fa-print"></i> Print RV
                                         </button>
                                         <button ref="printBtn" v-show="false" data-bs-toggle="modal"
@@ -239,6 +239,7 @@ import { approvalStatus } from '~/utils/constants'
 import { useToast } from "vue-toastification";
 import Swal from 'sweetalert2'
 import axios from 'axios';
+import { canPrint } from '~/utils/permissions';
 
 definePageMeta({
     name: ROUTES.RV_VIEW,

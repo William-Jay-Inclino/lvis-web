@@ -153,6 +153,7 @@ import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
 import { getFullname, formatDate } from '~/utils/helpers'
 import { PAGINATION_SIZE } from '~/utils/config'
 import { ROUTES } from '~/utils/constants';
+import type { Employee } from '~/composables/system/employee/employee.types';
 
 definePageMeta({
     name: ROUTES.CANVASS_INDEX,

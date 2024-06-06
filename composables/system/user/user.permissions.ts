@@ -36,37 +36,44 @@ export const warehousePermissions: WarehousePermissions = {
     canManageCanvass: {
         create: false,
         search: false,
-        viewDetails: false
+        viewDetails: false,
+        print: false,
     },
     canManageRV: {
         create: false,
         search: false,
-        viewDetails: false
+        viewDetails: false,
+        print: false,
     },
     canManageSPR: {
         create: false,
         search: false,
-        viewDetails: false
+        viewDetails: false,
+        print: false,
     },
     canManageJO: {
         create: false,
         search: false,
-        viewDetails: false
+        viewDetails: false,
+        print: false,
     },
     canManageMEQS: {
         create: false,
         search: false,
-        viewDetails: false
+        viewDetails: false,
+        print: false,
     },
     canManagePO: {
         create: false,
         search: false,
-        viewDetails: false
+        viewDetails: false,
+        print: false,
     },
     canManageRR: {
         create: false,
         search: false,
-        viewDetails: false
+        viewDetails: false,
+        print: false,
     },
 
 

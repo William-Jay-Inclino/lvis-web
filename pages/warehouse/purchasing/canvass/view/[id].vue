@@ -235,7 +235,7 @@
                                             to="/warehouse/purchasing/canvass">
                                             <i class="fas fa-search"></i> Search Canvass
                                         </nuxt-link>
-                                        <button @click="onClickPrint" class="btn btn-danger" data-bs-toggle="modal"
+                                        <button v-if="canPrint(authUser, 'canManageCanvass')" @click="onClickPrint" class="btn btn-danger" data-bs-toggle="modal"
                                             data-bs-target="#purchasingPdfModal">
                                             <i class="fas fa-print"></i> Print Canvass
                                         </button>
@@ -280,6 +280,7 @@ import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
 import { MOBILE_WIDTH } from '~/utils/config';
 import { ROUTES } from '~/utils/constants';
 import axios from 'axios';
+import { canPrint } from '~/utils/permissions';
 
 definePageMeta({
     name: ROUTES.CANVASS_VIEW,
