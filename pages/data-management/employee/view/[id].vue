@@ -34,7 +34,7 @@
                                         </tr>
                                         <tr>
                                             <td class="text-muted">Position</td>
-                                            <td> {{ item.position || 'N/A' }} </td>
+                                            <td> {{ item.position.name }} </td>
                                         </tr>
                                         <tr>
                                             <td class="text-muted">Signature</td>

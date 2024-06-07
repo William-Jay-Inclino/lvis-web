@@ -114,6 +114,7 @@ import { useToast } from "vue-toastification";
 import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
 import type { Item } from '~/composables/warehouse/item/item.type';
 import { ROUTES } from '~/utils/constants';
+import type { Employee } from '~/composables/system/employee/employee.types';
 
 definePageMeta({
     name: ROUTES.CANVASS_CREATE,

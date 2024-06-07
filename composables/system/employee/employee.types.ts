@@ -1,3 +1,4 @@
+import type { Position } from "../position/position"
 import type { UserEmployee } from "../user/user.types"
 
 
@@ -6,7 +7,7 @@ export interface Employee {
     firstname: string
     middlename: string
     lastname: string
-    position: string
+    position: Position
     signature_src: string
 
     // derived / resolvers 
@@ -33,7 +34,7 @@ export interface CreateEmployeeInput {
     firstname: string
     middlename: string
     lastname: string
-    position: string
+    position: Position | null
     signature_src?: string | null
 }
 

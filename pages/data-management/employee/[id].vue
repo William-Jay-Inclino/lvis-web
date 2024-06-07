@@ -34,7 +34,18 @@
                                 <label class="form-label">
                                     Position
                                 </label>
-                                <input type="text" class="form-control" v-model="item.position">
+                                <client-only>
+                                    <v-select :options="positions" label="name" v-model="item.position">
+                                        <template #search="{attributes, events}">
+                                            <input
+                                            class="vs__search"
+                                            :required="!item.position"
+                                            v-bind="attributes"
+                                            v-on="events"
+                                            />
+                                        </template>
+                                    </v-select>
+                                </client-only>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">
@@ -78,6 +89,7 @@
 import * as api from '~/composables/system/employee/employee.api'
 import type { CreateEmployeeInput, Employee } from '~/composables/system/employee/employee.types'
 import Swal from 'sweetalert2'
+import type { Position } from '~/composables/system/position/position';
 
 definePageMeta({
     name: ROUTES.EMPLOYEE_UPDATE,
@@ -95,20 +107,22 @@ const config = useRuntimeConfig()
 const API_URL = config.public.apiUrl
 
 const item = ref<Employee>()
+const positions = ref<Position[]>([])
 
 const signatureFile = ref<File>()
 
 
 onMounted(async () => {
 
-    const response = await api.findOne(route.params.id as string)
+    const response = await api.fetchFormDataInUpdate(route.params.id as string)
 
     if (!response) {
         console.error('Employee not found')
         return
     }
 
-    item.value = response
+    item.value = response.employee
+    positions.value = response.positions
 
     isLoadingPage.value = false
 })

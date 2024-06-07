@@ -1,7 +1,7 @@
 import { sendRequest } from "~/utils/api"
 import type { Employee, CreateEmployeeInput, MutationResponse, FindAllResponse } from "./employee.types";
 import axios from "axios";
-
+import type { Position } from "../position/position";
 
 
 export async function findAll(payload: { page: number, pageSize: number, searchValue: string | null }): Promise<FindAllResponse> {
@@ -27,8 +27,11 @@ export async function findAll(payload: { page: number, pageSize: number, searchV
                     firstname
                     middlename
                     lastname
-                    position
                     signature_src
+                    position {
+                        id 
+                        name
+                    }
                 }
                 totalItems
                 currentPage
@@ -55,8 +58,11 @@ export async function findOne(id: string): Promise<Employee | undefined> {
                 firstname
                 middlename
                 lastname
-                position
                 signature_src
+                position {
+                    id 
+                    name
+                }
             }
         }
     `;
@@ -78,19 +84,28 @@ export async function findOne(id: string): Promise<Employee | undefined> {
 }
 
 export async function create(input: CreateEmployeeInput): Promise<MutationResponse> {
+    
+    console.log('input', input);
 
-    const inputFields = Object.keys(input)
-        .map(field => `${field}: "${input[field as keyof CreateEmployeeInput]}"`)
-        .join(', ');
+    let signature_src = (input.signature_src && input.signature_src.trim() !== '') ? `"${input.signature_src}"` : null
 
     const mutation = `
         mutation {
-            createEmployee(input: { ${inputFields} }) {
+            createEmployee(input: {
+                firstname: "${input.firstname}",
+                middlename: "${input.middlename}",
+                lastname: "${input.lastname}",
+                signature_src: ${signature_src},
+                position_id: "${input.position?.id}",
+            }) {
                 id
                 firstname
                 middlename
                 lastname
-                position
+                position {
+                    id 
+                    name
+                }
             }
         }`;
 
@@ -122,18 +137,27 @@ export async function create(input: CreateEmployeeInput): Promise<MutationRespon
 
 export async function update(id: string, input: CreateEmployeeInput): Promise<MutationResponse> {
 
-    const inputFields = Object.keys(input)
-        .map(field => `${field}: "${input[field as keyof CreateEmployeeInput]}"`)
-        .join(', ');
+    console.log('input', input);
+
+    let signature_src = (input.signature_src && input.signature_src.trim() !== '') ? `"${input.signature_src}"` : null
 
     const mutation = `
         mutation {
-            updateEmployee(id: "${id}", input: { ${inputFields} }) {
+            updateEmployee(id: "${id}", input: {
+                firstname: "${input.firstname}",
+                middlename: "${input.middlename}",
+                lastname: "${input.lastname}",
+                signature_src: ${signature_src},
+                position_id: "${input.position?.id}",
+            }) {
                 id
                 firstname
                 middlename
                 lastname
-                position
+                position {
+                    id 
+                    name
+                }
             }
         }`;
 
@@ -223,6 +247,113 @@ export async function uploadSingleAttachment(attachment: any, apiUrl: string): P
     } catch (error) {
         console.error('Error uploading image:', error);
         return null
+    }
+
+}
+
+
+export async function fetchFormDataInCreate(): Promise<{ positions: Position[] }> {
+
+    const query = `
+        query {
+            positions {
+                id 
+                name 
+            }
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        let positions = []
+
+        if (!response.data || !response.data.data) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+
+        const data = response.data.data
+
+        if (data.positions) {
+            positions = data.positions.map((i: Position) => {
+                i.permissions = i.permissions ? JSON.parse(JSON.stringify(i.permissions)) : null
+                return i
+            })
+        }
+
+        return {
+            positions
+        }
+
+    } catch (error) {
+        console.error(error);
+        return {
+            positions: [],
+        }
+    }
+
+}
+
+export async function fetchFormDataInUpdate(id: string): Promise<{ positions: Position[], employee: Employee | undefined }> {
+
+    const query = `
+        query {
+            employee(id: "${id}") {
+                id
+                firstname
+                middlename
+                lastname
+                signature_src
+                position {
+                    id 
+                    name
+                }
+            }
+            positions {
+                id 
+                name 
+            }
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        let positions = []
+        let employee
+
+        if (!response.data || !response.data.data) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+
+        const data = response.data.data
+
+        if(!data.employee) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+
+        employee = data.employee
+
+        if (data.positions) {
+            positions = data.positions.map((i: Position) => {
+                i.permissions = i.permissions ? JSON.parse(JSON.stringify(i.permissions)) : null
+                return i
+            })
+        }
+
+        return {
+            positions,
+            employee
+        }
+
+    } catch (error) {
+        console.error(error);
+        return {
+            positions: [],
+            employee: undefined
+        }
     }
 
 }

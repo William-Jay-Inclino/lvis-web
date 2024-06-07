@@ -315,6 +315,11 @@ export async function fetchFormDataInCreate(): Promise<{
                     firstname
                     middlename
                     lastname
+                    position {
+                        id 
+                        name 
+                        permissions
+                    }
                     user_employee {
                         id
                     }

@@ -140,6 +140,12 @@
             <div v-show="currentStep === 3" class="row justify-content-center pt-3">
     
                 <div class="col-lg-6">
+
+                    <div class="mb-3 text-center" v-if="formData.employee">
+                        <label class="label text-muted fst-italic">
+                            Position: <span class="text-primary">{{ formData.employee.position.name }} </span>
+                        </label>
+                    </div>
     
                     <SystemUserPermissions :permissions="formData.permissions" />
     
@@ -170,10 +176,11 @@ definePageMeta({
 })
 
 import * as api from '~/composables/system/user/user.api'
-import type { CreateUserInput, User } from '~/composables/system/user/user.types'
+import type { CreateUserInput } from '~/composables/system/user/user.types'
 import { permissions } from '~/composables/system/user/user.permissions'
 import Swal from 'sweetalert2'
 import type { Employee } from '~/composables/system/employee/employee.types';
+import { mergeUserPermissions } from '~/composables/system/user/user.helpers'
 
 const router = useRouter()
 const isSaving = ref(false)
@@ -213,6 +220,14 @@ onMounted(async () => {
 
     employees.value = response.employees.map((i) => {
         i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
+
+        if(!i.position.permissions) {
+            i.position.permissions = JSON.parse(JSON.stringify(permissions))
+        } else {
+            // @ts-ignore
+            i.position.permissions = JSON.parse(i.position.permissions)
+        }
+
         return i
     })
 
@@ -253,10 +268,13 @@ const canProceedStep3 = computed(() => {
 
 watch(isEmployee, (val) => {
 
+    console.log('watch: isEmployee', val);
+
     formData.value.employee = null
     formData.value.firstname = ''
     formData.value.middlename = ''
     formData.value.lastname = ''
+    formData.value.permissions = JSON.parse(JSON.stringify(permissions))
 
 })
 
@@ -300,7 +318,8 @@ function onChangeEmployee() {
     formData.value.firstname = formData.value.employee.firstname
     formData.value.middlename = formData.value.employee.middlename
     formData.value.lastname = formData.value.employee.lastname
-
+    console.log('formData.value.employee.position.permissions', formData.value.employee.position.permissions);
+    formData.value.permissions = mergeUserPermissions(JSON.parse(JSON.stringify(permissions)), formData.value.employee.position.permissions)
 }
 
 function onEmployeeSelected(payload: Employee) {
@@ -318,7 +337,6 @@ function onEmployeeSelected(payload: Employee) {
 
     }
 }
-
 
 // ======================== CHILD FUNCTIONS <LoginCredentials.vue> ======================== 
 
@@ -356,7 +374,7 @@ const goToStep1 = () => currentStep.value = 1
 const goToStep2 = async () => {
     currentStep.value = 2
 
-    if (formData.value.password && formData.value.username) return
+    // if (formData.value.password && formData.value.username) return
 
     formData.value.password = 'temp' + generateRandom3Digits()
     formData.value.username = generateUsername(formData.value.firstname, formData.value.lastname)
