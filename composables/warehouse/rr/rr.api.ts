@@ -283,7 +283,7 @@ export async function fetchFormDataInCreate(): Promise<{
                         supplier{
                             id
                             name 
-                            vat_type
+                            is_vat_registered
                         }
                         meqs_supplier_items {
                             id 

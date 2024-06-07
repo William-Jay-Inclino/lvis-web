@@ -182,6 +182,7 @@ import type { RR } from '~/composables/warehouse/rr/rr.types';
 import { getFullname, formatDate } from '~/utils/helpers'
 import { PAGINATION_SIZE } from '~/utils/config'
 import type { PO } from '~/composables/warehouse/po/po.types';
+import type { Employee } from '~/composables/system/employee/employee.types';
 
 definePageMeta({
     name: ROUTES.RR_INDEX,

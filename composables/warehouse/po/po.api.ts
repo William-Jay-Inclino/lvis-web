@@ -267,7 +267,7 @@ export async function fetchFormDataInCreate(): Promise<{
                         supplier{
                             id
                             name 
-                            vat_type
+                            is_vat_registered
                         }
                         meqs_supplier_items {
                             id 
@@ -381,7 +381,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                     supplier {
                         id 
                         name
-                        vat_type
+                        is_vat_registered
                     }
                     meqs {
                         id 
@@ -595,7 +595,7 @@ export async function findOne(id: string): Promise<PO | undefined> {
                     supplier{
                         id
                         name 
-                        vat_type
+                        is_vat_registered
                     }
                     meqs {
                         id

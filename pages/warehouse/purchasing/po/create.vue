@@ -94,10 +94,9 @@
         
                                 <div v-if="poData.meqs_supplier" class="mb-3">
                                     <label class="form-label">
-                                        Vat
+                                        VAT Status
                                     </label>
-                                    <input type="text" class="form-control" disabled
-                                        :value="VAT[poData.meqs_supplier.supplier!.vat_type].label">
+                                    <div class="fst-italic text-warning"> {{ poData.meqs_supplier.supplier?.is_vat_registered ? 'VAT Registered' : 'Non-VAT Registered' }} </div>
                                 </div>
         
                                 <div v-if="selectedMeqs && isAdmin(authUser)">
