@@ -1,99 +1,93 @@
 <template>
 
-    <!-- <div class="background-container"> -->
-        <!-- <div class="background-overlay"></div> -->
+    <div v-if="authUser" class="container" style="width: 70%; padding-top: 50px;">
 
+        <div class="row justify-content-center align-items-center">
 
-        <div v-if="authUser" class="container" style="width: 70%; padding-top: 50px;">
-    
-            <div class="row justify-content-center align-items-center">
+            <div class="col-md-4 pb-5">
+                <div class="card shadow" style="width: 12rem;">
+                    <img src="~/assets/img/powerserve2.png" class="card-img-top" height="180">
+                    <div class="card-footer text-center">
+                        <button class="btn btn-primary"> POWERSERVE </button>
+                    </div>
+                </div>
+            </div>
 
-                <div class="col-md-4 pb-5">
-                    <div class="card shadow" style="width: 12rem;">
-                        <img src="~/assets/img/powerserve2.png" class="card-img-top" height="180">
-                        <div class="card-footer text-center">
-                            <button class="btn btn-primary"> POWERSERVE </button>
-                        </div>
+            <div class="col-md-4 pb-5">
+                <div class="card shadow" style="width: 12rem;">
+                    <img src="~/assets/img/settings.png" class="card-img-top" height="180">
+                    <div class="card-footer text-center">
+                        <button @click="goToSystem" class="btn btn-primary"> SYSTEM </button>
                     </div>
                 </div>
-    
-                <div class="col-md-4 pb-5">
-                    <div class="card shadow" style="width: 12rem;">
-                        <img src="~/assets/img/settings.png" class="card-img-top" height="180">
-                        <div class="card-footer text-center">
-                            <button @click="goToSystem" class="btn btn-primary"> SYSTEM </button>
-                        </div>
+            </div>
+
+            <div class="col-md-4 pb-5">
+                <div class="card shadow" style="width: 12rem;">
+                    <img src="~/assets/img/eforms.png" class="card-img-top" height="180">
+                    <div class="card-footer text-center">
+                        <button class="btn btn-primary"> e-FORMS </button>
                     </div>
                 </div>
-    
-                <div class="col-md-4 pb-5">
-                    <div class="card shadow" style="width: 12rem;">
-                        <img src="~/assets/img/eforms.png" class="card-img-top" height="180">
-                        <div class="card-footer text-center">
-                            <button class="btn btn-primary"> e-FORMS </button>
-                        </div>
+            </div>
+
+            <div class="col-md-4 pb-5">
+                <div class="card shadow" style="width: 12rem;">
+                    <img src="~/assets/img/econnect.png" class="card-img-top" height="180">
+                    <div class="card-footer text-center">
+                        <button class="btn btn-primary"> e-CONNECT </button>
                     </div>
                 </div>
-    
-                <div class="col-md-4 pb-5">
-                    <div class="card shadow" style="width: 12rem;">
-                        <img src="~/assets/img/econnect.png" class="card-img-top" height="180">
-                        <div class="card-footer text-center">
-                            <button class="btn btn-primary"> e-CONNECT </button>
-                        </div>
+            </div>
+
+            <div class="col-md-4 pb-5">
+                <div class="card shadow" style="width: 12rem;">
+                    <img src="~/assets/img/powerbill.png" class="card-img-top" height="180">
+                    <div class="card-footer text-center">
+                        <button class="btn btn-primary"> POWERBILL </button>
                     </div>
                 </div>
-    
-                <div class="col-md-4 pb-5">
-                    <div class="card shadow" style="width: 12rem;">
-                        <img src="~/assets/img/powerbill.png" class="card-img-top" height="180">
-                        <div class="card-footer text-center">
-                            <button class="btn btn-primary"> POWERBILL </button>
-                        </div>
+            </div>
+
+            <div class="col-md-4 pb-5">
+                <div class="card shadow" style="width: 12rem;">
+                    <img src="~/assets/img/lps.png" class="card-img-top" height="180">
+                    <div class="card-footer text-center">
+                        <button class="btn btn-primary"> LPS </button>
                     </div>
                 </div>
-    
-                <div class="col-md-4 pb-5">
-                    <div class="card shadow" style="width: 12rem;">
-                        <img src="~/assets/img/lps.png" class="card-img-top" height="180">
-                        <div class="card-footer text-center">
-                            <button class="btn btn-primary"> LPS </button>
-                        </div>
+            </div>
+
+            <div class="col-md-4 pb-5">
+                <div class="card shadow" style="width: 12rem;">
+                    <img src="~/assets/img/warehouse.png" class="card-img-top" height="180">
+                    <div class="card-footer text-center">
+                        <button @click="goToWarehouse" class="btn btn-primary"> WAREHOUSE </button>
                     </div>
                 </div>
-    
-                <div class="col-md-4 pb-5">
-                    <div class="card shadow" style="width: 12rem;">
-                        <img src="~/assets/img/warehouse.png" class="card-img-top" height="180">
-                        <div class="card-footer text-center">
-                            <button @click="goToWarehouse" class="btn btn-primary"> WAREHOUSE </button>
-                        </div>
+            </div>
+
+            <div class="col-md-4 pb-5">
+                <div class="card shadow" style="width: 12rem;">
+                    <img src="~/assets/img/accounting2.png" class="card-img-top" height="180">
+                    <div class="card-footer text-center">
+                        <button class="btn btn-primary"> ACCOUNTING </button>
                     </div>
                 </div>
-    
-                <div class="col-md-4 pb-5">
-                    <div class="card shadow" style="width: 12rem;">
-                        <img src="~/assets/img/accounting2.png" class="card-img-top" height="180">
-                        <div class="card-footer text-center">
-                            <button class="btn btn-primary"> ACCOUNTING </button>
-                        </div>
+            </div>
+
+            <div class="col-md-4 pb-5">
+                <div class="card shadow" style="width: 12rem;">
+                    <img src="~/assets/img/powerpay.png" class="card-img-top" height="180">
+                    <div class="card-footer text-center">
+                        <button class="btn btn-primary"> POWERPAY </button>
                     </div>
                 </div>
-    
-                <div class="col-md-4 pb-5">
-                    <div class="card shadow" style="width: 12rem;">
-                        <img src="~/assets/img/powerpay.png" class="card-img-top" height="180">
-                        <div class="card-footer text-center">
-                            <button class="btn btn-primary"> POWERPAY </button>
-                        </div>
-                    </div>
-                </div>
-    
             </div>
 
         </div>
 
-    <!-- </div> -->
+    </div>
 
         
     <div v-else>
@@ -162,33 +156,6 @@ const goToWarehouse =  () => {
 
 
 <style scoped>
-/* .container-custom {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 80vh;
-    margin: 0;
-} */
-
-.background-container {
-    /* display: grid;
-    place-items: center; */
-    height: 100vh;
-    overflow: auto;
-    padding-top: 40px;
-}
-
-/* .background-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('~/assets/img/homebg.png');
-    background-size: cover;
-    background-position: center;
-    z-index: -1;
-} */
 
 .card {
     border: none;

@@ -102,7 +102,7 @@
                                 <li><a class="dropdown-item" href="#">Profile</a></li>
                                 <li><a class="dropdown-item" href="#">Settings</a></li>
                                 <li><a class="dropdown-item" href="#">Activity log</a></li>
-                                <li><nuxt-link class="dropdown-item" to="/">Logout</nuxt-link></li>
+                                <li><nuxt-link @click="logout" class="dropdown-item" to="/">Logout</nuxt-link></li>
                             </ul>
                         </li>
                     </ul>
@@ -210,7 +210,7 @@
                     </li>
                 </ul>
                 <div class="mt-auto d-grid">
-                    <nuxt-link class="btn btn-outline-danger btn-block" to="/">Logout</nuxt-link>
+                    <nuxt-link @click="logout" class="btn btn-outline-danger btn-block" to="/">Logout</nuxt-link>
                 </div>
             </div>
         </div>
@@ -223,6 +223,8 @@
 
 
 <script setup lang="ts">
+
+import { logout } from '~/utils/helpers';
 
 const authUser = ref<AuthUser>()
 

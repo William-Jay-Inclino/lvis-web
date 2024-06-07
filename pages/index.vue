@@ -3,7 +3,7 @@
         <div class="background-overlay"></div>
         <div class="form-signin">
         <div class="img-container">
-            <img src="~/assets/img/leyeco-logo.png" alt="" width="192" height="177">
+            <img src="~/assets/img/leyeco-logo2.png" alt="" width="215" height="200">
         </div>
         <h1 class="h3 mb-3 fw-normal text-white">Please log in</h1>
 
@@ -67,11 +67,11 @@
 
     const isLoggingIn = ref(false)
 
-    onMounted(() => {
+    // onMounted(() => {
 
-        localStorage.removeItem('authUser');
+    //     localStorage.removeItem('authUser');
 
-    })
+    // })
 
     async function login() {
         console.log('login()');

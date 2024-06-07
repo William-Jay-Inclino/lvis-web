@@ -153,3 +153,6 @@ export function redirectTo401Page() {
     return window.location.href = '/error/401'
 }
 
+export function logout() {
+    localStorage.removeItem('authUser');
+}
