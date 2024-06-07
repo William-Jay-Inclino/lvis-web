@@ -647,7 +647,8 @@ function getItemsNeedingJustification(canvassItems: CanvassItem[], meqsSuppliers
             continue
         }
 
-        const isAwardedNotLowest = lowestPriceItem.meqs_supplier!.supplier?.id !== awardedItem.meqs_supplier?.supplier?.id
+        // const isAwardedNotLowest = (lowestPriceItem.meqs_supplier!.supplier?.id !== awardedItem.meqs_supplier?.supplier?.id)
+        const isAwardedNotLowest = (lowestPriceItem.meqs_supplier!.supplier?.id !== awardedItem.meqs_supplier?.supplier?.id) && (lowestPriceItem.price !== awardedItem.price)
         const hasEmptyNotes = awardedItem.notes.trim() === ''
 
         if (isAwardedNotLowest && hasEmptyNotes) {
