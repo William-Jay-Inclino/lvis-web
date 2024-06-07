@@ -74,6 +74,10 @@ export async function findOne(id: string): Promise<User | undefined> {
                         firstname
                         middlename
                         lastname
+                        position {
+                            id 
+                            name
+                        }
                     }
                 }
             }

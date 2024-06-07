@@ -140,6 +140,12 @@
                 <div v-else-if="formType === FORM_TYPE.USER_PERMISSIONS" class="row justify-content-center pt-5">
         
                     <div class="col-lg-6">
+
+                        <div class="mb-3 text-center">
+                            <label class="label text-muted fst-italic">
+                                Position: <span class="text-primary">{{ item.user_employee?.employee.position.name }} </span>
+                            </label>
+                        </div>
         
                         <SystemUserPermissions :permissions="item.permissions" />
         
