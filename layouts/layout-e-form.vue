@@ -3,7 +3,10 @@
     <div id="wrapper">
         <nav class="navbar sticky-top navbar-expand-lg navbar-dark" style="background-color: #1877F2;">
             <div class="container">
-                <a class="navbar-brand" href="#">Leyeco V - eFORMS</a>
+                <a class="navbar-brand" href="#">
+                    <img style="max-height: 60px;" src="~/assets/img/leyeco-logo2.png" alt="Leyeco V - SYSTEM Logo" class="img-fluid">
+                    Leyeco V - eFORMS
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
                     data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
                     <span class="navbar-toggler-icon"></span>

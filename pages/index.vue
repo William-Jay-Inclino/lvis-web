@@ -1,52 +1,40 @@
 <template>
-    <div class="wrapper">
-        <div class="background-overlay"></div>
-        <div class="form-signin">
-        <div class="img-container">
-            <img src="~/assets/img/leyeco-logo2.png" alt="" width="215" height="200">
+  <div class="bg-container position-relative d-flex align-items-center">
+    <div class="bg-overlay position-absolute top-0 start-0 end-0 bottom-0"></div>
+    <div class="container">
+      <div class="row justify-content-start">
+        <div class="col-md-5 col">
+          <div class="card border-0 border-3 border-dark shadow p-4">
+            <div class="card-body">
+              <h3 class="card-title text-center">
+                <img src="~/assets/img/leyeco-logo2.png" alt="Logo" class="logo mb-4">
+              </h3>
+              <form @submit.prevent="login">
+                <div class="mb-3">
+                  <label for="email" class="form-label">Username</label>
+                  <input v-model="email" type="text" class="form-control">
+                </div>
+                <div class="mb-3">
+                  <label for="password" class="form-label">Password</label>
+                  <input v-model="password" type="password" class="form-control">
+                </div>
+                <div style="margin-top: 10px;" v-if="error.show" class="alert alert-danger mb-3" role="alert">
+                    {{ error.msg }}
+                </div>
+                <div class="d-grid">
+                  <button :disabled="isLoggingIn" type="submit" class="btn btn-primary btn-block">
+                    {{ isLoggingIn ? 'Logging in...' : 'Login' }}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
-        <h1 class="h3 mb-3 fw-normal text-white">Please log in</h1>
-
-        <form @submit.prevent="login">
-            <div class="form-floating">
-            <input
-                v-model="email"
-                type="text"
-                class="form-control"
-                id="floatingInput"
-                placeholder=" "
-                @focus="addFocusClass"
-                @blur="removeFocusClass"
-            >
-            <label for="floatingInput">Username</label>
-            </div>
-    
-            <div class="form-floating" style="margin-top: 10px;">
-            <input
-                v-model="password"
-                type="password"
-                class="form-control"
-                id="floatingPassword"
-                placeholder=" "
-                @focus="addFocusClass"
-                @blur="removeFocusClass"
-            >
-            <label for="floatingPassword">Password</label>
-            </div>
-    
-            <div style="margin-top: 10px;" v-if="error.show" class="alert alert-danger mb-4" role="alert">
-                {{ error.msg }}
-            </div>
-    
-            <button :disabled="isLoggingIn" style="margin-top: 10px;" class="w-100 btn btn-lg btn-primary" type="submit">
-                {{ isLoggingIn ? 'Logging in...' : 'Log in' }}
-            </button>
-
-        </form>
-
-        </div>
+      </div>
     </div>
+  </div>
 </template>
+
 
 
 <script setup lang="ts">
@@ -66,12 +54,6 @@
     })
 
     const isLoggingIn = ref(false)
-
-    // onMounted(() => {
-
-    //     localStorage.removeItem('authUser');
-
-    // })
 
     async function login() {
         console.log('login()');
@@ -128,41 +110,39 @@
 
 </script>
 
-
-
-
 <style scoped>
-.wrapper {
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column; /* Stack items vertically */
-  align-items: center; /* Center items horizontally */
-  justify-content: center; /* Center items vertically */
-}
-
-.background-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('~/assets/img/loginbg15.png');
+.bg-container {
+  background-image: url('~/assets/img/loginbg9.png');
   background-size: cover;
   background-position: center;
-  z-index: -1;
+  height: 100vh;
 }
 
-.form-signin {
-  position: relative;
-  z-index: 1;
-  max-width: 330px;
-  padding: 15px;
-  margin-bottom: 50vh; /* Adjust the margin to move the form up or down */
-  text-align: center;
+.bg-overlay {
+  background-color: rgba(0, 0, 0, 0.2); /* Adjust the opacity as needed */
 }
 
-.img-container {
-  margin-bottom: 20px;
+.card {
+  border-radius: 1rem;
+}
+
+.card-title {
+  font-weight: bold;
+}
+
+/* .btn-warning {
+  background-color: #ffeb3b;
+  border: none;
+  border-radius: 0.5rem;
+  transition: background-color 0.3s ease;
+}
+
+.btn-warning:hover {
+  background-color: #fdd835;
+} */
+
+.logo {
+  max-width: 250px; /* Adjust the logo size as needed */
+  height: auto;
 }
 </style>
