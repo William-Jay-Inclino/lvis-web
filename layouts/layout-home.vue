@@ -1,6 +1,6 @@
 <template>
     <div v-if="authUser" id="wrapper">
-        <div class="bg-container">
+        <div :class="{'bg-container': !isMobile}">
 
             <nav class="navbar sticky-top navbar-expand-lg navbar-dark" style="background-color: #1877F2;">
                 <div class="container">
@@ -51,6 +51,10 @@
                 <NuxtPage />
             </div>
     
+            <br />
+            <br />
+            <br />
+            <br />
             <br />
             <br />
             
@@ -130,6 +134,8 @@ function checkMobile() {
   background-image: url('~/assets/img/homebg2.png');
   background-size: cover;
   background-position: center;
-  height: 100vh;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  width: 100%;
 }
 </style>

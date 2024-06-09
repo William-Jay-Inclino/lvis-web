@@ -1,10 +1,10 @@
 <template>
-    <footer :class="{'bg-white': !isHomeRoute}" class="footer mt-auto py-3 fixed-bottom d-flex justify-content-center align-items-center">
-        <div class="text-center text-dark fw-bold" style="font-family: monospace; color: #ffd700;">
-            <p>&copy; 2024 LVIS <i class="fas fa-bolt text-warning"></i> | Developed by <a target="_blank" href="https://www.facebook.com/jewell.inclino">William Jay Inclino</a></p>
-        </div>
+<footer :class="{'bg-white': !isHomeRoute || isMobile}" class="footer mt-auto pt-3 d-flex justify-content-center align-items-center">
+      <div class="text-center text-dark fw-bold" :style="{fontFamily: 'monospace', color: '#ffd700', fontSize: isMobile ? '13px' : '16px', textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%'}">
+        <p>&copy; 2024 LVIS <i class="fas fa-bolt text-warning"></i> | Developed by <a target="_blank" href="https://www.facebook.com/jewell.inclino">William Jay Inclino</a></p>
+      </div>
     </footer>
-</template>
+  </template>
 
 <script setup>
 import { useRoute } from 'vue-router'
@@ -14,4 +14,30 @@ const route = useRoute()
 console.log('route.path', route.path);
 const isHomeRoute = route.path === '/home'
 
+const isMobile = ref(false)
+
+onMounted(() => {
+
+    isMobile.value = window.innerWidth < MOBILE_WIDTH
+
+    window.addEventListener('resize', checkMobile);
+})
+
+
+function checkMobile() {
+    isMobile.value = window.innerWidth < MOBILE_WIDTH
+}
+
+
 </script>
+
+
+<style scoped>
+/* Add any additional styles if needed */
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+</style>
