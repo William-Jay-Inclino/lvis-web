@@ -3,15 +3,23 @@
     <div v-if="authUser" id="wrapper">
         <nav class="navbar sticky-top navbar-expand-lg navbar-dark" style="background-color: #1877F2;">
             <div class="container">
-                <a class="navbar-brand" href="#">
+                <nuxt-link class="navbar-brand" to="/home">
                     <img style="max-height: 60px;" src="~/assets/img/leyeco-logo2.png" alt="Leyeco V - SYSTEM Logo" class="img-fluid">
                     Leyeco V - SYSTEM
-                </a>
+                </nuxt-link>
                 <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
                     data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-
+                <!-- Notification icon for small screen -->
+                <div v-if="isApprover(authUser)" class="d-lg-none ms-auto me-3 position-relative">
+                    <nuxt-link class="text-white position-relative" to="/e-forms/pendings">
+                        <i class="fas fa-bell"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            {{ totalPendings }}
+                        </span>
+                    </nuxt-link>
+                </div>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li class="nav-item">

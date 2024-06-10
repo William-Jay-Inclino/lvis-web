@@ -3,10 +3,10 @@
     <div id="wrapper">
         <nav class="navbar sticky-top navbar-expand-lg navbar-dark" style="background-color: #1877F2;">
             <div class="container">
-                <a class="navbar-brand" href="#">
+                <nuxt-link class="navbar-brand" to="/home">
                     <img style="max-height: 60px;" src="~/assets/img/leyeco-logo2.png" alt="Leyeco V - SYSTEM Logo" class="img-fluid">
-                    Leyeco V - eFORMS
-                </a>
+                    Leyeco V - Notifications
+                </nuxt-link>
                 <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
                     data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
                     <span class="navbar-toggler-icon"></span>
@@ -61,31 +61,12 @@
             aria-labelledby="offcanvasExampleLabel">
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             <div class="offcanvas-header">
-                <img src="/Me.jpg" alt="Profile Picture" class="img-fluid">
+                <img src="/avatar.jpg" alt="Profile Picture" class="img-fluid">
             </div>
             <div class="offcanvas-body d-flex flex-column">
                 <ul class="nav flex-column mb-3">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">User Account</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Activity Log</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            Purchasing
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/canvass">Canvass</nuxt-link>
-                            </li>
-                            <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/rv">RV</nuxt-link></li>
-                            <li><a class="dropdown-item" href="#">SPR</a></li>
-                            <li><a class="dropdown-item" href="#">JO</a></li>
-                            <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/meqs">MEQS</nuxt-link></li>
-                            <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/po">PO</nuxt-link></li>
-                            <li><nuxt-link class="dropdown-item" to="/warehouse/purchasing/rr">RR</nuxt-link></li>
-                        </ul>
+                        <nuxt-link class="nav-link" to="/home">Home</nuxt-link>
                     </li>
                 </ul>
                 <div class="mt-auto d-grid">
