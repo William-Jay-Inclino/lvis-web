@@ -184,7 +184,7 @@
                                         <td class="text-muted"> {{ formatToPhpCurrency(item.price * item.canvass_item.quantity) }} </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="8" class="text-end fw-bold">
+                                        <td colspan="9" class="text-end fw-bold">
                                             Summary Total
                                         </td>
                                         <td class="fw-bold">
@@ -328,14 +328,16 @@ const totalPriceOfAllItems = computed(() => {
 
     for (let item of supplierItems.value) {
 
-        const totalPriceOfItem = getTotalNetPrice({
-            vatType: item.vat_type,
-            pricePerUnit: item.price,
-            vatPerUnit: getVatAmount(item.price, item.vat_type),
-            quantity: item.canvass_item.quantity
-        })
+        // const totalPriceOfItem = getTotalNetPrice({
+        //     vatType: item.vat_type,
+        //     pricePerUnit: item.price,
+        //     vatPerUnit: getVatAmount(item.price, item.vat_type),
+        //     quantity: item.canvass_item.quantity
+        // })
 
-        totalPrice += totalPriceOfItem
+        // totalPrice += totalPriceOfItem
+
+        totalPrice += item.price * item.canvass_item.quantity
 
     }
 

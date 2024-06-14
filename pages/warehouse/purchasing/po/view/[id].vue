@@ -361,14 +361,16 @@ const totalPriceOfAllItems = computed(() => {
     for (let item of supplierItems.value) {
 
         // const totalPriceOfItem = getTotalNetPrice(item.price, item.canvass_item.quantity, getVatAmount(item.price, item.vat_type))
-        const totalPriceOfItem = getTotalNetPrice({
-            vatType: item.vat_type,
-            pricePerUnit: item.price,
-            vatPerUnit: getVatAmount(item.price, item.vat_type),
-            quantity: item.canvass_item.quantity
-        })
+        // const totalPriceOfItem = getTotalNetPrice({
+        //     vatType: item.vat_type,
+        //     pricePerUnit: item.price,
+        //     vatPerUnit: getVatAmount(item.price, item.vat_type),
+        //     quantity: item.canvass_item.quantity
+        // })
 
-        totalPrice += totalPriceOfItem
+        // totalPrice += totalPriceOfItem
+
+        totalPrice += item.price * item.canvass_item.quantity
 
     }
 
