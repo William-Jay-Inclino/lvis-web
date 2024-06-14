@@ -2,12 +2,13 @@ import type { APPROVAL_STATUS, Vehicle } from "~/composables/common.types";
 import type { Canvass } from "../canvass/canvass.types";
 import type { MEQS } from "../meqs/meqs.types";
 import type { SPRApprover, SprApproverSettings } from "./spr-approver.types";
+import type { Employee } from "~/composables/system/employee/employee.types";
 
 export interface SPR {
   id: string;
   spr_number: string;
   date_requested: string;
-  canvass_id: string;
+  canvass_id?: string | null;
   vehicle_id: string;
   classification_id: string | null;
   supervisor_id: string;
@@ -28,7 +29,7 @@ export interface SPR {
 
   // =============== derived / resolvers =============== 
 
-  canvass: Canvass;
+  canvass?: Canvass | null;
   vehicle: Vehicle;
   meqs?: MEQS
   spr_approvers: SPRApprover[]

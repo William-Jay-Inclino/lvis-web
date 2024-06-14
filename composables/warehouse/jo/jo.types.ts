@@ -2,12 +2,13 @@ import type { APPROVAL_STATUS, Department } from "~/composables/common.types";
 import type { Canvass } from "../canvass/canvass.types";
 import type { MEQS } from "../meqs/meqs.types";
 import type { JOApprover, JoApproverSettings } from "./jo-approver.types";
+import type { Employee } from "~/composables/system/employee/employee.types";
 
 export interface JO {
   id: string;
   jo_number: string;
   date_requested: string;
-  canvass_id: string;
+  canvass_id?: string | null;
   equipment: string;
   classification_id: string | null;
   department_id: string | null;
@@ -29,7 +30,7 @@ export interface JO {
 
   // =============== derived / resolvers =============== 
 
-  canvass: Canvass;
+  canvass?: Canvass | null;
   meqs?: MEQS
   jo_approvers: JOApprover[]
   status: APPROVAL_STATUS

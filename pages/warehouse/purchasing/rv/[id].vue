@@ -285,6 +285,9 @@ const rvStatus = computed(() => {
 // ======================== FUNCTIONS ========================  
 
 function populateForm(data: RV) {
+
+    if(!data.canvass) return 
+
     data.date_requested = formatToValidHtmlDate(data.date_requested)
 
     const requestedBy = data.canvass.requested_by

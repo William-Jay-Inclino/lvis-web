@@ -289,6 +289,9 @@ const sprStatus = computed(() => {
 // ======================== FUNCTIONS ========================  
 
 function populateForm(data: SPR) {
+
+    if(!data.canvass) return 
+
     data.date_requested = formatToValidHtmlDate(data.date_requested)
 
     const requestedBy = data.canvass.requested_by

@@ -29,18 +29,19 @@
                                     <tr>
                                         <td class="text-muted"> RC Number </td>
                                         <td>
-                                            <nuxt-link v-if="meqs.rv"
+                                            <nuxt-link v-if="meqs.rv && meqs.rv.canvass"
                                                 :to="'/warehouse/purchasing/canvass/view/' + meqs?.rv.canvass.id">
                                                 {{ meqs?.rv.canvass.rc_number }}
                                             </nuxt-link>
-                                            <nuxt-link v-else-if="meqs.jo"
+                                            <nuxt-link v-else-if="meqs.jo && meqs.jo.canvass"
                                                 :to="'/warehouse/purchasing/canvass/view/' + meqs.jo.canvass.id">
                                                 {{ meqs.jo.canvass.rc_number }}
                                             </nuxt-link>
-                                            <nuxt-link v-else-if="meqs.spr"
+                                            <nuxt-link v-else-if="meqs.spr && meqs.spr.canvass"
                                                 :to="'/warehouse/purchasing/canvass/view/' + meqs.spr.canvass.id">
                                                 {{ meqs.spr.canvass.rc_number }}
                                             </nuxt-link>
+                                            <div v-else> N/A </div>
                                         </td>
                                     </tr>
                                     <tr v-if="meqs.rv">
@@ -59,7 +60,7 @@
                                             </nuxt-link>
                                         </td>
                                     </tr>
-                                    <tr v-if="meqs.spr">
+                                    <tr v-else-if="meqs.spr">
                                         <td class="text-muted"> SPR Number </td>
                                         <td>
                                             <nuxt-link :to="'/warehouse/purchasing/spr/view/' + meqs.spr.id">{{
@@ -67,11 +68,16 @@
                                             </nuxt-link>
                                         </td>
                                     </tr>
+                                    <tr v-else>
+                                        <td class="text-muted"> RV/SPR/JO Number </td>
+                                        <td> N/A </td>
+                                    </tr>
                                     <tr>
                                         <td class="text-muted">MEQS Number</td>
                                         <td>
-                                            <nuxt-link :to="'/warehouse/purchasing/meqs/view/' + item.meqs_supplier.meqs!.id">{{
-                item.meqs_supplier.meqs!.meqs_number }}</nuxt-link>
+                                            <nuxt-link v-if="item.meqs_supplier" :to="'/warehouse/purchasing/meqs/view/' + item.meqs_supplier.meqs!.id">{{
+                                            item.meqs_supplier.meqs!.meqs_number }}</nuxt-link>
+                                            <div v-else> N/A </div>
                                         </td>
                                     </tr>
                                     <tr>
@@ -96,11 +102,11 @@
                                     </tr>
                                     <tr>
                                         <td class="text-muted">Supplier</td>
-                                        <td> {{ item.meqs_supplier.supplier!.name }} </td>
+                                        <td> {{ item.meqs_supplier ? item.meqs_supplier.supplier!.name : 'N/A' }} </td>
                                     </tr>
                                     <tr>
                                         <td class="text-muted">VAT Status</td>
-                                        <td> {{ item.meqs_supplier.supplier?.is_vat_registered ? 'VAT Registered' : 'Non-VAT Registered' }} </td>
+                                        <td> {{ item.meqs_supplier ? item.meqs_supplier.supplier?.is_vat_registered ? 'VAT Registered' : 'Non-VAT Registered' : 'N/A' }} </td>
                                     </tr>
                                     <tr>
                                         <td class="text-muted">Fund Source</td>
@@ -331,7 +337,8 @@ onMounted(async () => {
 
 
 const meqs = computed(() => {
-
+    if(!item.value?.meqs_supplier) return 
+    
     const meqs = item.value?.meqs_supplier.meqs
     return meqs
 
@@ -339,7 +346,7 @@ const meqs = computed(() => {
 
 const supplierItems = computed(() => {
 
-    if (!item.value) return []
+    if (!item.value || !item.value.meqs_supplier) return []
 
     const items = item.value.meqs_supplier.meqs_supplier_items
 

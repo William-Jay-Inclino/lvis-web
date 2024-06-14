@@ -6,7 +6,7 @@ import type { Account } from "~/composables/system/account/account";
 
 export interface PO {
     id: string;
-    meqs_supplier_id: string;
+    meqs_supplier_id?: string | null;
     fund_source_id?: string | null;
     po_number: string;
     po_date: string;
@@ -26,7 +26,7 @@ export interface PO {
 
     // =============== derived / resolvers =============== 
 
-    meqs_supplier: MeqsSupplier
+    meqs_supplier?: MeqsSupplier | null
     rrs: RR[]
     po_approvers: Approver[];
     status: APPROVAL_STATUS;

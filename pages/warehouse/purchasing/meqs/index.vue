@@ -113,29 +113,38 @@
                                                 <td class="text-muted align-middle" v-else-if="i.jo">
                                                     JO#{{ i.jo.jo_number }}
                                                 </td>
-                                                <td class="text-muted align-middle" v-if="i.spr">
+                                                <td class="text-muted align-middle" v-else-if="i.spr">
                                                     SPR#{{ i.spr.spr_number }}
+                                                </td>
+                                                <td v-else>
+                                                    N/A
                                                 </td>
                                                 <td class="text-muted align-middle" v-if="i.rv">
                                                     {{
+                                                        i.rv.canvass ?
                 getFullname(i.rv.canvass.requested_by!.firstname,
                     i.rv.canvass.requested_by!.middlename,
-                    i.rv.canvass.requested_by!.lastname)
+                    i.rv.canvass.requested_by!.lastname) : 'N/A'
             }}
                                                 </td>
                                                 <td class="text-muted align-middle" v-else-if="i.jo">
                                                     {{
+                                                        i.jo.canvass ?
                 getFullname(i.jo.canvass.requested_by!.firstname,
                     i.jo.canvass.requested_by!.middlename,
-                    i.jo.canvass.requested_by!.lastname)
+                    i.jo.canvass.requested_by!.lastname) : 'N/A'
             }}
                                                 </td>
-                                                <td class="text-muted align-middle" v-if="i.spr">
+                                                <td class="text-muted align-middle" v-else-if="i.spr">
                                                     {{
+                                                        i.spr.canvass ?
                 getFullname(i.spr.canvass.requested_by!.firstname,
                     i.spr.canvass.requested_by!.middlename,
-                    i.spr.canvass.requested_by!.lastname)
+                    i.spr.canvass.requested_by!.lastname) : 'N/A'
             }}
+                                                </td>
+                                                <td v-else>
+                                                    N/A
                                                 </td>
                                                 <td class="text-muted align-middle"> {{ formatDate(i.meqs_date) }} </td>
                                                 <td class="text-center align-middle">
@@ -149,9 +158,9 @@
                                                         <i class="fas fa-info-circle"
                                                             :class="{ 'text-info': canViewDetails(authUser, 'canManageMEQS') }"></i>
                                                     </button>
-                                                    <button :disabled="!i.can_update" @click="onClickEdit(i.id)"
+                                                    <button :disabled="!i.can_update || i.status === APPROVAL_STATUS.CANCELLED" @click="onClickEdit(i.id)"
                                                         class="btn btn-light w-50">
-                                                        <i class="fas fa-edit" :class="{ 'text-primary': !!i.can_update }"></i>
+                                                        <i class="fas fa-edit" :class="{ 'text-primary': !!i.can_update && i.status !== APPROVAL_STATUS.CANCELLED}"></i>
                                                     </button>
                                                 </td>
                                             </tr>
@@ -209,6 +218,7 @@ import * as meqsApi from '~/composables/warehouse/meqs/meqs.api'
 import type { JO } from '~/composables/warehouse/jo/jo.types';
 import type { SPR } from '~/composables/warehouse/spr/spr.types';
 import { getFullname, formatDate } from '~/utils/helpers'
+import type { Employee } from '~/composables/system/employee/employee.types';
 
 
 definePageMeta({

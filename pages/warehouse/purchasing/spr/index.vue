@@ -91,10 +91,10 @@
                                         <tbody>
                                             <tr v-for="i in items">
                                                 <td class="text-muted align-middle"> {{ i.spr_number }} </td>
-                                                <td class="text-muted align-middle"> {{ i.canvass.rc_number }} </td>
-                                                <td class="text-muted align-middle"> {{
+                                                <td class="text-muted align-middle"> {{ i.canvass ? i.canvass.rc_number : 'N/A'  }} </td>
+                                                <td class="text-muted align-middle"> {{ i.canvass ?
                 getFullname(i.canvass.requested_by!.firstname,
-                    i.canvass.requested_by!.middlename, i.canvass.requested_by!.lastname) }}
+                    i.canvass.requested_by!.middlename, i.canvass.requested_by!.lastname) : 'N/A' }}
                                                 </td>
                                                 <td class="text-muted align-middle"> {{ formatDate(i.date_requested) }}
                                                 </td>
@@ -109,9 +109,9 @@
                                                         <i class="fas fa-info-circle"
                                                             :class="{ 'text-info': canViewDetails(authUser, 'canManageSPR') }"></i>
                                                     </button>
-                                                    <button :disabled="!i.can_update" @click="onClickEdit(i.id)"
+                                                    <button :disabled="!i.can_update || i.status === APPROVAL_STATUS.CANCELLED" @click="onClickEdit(i.id)"
                                                         class="btn btn-light w-50">
-                                                        <i class="fas fa-edit" :class="{ 'text-primary': !!i.can_update }"></i>
+                                                        <i class="fas fa-edit" :class="{ 'text-primary': !!i.can_update && i.status !== APPROVAL_STATUS.CANCELLED}"></i>
                                                     </button>
                                                 </td>
                                             </tr>
@@ -171,6 +171,7 @@ import * as sprApi from '~/composables/warehouse/spr/spr.api'
 import { getFullname, formatDate } from '~/utils/helpers'
 import { PAGINATION_SIZE } from '~/utils/config'
 import { approvalStatus } from '~/utils/constants';
+import type { Employee } from '~/composables/system/employee/employee.types';
 
 definePageMeta({
     name: ROUTES.SPR_INDEX,

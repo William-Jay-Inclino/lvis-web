@@ -91,24 +91,28 @@
                                         <tbody>
                                             <tr v-for="i in items">
                                                 <td class="text-muted align-middle"> {{ i.rr_number }} </td>
-                                                <td class="text-muted align-middle"> {{ i.po.po_number }} </td>
-                                                <td class="text-muted align-middle">
+                                                <td class="text-muted align-middle"> {{ i.po ? i.po.po_number : 'N/A' }} </td>
+                                                <td v-if="i.po && i.po.meqs_supplier" class="text-muted align-middle">
                                                     <span v-if="i.po.meqs_supplier.meqs!.rv">
                                                         {{
-                getRequisitionerFullname(i.po.meqs_supplier.meqs!.rv.canvass.requested_by)
+                                                            i.po.meqs_supplier.meqs!.rv.canvass ?
+                getRequisitionerFullname(i.po.meqs_supplier.meqs!.rv.canvass.requested_by) : 'N/A'
             }}
                                                     </span>
                                                     <span v-else-if="i.po.meqs_supplier.meqs!.spr">
                                                         {{
-                getRequisitionerFullname(i.po.meqs_supplier.meqs!.spr.canvass.requested_by)
+                                                            i.po.meqs_supplier.meqs!.spr.canvass ?
+                getRequisitionerFullname(i.po.meqs_supplier.meqs!.spr.canvass.requested_by) : 'N/A'
             }}
                                                     </span>
                                                     <span v-else-if="i.po.meqs_supplier.meqs!.jo">
                                                         {{
-                getRequisitionerFullname(i.po.meqs_supplier.meqs!.jo.canvass.requested_by)
+                                                            i.po.meqs_supplier.meqs!.jo.canvass ?
+                getRequisitionerFullname(i.po.meqs_supplier.meqs!.jo.canvass.requested_by) : 'N/A'
             }}
                                                     </span>
                                                 </td>
+                                                <td v-else> N/A </td>
                                                 <td class="text-muted align-middle"> {{ formatDate(i.rr_date) }} </td>
                                                 <td>
                                                     <div :class="{ [`badge bg-${approvalStatus[i.status].color}`]: true }">
@@ -121,9 +125,9 @@
                                                         <i class="fas fa-info-circle"
                                                             :class="{ 'text-info': (canViewDetails(authUser, 'canManageRR') && !isTransactionFailed(i) ), 'text-danger': isTransactionFailed(i) }"></i>
                                                     </button>
-                                                    <button :disabled="!i.can_update" @click="onClickEdit(i.id)"
+                                                    <button :disabled="!i.can_update || i.status === APPROVAL_STATUS.CANCELLED" @click="onClickEdit(i.id)"
                                                         class="btn btn-light w-50">
-                                                        <i class="fas fa-edit" :class="{ 'text-primary': !!i.can_update }"></i>
+                                                        <i class="fas fa-edit" :class="{ 'text-primary': !!i.can_update && i.status !== APPROVAL_STATUS.CANCELLED}"></i>
                                                     </button>
                                                 </td>
                                             </tr>

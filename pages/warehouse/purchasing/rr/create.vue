@@ -299,7 +299,7 @@ const totalPriceSummary = computed(() => grossTotalSummary.value + rrData.value.
 
 watch(poId, () => {
 
-    if (poId) {
+    if (poId && rrData.value.po!.meqs_supplier) {
         populateRrItems(rrData.value.po!.meqs_supplier.meqs_supplier_items)
     }
 

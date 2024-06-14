@@ -3,7 +3,7 @@
     <div class="card">
         <div class="card-body">
 
-            <div v-if="!isLoadingPage && authUser && item && meqs">
+            <div v-if="!isLoadingPage && authUser && item">
         
                 <div class="row pt-3 justify-content-center">
                     <div class="col-lg-12">
@@ -32,52 +32,68 @@
                                     </tr>
                                     <tr>
                                         <td class="text-muted"> RC Number </td>
-                                        <td>
-                                            <nuxt-link v-if="meqs.rv"
+                                        <td v-if="meqs">
+                                            <nuxt-link v-if="meqs.rv && meqs.rv.canvass"
                                                 :to="'/warehouse/purchasing/canvass/view/' + meqs.rv.canvass.id">{{
                 meqs.rv.canvass.rc_number }}</nuxt-link>
-                                            <nuxt-link v-else-if="meqs.jo"
+                                            <nuxt-link v-else-if="meqs.jo && meqs.jo.canvass"
                                                 :to="'/warehouse/purchasing/canvass/view/' + meqs.jo.canvass.id">{{
                 meqs.jo.canvass.rc_number }}</nuxt-link>
-                                            <nuxt-link v-else-if="meqs.spr"
+                                            <nuxt-link v-else-if="meqs.spr && meqs.spr.canvass"
                                                 :to="'/warehouse/purchasing/canvass/view/' + meqs.spr.canvass.id">{{
                 meqs.spr.canvass.rc_number }}</nuxt-link>
+                                            <div v-else>
+                                                N/A
+                                            </div>
+                                        </td>
+                                        <td v-else>
+                                            N/A
                                         </td>
                                     </tr>
-                                    <tr v-if="meqs.rv">
+                                    <tr v-if="meqs && meqs.rv">
                                         <td class="text-muted"> RV Number </td>
                                         <td>
                                             <nuxt-link :to="'/warehouse/purchasing/rv/view/' + meqs.rv.id">{{ meqs.rv.rv_number
                                                 }}</nuxt-link>
                                         </td>
                                     </tr>
-                                    <tr v-else-if="meqs.jo">
+                                    <tr v-else-if="meqs && meqs.jo">
                                         <td class="text-muted"> JO Number </td>
                                         <td>
                                             <nuxt-link :to="'/warehouse/purchasing/jo/view/' + meqs.jo.id">{{ meqs.jo.jo_number
                                                 }}</nuxt-link>
                                         </td>
                                     </tr>
-                                    <tr v-if="meqs.spr">
+                                    <tr v-else-if="meqs && meqs.spr">
                                         <td class="text-muted"> SPR Number </td>
                                         <td>
                                             <nuxt-link :to="'/warehouse/purchasing/spr/view/' + meqs.spr.id">{{
                 meqs.spr.spr_number }}</nuxt-link>
                                         </td>
                                     </tr>
+                                    <tr v-else>
+                                        <td class="text-muted"> RV/SPR/JO Number </td>
+                                        <td> N/A </td>
+                                    </tr>
                                     <tr>
                                         <td class="text-muted">MEQS Number</td>
                                         <td>
-                                            <nuxt-link
+                                            <nuxt-link v-if="item.po?.meqs_supplier"
                                                 :to="'/warehouse/purchasing/meqs/view/' + item.po.meqs_supplier.meqs!.id">{{
                 item.po.meqs_supplier.meqs!.meqs_number }}</nuxt-link>
+                                            <div v-else>
+                                                N/A
+                                            </div>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="text-muted">PO Number</td>
                                         <td>
-                                            <nuxt-link :to="'/warehouse/purchasing/po/view/' + item.po.id">{{ item.po.po_number
+                                            <nuxt-link v-if="item.po" :to="'/warehouse/purchasing/po/view/' + item.po.id">{{ item.po.po_number
                                                 }}</nuxt-link>
+                                            <div v-else>
+                                                N/A
+                                            </div>
                                         </td>
                                     </tr>
                                     <tr>
@@ -532,6 +548,9 @@ const totalPriceSummary = computed(() => grossTotalSummary.value - item.value!.d
 
 
 const meqs = computed(() => {
+
+    if(!item.value?.po) return null
+    if(!item.value!.po.meqs_supplier) return null 
 
     const meqs = item.value!.po.meqs_supplier.meqs
     return meqs

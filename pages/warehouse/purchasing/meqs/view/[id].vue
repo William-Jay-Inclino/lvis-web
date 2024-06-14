@@ -31,9 +31,12 @@
                                         <tr>
                                             <td class="text-muted">RC Number</td>
                                             <td>
-                                                <nuxt-link
+                                                <nuxt-link v-if="referenceData?.canvass"
                                                     :to="'/warehouse/purchasing/canvass/view/' + referenceData?.canvass.id">{{
                 referenceData?.canvass.rc_number }}</nuxt-link>
+                                                <div v-else>
+                                                    N/A
+                                                </div>
                                             </td>
                                         </tr>
                                         <tr>
@@ -41,11 +44,14 @@
                                             <td>
                                                 <nuxt-link v-if="item.rv" :to="'/warehouse/purchasing/rv/view/' + item.rv.id">
                                                     {{ item.rv.rv_number }} </nuxt-link>
-                                                <nuxt-link v-if="item.spr"
+                                                <nuxt-link v-else-if="item.spr"
                                                     :to="'/warehouse/purchasing/spr/view/' + item.spr.id"> {{
                 item.spr.spr_number }} </nuxt-link>
-                                                <nuxt-link v-if="item.jo" :to="'/warehouse/purchasing/jo/view/' + item.jo.id">
+                                                <nuxt-link v-else-if="item.jo" :to="'/warehouse/purchasing/jo/view/' + item.jo.id">
                                                     {{ item.jo.jo_number }} </nuxt-link>
+                                                    <div v-else>
+                                                        N/A
+                                                    </div>
                                             </td>
                                         </tr>
                                         <tr>
@@ -230,8 +236,8 @@
                                             <th class="bg-secondary text-white text-center">Remarks</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr :class="{'table-danger': hasRemarks(canvassItem.id)}" v-for="canvassItem, i in referenceData?.canvass.canvass_items">
+                                    <tbody v-if="referenceData?.canvass">
+                                        <tr :class="{'table-danger': hasRemarks(canvassItem.id)}" v-for="canvassItem, i in referenceData.canvass.canvass_items">
                                             <td class="text-muted"> {{ i + 1 }} </td>
                                             <td class="text-muted"> {{ canvassItem.description }} </td>
                                             <td class="text-muted"> {{ canvassItem.unit ? canvassItem.unit.name : 'N/A' }} </td>
@@ -253,6 +259,11 @@
                                                     View
                                                 </button>
                                             </td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody v-else>
+                                        <tr>
+                                            <td :colspan="5 + item.meqs_suppliers.length" class="text-center">N/A</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -277,8 +288,8 @@
                                     </button>
                                 </div>
                                 <div v-if="!item.cancelled_at">
-                                    <button v-if="isAdminOrOwner(item.created_by, authUser)" class="btn btn-warning me-2"
-                                        @click="onCancelMeqs()" :disabled="hasPO">
+                                    <button v-if="isAdminOrOwner(item.created_by, authUser) && !hasPO" class="btn btn-warning me-2"
+                                        @click="onCancelMeqs()">
                                         <i class="fas fa-times-circle"></i> Cancel MEQS
                                     </button>
                                     <button v-if="!!item.can_update" class="btn btn-success me-2"
@@ -395,7 +406,7 @@ const referenceLabel = computed(() => {
 
     // todos
 
-    return ''
+    return 'RV/SPR/JO'
 
 })
 

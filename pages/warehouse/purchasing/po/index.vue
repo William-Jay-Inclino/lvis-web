@@ -90,25 +90,29 @@
                                         <tbody>
                                             <tr v-for="i in items">
                                                 <td class="text-muted align-middle"> {{ i.po_number }} </td>
-                                                <td class="text-muted align-middle"> {{ i.meqs_supplier.meqs!.meqs_number }}
+                                                <td class="text-muted align-middle"> {{ i.meqs_supplier ? i.meqs_supplier.meqs!.meqs_number : 'N/A' }}
                                                 </td>
-                                                <td class="text-muted align-middle">
+                                                <td v-if="i.meqs_supplier" class="text-muted align-middle">
                                                     <span v-if="i.meqs_supplier.meqs!.rv">
                                                         {{
-                getRequisitionerFullname(i.meqs_supplier.meqs!.rv.canvass.requested_by)
+                                                            i.meqs_supplier.meqs!.rv.canvass ?                    
+                getRequisitionerFullname(i.meqs_supplier.meqs!.rv.canvass.requested_by) : 'N/A'
             }}
                                                     </span>
                                                     <span v-else-if="i.meqs_supplier.meqs!.spr">
                                                         {{
-                getRequisitionerFullname(i.meqs_supplier.meqs!.spr.canvass.requested_by)
+                                                            i.meqs_supplier.meqs!.spr.canvass ?                    
+                getRequisitionerFullname(i.meqs_supplier.meqs!.spr.canvass.requested_by) : 'N/A'
             }}
                                                     </span>
                                                     <span v-else-if="i.meqs_supplier.meqs!.jo">
                                                         {{
-                getRequisitionerFullname(i.meqs_supplier.meqs!.jo.canvass.requested_by)
+                                                            i.meqs_supplier.meqs!.jo.canvass ?                    
+                getRequisitionerFullname(i.meqs_supplier.meqs!.jo.canvass.requested_by) : 'N/A'
             }}
                                                     </span>
                                                 </td>
+                                                <td v-else> N/A </td>
                                                 <td class="text-muted align-middle"> {{ formatDate(i.po_date) }} </td>
                                                 <td>
                                                     <div :class="{ [`badge bg-${approvalStatus[i.status].color}`]: true }">
@@ -121,9 +125,9 @@
                                                         <i class="fas fa-info-circle"
                                                             :class="{ 'text-info': canViewDetails(authUser, 'canManagePO') }"></i>
                                                     </button>
-                                                    <button :disabled="!i.can_update" @click="onClickEdit(i.id)"
+                                                    <button :disabled="!i.can_update || i.status === APPROVAL_STATUS.CANCELLED" @click="onClickEdit(i.id)"
                                                         class="btn btn-light w-50">
-                                                        <i class="fas fa-edit" :class="{ 'text-primary': !!i.can_update }"></i>
+                                                        <i class="fas fa-edit" :class="{ 'text-primary': !!i.can_update && i.status !== APPROVAL_STATUS.CANCELLED}"></i>
                                                     </button>
                                                 </td>
                                             </tr>
@@ -181,6 +185,7 @@ import type { PO } from '~/composables/warehouse/po/po.types';
 import { getFullname, formatDate } from '~/utils/helpers'
 import { PAGINATION_SIZE } from '~/utils/config'
 import type { MEQS } from '~/composables/warehouse/meqs/meqs.types';
+import type { Employee } from '~/composables/system/employee/employee.types';
 
 definePageMeta({
     name: ROUTES.PO_INDEX,

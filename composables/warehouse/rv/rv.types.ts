@@ -7,7 +7,7 @@ import type { Employee } from "~/composables/system/employee/employee.types";
 export interface RV {
   id: string;
   rv_number: string;
-  canvass_id: string;
+  canvass_id?: string | null;
   classification_id: string | null;
   supervisor_id: string;
   date_requested: string;
@@ -31,7 +31,7 @@ export interface RV {
 
   // =============== derived / resolvers =============== 
 
-  canvass: Canvass;
+  canvass?: Canvass | null;
   meqs?: MEQS
   rv_approvers: RVApprover[]
   status: APPROVAL_STATUS
