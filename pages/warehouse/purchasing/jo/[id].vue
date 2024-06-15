@@ -411,6 +411,9 @@ async function editApprover(
 
         joData.value.jo_approvers[prevApproverItemIndx] = { ...response.data }
 
+        joData.value.supervisor = a!
+        joData.value.supervisor_id = a!.id
+
         modalCloseBtn.click()
 
     } else {

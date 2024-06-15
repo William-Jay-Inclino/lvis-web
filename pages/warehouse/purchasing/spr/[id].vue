@@ -428,6 +428,9 @@ async function editApprover(
 
         sprData.value.spr_approvers[prevApproverItemIndx] = { ...response.data }
 
+        sprData.value.supervisor = a!
+        sprData.value.supervisor_id = a!.id
+
         modalCloseBtn.click()
 
     } else {

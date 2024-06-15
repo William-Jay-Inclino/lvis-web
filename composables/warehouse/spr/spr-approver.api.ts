@@ -24,6 +24,7 @@ export async function updateApproverOrder(inputs: { id: string, order: number }[
                     status
                     label
                     order
+                    is_supervisor
                 }
             }
         }
@@ -88,6 +89,7 @@ export async function create(sprId: string, input: CreateApproverInput): Promise
                 status
                 label
                 order
+                is_supervisor
             }
         }`;
 
@@ -191,6 +193,7 @@ export async function update(input: UpdateApproverInput): Promise<SprApproverMut
                 status
                 label
                 order
+                is_supervisor
             }
         }`;
 

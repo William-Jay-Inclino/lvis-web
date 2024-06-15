@@ -530,7 +530,8 @@ export async function create(input: CreateRvInput): Promise<MutationResponse> {
         approver_id: input.supervisor!.id,
         approver: input.supervisor,
         label: APPROVER_SUPERVISOR_LABEL,
-        order: 1
+        order: 1,
+        is_supervisor: true
     })
 
 
@@ -540,6 +541,7 @@ export async function create(input: CreateRvInput): Promise<MutationResponse> {
           approver_id: "${item.approver?.id}"
           label: "${item.label}"
           order: ${item.order}
+          is_supervisor: ${ !!item.is_supervisor ? item.is_supervisor : false }
         }`;
     }).join(', ');
 

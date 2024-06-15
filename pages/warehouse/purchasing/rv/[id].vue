@@ -196,7 +196,6 @@ const authUser = ref<AuthUser>({} as AuthUser)
 
 // DEPENDENCIES
 const route = useRoute()
-const router = useRouter();
 const toast = useToast();
 
 // FLAGS
@@ -349,30 +348,6 @@ async function updateRvInfo() {
 
 }
 
-// async function cancelRv() {
-
-//     console.log('cancelRv')
-//     const response = await rvApi.cancel(rvData.value.id)
-
-//     if (response.success) {
-//         toast.success(response.msg)
-//         rvData.value.cancelled_at = response.cancelled_at!
-
-//         router.push('/warehouse/purchasing/rv')
-
-//     } else {
-//         Swal.fire({
-//             title: 'Error!',
-//             text: response.msg,
-//             icon: 'error',
-//             position: 'top',
-//         })
-//     }
-
-
-// }
-
-
 
 // ======================== CHILD EVENTS: <WarehouseApprover> ========================  
 
@@ -425,9 +400,14 @@ async function editApprover(
 
         const a = response.data.approver
 
+        console.log('a', a);
+
         response.data.approver!['fullname'] = getFullname(a!.firstname, a!.middlename, a!.lastname)
 
         rvData.value.rv_approvers[prevApproverItemIndx] = { ...response.data }
+
+        rvData.value.supervisor = a!
+        rvData.value.supervisor_id = a!.id
 
         modalCloseBtn.click()
 
@@ -526,31 +506,6 @@ async function changeApproverOrder(
 }
 
 // ======================== UTILS ========================  
-
-// async function onCancelRv() {
-
-//     Swal.fire({
-//         title: "Are you sure?",
-//         text: `This RV will be cancelled!`,
-//         position: "top",
-//         icon: "warning",
-//         showCancelButton: true,
-//         confirmButtonColor: "#e74a3b",
-//         cancelButtonColor: "#6c757d",
-//         confirmButtonText: "Yes, cancel it!",
-//         reverseButtons: true,
-//         showLoaderOnConfirm: true,
-//         preConfirm: async (remove) => {
-
-//             if (remove) {
-//                 await cancelRv()
-//             }
-
-//         },
-//         allowOutsideClick: () => !Swal.isLoading()
-//     })
-
-// }
 
 function isValidRvInfo(): boolean {
 

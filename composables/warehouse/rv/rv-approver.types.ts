@@ -6,6 +6,10 @@ export interface RvApproverSettings {
   approver: Employee | null
   label: string
   order: number
+
+  // set programmatically
+
+  is_supervisor?: boolean
 }
 
 export interface RvApproverMutationResponse {
@@ -29,4 +33,5 @@ export interface RVApprover {
   status: APPROVAL_STATUS,
   label: string
   order: number
+  is_supervisor: boolean
 }
