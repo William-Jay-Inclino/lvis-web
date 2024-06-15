@@ -34,7 +34,7 @@
                                             <td> {{ item.address }} </td>
                                         </tr>
                                         <tr>
-                                            <td class="text-muted">Tin Number</td>
+                                            <td class="text-muted">TIN</td>
                                             <td> {{ item.tin_no }} </td>
                                         </tr>
                                         <tr>

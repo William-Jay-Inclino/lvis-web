@@ -39,7 +39,7 @@
                                                 <th class="bg-secondary text-white">Name</th>
                                                 <th class="bg-secondary text-white">Contact</th>
                                                 <th class="bg-secondary text-white">Address</th>
-                                                <th class="bg-secondary text-white">Tin No.</th>
+                                                <th class="bg-secondary text-white">TIN</th>
                                                 <th class="bg-secondary text-white">VAT Status</th>
                                                 <th class="text-center bg-secondary text-white">
                                                     <i class="fas fa-cog"></i>

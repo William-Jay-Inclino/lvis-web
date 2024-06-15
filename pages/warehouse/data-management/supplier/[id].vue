@@ -33,7 +33,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">
-                                    Tin Number <span class="text-danger">*</span>
+                                    TIN <span class="text-danger">*</span>
                                 </label>
                                 <input type="text" class="form-control" v-model="item.tin_no" required>
                             </div>

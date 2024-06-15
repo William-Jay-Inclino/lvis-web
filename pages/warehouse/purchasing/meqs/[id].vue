@@ -74,18 +74,18 @@
                         <div class="mb-3">
                             <label class="form-label">Requisitioner</label>
                             <input type="text" class="form-control"
-                                :value="getFullname(reference!.canvass.requested_by!.firstname, reference!.canvass.requested_by!.middlename, reference!.canvass.requested_by!.lastname)"
+                                :value="getFullname(reference!.canvass!.requested_by!.firstname, reference!.canvass!.requested_by!.middlename, reference!.canvass!.requested_by!.lastname)"
                                 disabled>
                         </div>
         
                         <div class="mb-3">
                             <label class="form-label">Requisitioner Purpose</label>
-                            <input type="text" class="form-control" :value="reference.canvass.purpose" disabled>
+                            <input type="text" class="form-control" :value="reference.canvass!.purpose" disabled>
                         </div>
         
                         <div class="mb-3">
                             <label class="form-label">Requisitioner Notes</label>
-                            <input type="text" class="form-control" :value="reference.canvass.notes" disabled>
+                            <input type="text" class="form-control" :value="reference.canvass!.notes" disabled>
                         </div>
         
                         <div class="mb-3">
@@ -115,7 +115,7 @@
                     <div class="12">
         
                         <WarehouseMEQSSupplier :suppliers="suppliers" :meqs_suppliers="meqsData.meqs_suppliers"
-                            :canvass_items="reference.canvass.canvass_items" :is-adding-supplier="isAddingSupplier"
+                            :canvass_items="reference.canvass!.canvass_items" :is-adding-supplier="isAddingSupplier"
                             :is-editing-supplier="isEditingSupplier" :is-page-create="false" @add-supplier="addSupplier"
                             :is-adding-attachment="isAddingAttachment" @edit-supplier="editSupplier"
                             :is-rr-completed="meqsData.is_rr_completed" @remove-supplier="removeSupplier"
@@ -130,7 +130,7 @@
                     <div class="12">
         
                         <WarehouseMEQSAward :meqs_suppliers="meqsData.meqs_suppliers"
-                            :canvass_items="reference.canvass.canvass_items" @award-supplier-item="awardSupplierItem"
+                            :canvass_items="reference.canvass!.canvass_items" @award-supplier-item="awardSupplierItem"
                             :is-attaching-remark="isAttachingRemark" @attach-note="attachNote" />
         
                     </div>
