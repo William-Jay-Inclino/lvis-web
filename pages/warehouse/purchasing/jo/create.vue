@@ -100,7 +100,7 @@
         
                                 <div class="mb-3">
                                     <label class="form-label">
-                                        Department
+                                        Department <span class="text-danger">*</span>
                                     </label>
                                     <client-only>
                                         <v-select :options="departments" label="code" v-model="joData.department"></v-select>
@@ -161,6 +161,7 @@ import { getFullname } from '~/utils/helpers'
 import * as joApi from '~/composables/warehouse/jo/jo.api'
 import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
 import type { CreateJoInput } from '~/composables/warehouse/jo/jo.types';
+import type { Employee } from '~/composables/system/employee/employee.types';
 
 definePageMeta({
     name: ROUTES.JO_CREATE,
@@ -320,10 +321,6 @@ function isValid(): boolean {
 
     if (!joData.value.supervisor) {
         joDataErrors.value.supervisor = true
-    }
-
-    if (joData.value.equipment.trim() === '') {
-        joDataErrors.value.equipment = true
     }
 
     if (!joData.value.department) {

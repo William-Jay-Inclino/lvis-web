@@ -622,7 +622,7 @@ export async function update(id: string, input: UpdateJoInput): Promise<Mutation
                 input: {
                     supervisor_id: "${input.supervisor?.id}"
                     department_id: "${input.department?.id}"
-                    equipment: ${input.equipment}
+                    equipment: "${input.equipment}"
                     classification_id: ${classification_id}
                     notes: "${input.notes}"
                 }

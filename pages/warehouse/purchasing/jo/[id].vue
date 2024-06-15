@@ -104,7 +104,7 @@
         
                         <div class="mb-3">
                             <label class="form-label">
-                                Department
+                                Department <span class="text-danger">*</span>
                             </label>
                             <client-only>
                                 <v-select :options="departments" label="name" v-model="joData.department"></v-select>
@@ -354,29 +354,6 @@ async function updateJoInfo() {
 
 }
 
-// async function cancelJo() {
-
-//     console.log('cancelJo')
-//     const response = await joApi.cancel(joData.value.id)
-
-//     if (response.success) {
-//         toast.success(response.msg)
-//         joData.value.cancelled_at = response.cancelled_at!
-
-//         router.push('/warehouse/purchasing/jo')
-
-//     } else {
-//         Swal.fire({
-//             title: 'Error!',
-//             text: response.msg,
-//             icon: 'error',
-//             position: 'top',
-//         })
-//     }
-
-
-// }
-
 
 
 // ======================== CHILD EVENTS: <WarehouseApprover> ========================  
@@ -532,31 +509,6 @@ async function changeApproverOrder(
 
 // ======================== UTILS ========================  
 
-// async function onCancelJo() {
-
-//     Swal.fire({
-//         title: "Are you sure?",
-//         text: `This JO will be cancelled!`,
-//         position: "top",
-//         icon: "warning",
-//         showCancelButton: true,
-//         confirmButtonColor: "#e74a3b",
-//         cancelButtonColor: "#6c757d",
-//         confirmButtonText: "Yes, cancel it!",
-//         reverseButtons: true,
-//         showLoaderOnConfirm: true,
-//         preConfirm: async (remove) => {
-
-//             if (remove) {
-//                 await cancelJo()
-//             }
-
-//         },
-//         allowOutsideClick: () => !Swal.isLoading()
-//     })
-
-// }
-
 function isValidJoInfo(): boolean {
 
     joDataErrors.value = { ..._joDataErrorsInitial }
@@ -569,9 +521,9 @@ function isValidJoInfo(): boolean {
         joDataErrors.value.department = true
     }
 
-    if (joData.value.equipment.trim() === '') {
-        joDataErrors.value.equipment = true
-    }
+    // if (joData.value.equipment.trim() === '') {
+    //     joDataErrors.value.equipment = true
+    // }
 
     const hasError = Object.values(joDataErrors.value).includes(true);
 
