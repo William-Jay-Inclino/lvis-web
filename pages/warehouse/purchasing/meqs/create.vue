@@ -370,9 +370,9 @@ const purpose = computed(() => {
         return ''
     }
 
-    if (referenceIsRv.value) return meqsData.value.rv!.canvass.purpose
-    if (referenceIsJo.value) return meqsData.value.jo!.canvass.purpose
-    if (referenceIsSpr.value) return meqsData.value.spr!.canvass.purpose
+    if (referenceIsRv.value) return meqsData.value.rv!.canvass!.purpose
+    if (referenceIsJo.value) return meqsData.value.jo!.canvass!.purpose
+    if (referenceIsSpr.value) return meqsData.value.spr!.canvass!.purpose
 
     // todo: get purpose for jo and spr
     return ''
@@ -384,9 +384,9 @@ const requisitionerNotes = computed(() => {
         return ''
     }
 
-    if (referenceIsRv.value) return meqsData.value.rv!.canvass.notes
-    if (referenceIsJo.value) return meqsData.value.jo!.canvass.notes
-    if (referenceIsSpr.value) return meqsData.value.spr!.canvass.notes
+    if (referenceIsRv.value) return meqsData.value.rv!.canvass!.notes
+    if (referenceIsJo.value) return meqsData.value.jo!.canvass!.notes
+    if (referenceIsSpr.value) return meqsData.value.spr!.canvass!.notes
 
     // todo: get purpose for jo and spr
     return ''
@@ -400,11 +400,11 @@ const requisitioner = computed(() => {
     let employee
 
     if (referenceIsRv.value) {
-        employee = meqsData.value.rv?.canvass.requested_by
+        employee = meqsData.value.rv?.canvass!.requested_by
     } else if (referenceIsJo.value) {
-        employee = meqsData.value.jo?.canvass.requested_by
+        employee = meqsData.value.jo?.canvass!.requested_by
     } else if (referenceIsSpr.value) {
-        employee = meqsData.value.spr?.canvass.requested_by
+        employee = meqsData.value.spr?.canvass!.requested_by
     }
 
     // todo: get employee data for jo and spr
@@ -415,15 +415,15 @@ const requisitioner = computed(() => {
 const canvassItems = computed((): CanvassItem[] => {
 
     if (referenceIsRv.value) {
-        return meqsData.value.rv!.canvass.canvass_items
+        return meqsData.value.rv!.canvass!.canvass_items
     }
 
     if (referenceIsJo.value) {
-        return meqsData.value.jo!.canvass.canvass_items
+        return meqsData.value.jo!.canvass!.canvass_items
     }
 
     if (referenceIsSpr.value) {
-        return meqsData.value.spr!.canvass.canvass_items
+        return meqsData.value.spr!.canvass!.canvass_items
     }
 
 

@@ -356,27 +356,6 @@ async function updateMeqsInfo() {
 
 }
 
-// async function cancelMeqs() {
-//     const response = await meqsApi.cancel(meqsData.value.id)
-
-//     if (response.success) {
-//         toast.success(response.msg)
-//         meqsData.value.cancelled_at = response.cancelled_at!
-
-//         router.push('/warehouse/purchasing/meqs')
-
-//     } else {
-//         Swal.fire({
-//             title: 'Error!',
-//             text: response.msg,
-//             icon: 'error',
-//             position: 'top',
-//         })
-//     }
-// }
-
-
-
 
 
 // ======================== CHILD EVENTS: <WarehouseApprover> ========================  

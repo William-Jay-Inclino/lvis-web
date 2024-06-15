@@ -1,5 +1,3 @@
-import type { VAT_TYPE } from "#imports";
-
 
 export interface Supplier {
     id: string;
@@ -8,6 +6,10 @@ export interface Supplier {
     address: string;
     tin_no: string;
     is_vat_registered: boolean;
+
+    // set programmatically 
+
+    name_with_address?: string
 }
 
 

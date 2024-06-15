@@ -627,6 +627,7 @@ export async function fetchFormDataInCreate(): Promise<{
             suppliers{
                 id 
                 name
+                address
                 is_vat_registered
             },
             meqsApproverSettings{
@@ -825,6 +826,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                     supplier {
                         id 
                         name 
+                        address
                         is_vat_registered
                     }
                     attachments {
@@ -871,6 +873,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
             suppliers{
                 id 
                 name
+                address
                 is_vat_registered
             }
         }

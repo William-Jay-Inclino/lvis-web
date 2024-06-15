@@ -111,11 +111,11 @@
                                     <div v-if="formIsAdd">
                                         <client-only>
                                             <v-select @option:selected="onChangeSupplier" :options="availableSuppliers"
-                                                v-model="formData.supplier" label="name"></v-select>
+                                                v-model="formData.supplier" label="name_with_address"></v-select>
                                         </client-only>
                                     </div>
                                     <div v-else>
-                                        <input type="text" class="form-control" :value="formData.supplier?.name"
+                                        <input type="text" class="form-control" :value="formData.supplier?.name + ' - ' + formData.supplier?.address"
                                             disabled>
                                     </div>
                                     <small class="fst-italic text-muted" v-if="formData.supplier"> {{ formData.supplier.is_vat_registered ? 'VAT Registered' : 'Non-VAT Registered' }} </small>
@@ -445,7 +445,10 @@ const availableSuppliers = computed(() => {
 
     const uniqueSuppliers = props.suppliers.filter(supplier1 => !props.meqs_suppliers.some(supplier2 => supplier1.id === supplier2.supplier?.id));
 
-    return uniqueSuppliers
+    return uniqueSuppliers.map(i => {
+        i.name_with_address = i.name + ' - ' + i.address
+        return i
+    })
 
 })
 
