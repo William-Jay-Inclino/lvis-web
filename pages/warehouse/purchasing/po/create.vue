@@ -19,7 +19,7 @@
                                         MEQS Number <span class="text-danger">*</span>
                                     </label>
                                     <client-only>
-                                        <v-select @option:selected="onMeqsSelected" :options="meqs" label="meqs_number"
+                                        <v-select @option:selected="onMeqsSelected" :options="filteredMeqs" label="meqs_number"
                                             v-model="selectedMeqs" :clearable=false>
                                             <template v-slot:option="option">
                                                 <div v-if="option.status !== APPROVAL_STATUS.APPROVED" class="row">
@@ -265,19 +265,8 @@ onMounted(async () => {
 
     const response = await poApi.fetchFormDataInCreate()
 
-    meqs.value = response.meqs.map(i => {
+    meqs.value = response.meqs
 
-        let hasAvailabelSupplier = i.meqs_suppliers.find(j => !j.is_referenced)
-
-        if (hasAvailabelSupplier) {
-            i.hasAvailableSupplier = true
-        } else {
-            i.hasAvailableSupplier = false
-        }
-
-        return i
-
-    })
     poData.value.approvers = response.approvers
     accounts.value = response.accounts
 
@@ -296,7 +285,25 @@ const suppliers = computed(() => {
 
     return supplierThatHasAwardedItems.map(i => ({ ...i, label: i.supplier?.name }))
 
-    // return selectedMeqs.value.meqs_suppliers.map(i => ({ ...i, label: i.supplier?.name }))
+
+})
+
+const filteredMeqs = computed( () => {
+
+    return meqs.value.map(i => {
+
+        const supplierThatHasAwardedItems = i.meqs_suppliers.filter(i => i.meqs_supplier_items.some(j => j.is_awarded))
+        const hasAvailabelSupplier = supplierThatHasAwardedItems.find(i => !i.is_referenced)
+
+        if(hasAvailabelSupplier) {
+            i.hasAvailableSupplier = true 
+        } else {
+            i.hasAvailableSupplier = false 
+        }
+
+        return i
+
+    })
 
 })
 
@@ -318,7 +325,6 @@ const supplierItems = computed(() => {
 
 
 })
-
 
 const totalPriceOfAllItems = computed(() => {
 
