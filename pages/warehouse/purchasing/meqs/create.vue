@@ -29,7 +29,7 @@
                                     <div class="row g-0">
                                         <div class="col-4">
                                             <client-only>
-                                                <v-select :options="transactionTypes" v-model="transactionType"
+                                                <v-select @option:selected="onChangeTransactionType" :options="transactionTypes" v-model="transactionType"
                                                     :clearable="false"></v-select>
                                             </client-only>
                                         </div>
@@ -487,6 +487,40 @@ watch(sprId, (val) => {
 
 
 // ======================== FUNCTIONS ======================== 
+
+function onChangeTransactionType() {
+    console.log('onChangeTransactionType');
+
+    if(transactionType.value === 'RV') {
+        console.log('Transaction type is RV. Clearing data of SPR & JO');
+        
+        meqsData.value.spr = null
+        meqsData.value.jo = null
+
+        return 
+    }
+
+    if(transactionType.value === 'SPR') {
+        console.log('Transaction type is SPR. Clearing data of JO & RV');
+        
+        meqsData.value.rv = null
+        meqsData.value.jo = null
+
+        return 
+
+    }
+
+    if(transactionType.value === 'JO') {
+        console.log('Transaction type is JO. Clearing data of RV & SPR');
+        
+        meqsData.value.rv = null
+        meqsData.value.spr = null
+
+        return 
+
+    }
+
+}
 
 // check if rv is approved. If true then rollback to previous rv else set new current rv
 function onRvNumberSelected(payload: RV) {
