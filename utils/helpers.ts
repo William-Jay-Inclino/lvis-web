@@ -1,5 +1,6 @@
 import moment from "moment";
 import { VAT_TYPE } from "#imports";
+import { APPROVAL_STATUS } from "#imports";
 
 
 export function getFullname(firstname: string, middlename: string | null, lastname: string) {
@@ -151,6 +152,18 @@ export function getGrossTotal(payload: { price: number, quantity: number }) {
 export function redirectTo401Page() {
     console.log('redirectTo401Page()')
     return window.location.href = '/error/401'
+}
+
+// status should be blank if nay nag una nga approver nga ni disapproved. Meaning wala na abot sa ilaha ang document
+
+export function isBlankStatus(itemStatus: APPROVAL_STATUS, approverStatus: APPROVAL_STATUS) {
+
+    if(itemStatus === APPROVAL_STATUS.DISAPPROVED && approverStatus === APPROVAL_STATUS.PENDING) {
+        return true 
+    }
+
+    return false 
+
 }
 
 export function logout() {

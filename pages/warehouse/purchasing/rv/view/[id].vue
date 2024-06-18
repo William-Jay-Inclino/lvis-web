@@ -159,13 +159,16 @@
                                                 <td class="align-middle"> {{ i.label }} </td>
                                                 <td class="align-middle"> {{ getFullname(i.approver!.firstname,
                 i.approver!.middlename, i.approver!.lastname) }} </td>
-                                                <td class="text-muted text-center align-middle">
+                                                <td v-if="!isBlankStatus(item.status, i.status)" class="text-muted text-center align-middle">
                                                     <div :class="{ [`badge bg-${approvalStatus[i.status].color}`]: true }">
                                                         {{ approvalStatus[i.status].label }}
                                                     </div>
                                                     <div class="fst-italic" v-if="i.date_approval">
                                                         <small> {{ formatDate(i.date_approval, true) }} </small>
                                                     </div>
+                                                </td>
+                                                <td v-else class="text-muted text-center align-middle fst-italic">
+                                                    N/A
                                                 </td>
                                                 <td>
                                                     <textarea rows="3" class="form-control" disabled
@@ -241,6 +244,7 @@ import { useToast } from "vue-toastification";
 import Swal from 'sweetalert2'
 import axios from 'axios';
 import { canPrint } from '~/utils/permissions';
+import { APPROVAL_STATUS, isBlankStatus } from '#imports';
 
 definePageMeta({
     name: ROUTES.RV_VIEW,
@@ -387,6 +391,9 @@ async function onClickPrint() {
         console.error('Error loading PDF:', error);
     }
 }
+
+
+
 
 
 const onClickAdd = () => router.push('/warehouse/purchasing/rv/create')

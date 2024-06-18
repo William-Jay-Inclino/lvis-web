@@ -151,13 +151,16 @@
                                         <td class="align-middle"> {{ i.label }} </td>
                                         <td class="align-middle"> {{ getFullname(i.approver!.firstname, i.approver!.middlename,
                 i.approver!.lastname) }} </td>
-                                        <td class="text-muted text-center align-middle">
+                                        <td v-if="!isBlankStatus(item.status, i.status)" class="text-muted text-center align-middle">
                                             <div :class="{ [`badge bg-${approvalStatus[i.status].color}`]: true }">
                                                 {{ approvalStatus[i.status].label }}
                                             </div>
                                             <div class="fst-italic" v-if="i.date_approval">
                                                 <small> {{ formatDate(i.date_approval, true) }} </small>
                                             </div>
+                                        </td>
+                                        <td v-else class="text-muted text-center align-middle fst-italic">
+                                            N/A
                                         </td>
                                         <td>
                                             <textarea rows="3" class="form-control" disabled :value="i.notes"></textarea>
