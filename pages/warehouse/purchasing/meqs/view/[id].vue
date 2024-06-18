@@ -240,7 +240,7 @@
                                         </tr>
                                     </thead>
                                     <tbody v-if="referenceData?.canvass">
-                                        <tr :class="{'table-danger': hasRemarks(canvassItem.id)}" v-for="canvassItem, i in referenceData.canvass.canvass_items">
+                                        <tr :class="{'table-danger': hasRemarks(canvassItem.id, item.meqs_suppliers)}" v-for="canvassItem, i in referenceData.canvass.canvass_items">
                                             <td class="text-muted"> {{ i + 1 }} </td>
                                             <td class="text-muted"> {{ canvassItem.description }} </td>
                                             <td class="text-muted"> {{ canvassItem.unit ? canvassItem.unit.name : 'N/A' }} </td>
@@ -356,6 +356,7 @@ import type { MEQS } from '~/composables/warehouse/meqs/meqs.types';
 import { useToast } from "vue-toastification";
 import Swal from 'sweetalert2'
 import axios from 'axios';
+import { hasRemarks } from '~/composables/warehouse/meqs/meqs';
 
 definePageMeta({
     name: ROUTES.MEQS_VIEW,
@@ -446,23 +447,23 @@ function onClickNote(canvass_item_id: string) {
 
 }
 
-function hasRemarks(canvass_item_id: string): boolean {
+// function hasRemarks(canvass_item_id: string): boolean {
 
-    for (let supplier of item.value!.meqs_suppliers) {
+//     for (let supplier of item.value!.meqs_suppliers) {
 
-        const item = supplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
+//         const item = supplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
 
-        if (item) {
-            const isNotEmpty = (!!item.notes || item.notes.trim() !== '')
-            if(isNotEmpty){
-                return true 
-            }
-        }
+//         if (item) {
+//             const isNotEmpty = (!!item.notes || item.notes.trim() !== '')
+//             if(isNotEmpty){
+//                 return true 
+//             }
+//         }
 
-    }
+//     }
 
-    return false 
-}
+//     return false 
+// }
 
 const hasPO = computed(() => {
 

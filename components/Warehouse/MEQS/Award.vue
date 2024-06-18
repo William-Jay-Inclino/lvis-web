@@ -4,7 +4,9 @@
 
         <div class="row">
             <div class="col">
-                <small class="text-secondary fst-italic">Click the star icon to award the supplier </small>
+                <div>
+                    <small class="text-secondary fst-italic">Click the star icon to award the supplier </small>
+                </div>
             </div>
         </div>
 
@@ -20,7 +22,7 @@
                     <th class="bg-secondary text-white text-center" v-for="meqsSupplier in meqs_suppliers">
                         {{ `${meqsSupplier.supplier?.name} (${meqsSupplier.payment_terms})` }}
                     </th>
-                    <th class="bg-secondary text-white text-center"> Remark </th>
+                    <th class="bg-secondary text-white text-center"> Remarks </th>
                 </tr>
             </thead>
 
@@ -35,13 +37,13 @@
                     <td v-for="meqsSupplier in meqs_suppliers">
                         <div class="d-flex justify-content-center align-items-center">
 
-                            <div v-for="supplierItem in meqsSupplier.meqs_supplier_items">
+                            <div v-for="supplierItem, indx in meqsSupplier.meqs_supplier_items">
                                 <div v-if="supplierItem.canvass_item.id === item.id" class="d-flex align-items-center">
                                     <input type="text"
                                         :value="(supplierItem.price === -1) ? 'N/A' : formatToPhpCurrency(supplierItem.price)"
                                         class="form-control me-2" style="width: 100px" disabled>
                                     <i class="fas fa-star clickable-icon fs-5"
-                                        @click="onAward(meqsSupplier, item.id, supplierItem)"
+                                        @click="onAward(meqsSupplier, item.id, supplierItem, indx)"
                                         :class="{ 'text-warning': supplierItem.is_awarded }"></i>
                                 </div>
                             </div>
@@ -49,10 +51,9 @@
                         </div>
                     </td>
                     <td class="align-middle text-center">
-                        <button @click="onClickAttachNote(item.id)" class="btn btn-secondary btn-sm"
+                        <button ref="attachRemarkBtns" @click="onClickAttachNote(item.id)" class="btn btn-light btn-sm"
                             data-bs-toggle="modal" data-bs-target="#attachNoteModal">
-                            Attach
-                            <i class="fas fa-book"></i>
+                            <i class="fas fa-sticky-note fs-2" :class="{'text-warning': hasRemarks(item.id, meqs_suppliers)}"></i>
                         </button>
                     </td>
                 </tr>
@@ -95,6 +96,7 @@
 
 <script setup lang="ts">
 import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
+import { hasRemarks } from '~/composables/warehouse/meqs/meqs';
 import type { MeqsSupplier } from '~/composables/warehouse/meqs/meqs-supplier';
 import type { MeqsSupplierItem } from '~/composables/warehouse/meqs/meqs-supplier-item';
 
@@ -116,7 +118,7 @@ const props = defineProps({
     },
     isAttachingRemark: {
         type: Boolean,
-        default: () => true
+        default: () => false
     }
 });
 
@@ -133,6 +135,7 @@ const _attachNoteDataInitial = {
 const attachNoteData = ref<AttachNoteData>({ ..._attachNoteDataInitial })
 const closeattachNoteModal = ref<HTMLButtonElement>()
 
+const attachRemarkBtns = ref<HTMLButtonElement[]>([])
 
 function attachNote() {
     console.log('attachNote', attachNoteData)
@@ -160,13 +163,13 @@ function onClickAttachNote(canvassItemId: string) {
 
 }
 
-function onAward(meqsSupplier: MeqsSupplier, canvass_item_id: string, meqsSupplierItem: MeqsSupplierItem) {
+function onAward(meqsSupplier: MeqsSupplier, canvass_item_id: string, meqsSupplierItem: MeqsSupplierItem, indx: number) {
 
     console.log('onAward')
 
     // if(meqsSupplierItem.is_awarded) return 
 
-    emits('awardSupplierItem', meqsSupplier, canvass_item_id, meqsSupplierItem.id)
+    emits('awardSupplierItem', meqsSupplier, canvass_item_id, meqsSupplierItem.id, attachRemarkBtns.value[indx])
 
 }
 

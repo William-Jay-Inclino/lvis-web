@@ -185,6 +185,9 @@ import type { CreateMeqsSupplierAttachmentSubInput, CreateMeqsSupplierInput, Cre
 import type { CreateMeqsSupplierAttachmentInput } from '~/composables/warehouse/meqs/meqs-supplier-attachment';
 import type { Supplier } from '~/composables/warehouse/supplier/supplier';
 import type { Employee } from '~/composables/system/employee/employee.types';
+import type { MeqsSupplierItem } from '~/composables/warehouse/meqs/meqs-supplier-item';
+import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
+import { getLowestPriceItem, getSupplierItemsByCanvassId } from '~/composables/warehouse/meqs/meqs';
 
 definePageMeta({
     name: ROUTES.MEQS_UPDATE,
@@ -204,7 +207,6 @@ const enum FORM_TYPE {
 
 // DEPENDENCIES
 const route = useRoute()
-const router = useRouter();
 const toast = useToast();
 const config = useRuntimeConfig()
 
@@ -795,9 +797,10 @@ async function changeApproverOrder(
 // ======================== CHILD EVENTS: <WarehouseApprover> ========================  
 
 
-async function awardSupplierItem(meqsSupplier: MeqsSupplier, canvass_item_id: string, meqs_supplier_item_id: string) {
+async function awardSupplierItem(meqsSupplier: MeqsSupplier, canvass_item_id: string, meqs_supplier_item_id: string, attachRemarkBtn: HTMLButtonElement) {
 
     console.log('awardSupplierItem', meqsSupplier, canvass_item_id)
+    console.log('attachRemarkBtn', attachRemarkBtn);
 
     const item = meqsSupplier.meqs_supplier_items.find(i => i.canvass_item.id === canvass_item_id)
 
@@ -817,6 +820,14 @@ async function awardSupplierItem(meqsSupplier: MeqsSupplier, canvass_item_id: st
         // set the award
         item.is_awarded = true
 
+    }
+
+
+    // remarks/note is required if selected item is not the lowest price 
+
+    if(!isLowestPriceItem(meqs_supplier_item_id, canvass_item_id, meqsData.value.meqs_suppliers)) {
+        console.log('item is not lowest price');
+        attachRemarkBtn.click()
     }
 
 
@@ -885,6 +896,19 @@ function removeAwardForAllSuppliersWith(canvass_item_id: string) {
 
 }
 
+function isLowestPriceItem(meqs_supplier_item_id: string, canvass_item_id: string, meqs_suppliers: MeqsSupplier[]): boolean {
+
+    console.log('isLowestPriceItem');
+    
+    const supplierItems = getSupplierItemsByCanvassId(canvass_item_id, meqs_suppliers)
+    const lowestPriceItem = getLowestPriceItem(supplierItems)
+
+    if(meqs_supplier_item_id === lowestPriceItem.id) {
+        return true 
+    }
+
+    return false 
+}
 
 
 // ======================== UTILS ========================  
