@@ -120,10 +120,10 @@
                                     </div>
                                     <small class="fst-italic text-muted" v-if="formData.supplier"> {{ formData.supplier.is_vat_registered ? 'VAT Registered' : 'Non-VAT Registered' }} </small>
                                 </div>
-                                <!-- <div class="mb-3">
+                                <div class="mb-3">
                                     <label class="form-label"> Vat </label>
                                     <input type="text" class="form-control" :value="vat" disabled>
-                                </div> -->
+                                </div>
                                 <div class="mb-3">
                                     <label class="form-label">
                                         Payment Terms <span class="text-danger">*</span>
@@ -425,6 +425,7 @@ const meqs_supplier_items = computed((): MeqsSupplierItem[] => {
 
     for (let item of clonedCanvassItems) {
 
+
         items.push({
             id: '',
             canvass_item: item,
@@ -460,13 +461,13 @@ const canAddSupplier = computed(() => {
 
 })
 
-// const vat = computed(() => {
+const vat = computed(() => {
 
-//     if (!formData.value.supplier) return ''
+    if (!formData.value.supplier) return ''
 
-//     return VAT[formData.value.supplier.vat_type].label
+    return VAT[formData.value.supplier.vat_type].label
 
-// })
+})
 
 const maxFileLimit = computed(() => props.canvass_items.length)
 
@@ -576,7 +577,7 @@ function onChangeSupplier() {
 
     if(!supplier) return 
 
-    let vatType = supplier.is_vat_registered ? VAT_TYPE.INC : VAT_TYPE.NONE
+    let vatType = supplier.is_vat_registered ? supplier.vat_type : VAT_TYPE.NONE
 
     for (let item of formData.value.meqs_supplier_items) {
         item.vat_type = vatType

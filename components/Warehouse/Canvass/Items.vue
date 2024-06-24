@@ -214,7 +214,7 @@ const props = defineProps({
 
 const isMobile = ref(false)
 const formIsAdd = ref(true)
-const itemIsStock = ref(true)
+const itemIsStock = ref(false)
 const editItemIndx = ref()
 
 const closeBtnModal = ref<HTMLButtonElement>()
