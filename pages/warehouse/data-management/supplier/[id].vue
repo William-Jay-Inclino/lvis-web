@@ -54,6 +54,16 @@
                                     </label>
                                 </div>
                             </div>
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    VAT Type <span class="text-danger">*</span>
+                                </label>
+                                <select v-model="item.vat_type" class="form-select" :disabled="!item.is_vat_registered">
+                                    <option v-if="!item.is_vat_registered" selected :value="VAT_TYPE.NONE"> {{ VAT[VAT_TYPE.NONE].label }} </option>
+                                    <option :value="VAT_TYPE.INC"> {{ VAT[VAT_TYPE.INC].label }} </option>
+                                    <option :value="VAT_TYPE.EXC"> {{ VAT[VAT_TYPE.EXC].label }} </option>
+                                </select>
+                            </div>
                         </div>
                     </div>
         
@@ -120,6 +130,26 @@ onMounted(async () => {
 })
 
 
+const isVatRegistered = computed( () => {
+    
+    if(!item.value) return 
+
+    return item.value.is_vat_registered
+})
+
+watch(isVatRegistered, (val) => {
+
+    if(!item.value) return
+
+    if(!val) {
+        item.value!.vat_type = VAT_TYPE.NONE
+    } else {
+        item.value!.vat_type = VAT_TYPE.INC
+    }
+
+})
+
+
 async function onSubmit() {
 
     if (!item.value) return
@@ -132,6 +162,7 @@ async function onSubmit() {
         address: item.value.address,
         tin_no: item.value.tin_no,
         is_vat_registered: item.value.is_vat_registered,
+        vat_type: item.value.vat_type
     }
 
     isSaving.value = true

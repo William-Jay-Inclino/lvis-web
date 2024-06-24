@@ -41,6 +41,10 @@
                                             <td class="text-muted">VAT Status</td>
                                             <td> {{ item.is_vat_registered ? 'VAT Registered' : 'Non-VAT Registered' }} </td>
                                         </tr>
+                                        <tr>
+                                            <td class="text-muted">VAT Type</td>
+                                            <td> {{ VAT[item.vat_type].label }} </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>

@@ -40,7 +40,7 @@
                                                 <th class="bg-secondary text-white">Contact</th>
                                                 <th class="bg-secondary text-white">Address</th>
                                                 <th class="bg-secondary text-white">TIN</th>
-                                                <th class="bg-secondary text-white">VAT Status</th>
+                                                <th class="bg-secondary text-white">VAT Type</th>
                                                 <th class="text-center bg-secondary text-white">
                                                     <i class="fas fa-cog"></i>
                                                 </th>
@@ -52,7 +52,7 @@
                                                 <td class="text-muted"> {{ i.contact }} </td>
                                                 <td class="text-muted"> {{ i.address }} </td>
                                                 <td class="text-muted"> {{ i.tin_no }} </td>
-                                                <td class="text-muted"> {{ i.is_vat_registered ? 'VAT' : 'Non-VAT' }} </td>
+                                                <td class="text-muted"> {{ VAT[i.vat_type].label }} </td>
                                                 <td class="text-center">
                                                     <button :disabled="!canDelete(authUser, 'canManageSupplier')"
                                                         @click="onClickDelete(i.id)" class="btn btn-sm btn-light me-3">

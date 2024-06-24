@@ -1,3 +1,4 @@
+import type { VAT_TYPE } from "#imports";
 
 export interface Supplier {
     id: string;
@@ -6,6 +7,7 @@ export interface Supplier {
     address: string;
     tin_no: string;
     is_vat_registered: boolean;
+    vat_type: VAT_TYPE;
 
     // set programmatically 
 
@@ -19,6 +21,7 @@ export interface CreateSupplierInput {
     address: string;
     tin_no: string;
     is_vat_registered: boolean;
+    vat_type: VAT_TYPE;
 }
 
 export interface MutationResponse {

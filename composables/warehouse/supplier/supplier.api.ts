@@ -14,6 +14,7 @@ export async function findAll(): Promise<Supplier[]> {
                 tin_no
                 address
                 is_vat_registered
+                vat_type
             }
         }
     `;
@@ -38,6 +39,7 @@ export async function findOne(id: string): Promise<Supplier | undefined> {
                 tin_no
                 address
                 is_vat_registered
+                vat_type
             }
         }
     `;
@@ -77,6 +79,7 @@ export async function create(input: CreateSupplierInput): Promise<MutationRespon
                 tin_no
                 address
                 is_vat_registered
+                vat_type
             }
         }`;
 
@@ -125,6 +128,7 @@ export async function update(id: string, input: CreateSupplierInput): Promise<Mu
                 tin_no
                 address
                 is_vat_registered
+                vat_type
             }
         }`;
 

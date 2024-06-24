@@ -52,16 +52,16 @@
                                 </label>
                             </div>
                         </div>
-                        <!-- <div class="mb-3">
+                        <div class="mb-3">
                             <label class="form-label">
-                                VAT <span class="text-danger">*</span>
+                                VAT Type <span class="text-danger">*</span>
                             </label>
-                            <select v-model="formData.vat_type" class="form-select" aria-label="Default select example">
-                                <option selected :value="VAT_TYPE.NONE"> {{ VAT[VAT_TYPE.NONE].label }} </option>
+                            <select v-model="formData.vat_type" class="form-select" :disabled="!formData.is_vat_registered">
+                                <option v-if="!formData.is_vat_registered" selected :value="VAT_TYPE.NONE"> {{ VAT[VAT_TYPE.NONE].label }} </option>
                                 <option :value="VAT_TYPE.INC"> {{ VAT[VAT_TYPE.INC].label }} </option>
                                 <option :value="VAT_TYPE.EXC"> {{ VAT[VAT_TYPE.EXC].label }} </option>
                             </select>
-                        </div> -->
+                        </div>
     
                     </div>
                 </div>
@@ -110,10 +110,22 @@ const _initialFormData: CreateSupplierInput = {
     tin_no: '',
     address: '',
     is_vat_registered: false,
+    vat_type: VAT_TYPE.NONE
 }
 
 const formData = ref({ ..._initialFormData })
 
+const isVatRegistered = computed( () => formData.value.is_vat_registered)
+
+watch(isVatRegistered, (val) => {
+
+    if(!val) {
+        formData.value.vat_type = VAT_TYPE.NONE
+    } else {
+        formData.value.vat_type = VAT_TYPE.INC
+    }
+
+})
 
 async function onSubmit() {
 
