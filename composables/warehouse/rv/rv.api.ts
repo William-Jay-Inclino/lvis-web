@@ -178,6 +178,22 @@ export async function findOne(id: string): Promise<RV | undefined> {
                         lastname
                     }
                     purpose
+                    canvass_items {
+                        description
+                        unit {
+                            name
+                        }
+                        brand {
+                            name
+                        }
+                        quantity
+                        item {
+                            id
+                            code 
+                            name 
+                            description
+                        }
+                    }
                 }
                 supervisor {
                     firstname 

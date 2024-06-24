@@ -172,6 +172,49 @@
                         </div>
         
                         <hr>
+
+
+                        <div class="row pt-3">
+                            <div class="col">
+        
+                                <div class="h5wrapper mb-3">
+                                    <hr class="result">
+                                    <h5 class="text-warning fst-italic">
+                                        <i class="fas fa-shopping-cart"></i> Items
+                                    </h5>
+                                    <hr class="result">
+                                </div>
+    
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th class="bg-secondary text-white"> No. </th>
+                                                <th class="bg-secondary text-white"> Description </th>
+                                                <th class="bg-secondary text-white"> Item Class </th>
+                                                <th class="bg-secondary text-white"> Brand </th>
+                                                <th class="bg-secondary text-white"> Unit </th>
+                                                <th class="bg-secondary text-white"> Quantity </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody v-if="item.canvass">
+                                            <tr v-for="i, count in item.canvass.canvass_items">
+                                                <td> {{ count + 1 }} </td>
+                                                <td> {{ i.item ? `${ i.item.code } - ${ i.description }` : i.description }} </td>
+                                                <td> {{ i.item ? 'Stock' : 'Non-Stock' }} </td>
+                                                <td> {{ i.brand ? i.brand.name : 'N/A' }} </td>
+                                                <td> {{ i.unit ? i.unit.name : 'N/A' }} </td>
+                                                <td> {{ i.quantity }} </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+        
+                            </div>
+                        </div>
+        
+                        <hr>
+
         
                         <div class="row mb-3 pt-3">
                             <div class="col">
