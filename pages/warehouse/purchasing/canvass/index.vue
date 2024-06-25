@@ -204,9 +204,10 @@ onMounted(async () => {
     authUser.value = getAuthUser()
     console.log('authUser.value', authUser.value)
 
-    // const response = await api.fetchDataInSearchFilters()
+    const response = await api.fetchDataInSearchFilters()
 
-    // employees.value = addPropertyFullName(response.employees)
+    canvasses.value = response.canvasses
+    employees.value = addPropertyFullName(response.employees)
 
     isLoadingPage.value = false
 
