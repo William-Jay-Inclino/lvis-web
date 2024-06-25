@@ -357,3 +357,30 @@ export async function fetchFormDataInUpdate(id: string): Promise<{ positions: Po
     }
 
 }
+
+export async function fetchEmployees(payload: string): Promise<Employee[]> {
+    const query = `
+        query {
+            employeesByName(name: "${payload}") {
+                id 
+                firstname 
+                middlename 
+                lastname
+            },
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        if (!response.data || !response.data.data) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+        return response.data.data.employeesByName
+
+    } catch (error) {
+        console.error(error);
+        return []
+    }
+}

@@ -154,6 +154,15 @@ export function redirectTo401Page() {
     return window.location.href = '/error/401'
 }
 
+export function debounce<T extends (...args: any[]) => void>(func: T, wait: number): (...args: Parameters<T>) => void {
+    let timeout: NodeJS.Timeout;
+    return function(...args: Parameters<T>): void {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func(...args), wait);
+    };
+}
+  
+
 // status should be blank if nay nag una nga approver nga ni disapproved. Meaning wala na abot sa ilaha ang document
 
 export function isBlankStatus(itemStatus: APPROVAL_STATUS, approverStatus: APPROVAL_STATUS) {

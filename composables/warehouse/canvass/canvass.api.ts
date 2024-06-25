@@ -426,61 +426,49 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
     }
 }
 
-export async function fetchDataInSearchFilters(): Promise<{
-    canvasses: Canvass[],
-    employees: Employee[]
-}> {
-    const query = `
-        query {
-            canvasses(page: 1, pageSize: 10) {
-                data{
-                    rc_number
-                }
-            },
-            employees(page: 1, pageSize: 100) {
-                data {
-                    id
-                    firstname
-                    middlename
-                    lastname
-                }
-            }
-        }
-    `;
+// export async function fetchDataInSearchFilters(): Promise<{
+//     employees: Employee[]
+// }> {
+//     const query = `
+//         query {
+//             employees(page: 1, pageSize: 100) {
+//                 data {
+//                     id
+//                     firstname
+//                     middlename
+//                     lastname
+//                 }
+//             }
+//         }
+//     `;
 
-    try {
-        const response = await sendRequest(query);
-        console.log('response', response)
+//     try {
+//         const response = await sendRequest(query);
+//         console.log('response', response)
 
-        let canvasses = []
-        let employees = []
+//         let employees = []
 
-        if (!response.data || !response.data.data) {
-            throw new Error(JSON.stringify(response.data.errors));
-        }
+//         if (!response.data || !response.data.data) {
+//             throw new Error(JSON.stringify(response.data.errors));
+//         }
 
-        const data = response.data.data
+//         const data = response.data.data
 
-        if (data.employees && data.employees.data) {
-            employees = response.data.data.employees.data
-        }
+//         if (data.employees && data.employees.data) {
+//             employees = response.data.data.employees.data
+//         }
 
-        if (data.canvasses && data.canvasses.data) {
-            canvasses = data.canvasses.data
-        }
-        return {
-            canvasses,
-            employees
-        }
+//         return {
+//             employees
+//         }
 
-    } catch (error) {
-        console.error(error);
-        return {
-            canvasses: [],
-            employees: [],
-        }
-    }
-}
+//     } catch (error) {
+//         console.error(error);
+//         return {
+//             employees: [],
+//         }
+//     }
+// }
 
 export async function create(input: CreateCanvassInput): Promise<MutationResponse> {
 
@@ -595,4 +583,28 @@ export async function update(id: string, input: UpdateCanvassInput): Promise<Mut
 
 
 
+}
+
+export async function fetchRcNumbers(payload: string): Promise<Canvass[]> {
+    const query = `
+        query {
+            rc_numbers(rc_number: "${payload}") {
+                rc_number
+            },
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        if (!response.data || !response.data.data) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+        return response.data.data.rc_numbers
+
+    } catch (error) {
+        console.error(error);
+        return []
+    }
 }

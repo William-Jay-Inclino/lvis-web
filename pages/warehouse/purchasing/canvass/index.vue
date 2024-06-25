@@ -12,7 +12,7 @@
                         <div class="mb-3">
                             <label class="form-label">RC Number</label>
                             <client-only>
-                                <v-select :options="canvasses" label="rc_number" v-model="canvass"></v-select>
+                                <v-select @search="handleSearchRcNumber" :options="canvasses" label="rc_number" v-model="canvass"></v-select>
                             </client-only>
                         </div>
                     </div>
@@ -26,7 +26,7 @@
                         <div class="mb-3">
                             <label class="form-label">Requisitioner</label>
                             <client-only>
-                                <v-select :options="employees" label="fullname" v-model="requested_by"></v-select>
+                                <v-select @search="handleSearchEmployees" :options="employees" label="fullname" v-model="requested_by"></v-select>
                             </client-only>
                         </div>
                     </div>
@@ -154,6 +154,9 @@ import { getFullname, formatDate } from '~/utils/helpers'
 import { PAGINATION_SIZE } from '~/utils/config'
 import { ROUTES } from '~/utils/constants';
 import type { Employee } from '~/composables/system/employee/employee.types';
+import { debounce } from '~/utils/helpers';
+import { fetchEmployees } from '~/composables/system/employee/employee.api';
+import { addPropertyFullName } from '~/composables/system/employee/employee';
 
 definePageMeta({
     name: ROUTES.CANVASS_INDEX,
@@ -201,13 +204,9 @@ onMounted(async () => {
     authUser.value = getAuthUser()
     console.log('authUser.value', authUser.value)
 
-    const response = await api.fetchDataInSearchFilters()
+    // const response = await api.fetchDataInSearchFilters()
 
-    canvasses.value = response.canvasses
-    employees.value = response.employees.map((i) => {
-        i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
-        return i
-    })
+    // employees.value = addPropertyFullName(response.employees)
 
     isLoadingPage.value = false
 
@@ -276,12 +275,74 @@ async function search() {
     pagination.value.totalPages = totalPages
 }
 
+async function handleSearchRcNumber(input: string, loading: (status: boolean) => void ) {
 
+    if(input.trim() === '') {
+        canvasses.value = []
+        return
+    } 
+
+    debouncedSearchRcNumbers(input, loading)
+
+}
+
+async function handleSearchEmployees(input: string, loading: (status: boolean) => void ) {
+
+    if(input.trim() === ''){
+        employees.value = []
+        return 
+    } 
+
+    debouncedSearchEmployees(input, loading)
+
+}
+
+async function searchRcNumbers(input: string, loading: (status: boolean) => void) {
+    console.log('searchRcNumbers');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await api.fetchRcNumbers(input);
+        console.log('response', response);
+        canvasses.value = response;
+    } catch (error) {
+        console.error('Error fetching RC numbers:', error);
+    } finally {
+        loading(false);
+    }
+}
+
+async function searchEmployees(input: string, loading: (status: boolean) => void) {
+    console.log('searchEmployees');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await fetchEmployees(input);
+        console.log('response', response);
+        employees.value = addPropertyFullName(response)
+    } catch (error) {
+        console.error('Error fetching Employees:', error);
+    } finally {
+        loading(false);
+    }
+}
 
 // ======================== UTILS ======================== 
 
 const onClickViewDetails = (id: string) => router.push('/warehouse/purchasing/canvass/view/' + id)
 const onClickEdit = (id: string) => router.push('/warehouse/purchasing/canvass/' + id)
 const onClickAdd = () => router.push('/warehouse/purchasing/canvass/create')
+
+const debouncedSearchRcNumbers = debounce((input: string, loading: (status: boolean) => void) => {
+  searchRcNumbers(input, loading);
+}, 500);
+
+const debouncedSearchEmployees = debounce((input: string, loading: (status: boolean) => void) => {
+    searchEmployees(input, loading);
+}, 500);
 
 </script>
