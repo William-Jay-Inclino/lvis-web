@@ -711,7 +711,7 @@ export async function cancel(id: string): Promise<CancelResponse> {
 export async function fetchRvNumbers(payload: string): Promise<RV[]> {
     const query = `
         query {
-            rv_numbers(rv_number: "${payload}") {
+            rvs_by_rv_number(rv_number: "${payload}") {
                 rv_number
             },
         }
@@ -724,7 +724,7 @@ export async function fetchRvNumbers(payload: string): Promise<RV[]> {
         if (!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
         }
-        return response.data.data.rv_numbers
+        return response.data.data.rvs_by_rv_number
 
     } catch (error) {
         console.error(error);

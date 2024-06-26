@@ -22,7 +22,7 @@ export async function fetchDataInSearchFilters(): Promise<{
                     spr_number
                 }
             }
-            employees(page: 1, pageSize: 100) {
+            employees(page: 1, pageSize: 10) {
                 data {
                     id
                     firstname
@@ -335,7 +335,7 @@ export async function fetchFormDataInCreate(): Promise<{
                     is_referenced
                 }
             },
-            employees(page: 1, pageSize: 100) {
+            employees(page: 1, pageSize: 10) {
                 data{
                     id
                     firstname
@@ -484,7 +484,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 }
 
             },
-            employees(page: 1, pageSize: 100) {
+            employees(page: 1, pageSize: 10) {
                 data {
                     id
                     firstname
@@ -715,5 +715,30 @@ export async function cancel(id: string): Promise<CancelResponse> {
             success: false,
             msg: 'Failed to cancel SPR. Please contact system administrator'
         };
+    }
+}
+
+
+export async function fetchSprNumbers(payload: string): Promise<SPR[]> {
+    const query = `
+        query {
+            sprs_by_spr_number(spr_number: "${payload}") {
+                spr_number
+            },
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        if (!response.data || !response.data.data) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+        return response.data.data.sprs_by_spr_number
+
+    } catch (error) {
+        console.error(error);
+        return []
     }
 }
