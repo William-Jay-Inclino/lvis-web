@@ -24,7 +24,7 @@
                                 Requisitioner <span class="text-danger">*</span>
                             </label>
                             <client-only>
-                                <v-select :options="employees" label="fullname" v-model="formData.requested_by"></v-select>
+                                <v-select @search="handleSearchEmployees" :options="employees" label="fullname" v-model="formData.requested_by"></v-select>
                             </client-only>
                             <small class="text-danger fst-italic" v-show="formDataErrors.requested_by"> This field is required
                             </small>
@@ -53,7 +53,7 @@
         
                         <WarehouseCanvassItems :canvass-items="formData.canvass_items" :brands="brands" :units="units"
                             :items="items" @add-item="addCanvassItem" @edit-item="editCanvassItem"
-                            @remove-item="removeCanvassItem" />
+                            @remove-item="removeCanvassItem" @searched-items="handleSearchedItems"/>
         
                     </div>
                 </div>
@@ -109,12 +109,14 @@
 import * as api from '~/composables/warehouse/canvass/canvass.api'
 import Swal from 'sweetalert2'
 import type { CreateCanvassInput } from '~/composables/warehouse/canvass/canvass.types';
-import { getFullname } from '~/utils/helpers'
 import { useToast } from "vue-toastification";
 import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
 import type { Item } from '~/composables/warehouse/item/item.type';
 import { ROUTES } from '~/utils/constants';
 import type { Employee } from '~/composables/system/employee/employee.types';
+import { fetchEmployees } from '~/composables/system/employee/employee.api';
+import { addPropertyFullName } from '~/composables/system/employee/employee';
+import { fetchItemsByCodeOrName } from '~/composables/warehouse/item/item.api';
 
 definePageMeta({
     name: ROUTES.CANVASS_CREATE,
@@ -129,7 +131,6 @@ const router = useRouter();
 const toast = useToast();
 
 // FLAGS
-const isMobile = ref(false)
 const isSaving = ref(false)
 
 // INITIAL DATA
@@ -164,10 +165,7 @@ onMounted(async () => {
 
     const response = await api.fetchFormDataInCreate()
 
-    employees.value = response.employees.map((i) => {
-        i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
-        return i
-    })
+    employees.value = addPropertyFullName(response.employees)
     brands.value = response.brands
     units.value = response.units
     items.value = response.items.map(i => ({ ...i, label: `${i.code} - ${i.name}` }))
@@ -230,6 +228,41 @@ async function onClickNextStep1() {
     currentStep.value += 1
 }
 
+async function handleSearchEmployees(input: string, loading: (status: boolean) => void ) {
+
+    if(input.trim() === ''){
+        employees.value = []
+        return 
+    } 
+
+    debouncedSearchEmployees(input, loading)
+
+}
+
+async function handleSearchedItems(searchedItems: Item[]) {
+
+    console.log('handleSearchedItems');
+
+    items.value = searchedItems.map(i => ({ ...i, label: `${i.code} - ${i.name}` }))
+
+}
+
+async function searchEmployees(input: string, loading: (status: boolean) => void) {
+    console.log('searchEmployees');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await fetchEmployees(input);
+        console.log('response', response);
+        employees.value = addPropertyFullName(response)
+    } catch (error) {
+        console.error('Error fetching Employees:', error);
+    } finally {
+        loading(false);
+    }
+}
 
 
 // ======================== CANVASSS ITEM FUNCTIONS ======================== 
@@ -293,7 +326,9 @@ async function removeCanvassItem(indx: number) {
 // ======================== UTILS ======================== 
 
 
-
+const debouncedSearchEmployees = debounce((input: string, loading: (status: boolean) => void) => {
+    searchEmployees(input, loading);
+}, 500);
 
 
 </script>

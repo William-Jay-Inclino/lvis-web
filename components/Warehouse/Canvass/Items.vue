@@ -101,9 +101,10 @@
                                 Item <span class="text-danger">*</span>
                             </label>
                             <client-only>
-                                <v-select :options="items" label="label" v-model="canvassItem.item"
+                                <v-select @search="handleSearchItems" :options="items" label="label" v-model="canvassItem.item"
                                     @option:selected="onChangeItem" :clearable="false"></v-select>
                             </client-only>
+                            <small class="text-muted fst-italic"> Enter item code or name </small>
                             <small class="text-danger fst-italic" v-if="canvassItemErrors.item">
                                 This field is required
                             </small>
@@ -174,11 +175,12 @@
 
 <script setup lang="ts">
 import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
+import { fetchItemsByCodeOrName } from '~/composables/warehouse/item/item.api';
 import type { Item } from '~/composables/warehouse/item/item.type';
 import { MOBILE_WIDTH } from '~/utils/config';
 
 
-const emits = defineEmits(['addItem', 'removeItem', 'editItem']);
+const emits = defineEmits(['addItem', 'removeItem', 'editItem', 'searchedItems']);
 
 const props = defineProps({
     canvassItems: {
@@ -323,6 +325,33 @@ function onChangeItem() {
 
 }
 
+async function handleSearchItems(input: string, loading: (status: boolean) => void ) {
+
+    if(input.trim() === ''){
+        emits("searchedItems", [])
+        return 
+    } 
+
+    debouncedSearchItems(input, loading)
+
+}
+
+async function searchItems(input: string, loading: (status: boolean) => void) {
+    console.log('searchItems');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await fetchItemsByCodeOrName(input);
+        emits("searchedItems", response)
+        
+    } catch (error) {
+        console.error('Error fetching Items:', error);
+    } finally {
+        loading(false);
+    }
+}
 
 // ======================== UTILS ======================== 
 
@@ -359,5 +388,10 @@ function isValidCanvassItem(): boolean {
 function checkMobile() {
     isMobile.value = window.innerWidth < MOBILE_WIDTH
 }
+
+
+const debouncedSearchItems = debounce((input: string, loading: (status: boolean) => void) => {
+    searchItems(input, loading);
+}, 500);
 
 </script>
