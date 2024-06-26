@@ -13,7 +13,7 @@
                         <div class="mb-3">
                             <label class="form-label">RV Number</label>
                             <client-only>
-                                <v-select :options="rvs" label="rv_number" v-model="rv"></v-select>
+                                <v-select @search="handleSearchRvNumber" :options="rvs" label="rv_number" v-model="rv"></v-select>
                             </client-only>
                         </div>
                     </div>
@@ -21,7 +21,7 @@
                         <div class="mb-3">
                             <label class="form-label">RC Number</label>
                             <client-only>
-                                <v-select :options="canvasses" label="rc_number" v-model="canvass"></v-select>
+                                <v-select @search="handleSearchRcNumber" :options="canvasses" label="rc_number" v-model="canvass"></v-select>
                             </client-only>
                         </div>
                     </div>
@@ -35,7 +35,7 @@
                         <div class="mb-3">
                             <label class="form-label">Requisitioner</label>
                             <client-only>
-                                <v-select :options="employees" label="fullname" v-model="requested_by"></v-select>
+                                <v-select @search="handleSearchEmployees" :options="employees" label="fullname" v-model="requested_by"></v-select>
                             </client-only>
                         </div>
                     </div>
@@ -172,6 +172,9 @@ import { getFullname, formatDate } from '~/utils/helpers'
 import { PAGINATION_SIZE } from '~/utils/config'
 import { ROUTES, approvalStatus } from '~/utils/constants';
 import type { Employee } from '~/composables/system/employee/employee.types';
+import { fetchRcNumbers } from '~/composables/warehouse/canvass/canvass.api';
+import { fetchEmployees } from '~/composables/system/employee/employee.api';
+import { addPropertyFullName } from '~/composables/system/employee/employee';
 
 definePageMeta({
     name: ROUTES.RV_INDEX,
@@ -308,7 +311,89 @@ async function search() {
 
 }
 
+async function handleSearchRvNumber(input: string, loading: (status: boolean) => void ) {
 
+    if(input.trim() === '') {
+        rvs.value = []
+        return
+    } 
+
+    debouncedSearchRvNumbers(input, loading)
+
+}
+
+async function handleSearchRcNumber(input: string, loading: (status: boolean) => void ) {
+
+    if(input.trim() === '') {
+        canvasses.value = []
+        return
+    } 
+
+    debouncedSearchRcNumbers(input, loading)
+
+}
+
+async function handleSearchEmployees(input: string, loading: (status: boolean) => void ) {
+
+    if(input.trim() === ''){
+        employees.value = []
+        return 
+    } 
+
+    debouncedSearchEmployees(input, loading)
+
+}
+
+async function searchRvNumbers(input: string, loading: (status: boolean) => void) {
+    console.log('searchRvNumbers');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await rvApi.fetchRvNumbers(input);
+        console.log('response', response);
+        rvs.value = response;
+    } catch (error) {
+        console.error('Error fetching RV numbers:', error);
+    } finally {
+        loading(false);
+    }
+}
+
+async function searchRcNumbers(input: string, loading: (status: boolean) => void) {
+    console.log('searchRcNumbers');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await fetchRcNumbers(input);
+        console.log('response', response);
+        canvasses.value = response;
+    } catch (error) {
+        console.error('Error fetching RC numbers:', error);
+    } finally {
+        loading(false);
+    }
+}
+
+async function searchEmployees(input: string, loading: (status: boolean) => void) {
+    console.log('searchEmployees');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await fetchEmployees(input);
+        console.log('response', response);
+        employees.value = addPropertyFullName(response)
+    } catch (error) {
+        console.error('Error fetching Employees:', error);
+    } finally {
+        loading(false);
+    }
+}
 
 // ======================== UTILS ======================== 
 
@@ -316,5 +401,16 @@ const onClickViewDetails = (id: string) => router.push('/warehouse/purchasing/rv
 const onClickEdit = (id: string) => router.push('/warehouse/purchasing/rv/' + id)
 const onClickAdd = () => router.push('/warehouse/purchasing/rv/create')
 
+const debouncedSearchRvNumbers = debounce((input: string, loading: (status: boolean) => void) => {
+  searchRvNumbers(input, loading);
+}, 500);
+
+const debouncedSearchRcNumbers = debounce((input: string, loading: (status: boolean) => void) => {
+  searchRcNumbers(input, loading);
+}, 500);
+
+const debouncedSearchEmployees = debounce((input: string, loading: (status: boolean) => void) => {
+    searchEmployees(input, loading);
+}, 500);
 
 </script>

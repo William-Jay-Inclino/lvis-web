@@ -22,7 +22,7 @@ export async function fetchDataInSearchFilters(): Promise<{
                     rv_number
                 }
             }
-            employees(page: 1, pageSize: 100) {
+            employees(page: 1, pageSize: 10) {
                 data {
                     id
                     firstname
@@ -331,7 +331,7 @@ export async function fetchFormDataInCreate(): Promise<{
                     is_referenced
                 }
             },
-            employees(page: 1, pageSize: 100) {
+            employees(page: 1, pageSize: 10) {
                 data{
                     id
                     firstname
@@ -464,7 +464,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 }
 
             },
-            employees(page: 1, pageSize: 100) {
+            employees(page: 1, pageSize: 10) {
                 data {
                     id
                     firstname
@@ -674,7 +674,6 @@ export async function update(id: string, input: UpdateRvInput): Promise<Mutation
     }
 }
 
-
 export async function cancel(id: string): Promise<CancelResponse> {
 
     const mutation = `
@@ -706,5 +705,29 @@ export async function cancel(id: string): Promise<CancelResponse> {
             success: false,
             msg: 'Failed to cancel RV. Please contact system administrator'
         };
+    }
+}
+
+export async function fetchRvNumbers(payload: string): Promise<RV[]> {
+    const query = `
+        query {
+            rv_numbers(rv_number: "${payload}") {
+                rv_number
+            },
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        if (!response.data || !response.data.data) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+        return response.data.data.rv_numbers
+
+    } catch (error) {
+        console.error(error);
+        return []
     }
 }

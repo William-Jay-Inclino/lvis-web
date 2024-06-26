@@ -600,7 +600,7 @@ export async function update(id: string, input: UpdateCanvassInput): Promise<Mut
 export async function fetchRcNumbers(payload: string): Promise<Canvass[]> {
     const query = `
         query {
-            rc_numbers(rc_number: "${payload}") {
+            canvasses_by_rc_number(rc_number: "${payload}") {
                 rc_number
             },
         }
@@ -613,7 +613,7 @@ export async function fetchRcNumbers(payload: string): Promise<Canvass[]> {
         if (!response.data || !response.data.data) {
             throw new Error(JSON.stringify(response.data.errors));
         }
-        return response.data.data.rc_numbers
+        return response.data.data.canvasses_by_rc_number
 
     } catch (error) {
         console.error(error);
