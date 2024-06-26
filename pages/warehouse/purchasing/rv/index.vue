@@ -228,10 +228,7 @@ onMounted(async () => {
 
     canvasses.value = response.canvasses
     rvs.value = response.rvs
-    employees.value = response.employees.map((i) => {
-        i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
-        return i
-    })
+    employees.value = addPropertyFullName(response.employees)
 
     isLoadingPage.value = false
 

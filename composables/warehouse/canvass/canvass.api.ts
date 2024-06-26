@@ -620,3 +620,38 @@ export async function fetchRcNumbers(payload: string): Promise<Canvass[]> {
         return []
     }
 }
+
+
+export async function fetchCanvassesByRcNumber(payload: string): Promise<Canvass[]> {
+    const query = `
+        query {
+            canvasses_by_rc_number(rc_number: "${payload}", , is_details_included: true) {
+                id
+                rc_number
+                requested_by {
+                    id
+                    firstname
+                    middlename
+                    lastname
+                }
+                purpose
+                notes
+                is_referenced
+            },
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        if (!response.data || !response.data.data) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+        return response.data.data.canvasses_by_rc_number
+
+    } catch (error) {
+        console.error(error);
+        return []
+    }
+}
