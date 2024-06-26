@@ -51,7 +51,7 @@
                                 Requisitioner <span class="text-danger">*</span>
                             </label>
                             <client-only>
-                                <v-select :options="employees" label="fullname" v-model="canvass.requested_by"></v-select>
+                                <v-select @search="handleSearchEmployees" :options="employees" label="fullname" v-model="canvass.requested_by"></v-select>
                             </client-only>
                             <small class="text-danger fst-italic" v-if="canvassErrors.requisitioner"> This field is required
                             </small>
@@ -80,7 +80,7 @@
                         <WarehouseCanvassItems :canvass-is-reference-in-r-r="canvass.is_reference_in_rr"
                             :canvass-items="canvass.canvass_items" :brands="brands" :units="units" :items="items"
                             :is-adding="isAddingItem" :is-editing="isEditingItem" @add-item="addCanvassItem"
-                            @edit-item="editCanvassItem" @remove-item="removeCanvassItem" />
+                            @edit-item="editCanvassItem" @remove-item="removeCanvassItem" @searched-items="handleSearchedItems"/>
         
                     </div>
         
@@ -130,6 +130,8 @@ import { useToast } from "vue-toastification";
 import { formatToValidHtmlDate, redirectTo401Page } from '~/utils/helpers'
 import type { Item } from '~/composables/warehouse/item/item.type';
 import type { Employee } from '~/composables/system/employee/employee.types';
+import { fetchEmployees } from '~/composables/system/employee/employee.api';
+import { addPropertyFullName } from '~/composables/system/employee/employee';
 
 definePageMeta({
     name: ROUTES.CANVASS_UPDATE,
@@ -270,7 +272,41 @@ async function updateCanvassDetail() {
 
 }
 
+async function handleSearchEmployees(input: string, loading: (status: boolean) => void ) {
 
+    if(input.trim() === ''){
+        employees.value = []
+        return 
+    } 
+
+    debouncedSearchEmployees(input, loading)
+
+}
+
+async function handleSearchedItems(searchedItems: Item[]) {
+
+    console.log('handleSearchedItems');
+
+    items.value = searchedItems.map(i => ({ ...i, label: `${i.code} - ${i.name}` }))
+
+}
+
+async function searchEmployees(input: string, loading: (status: boolean) => void) {
+    console.log('searchEmployees');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await fetchEmployees(input);
+        console.log('response', response);
+        employees.value = addPropertyFullName(response)
+    } catch (error) {
+        console.error('Error fetching Employees:', error);
+    } finally {
+        loading(false);
+    }
+}
 
 // ======================== CANVASS ITEM FUNCTIONS ======================== 
 
@@ -398,6 +434,10 @@ async function removeCanvassItem(indx: number) {
 
 // ======================== UTILS ======================== 
 
+
+const debouncedSearchEmployees = debounce((input: string, loading: (status: boolean) => void) => {
+    searchEmployees(input, loading);
+}, 500);
 
 
 </script>

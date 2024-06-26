@@ -116,7 +116,6 @@ import { ROUTES } from '~/utils/constants';
 import type { Employee } from '~/composables/system/employee/employee.types';
 import { fetchEmployees } from '~/composables/system/employee/employee.api';
 import { addPropertyFullName } from '~/composables/system/employee/employee';
-import { fetchItemsByCodeOrName } from '~/composables/warehouse/item/item.api';
 
 definePageMeta({
     name: ROUTES.CANVASS_CREATE,
