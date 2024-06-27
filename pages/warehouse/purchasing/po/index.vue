@@ -14,7 +14,7 @@
                         <div class="mb-3">
                             <label class="form-label">PO Number</label>
                             <client-only>
-                                <v-select :options="pos" label="po_number" v-model="po"></v-select>
+                                <v-select @search="handleSearchPoNumber" :options="pos" label="po_number" v-model="po"></v-select>
                             </client-only>
                         </div>
                     </div>
@@ -22,7 +22,7 @@
                         <div class="mb-3">
                             <label class="form-label">MEQS Number</label>
                             <client-only>
-                                <v-select :options="meqs" label="meqs_number" v-model="meq"></v-select>
+                                <v-select @search="handleSearchMeqsNumber" :options="meqs" label="meqs_number" v-model="meq"></v-select>
                             </client-only>
                         </div>
                     </div>
@@ -36,7 +36,7 @@
                         <div class="mb-3">
                             <label class="form-label">Requisitioner</label>
                             <client-only>
-                                <v-select :options="employees" label="fullname" v-model="requested_by"></v-select>
+                                <v-select @search="handleSearchEmployees" :options="employees" label="fullname" v-model="requested_by"></v-select>
                             </client-only>
                         </div>
                     </div>
@@ -186,6 +186,10 @@ import { getFullname, formatDate } from '~/utils/helpers'
 import { PAGINATION_SIZE } from '~/utils/config'
 import type { MEQS } from '~/composables/warehouse/meqs/meqs.types';
 import type { Employee } from '~/composables/system/employee/employee.types';
+import { fetchEmployees } from '~/composables/system/employee/employee.api';
+import { addPropertyFullName } from '~/composables/system/employee/employee';
+import { fetchMeqsNumbers } from '~/composables/warehouse/meqs/meqs.api';
+
 
 definePageMeta({
     name: ROUTES.PO_INDEX,
@@ -235,10 +239,7 @@ onMounted(async () => {
 
     pos.value = response.pos
     meqs.value = response.meqs
-    employees.value = response.employees.map((i) => {
-        i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
-        return i
-    })
+    employees.value = addPropertyFullName(response.employees)
 
     isLoadingPage.value = false
 
@@ -322,6 +323,90 @@ async function search() {
     pagination.value.totalPages = totalPages
 }
 
+async function handleSearchPoNumber(input: string, loading: (status: boolean) => void ) {
+
+    if(input.trim() === '') {
+        pos.value = []
+        return
+    } 
+
+    debouncedSearchPoNumbers(input, loading)
+
+}
+
+async function handleSearchMeqsNumber(input: string, loading: (status: boolean) => void ) {
+
+    if(input.trim() === '') {
+        meqs.value = []
+        return
+    } 
+
+    debouncedSearchMeqsNumbers(input, loading)
+
+}
+
+async function handleSearchEmployees(input: string, loading: (status: boolean) => void ) {
+
+    if(input.trim() === ''){
+        employees.value = []
+        return 
+    } 
+
+    debouncedSearchEmployees(input, loading)
+
+}
+
+async function searchPoNumbers(input: string, loading: (status: boolean) => void) {
+    console.log('searchPoNumbers');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await poApi.fetchPoNumbers(input);
+        console.log('response', response);
+        pos.value = response;
+    } catch (error) {
+        console.error('Error fetching PO numbers:', error);
+    } finally {
+        loading(false);
+    }
+}
+
+async function searchMeqsNumbers(input: string, loading: (status: boolean) => void) {
+    console.log('searchMeqsNumbers');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await fetchMeqsNumbers(input);
+        console.log('response', response);
+        meqs.value = response;
+    } catch (error) {
+        console.error('Error fetching MEQS numbers:', error);
+    } finally {
+        loading(false);
+    }
+}
+
+async function searchEmployees(input: string, loading: (status: boolean) => void) {
+    console.log('searchEmployees');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await fetchEmployees(input);
+        console.log('response', response);
+        employees.value = addPropertyFullName(response)
+    } catch (error) {
+        console.error('Error fetching Employees:', error);
+    } finally {
+        loading(false);
+    }
+}
+
 
 
 // ======================== UTILS ======================== 
@@ -335,6 +420,18 @@ function getRequisitionerFullname(employee?: Employee | null) {
 const onClickViewDetails = (id: string) => router.push('/warehouse/purchasing/po/view/' + id)
 const onClickEdit = (id: string) => router.push('/warehouse/purchasing/po/' + id)
 const onClickAdd = () => router.push('/warehouse/purchasing/po/create')
+
+const debouncedSearchPoNumbers = debounce((input: string, loading: (status: boolean) => void) => {
+    searchPoNumbers(input, loading);
+}, 500);
+
+const debouncedSearchMeqsNumbers = debounce((input: string, loading: (status: boolean) => void) => {
+    searchMeqsNumbers(input, loading);
+}, 500);
+
+const debouncedSearchEmployees = debounce((input: string, loading: (status: boolean) => void) => {
+    searchEmployees(input, loading);
+}, 500);
 
 
 </script>

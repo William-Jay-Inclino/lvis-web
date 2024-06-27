@@ -194,7 +194,7 @@ export async function fetchDataInSearchFilters(): Promise<{
                     meqs_number
                 }
             },
-            employees(page: 1, pageSize: 100) {
+            employees(page: 1, pageSize: 10) {
                 data {
                     id
                     firstname
@@ -448,7 +448,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                     order
                 }
             },
-            employees(page: 1, pageSize: 100) {
+            employees(page: 1, pageSize: 10) {
                 data {
                     id
                     firstname
@@ -767,5 +767,29 @@ export async function cancel(id: string): Promise<CancelResponse> {
             success: false,
             msg: 'Failed to cancel PO. Please contact system administrator'
         };
+    }
+}
+
+export async function fetchPoNumbers(payload: string): Promise<PO[]> {
+    const query = `
+        query {
+            pos_by_po_number(po_number: "${payload}") {
+                po_number
+            },
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        if (!response.data || !response.data.data) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+        return response.data.data.pos_by_po_number
+
+    } catch (error) {
+        console.error(error);
+        return []
     }
 }
