@@ -1,8 +1,8 @@
 <template>
     <div>
 
+        <!-- Approvers table -->
         <div>
-        <!-- <div v-if="!isMobile"> -->
             
             <div class="table-responsive">
                 <table class="table table-hover">
@@ -69,82 +69,6 @@
             </div>
 
         </div>
-
-        <!-- <div v-else>
-
-            <div class="row">
-                <div class="col-sm-12">
-                    <div v-for="item, i in approvers" class="table-responsive">
-                    
-                        <table class="table table-hover table-bordered">
-        
-                            <tbody>
-                                <tr>
-                                    <td width="50%" class="bg-secondary text-white"> Order </td>
-                                    <td class="bg-secondary text-white"> {{ item.order }} </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted"> Label </td>
-                                    <td> {{ item.label }} </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted"> Approver </td>
-                                    <td>
-                                        {{ getFullname(item.approver!.firstname, item.approver!.middlename, item.approver!.lastname) }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted"> Status </td>
-                                    <td>
-                                        <div :class="{[`badge bg-${approvalStatus[item.status].color}`]: true}"> 
-                                            {{ approvalStatus[item.status].label }} 
-                                        </div>
-                                        <div class="fst-italic" v-if="item.date_approval">
-                                            <small> {{ formatDate(item.date_approval, true) }} </small>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted"> Notes </td>
-                                    <td>
-                                        <textarea :value="item.notes" class="form-control" rows="3" disabled></textarea>
-                                    </td>
-                                </tr>
-                                <tr class="text-center">
-                                    <td colspan="2">
-                                        <button @click="removeApprover(item.id)" class="btn btn-sm btn-light w-50">
-                                            <i class="fas fa-trash text-danger"></i>
-                                        </button>
-        
-                                        <button @click="onClickEditApprover(i)" class="btn btn-sm btn-light w-50" data-bs-toggle="modal" data-bs-target="#editApproverModal">
-                                            <i class="fas fa-edit text-primary"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-        
-                        </table>
-                    
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="text-center">
-                        <button @click="onClickAddApprover" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#addApproverModal">
-                            <i class="fas fa-plus-circle"></i> Add Approver
-                        </button>
-                        <button @click="onClickChangeApprover" class="btn btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#changeApproverOrderModal">
-                            <i class="fas fa-sort"></i> Change Order
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <hr>
-
-        </div> -->
 
         <!-- Change approver order modal-->
         <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="changeApproverOrderModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -229,7 +153,7 @@
                             Approver <span class="text-danger">*</span>
                         </label>
                         <client-only>
-                            <v-select :options="uniqueEmployees" label="fullname" v-model="addApproverData.approver"></v-select>
+                            <v-select @search="handleSearchEmployees" :options="uniqueEmployees" label="fullname" v-model="addApproverData.approver"></v-select>
                         </client-only>
                         <small class="text-danger fst-italic" v-show="addApproverErrors.approver">
                             This field is required
@@ -284,7 +208,7 @@
                             Approver <span class="text-danger">*</span>
                         </label>
                         <client-only>
-                            <v-select :options="uniqueEmployees" label="fullname" v-model="editApproverData.approver" :clearable="false"></v-select>
+                            <v-select @search="handleSearchEmployees" :options="uniqueEmployees" label="fullname" v-model="editApproverData.approver" :clearable="false"></v-select>
                         </client-only>
                     </div>
 
@@ -344,10 +268,10 @@
 
 <script setup lang="ts">
 import type { Employee } from '~/composables/system/employee/employee.types';
+import { fetchEmployees } from '~/composables/system/employee/employee.api';
 
 
-
-    const emits = defineEmits(['changeApproverOrder', 'addApprover', 'editApprover', 'removeApprover']);
+    const emits = defineEmits(['changeApproverOrder', 'addApprover', 'editApprover', 'removeApprover', 'searchedEmployees']);
     
     const props = defineProps({
         approvers: {
@@ -553,6 +477,34 @@ import type { Employee } from '~/composables/system/employee/employee.types';
 
     }
 
+    async function handleSearchEmployees(input: string, loading: (status: boolean) => void ) {
+
+        if(input.trim() === ''){
+            emits('searchedEmployees', [])
+            return 
+        } 
+
+        debouncedSearchEmployees(input, loading)
+
+    }
+
+    async function searchEmployees(input: string, loading: (status: boolean) => void) {
+        console.log('searchEmployees');
+        console.log('input', input);
+
+        loading(true)
+
+        try {
+            const response = await fetchEmployees(input);
+            console.log('response', response);
+            emits('searchedEmployees', response)
+        } catch (error) {
+            console.error('Error fetching Employees:', error);
+        } finally {
+            loading(false);
+        }
+    }
+
 
 
     // ======================== UTILS ========================  
@@ -615,7 +567,9 @@ import type { Employee } from '~/composables/system/employee/employee.types';
 
     }
 
-
+    const debouncedSearchEmployees = debounce((input: string, loading: (status: boolean) => void) => {
+        searchEmployees(input, loading);
+    }, 500);
 
 </script>
 

@@ -18,7 +18,7 @@
                                         RC Number <span class="text-danger">*</span>
                                     </label>
                                     <client-only>
-                                        <v-select @option:selected="onRcNumberSelected" :options="canvasses" label="rc_number"
+                                        <v-select @search="handleSearchRcNumber" @option:selected="onRcNumberSelected" :options="canvasses" label="rc_number"
                                             v-model="sprData.canvass">
                                             <template v-slot:option="option">
                                                 <div v-if="option.is_referenced" class="row">
@@ -83,7 +83,7 @@
                                         Imd. Sup. <span class="text-danger">*</span>
                                     </label>
                                     <client-only>
-                                        <v-select :options="employees" label="fullname" v-model="sprData.supervisor"></v-select>
+                                        <v-select @search="handleSearchEmployees" :options="employees" label="fullname" v-model="sprData.supervisor"></v-select>
                                     </client-only>
                                     <small class="text-danger fst-italic" v-if="sprDataErrors.supervisor"> This field is
                                         required
@@ -154,6 +154,10 @@ import { getFullname } from '~/utils/helpers'
 import * as sprApi from '~/composables/warehouse/spr/spr.api'
 import type { Canvass } from '~/composables/warehouse/canvass/canvass.types';
 import type { CreateSprInput } from '~/composables/warehouse/spr/spr.types';
+import type { Employee } from '~/composables/system/employee/employee.types';
+import { fetchCanvassesByRcNumber } from '~/composables/warehouse/canvass/canvass.api';
+import { fetchEmployees } from '~/composables/system/employee/employee.api';
+import { addPropertyFullName } from '~/composables/system/employee/employee';
 
 definePageMeta({
     name: ROUTES.SPR_CREATE,
@@ -206,10 +210,7 @@ onMounted(async () => {
 
     canvasses.value = response.canvasses
 
-    employees.value = response.employees.map((i) => {
-        i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
-        return i
-    })
+    employees.value = addPropertyFullName(response.employees)
 
     sprData.value.approvers = response.approvers
     classifications.value = response.classifications
@@ -296,7 +297,62 @@ function onRcNumberSelected(payload: Canvass) {
     }
 }
 
+async function handleSearchRcNumber(input: string, loading: (status: boolean) => void ) {
 
+    if(input.trim() === '') {
+        canvasses.value = []
+        return
+    } 
+
+    debouncedSearchRcNumbers(input, loading)
+
+}
+
+async function handleSearchEmployees(input: string, loading: (status: boolean) => void ) {
+
+    if(input.trim() === ''){
+        employees.value = []
+        return 
+    } 
+
+    debouncedSearchEmployees(input, loading)
+
+}
+
+async function searchEmployees(input: string, loading: (status: boolean) => void) {
+    console.log('searchEmployees');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await fetchEmployees(input);
+        console.log('response', response);
+        employees.value = addPropertyFullName(response)
+    } catch (error) {
+        console.error('Error fetching Employees:', error);
+    } finally {
+        loading(false);
+    }
+}
+
+
+async function searchRcNumbers(input: string, loading: (status: boolean) => void) {
+    console.log('searchRcNumbers');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await fetchCanvassesByRcNumber(input);
+        console.log('response', response);
+        canvasses.value = response;
+    } catch (error) {
+        console.error('Error fetching RC numbers:', error);
+    } finally {
+        loading(false);
+    }
+}
 
 // ======================== UTILS ========================  
 
@@ -326,6 +382,12 @@ function isValid(): boolean {
 
 }
 
+const debouncedSearchRcNumbers = debounce((input: string, loading: (status: boolean) => void) => {
+  searchRcNumbers(input, loading);
+}, 500);
 
+const debouncedSearchEmployees = debounce((input: string, loading: (status: boolean) => void) => {
+    searchEmployees(input, loading);
+}, 500);
 
 </script>

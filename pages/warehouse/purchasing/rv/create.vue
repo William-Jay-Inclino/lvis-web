@@ -335,7 +335,6 @@ async function searchEmployees(input: string, loading: (status: boolean) => void
     }
 }
 
-
 async function searchRcNumbers(input: string, loading: (status: boolean) => void) {
     console.log('searchRcNumbers');
     console.log('input', input);
