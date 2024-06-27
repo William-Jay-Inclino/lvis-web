@@ -87,7 +87,7 @@
                                 Imd. Sup. <span class="text-danger">*</span>
                             </label>
                             <client-only>
-                                <v-select :options="employees" label="fullname" v-model="sprData.supervisor"
+                                <v-select @search="handleSearchEmployees" :options="employees" label="fullname" v-model="sprData.supervisor"
                                     :clearable="false"></v-select>
                             </client-only>
                             <small class="text-danger fst-italic" v-if="sprDataErrors.supervisor"> This field is required
@@ -132,7 +132,7 @@
                         <WarehouseApprover :approvers="sprData.spr_approvers" :employees="employees"
                             :isUpdatingApproverOrder="isUpdatingApproverOrder" :isAddingApprover="isAddingSprApprover"
                             :isEditingApprover="isEditingSprApprover" @changeApproverOrder="changeApproverOrder"
-                            @addApprover="addApprover" @editApprover="editApprover" @removeApprover="removeApprover" />
+                            @addApprover="addApprover" @editApprover="editApprover" @removeApprover="removeApprover" @searched-employees="handleSearchedEmployees"/>
                     </div>
         
         
@@ -183,6 +183,8 @@ import * as sprApproverApi from '~/composables/warehouse/spr/spr-approver.api'
 import { type SPR } from '~/composables/warehouse/spr/spr.types';
 import { approvalStatus } from '~/utils/constants';
 import type { Employee } from '~/composables/system/employee/employee.types';
+import { fetchEmployees } from '~/composables/system/employee/employee.api';
+import { addPropertyFullName } from '~/composables/system/employee/employee';
 
 definePageMeta({
     name: ROUTES.SPR_UPDATE,
@@ -197,7 +199,6 @@ const authUser = ref<AuthUser>({} as AuthUser)
 
 // DEPENDENCIES
 const route = useRoute()
-const router = useRouter();
 const toast = useToast();
 
 // FLAGS
@@ -242,10 +243,7 @@ onMounted(async () => {
 
     populateForm(response.spr)
 
-    employees.value = response.employees.map((i) => {
-        i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
-        return i
-    })
+    employees.value = addPropertyFullName(response.employees)
 
     classifications.value = response.classifications
     vehicles.value = response.vehicles
@@ -349,27 +347,38 @@ async function updateSprInfo() {
 
 }
 
-// async function cancelSpr() {
+async function handleSearchEmployees(input: string, loading: (status: boolean) => void ) {
 
-//     const response = await sprApi.cancel(sprData.value.id)
+    if(input.trim() === ''){
+        employees.value = []
+        return 
+    } 
 
-//     if (response.success) {
-//         toast.success(response.msg)
-//         sprData.value.cancelled_at = response.cancelled_at!
+    debouncedSearchEmployees(input, loading)
 
-//         router.push('/warehouse/purchasing/spr')
+}
 
-//     } else {
-//         Swal.fire({
-//             title: 'Error!',
-//             text: response.msg,
-//             icon: 'error',
-//             position: 'top',
-//         })
-//     }
+// handle searched employees from child component (Approver) 
+async function handleSearchedEmployees(searchedEmployees: Employee[]) {
+    employees.value = addPropertyFullName(searchedEmployees)
+}
 
+async function searchEmployees(input: string, loading: (status: boolean) => void) {
+    console.log('searchEmployees');
+    console.log('input', input);
 
-// }
+    loading(true)
+
+    try {
+        const response = await fetchEmployees(input);
+        console.log('response', response);
+        employees.value = addPropertyFullName(response)
+    } catch (error) {
+        console.error('Error fetching Employees:', error);
+    } finally {
+        loading(false);
+    }
+}
 
 
 
@@ -572,6 +581,8 @@ function isValidSprInfo(): boolean {
 
 }
 
-
+const debouncedSearchEmployees = debounce((input: string, loading: (status: boolean) => void) => {
+    searchEmployees(input, loading);
+}, 500);
 
 </script>
