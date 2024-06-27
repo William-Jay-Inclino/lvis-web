@@ -13,7 +13,7 @@
                         <div class="mb-3">
                             <label class="form-label">MEQS Number</label>
                             <client-only>
-                                <v-select :options="meqsArray" label="meqs_number" v-model="meqs"></v-select>
+                                <v-select @search="handleSearchMeqsNumber" :options="meqsArray" label="meqs_number" v-model="meqs"></v-select>
                             </client-only>
                         </div>
                     </div>
@@ -29,11 +29,11 @@
                                 </div>
                                 <div class="col-8">
                                     <client-only>
-                                        <v-select :options="rvs" label="rv_number" v-model="rv"
+                                        <v-select @search="handleSearchRvNumber" :options="rvs" label="rv_number" v-model="rv"
                                             v-show="transactionType === 'RV'"></v-select>
-                                        <v-select :options="jos" label="jo_number" v-model="jo"
+                                        <v-select @search="handleSearchJoNumber" :options="jos" label="jo_number" v-model="jo"
                                             v-show="transactionType === 'JO'"></v-select>
-                                        <v-select :options="sprs" label="spr_number" v-model="spr"
+                                        <v-select @search="handleSearchSprNumber" :options="sprs" label="spr_number" v-model="spr"
                                             v-show="transactionType === 'SPR'"></v-select>
                                     </client-only>
                                 </div>
@@ -52,7 +52,7 @@
                         <div class="mb-3">
                             <label class="form-label">Requisitioner</label>
                             <client-only>
-                                <v-select :options="employees" label="fullname" v-model="requested_by"></v-select>
+                                <v-select @search="handleSearchEmployees" :options="employees" label="fullname" v-model="requested_by"></v-select>
                             </client-only>
                         </div>
                     </div>
@@ -219,6 +219,11 @@ import type { JO } from '~/composables/warehouse/jo/jo.types';
 import type { SPR } from '~/composables/warehouse/spr/spr.types';
 import { getFullname, formatDate } from '~/utils/helpers'
 import type { Employee } from '~/composables/system/employee/employee.types';
+import { fetchRvNumbers } from '~/composables/warehouse/rv/rv.api';
+import { fetchEmployees } from '~/composables/system/employee/employee.api';
+import { addPropertyFullName } from '~/composables/system/employee/employee';
+import { fetchSprNumbers } from '~/composables/warehouse/spr/spr.api';
+import { fetchJoNumbers } from '~/composables/warehouse/jo/jo.api';
 
 
 definePageMeta({
@@ -380,11 +385,170 @@ function onChangeTransactionType() {
     jo.value = null
 }
 
+async function handleSearchMeqsNumber(input: string, loading: (status: boolean) => void ) {
+
+    if(input.trim() === '') {
+        meqsArray.value = []
+        return
+    } 
+
+    debouncedSearchMeqsNumbers(input, loading)
+
+}
+
+async function handleSearchJoNumber(input: string, loading: (status: boolean) => void ) {
+
+    if(input.trim() === '') {
+        jos.value = []
+        return
+    } 
+
+    debouncedSearchJoNumbers(input, loading)
+
+}
+
+async function handleSearchSprNumber(input: string, loading: (status: boolean) => void ) {
+
+    if(input.trim() === '') {
+        sprs.value = []
+        return
+    } 
+
+    debouncedSearchSprNumbers(input, loading)
+
+}
+
+async function handleSearchRvNumber(input: string, loading: (status: boolean) => void ) {
+
+    if(input.trim() === '') {
+        rvs.value = []
+        return
+    } 
+
+    debouncedSearchRvNumbers(input, loading)
+
+}
+
+async function handleSearchEmployees(input: string, loading: (status: boolean) => void ) {
+
+    if(input.trim() === ''){
+        employees.value = []
+        return 
+    } 
+
+    debouncedSearchEmployees(input, loading)
+
+}
+
+async function searchMeqsNumbers(input: string, loading: (status: boolean) => void) {
+    console.log('searchMeqsNumbers');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await meqsApi.fetchMeqsNumbers(input);
+        console.log('response', response);
+        meqsArray.value = response;
+    } catch (error) {
+        console.error('Error fetching MEQS numbers:', error);
+    } finally {
+        loading(false);
+    }
+}
+
+async function searchJoNumbers(input: string, loading: (status: boolean) => void) {
+    console.log('searchJoNumbers');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await fetchJoNumbers(input);
+        console.log('response', response);
+        jos.value = response;
+    } catch (error) {
+        console.error('Error fetching JO numbers:', error);
+    } finally {
+        loading(false);
+    }
+}
+
+async function searchSprNumbers(input: string, loading: (status: boolean) => void) {
+    console.log('searchSprNumbers');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await fetchSprNumbers(input);
+        console.log('response', response);
+        sprs.value = response;
+    } catch (error) {
+        console.error('Error fetching SPR numbers:', error);
+    } finally {
+        loading(false);
+    }
+}
+
+async function searchRvNumbers(input: string, loading: (status: boolean) => void) {
+    console.log('searchRvNumbers');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await fetchRvNumbers(input);
+        console.log('response', response);
+        rvs.value = response;
+    } catch (error) {
+        console.error('Error fetching RV numbers:', error);
+    } finally {
+        loading(false);
+    }
+}
+
+async function searchEmployees(input: string, loading: (status: boolean) => void) {
+    console.log('searchEmployees');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await fetchEmployees(input);
+        console.log('response', response);
+        employees.value = addPropertyFullName(response)
+    } catch (error) {
+        console.error('Error fetching Employees:', error);
+    } finally {
+        loading(false);
+    }
+}
+
 // ======================== UTILS ======================== 
 
 const onClickViewDetails = (id: string) => router.push('/warehouse/purchasing/meqs/view/' + id)
 const onClickEdit = (id: string) => router.push('/warehouse/purchasing/meqs/' + id)
 const onClickAdd = () => router.push('/warehouse/purchasing/meqs/create')
 
+const debouncedSearchMeqsNumbers = debounce((input: string, loading: (status: boolean) => void) => {
+  searchMeqsNumbers(input, loading);
+}, 500);
+
+const debouncedSearchJoNumbers = debounce((input: string, loading: (status: boolean) => void) => {
+  searchJoNumbers(input, loading);
+}, 500);
+
+const debouncedSearchSprNumbers = debounce((input: string, loading: (status: boolean) => void) => {
+  searchSprNumbers(input, loading);
+}, 500);
+
+const debouncedSearchRvNumbers = debounce((input: string, loading: (status: boolean) => void) => {
+  searchRvNumbers(input, loading);
+}, 500);
+
+const debouncedSearchEmployees = debounce((input: string, loading: (status: boolean) => void) => {
+    searchEmployees(input, loading);
+}, 500);
 
 </script>

@@ -105,7 +105,7 @@
                         <WarehouseApprover :approvers="meqsData.meqs_approvers" :employees="employees"
                             :isUpdatingApproverOrder="isUpdatingApproverOrder" :isAddingApprover="isAddingApprover"
                             :isEditingApprover="isEditingApprover" @changeApproverOrder="changeApproverOrder"
-                            @addApprover="addApprover" @editApprover="editApprover" @removeApprover="removeApprover" />
+                            @addApprover="addApprover" @editApprover="editApprover" @removeApprover="removeApprover" @searched-employees="handleSearchedEmployees"/>
                     </div>
         
                 </div>
@@ -185,9 +185,8 @@ import type { CreateMeqsSupplierAttachmentSubInput, CreateMeqsSupplierInput, Cre
 import type { CreateMeqsSupplierAttachmentInput } from '~/composables/warehouse/meqs/meqs-supplier-attachment';
 import type { Supplier } from '~/composables/warehouse/supplier/supplier';
 import type { Employee } from '~/composables/system/employee/employee.types';
-import type { MeqsSupplierItem } from '~/composables/warehouse/meqs/meqs-supplier-item';
-import type { CanvassItem } from '~/composables/warehouse/canvass/canvass-item.types';
 import { getLowestPriceItem, getSupplierItemsByCanvassId } from '~/composables/warehouse/meqs/meqs';
+import { addPropertyFullName } from '~/composables/system/employee/employee';
 
 definePageMeta({
     name: ROUTES.MEQS_UPDATE,
@@ -246,10 +245,7 @@ onMounted(async () => {
 
     populateForm(response.meqs)
 
-    employees.value = response.employees.map((i) => {
-        i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
-        return i
-    })
+    employees.value = addPropertyFullName(response.employees)
 
     suppliers.value = response.suppliers
 
@@ -358,6 +354,10 @@ async function updateMeqsInfo() {
 
 }
 
+// handle searched employees from child component (Approver) 
+async function handleSearchedEmployees(searchedEmployees: Employee[]) {
+    employees.value = addPropertyFullName(searchedEmployees)
+}
 
 
 // ======================== CHILD EVENTS: <WarehouseApprover> ========================  
@@ -947,5 +947,6 @@ function isInvalidPrice(price: number): boolean {
         return false
     }
 }
+
 
 </script>

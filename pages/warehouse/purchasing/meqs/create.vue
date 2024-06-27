@@ -35,7 +35,7 @@
                                         </div>
                                         <div class="col-8" v-if="transactionType === 'RV'">
                                             <client-only>
-                                                <v-select @option:selected="onRvNumberSelected" :options="rvs" label="rv_number"
+                                                <v-select @search="handleSearchRvNumber" @option:selected="onRvNumberSelected" :options="rvs" label="rv_number"
                                                     v-model="meqsData.rv">
                                                     <template v-slot:option="option">
                                                         <div v-if="option.status !== APPROVAL_STATUS.APPROVED" class="row">
@@ -78,7 +78,7 @@
                                         </div>
                                         <div class="col-8" v-else-if="transactionType === 'JO'">
                                             <client-only>
-                                                <v-select @option:selected="onJoNumberSelected" :options="jos" label="jo_number"
+                                                <v-select @search="handleSearchJoNumber" @option:selected="onJoNumberSelected" :options="jos" label="jo_number"
                                                     v-model="meqsData.jo">
                                                     <template v-slot:option="option">
                                                         <div v-if="option.status !== APPROVAL_STATUS.APPROVED" class="row">
@@ -121,7 +121,7 @@
                                         </div>
                                         <div class="col-8" v-else-if="transactionType === 'SPR'">
                                             <client-only>
-                                                <v-select @option:selected="onSprNumberSelected" :options="sprs"
+                                                <v-select @search="handleSearchSprNumber" @option:selected="onSprNumberSelected" :options="sprs"
                                                     label="spr_number" v-model="meqsData.spr">
                                                     <template v-slot:option="option">
                                                         <div v-if="option.status !== APPROVAL_STATUS.APPROVED" class="row">
@@ -288,6 +288,9 @@ import type { JO } from '~/composables/warehouse/jo/jo.types';
 import type { SPR } from '~/composables/warehouse/spr/spr.types';
 import type { Supplier } from '~/composables/warehouse/supplier/supplier';
 import { getLowestPriceItem, getSupplierItemsByCanvassId } from '~/composables/warehouse/meqs/meqs';
+import { fetchJOsByJoNumber } from '~/composables/warehouse/jo/jo.api';
+import { fetchSPRsBySprNumber } from '~/composables/warehouse/spr/spr.api';
+import { fetchRVsByRvNumber } from '~/composables/warehouse/rv/rv.api';
 
 definePageMeta({
     name: ROUTES.MEQS_CREATE,
@@ -700,36 +703,95 @@ function getItemsNeedingJustification(canvassItems: CanvassItem[], meqsSuppliers
     return items
 }
 
-// function getSupplierItemsByCanvassId(canvassId: string, suppliers: MeqsSupplier[]): MeqsSupplierItem[] {
 
-//     const itemsByCanvassId: MeqsSupplierItem[] = []
 
-//     for (let supplier of suppliers) {
+// ======================== SEARCH FUNCTIONS ======================== 
 
-//         const canvassItem = supplier.meqs_supplier_items.find(i => i.canvass_item.id === canvassId)
-//         if (canvassItem) {
-//             canvassItem.meqs_supplier = supplier
-//             itemsByCanvassId.push(canvassItem)
-//         }
 
-//     }
+async function handleSearchJoNumber(input: string, loading: (status: boolean) => void ) {
 
-//     return itemsByCanvassId
+    if(input.trim() === '') {
+        jos.value = []
+        return
+    } 
 
-// }
+    debouncedSearchJoNumbers(input, loading)
 
-// function getLowestPriceItem(items: MeqsSupplierItem[]): MeqsSupplierItem {
+}
 
-//     const getInitialItemIndx = items.findIndex(i => i.price !== -1)
+async function handleSearchSprNumber(input: string, loading: (status: boolean) => void ) {
 
-//     const lowestPriceItem = items.reduce((lowest, item) => {
-//         return (item.price < lowest.price && item.price !== -1) ? item : lowest;
-//     }, items[getInitialItemIndx]);
+    if(input.trim() === '') {
+        sprs.value = []
+        return
+    } 
 
-//     return lowestPriceItem
+    debouncedSearchSprNumbers(input, loading)
 
-// }
+}
 
+async function handleSearchRvNumber(input: string, loading: (status: boolean) => void ) {
+
+    if(input.trim() === '') {
+        rvs.value = []
+        return
+    } 
+
+    debouncedSearchRvNumbers(input, loading)
+
+}
+
+
+async function searchJoNumbers(input: string, loading: (status: boolean) => void) {
+    console.log('searchJoNumbers');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await fetchJOsByJoNumber(input);
+        console.log('response', response);
+        jos.value = response;
+    } catch (error) {
+        console.error('Error fetching JO numbers:', error);
+    } finally {
+        loading(false);
+    }
+}
+
+async function searchSprNumbers(input: string, loading: (status: boolean) => void) {
+    console.log('searchSprNumbers');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await fetchSPRsBySprNumber(input);
+        console.log('response', response);
+        sprs.value = response;
+    } catch (error) {
+        console.error('Error fetching SPR numbers:', error);
+    } finally {
+        loading(false);
+    }
+}
+
+async function searchRvNumbers(input: string, loading: (status: boolean) => void) {
+    console.log('searchRvNumbers');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await fetchRVsByRvNumber(input);
+        console.log('response', response);
+        rvs.value = response;
+    } catch (error) {
+        console.error('Error fetching RV numbers:', error);
+    } finally {
+        loading(false);
+    }
+}
 
 
 // ======================== CHILD FUNCTIONS: SUPPLIER ======================== 
@@ -974,5 +1036,17 @@ function isValidStep3(meqsSuppliers: MeqsSupplier[], canvassItems: CanvassItem[]
     return true
 
 }
+
+const debouncedSearchJoNumbers = debounce((input: string, loading: (status: boolean) => void) => {
+  searchJoNumbers(input, loading);
+}, 500);
+
+const debouncedSearchSprNumbers = debounce((input: string, loading: (status: boolean) => void) => {
+  searchSprNumbers(input, loading);
+}, 500);
+
+const debouncedSearchRvNumbers = debounce((input: string, loading: (status: boolean) => void) => {
+  searchRvNumbers(input, loading);
+}, 500);
 
 </script>

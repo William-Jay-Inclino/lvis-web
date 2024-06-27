@@ -625,7 +625,7 @@ export async function fetchRcNumbers(payload: string): Promise<Canvass[]> {
 export async function fetchCanvassesByRcNumber(payload: string): Promise<Canvass[]> {
     const query = `
         query {
-            canvasses_by_rc_number(rc_number: "${payload}", , is_detail_included: true) {
+            canvasses_by_rc_number(rc_number: "${payload}", is_detail_included: true) {
                 id
                 rc_number
                 requested_by {

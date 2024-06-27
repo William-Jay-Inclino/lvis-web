@@ -747,3 +747,56 @@ export async function fetchJoNumbers(payload: string): Promise<JO[]> {
         return []
     }
 }
+
+
+export async function fetchJOsByJoNumber(payload: string): Promise<JO[]> {
+    const query = `
+        query {
+            jos_by_jo_number(jo_number: "${payload}", is_detail_included: true) {
+                id
+                jo_number
+                status
+                is_referenced
+                canvass {
+                    rc_number
+                    requested_by {
+                        id
+                        firstname
+                        middlename
+                        lastname
+                    }
+                    purpose
+                    notes
+                    canvass_items{
+                        id
+                        canvass_id
+                        description
+                        brand{
+                            id
+                            name
+                        }
+                        unit{
+                            id
+                            name
+                        }
+                        quantity
+                    }
+                }
+            },
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        if (!response.data || !response.data.data) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+        return response.data.data.jos_by_jo_number
+
+    } catch (error) {
+        console.error(error);
+        return []
+    }
+}

@@ -315,7 +315,7 @@ async function handleSearchSprNumber(input: string, loading: (status: boolean) =
         return
     } 
 
-    debouncedSearchRvNumbers(input, loading)
+    debouncedSearchSprNumbers(input, loading)
 
 }
 
@@ -397,7 +397,7 @@ const onClickViewDetails = (id: string) => router.push('/warehouse/purchasing/sp
 const onClickEdit = (id: string) => router.push('/warehouse/purchasing/spr/' + id)
 const onClickAdd = () => router.push('/warehouse/purchasing/spr/create')
 
-const debouncedSearchRvNumbers = debounce((input: string, loading: (status: boolean) => void) => {
+const debouncedSearchSprNumbers = debounce((input: string, loading: (status: boolean) => void) => {
   searchSprNumbers(input, loading);
 }, 500);
 

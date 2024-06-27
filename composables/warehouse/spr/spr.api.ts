@@ -742,3 +742,56 @@ export async function fetchSprNumbers(payload: string): Promise<SPR[]> {
         return []
     }
 }
+
+
+export async function fetchSPRsBySprNumber(payload: string): Promise<SPR[]> {
+    const query = `
+        query {
+            sprs_by_spr_number(spr_number: "${payload}", is_detail_included: true) {
+                id
+                spr_number
+                status
+                is_referenced
+                canvass {
+                    rc_number
+                    requested_by {
+                        id
+                        firstname
+                        middlename
+                        lastname
+                    }
+                    purpose
+                    notes
+                    canvass_items{
+                        id
+                        canvass_id
+                        description
+                        brand{
+                            id
+                            name
+                        }
+                        unit{
+                            id
+                            name
+                        }
+                        quantity
+                    }
+                }
+            },
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        if (!response.data || !response.data.data) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+        return response.data.data.sprs_by_spr_number
+
+    } catch (error) {
+        console.error(error);
+        return []
+    }
+}

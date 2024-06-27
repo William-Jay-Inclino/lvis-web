@@ -731,3 +731,56 @@ export async function fetchRvNumbers(payload: string): Promise<RV[]> {
         return []
     }
 }
+
+
+export async function fetchRVsByRvNumber(payload: string): Promise<RV[]> {
+    const query = `
+        query {
+            rvs_by_rv_number(rv_number: "${payload}", is_detail_included: true) {
+                id
+                rv_number
+                status
+                is_referenced
+                canvass {
+                    rc_number
+                    requested_by {
+                        id
+                        firstname
+                        middlename
+                        lastname
+                    }
+                    purpose
+                    notes
+                    canvass_items{
+                        id
+                        canvass_id
+                        description
+                        brand{
+                            id
+                            name
+                        }
+                        unit{
+                            id
+                            name
+                        }
+                        quantity
+                    }
+                }
+            },
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        if (!response.data || !response.data.data) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+        return response.data.data.rvs_by_rv_number
+
+    } catch (error) {
+        console.error(error);
+        return []
+    }
+}
