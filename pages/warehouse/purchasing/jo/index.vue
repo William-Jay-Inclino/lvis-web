@@ -13,7 +13,7 @@
                         <div class="mb-3">
                             <label class="form-label">JO Number</label>
                             <client-only>
-                                <v-select :options="jos" label="jo_number" v-model="jo"></v-select>
+                                <v-select @search="handleSearchJoNumber" :options="jos" label="jo_number" v-model="jo"></v-select>
                             </client-only>
                         </div>
                     </div>
@@ -21,7 +21,7 @@
                         <div class="mb-3">
                             <label class="form-label">RC Number</label>
                             <client-only>
-                                <v-select :options="canvasses" label="rc_number" v-model="canvass"></v-select>
+                                <v-select @search="handleSearchRcNumber" :options="canvasses" label="rc_number" v-model="canvass"></v-select>
                             </client-only>
                         </div>
                     </div>
@@ -35,7 +35,7 @@
                         <div class="mb-3">
                             <label class="form-label">Requisitioner</label>
                             <client-only>
-                                <v-select :options="employees" label="fullname" v-model="requested_by"></v-select>
+                                <v-select @search="handleSearchEmployees" :options="employees" label="fullname" v-model="requested_by"></v-select>
                             </client-only>
                         </div>
                     </div>
@@ -119,65 +119,6 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <!-- </div> -->
-        
-                                <!-- <div v-else>
-        
-                                    <div v-for="i in items" class="table-responsive">
-        
-                                        <table class="table table-hover table-bordered">
-        
-                                            <tbody>
-                                                <tr>
-                                                    <td width="50%" class="bg-secondary text-white"> JO Number </td>
-                                                    <td class="bg-secondary text-white"> {{ i.jo_number }} </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="text-muted"> RC Number </td>
-                                                    <td> {{ i.canvass.rc_number }} </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="text-muted"> Requisitioner </td>
-                                                    <td> {{ getFullname(i.canvass.requested_by!.firstname,
-                                    i.canvass.requested_by!.middlename, i.canvass.requested_by!.lastname) }}
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="text-muted"> Date </td>
-                                                    <td> {{ formatDate(i.date_requested) }} </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="text-muted"> Status </td>
-                                                    <td>
-                                                        <div :class="{ [`badge bg-${approvalStatus[i.status].color}`]: true }">
-                                                            {{ approvalStatus[i.status].label }}
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="text-center"
-                                                        :colspan="isAdminOrOwner(i.created_by, authUser) ? 1 : 2">
-                                                        <nuxt-link class="btn btn-sm btn-light text-info w-100"
-                                                            :to="'/warehouse/purchasing/jo/view/' + i.id">
-                                                            <i class="fas fa-info-circle text-info"></i> View Details
-                                                        </nuxt-link>
-                                                    </td>
-                                                    <td v-if="isAdminOrOwner(i.created_by, authUser)" class="text-center">
-                                                        <button @click="onClickEdit(i.id)"
-                                                            class="btn btn-sm btn-light text-primary w-100">
-                                                            <i class="fas fa-edit"></i>
-                                                            Edit JO
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-        
-                                        </table>
-        
-        
-                                    </div>
-        
-                                </div> -->
         
         
                             </div>
@@ -231,7 +172,9 @@ import { getFullname, formatDate } from '~/utils/helpers'
 import { PAGINATION_SIZE } from '~/utils/config'
 import { ROUTES, approvalStatus } from '~/utils/constants';
 import type { Employee } from '~/composables/system/employee/employee.types';
-
+import { fetchRcNumbers } from '~/composables/warehouse/canvass/canvass.api';
+import { fetchEmployees } from '~/composables/system/employee/employee.api';
+import { addPropertyFullName } from '~/composables/system/employee/employee';
 
 definePageMeta({
     name: ROUTES.JO_INDEX,
@@ -290,10 +233,7 @@ onMounted(async () => {
 
     canvasses.value = response.canvasses
     jos.value = response.jos
-    employees.value = response.employees.map((i) => {
-        i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
-        return i
-    })
+    employees.value = addPropertyFullName(response.employees)
 
     isLoadingPage.value = false
 
@@ -373,7 +313,89 @@ async function search() {
 
 }
 
+async function handleSearchJoNumber(input: string, loading: (status: boolean) => void ) {
 
+    if(input.trim() === '') {
+        jos.value = []
+        return
+    } 
+
+    debouncedSearchJoNumbers(input, loading)
+
+}
+
+async function handleSearchRcNumber(input: string, loading: (status: boolean) => void ) {
+
+    if(input.trim() === '') {
+        canvasses.value = []
+        return
+    } 
+
+    debouncedSearchRcNumbers(input, loading)
+
+}
+
+async function handleSearchEmployees(input: string, loading: (status: boolean) => void ) {
+
+    if(input.trim() === ''){
+        employees.value = []
+        return 
+    } 
+
+    debouncedSearchEmployees(input, loading)
+
+}
+
+async function searchJoNumbers(input: string, loading: (status: boolean) => void) {
+    console.log('searchJoNumbers');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await joApi.fetchJoNumbers(input);
+        console.log('response', response);
+        jos.value = response;
+    } catch (error) {
+        console.error('Error fetching JO numbers:', error);
+    } finally {
+        loading(false);
+    }
+}
+
+async function searchRcNumbers(input: string, loading: (status: boolean) => void) {
+    console.log('searchRcNumbers');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await fetchRcNumbers(input);
+        console.log('response', response);
+        canvasses.value = response;
+    } catch (error) {
+        console.error('Error fetching RC numbers:', error);
+    } finally {
+        loading(false);
+    }
+}
+
+async function searchEmployees(input: string, loading: (status: boolean) => void) {
+    console.log('searchEmployees');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await fetchEmployees(input);
+        console.log('response', response);
+        employees.value = addPropertyFullName(response)
+    } catch (error) {
+        console.error('Error fetching Employees:', error);
+    } finally {
+        loading(false);
+    }
+}
 
 // ======================== UTILS ======================== 
 
@@ -381,5 +403,16 @@ const onClickViewDetails = (id: string) => router.push('/warehouse/purchasing/jo
 const onClickEdit = (id: string) => router.push('/warehouse/purchasing/jo/' + id)
 const onClickAdd = () => router.push('/warehouse/purchasing/jo/create')
 
+const debouncedSearchJoNumbers = debounce((input: string, loading: (status: boolean) => void) => {
+  searchJoNumbers(input, loading);
+}, 500);
+
+const debouncedSearchRcNumbers = debounce((input: string, loading: (status: boolean) => void) => {
+  searchRcNumbers(input, loading);
+}, 500);
+
+const debouncedSearchEmployees = debounce((input: string, loading: (status: boolean) => void) => {
+    searchEmployees(input, loading);
+}, 500);
 
 </script>

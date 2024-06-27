@@ -22,7 +22,7 @@ export async function fetchDataInSearchFilters(): Promise<{
                     jo_number
                 }
             }
-            employees(page: 1, pageSize: 100) {
+            employees(page: 1, pageSize: 10) {
                 data {
                     id
                     firstname
@@ -336,7 +336,7 @@ export async function fetchFormDataInCreate(): Promise<{
                     is_referenced
                 }
             },
-            employees(page: 1, pageSize: 100) {
+            employees(page: 1, pageSize: 10) {
                 data{
                     id
                     firstname
@@ -486,7 +486,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 }
 
             },
-            employees(page: 1, pageSize: 100) {
+            employees(page: 1, pageSize: 10) {
                 data {
                     id
                     firstname
@@ -720,5 +720,30 @@ export async function cancel(id: string): Promise<CancelResponse> {
             success: false,
             msg: 'Failed to cancel JO. Please contact system administrator'
         };
+    }
+}
+
+
+export async function fetchJoNumbers(payload: string): Promise<JO[]> {
+    const query = `
+        query {
+            jos_by_jo_number(jo_number: "${payload}") {
+                jo_number
+            },
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        if (!response.data || !response.data.data) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+        return response.data.data.jos_by_jo_number
+
+    } catch (error) {
+        console.error(error);
+        return []
     }
 }

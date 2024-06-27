@@ -86,7 +86,7 @@
                                 Imd. Sup. <span class="text-danger">*</span>
                             </label>
                             <client-only>
-                                <v-select :options="employees" label="fullname" v-model="joData.supervisor"
+                                <v-select @search="handleSearchEmployees" :options="employees" label="fullname" v-model="joData.supervisor"
                                     :clearable="false"></v-select>
                             </client-only>
                             <small class="text-danger fst-italic" v-if="joDataErrors.supervisor"> This field is required
@@ -138,7 +138,7 @@
                         <WarehouseApprover :approvers="joData.jo_approvers" :employees="employees"
                             :isUpdatingApproverOrder="isUpdatingApproverOrder" :isAddingApprover="isAddingJoApprover"
                             :isEditingApprover="isEditingJoApprover" @changeApproverOrder="changeApproverOrder"
-                            @addApprover="addApprover" @editApprover="editApprover" @removeApprover="removeApprover" />
+                            @addApprover="addApprover" @editApprover="editApprover" @removeApprover="removeApprover" @searched-employees="handleSearchedEmployees"/>
                     </div>
         
         
@@ -189,6 +189,8 @@ import * as joApproverApi from '~/composables/warehouse/jo/jo-approver.api'
 import { type JO } from '~/composables/warehouse/jo/jo.types';
 import { approvalStatus } from '~/utils/constants';
 import type { Employee } from '~/composables/system/employee/employee.types';
+import { fetchEmployees } from '~/composables/system/employee/employee.api';
+import { addPropertyFullName } from '~/composables/system/employee/employee';
 
 definePageMeta({
     name: ROUTES.JO_UPDATE,
@@ -201,7 +203,6 @@ const authUser = ref<AuthUser>({} as AuthUser)
 
 // DEPENDENCIES
 const route = useRoute()
-const router = useRouter();
 const toast = useToast();
 
 // FLAGS
@@ -247,10 +248,7 @@ onMounted(async () => {
 
     populateForm(response.jo)
 
-    employees.value = response.employees.map((i) => {
-        i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
-        return i
-    })
+    employees.value = addPropertyFullName(response.employees)
 
     classifications.value = response.classifications
     departments.value = response.departments
@@ -354,7 +352,38 @@ async function updateJoInfo() {
 
 }
 
+async function handleSearchEmployees(input: string, loading: (status: boolean) => void ) {
 
+    if(input.trim() === ''){
+        employees.value = []
+        return 
+    } 
+
+    debouncedSearchEmployees(input, loading)
+
+}
+
+// handle searched employees from child component (Approver) 
+async function handleSearchedEmployees(searchedEmployees: Employee[]) {
+    employees.value = addPropertyFullName(searchedEmployees)
+}
+
+async function searchEmployees(input: string, loading: (status: boolean) => void) {
+    console.log('searchEmployees');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await fetchEmployees(input);
+        console.log('response', response);
+        employees.value = addPropertyFullName(response)
+    } catch (error) {
+        console.error('Error fetching Employees:', error);
+    } finally {
+        loading(false);
+    }
+}
 
 // ======================== CHILD EVENTS: <WarehouseApprover> ========================  
 
@@ -537,6 +566,10 @@ function isValidJoInfo(): boolean {
     return true
 
 }
+
+const debouncedSearchEmployees = debounce((input: string, loading: (status: boolean) => void) => {
+    searchEmployees(input, loading);
+}, 500);
 
 
 </script>
