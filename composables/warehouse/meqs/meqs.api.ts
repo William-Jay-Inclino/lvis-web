@@ -1195,3 +1195,60 @@ export async function fetchMeqsNumbers(payload: string): Promise<MEQS[]> {
         return []
     }
 }
+
+
+export async function fetchMeqsByMeqsNumber(payload: string): Promise<MEQS[]> {
+    const query = `
+        query {
+            meqs_by_meqs_number(meqs_number: "${payload}", is_detail_included: true) {
+                id
+                meqs_number
+                status
+                meqs_suppliers {
+                    id
+                    payment_terms
+                    is_referenced
+                    supplier{
+                        id
+                        name 
+                        is_vat_registered
+                    }
+                    meqs_supplier_items {
+                        id 
+                        price 
+                        notes 
+                        is_awarded
+                        vat_type
+                        canvass_item {
+                            id 
+                            description
+                            brand {
+                                id 
+                                name
+                            }
+                            unit {
+                                id 
+                                name 
+                            }
+                            quantity
+                        }
+                    }
+                }
+            },
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        if (!response.data || !response.data.data) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+        return response.data.data.meqs_by_meqs_number
+
+    } catch (error) {
+        console.error(error);
+        return []
+    }
+}

@@ -89,7 +89,7 @@
                         <WarehouseApprover :approvers="poData.po_approvers" :employees="employees"
                             :isUpdatingApproverOrder="isUpdatingApproverOrder" :isAddingApprover="isAddingApprover"
                             :isEditingApprover="isEditingApprover" @changeApproverOrder="changeApproverOrder"
-                            @addApprover="addApprover" @editApprover="editApprover" @removeApprover="removeApprover" />
+                            @addApprover="addApprover" @editApprover="editApprover" @removeApprover="removeApprover" @searched-employees="handleSearchedEmployees"/>
                     </div>
 
                 </div>
@@ -137,6 +137,7 @@ import * as poApi from '~/composables/warehouse/po/po.api'
 import * as poApproverApi from '~/composables/warehouse/po/po-approver.api'
 import type { Account } from '~/composables/system/account/account';
 import type { Employee } from '~/composables/system/employee/employee.types';
+import { addPropertyFullName } from '~/composables/system/employee/employee';
 
 definePageMeta({
     name: ROUTES.PO_UPDATE,
@@ -150,7 +151,6 @@ const authUser = ref<AuthUser>({} as AuthUser)
 
 // DEPENDENCIES
 const route = useRoute()
-const router = useRouter();
 const toast = useToast();
 
 // FLAGS
@@ -267,7 +267,10 @@ async function updatePoInfo() {
 
 }
 
-
+// handle searched employees from child component (Approver) 
+async function handleSearchedEmployees(searchedEmployees: Employee[]) {
+    employees.value = addPropertyFullName(searchedEmployees)
+}
 
 // ======================== CHILD EVENTS: <WarehouseApprover> ========================  
 

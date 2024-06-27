@@ -19,7 +19,7 @@
                                         MEQS Number <span class="text-danger">*</span>
                                     </label>
                                     <client-only>
-                                        <v-select @option:selected="onMeqsSelected" :options="filteredMeqs" label="meqs_number"
+                                        <v-select @search="handleSearchMeqsNumber" @option:selected="onMeqsSelected" :options="filteredMeqs" label="meqs_number"
                                             v-model="selectedMeqs" :clearable=false>
                                             <template v-slot:option="option">
                                                 <div v-if="option.status !== APPROVAL_STATUS.APPROVED" class="row">
@@ -229,6 +229,7 @@ import type { MeqsSupplier } from '~/composables/warehouse/meqs/meqs-supplier';
 import Swal from 'sweetalert2'
 import { getTotalNetPrice, getVatAmount } from '~/utils/helpers';
 import type { Account } from '~/composables/system/account/account';
+import { fetchMeqsByMeqsNumber } from '~/composables/warehouse/meqs/meqs.api';
 
 definePageMeta({
     name: ROUTES.PO_CREATE,
@@ -273,6 +274,9 @@ onMounted(async () => {
     isLoadingPage.value = false
 
 })
+
+
+// ======================== COMPUTED ========================  
 
 
 // filter supplier that has awarded items only 
@@ -352,6 +356,10 @@ const totalPriceOfAllItems = computed(() => {
 })
 
 
+
+// ======================== FUNCTIONS ========================  
+
+
 async function save() {
     console.log('save')
 
@@ -414,5 +422,42 @@ function resetSupplier() {
     poData.value.meqs_supplier = null
     currentMeqsSupplier = null
 }
+
+async function handleSearchMeqsNumber(input: string, loading: (status: boolean) => void ) {
+
+    if(input.trim() === '') {
+        meqs.value = []
+        return
+    } 
+
+    debouncedSearchRcNumbers(input, loading)
+
+}
+
+async function searchMeqsNumbers(input: string, loading: (status: boolean) => void) {
+    console.log('searchMeqsNumbers');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await fetchMeqsByMeqsNumber(input);
+        console.log('response', response);
+        meqs.value = response;
+    } catch (error) {
+        console.error('Error fetching MEQS numbers:', error);
+    } finally {
+        loading(false);
+    }
+}
+
+
+// ======================== UTILS ========================  
+
+const debouncedSearchRcNumbers = debounce((input: string, loading: (status: boolean) => void) => {
+    searchMeqsNumbers(input, loading);
+}, 500);
+
+
 
 </script>
