@@ -86,7 +86,7 @@
                                 Received By <span class="text-danger">*</span>
                             </label>
                             <client-only>
-                                <v-select :options="employees" label="fullname" v-model="rrData.received_by"
+                                <v-select @search="handleSearchEmployees" :options="employees" label="fullname" v-model="rrData.received_by"
                                     :clearable="false"></v-select>
                             </client-only>
                         </div>
@@ -145,7 +145,7 @@
                         <WarehouseApprover :approvers="rrData.rr_approvers" :employees="employees"
                             :isUpdatingApproverOrder="isUpdatingApproverOrder" :isAddingApprover="isAddingApprover"
                             :isEditingApprover="isEditingApprover" @changeApproverOrder="changeApproverOrder"
-                            @addApprover="addApprover" @editApprover="editApprover" @removeApprover="removeApprover" />
+                            @addApprover="addApprover" @editApprover="editApprover" @removeApprover="removeApprover"  @searched-employees="handleSearchedEmployees"/>
                     </div>
         
                 </div>
@@ -199,6 +199,8 @@ import * as rrApi from '~/composables/warehouse/rr/rr.api'
 import * as rrApproverApi from '~/composables/warehouse/rr/rr-approver.api'
 import * as rrItemApi from '~/composables/warehouse/rr/rr-item.api'
 import type { Employee } from '~/composables/system/employee/employee.types';
+import { fetchEmployees } from '~/composables/system/employee/employee.api';
+import { addPropertyFullName } from '~/composables/system/employee/employee';
 
 definePageMeta({
     name: ROUTES.RR_UPDATE,
@@ -255,10 +257,7 @@ onMounted(async () => {
 
     populateForm(response.rr)
 
-    employees.value = response.employees.map((i) => {
-        i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
-        return i
-    })
+    employees.value = addPropertyFullName(response.employees)
 
 
     isLoadingPage.value = false
@@ -351,6 +350,40 @@ async function updateRrInfo() {
     }
 
 }
+
+// handle searched employees from child component (Approver) 
+async function handleSearchedEmployees(searchedEmployees: Employee[]) {
+    employees.value = addPropertyFullName(searchedEmployees)
+}
+
+async function handleSearchEmployees(input: string, loading: (status: boolean) => void ) {
+
+    if(input.trim() === ''){
+        employees.value = []
+        return 
+    } 
+
+    debouncedSearchEmployees(input, loading)
+
+}
+
+async function searchEmployees(input: string, loading: (status: boolean) => void) {
+    console.log('searchEmployees');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await fetchEmployees(input);
+        console.log('response', response);
+        employees.value = addPropertyFullName(response)
+    } catch (error) {
+        console.error('Error fetching Employees:', error);
+    } finally {
+        loading(false);
+    }
+}
+
 
 
 // ======================== CHILD EVENTS: <WarehouseRRItems> ========================  
@@ -550,5 +583,8 @@ async function changeApproverOrder(
     }
 }
 
+const debouncedSearchEmployees = debounce((input: string, loading: (status: boolean) => void) => {
+    searchEmployees(input, loading);
+}, 500);
 
 </script>

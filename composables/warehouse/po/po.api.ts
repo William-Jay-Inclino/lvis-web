@@ -793,3 +793,70 @@ export async function fetchPoNumbers(payload: string): Promise<PO[]> {
         return []
     }
 }
+
+
+export async function fetchPosByPoNumber(payload: string): Promise<PO[]> {
+    const query = `
+        query {
+            pos_by_po_number(po_number: "${payload}", is_detail_included: true) {
+                id
+                po_number
+                status
+                meqs_supplier {
+                    id
+                    payment_terms
+                    is_referenced
+                    supplier{
+                        id
+                        name 
+                        is_vat_registered
+                    }
+                    meqs_supplier_items {
+                        id 
+                        price 
+                        notes 
+                        is_awarded
+                        vat_type
+                        canvass_item {
+                            id 
+                            description
+                            brand {
+                                id 
+                                name
+                            }
+                            unit {
+                                id 
+                                name 
+                            }
+                            quantity
+                            item {
+                                id 
+                                code 
+                                name 
+                                description
+                            }
+                        }
+                    }
+                }
+                rrs {
+                    id 
+                    rr_number
+                }
+            },
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        if (!response.data || !response.data.data) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+        return response.data.data.pos_by_po_number
+
+    } catch (error) {
+        console.error(error);
+        return []
+    }
+}

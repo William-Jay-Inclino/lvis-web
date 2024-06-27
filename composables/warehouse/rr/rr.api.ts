@@ -207,7 +207,7 @@ export async function fetchDataInSearchFilters(): Promise<{
                     rr_number
                 }
             },
-            employees(page: 1, pageSize: 100) {
+            employees(page: 1, pageSize: 10) {
                 data {
                     id
                     firstname
@@ -337,7 +337,7 @@ export async function fetchFormDataInCreate(): Promise<{
                 id
                 name
             },
-            employees(page: 1, pageSize: 100) {
+            employees(page: 1, pageSize: 10) {
                 data {
                     id
                     firstname
@@ -489,7 +489,7 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                     po_number
                 }
             },
-            employees(page: 1, pageSize: 100) {
+            employees(page: 1, pageSize: 10) {
                 data {
                     id
                     firstname
@@ -789,5 +789,29 @@ export async function cancel(id: string): Promise<CancelResponse> {
             success: false,
             msg: 'Failed to cancel RR. Please contact system administrator'
         };
+    }
+}
+
+export async function fetchRrNumbers(payload: string): Promise<RR[]> {
+    const query = `
+        query {
+            rrs_by_rr_number(rr_number: "${payload}") {
+                rr_number
+            },
+        }
+    `;
+
+    try {
+        const response = await sendRequest(query);
+        console.log('response', response)
+
+        if (!response.data || !response.data.data) {
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+        return response.data.data.rrs_by_rr_number
+
+    } catch (error) {
+        console.error(error);
+        return []
     }
 }

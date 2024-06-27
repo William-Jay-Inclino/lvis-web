@@ -26,7 +26,7 @@
                                 PO Number <span class="text-danger">*</span>
                             </label>
                             <client-only>
-                                <v-select @option:selected="onPoSelected" :options="pos" label="po_number" v-model="rrData.po"
+                                <v-select @search="handleSearchPoNumber" @option:selected="onPoSelected" :options="pos" label="po_number" v-model="rrData.po"
                                     :clearable="false">
                                     <template v-slot:option="option">
                                         <div v-if="option.status !== APPROVAL_STATUS.APPROVED" class="row">
@@ -101,7 +101,7 @@
                                 Received By <span class="text-danger">*</span>
                             </label>
                             <client-only>
-                                <v-select :options="employees" label="fullname" v-model="rrData.received_by"></v-select>
+                                <v-select @search="handleSearchEmployees" :options="employees" label="fullname" v-model="rrData.received_by"></v-select>
                             </client-only>
                             <small class="text-danger fst-italic" v-if="rrDataErrors.received_by"> This field is required
                             </small>
@@ -202,9 +202,11 @@ import type { MeqsSupplierItem } from '~/composables/warehouse/meqs/meqs-supplie
 import type { RrItem } from '~/composables/warehouse/rr/rr-item.types';
 import Swal from 'sweetalert2'
 import { useToast } from "vue-toastification";
-import { getNetPrice } from '~/utils/helpers';
 import type { Item } from '~/composables/warehouse/item/item.type';
 import type { Employee } from '~/composables/system/employee/employee.types';
+import { fetchEmployees } from '~/composables/system/employee/employee.api';
+import { addPropertyFullName } from '~/composables/system/employee/employee';
+import { fetchPosByPoNumber } from '~/composables/warehouse/po/po.api';
 
 definePageMeta({
     name: ROUTES.RR_CREATE,
@@ -259,10 +261,7 @@ onMounted(async () => {
 
     const response = await rrApi.fetchFormDataInCreate()
 
-    employees.value = response.employees.map((i) => {
-        i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
-        return i
-    })
+    employees.value = addPropertyFullName(response.employees)
     brands.value = response.brands
     units.value = response.units
     rrData.value.approvers = response.approvers
@@ -439,6 +438,62 @@ function isValidStep2(): boolean {
 
 }
 
+async function handleSearchPoNumber(input: string, loading: (status: boolean) => void ) {
+
+    if(input.trim() === '') {
+        pos.value = []
+        return
+    } 
+
+    debouncedSearchPoNumbers(input, loading)
+
+}
+
+async function handleSearchEmployees(input: string, loading: (status: boolean) => void ) {
+
+    if(input.trim() === ''){
+        employees.value = []
+        return 
+    } 
+
+    debouncedSearchEmployees(input, loading)
+
+}
+
+async function searchPoNumbers(input: string, loading: (status: boolean) => void) {
+    console.log('searchPoNumbers');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await fetchPosByPoNumber(input);
+        console.log('response', response);
+        pos.value = response;
+    } catch (error) {
+        console.error('Error fetching PO numbers:', error);
+    } finally {
+        loading(false);
+    }
+}
+
+async function searchEmployees(input: string, loading: (status: boolean) => void) {
+    console.log('searchEmployees');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await fetchEmployees(input);
+        console.log('response', response);
+        employees.value = addPropertyFullName(response)
+    } catch (error) {
+        console.error('Error fetching Employees:', error);
+    } finally {
+        loading(false);
+    }
+}
+
 // ======================== CHILD FUNCTIONS <Items.vue> ======================== 
 
 // ======================== UTILS ======================== 
@@ -451,5 +506,13 @@ const goToStep2 = () => {
     currentStep.value = 2
 
 }
+
+const debouncedSearchPoNumbers = debounce((input: string, loading: (status: boolean) => void) => {
+    searchPoNumbers(input, loading);
+}, 500);
+
+const debouncedSearchEmployees = debounce((input: string, loading: (status: boolean) => void) => {
+    searchEmployees(input, loading);
+}, 500);
 
 </script>

@@ -14,7 +14,7 @@
                         <div class="mb-3">
                             <label class="form-label">RR Number</label>
                             <client-only>
-                                <v-select :options="rrs" label="rr_number" v-model="rr"></v-select>
+                                <v-select @search="handleSearchRrNumber" :options="rrs" label="rr_number" v-model="rr"></v-select>
                             </client-only>
                         </div>
                     </div>
@@ -22,7 +22,7 @@
                         <div class="mb-3">
                             <label class="form-label">PO Number</label>
                             <client-only>
-                                <v-select :options="pos" label="po_number" v-model="po"></v-select>
+                                <v-select @search="handleSearchPoNumber" :options="pos" label="po_number" v-model="po"></v-select>
                             </client-only>
                         </div>
                     </div>
@@ -36,7 +36,7 @@
                         <div class="mb-3">
                             <label class="form-label">Requisitioner</label>
                             <client-only>
-                                <v-select :options="employees" label="fullname" v-model="requested_by"></v-select>
+                                <v-select @search="handleSearchEmployees" :options="employees" label="fullname" v-model="requested_by"></v-select>
                             </client-only>
                         </div>
                     </div>
@@ -187,6 +187,9 @@ import { getFullname, formatDate } from '~/utils/helpers'
 import { PAGINATION_SIZE } from '~/utils/config'
 import type { PO } from '~/composables/warehouse/po/po.types';
 import type { Employee } from '~/composables/system/employee/employee.types';
+import { fetchEmployees } from '~/composables/system/employee/employee.api';
+import { addPropertyFullName } from '~/composables/system/employee/employee';
+import { fetchPoNumbers } from '~/composables/warehouse/po/po.api';
 
 definePageMeta({
     name: ROUTES.RR_INDEX,
@@ -236,10 +239,7 @@ onMounted(async () => {
 
     pos.value = response.pos
     rrs.value = response.rrs
-    employees.value = response.employees.map((i) => {
-        i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
-        return i
-    })
+    employees.value = addPropertyFullName(response.employees)
 
     isLoadingPage.value = false
 
@@ -323,7 +323,89 @@ async function search() {
     pagination.value.totalPages = totalPages
 }
 
+async function handleSearchRrNumber(input: string, loading: (status: boolean) => void ) {
 
+    if(input.trim() === '') {
+        rrs.value = []
+        return
+    } 
+
+    debouncedSearchRrNumbers(input, loading)
+
+}
+
+async function handleSearchPoNumber(input: string, loading: (status: boolean) => void ) {
+
+    if(input.trim() === '') {
+        pos.value = []
+        return
+    } 
+
+    debouncedSearchPoNumbers(input, loading)
+
+}
+
+async function handleSearchEmployees(input: string, loading: (status: boolean) => void ) {
+
+    if(input.trim() === ''){
+        employees.value = []
+        return 
+    } 
+
+    debouncedSearchEmployees(input, loading)
+
+}
+
+async function searchRrNumbers(input: string, loading: (status: boolean) => void) {
+    console.log('searchRrNumbers');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await rrApi.fetchRrNumbers(input);
+        console.log('response', response);
+        rrs.value = response;
+    } catch (error) {
+        console.error('Error fetching RR numbers:', error);
+    } finally {
+        loading(false);
+    }
+}
+
+async function searchPoNumbers(input: string, loading: (status: boolean) => void) {
+    console.log('searchPoNumbers');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await fetchPoNumbers(input);
+        console.log('response', response);
+        pos.value = response;
+    } catch (error) {
+        console.error('Error fetching PO numbers:', error);
+    } finally {
+        loading(false);
+    }
+}
+
+async function searchEmployees(input: string, loading: (status: boolean) => void) {
+    console.log('searchEmployees');
+    console.log('input', input);
+
+    loading(true)
+
+    try {
+        const response = await fetchEmployees(input);
+        console.log('response', response);
+        employees.value = addPropertyFullName(response)
+    } catch (error) {
+        console.error('Error fetching Employees:', error);
+    } finally {
+        loading(false);
+    }
+}
 
 // ======================== UTILS ======================== 
 
@@ -347,6 +429,17 @@ const onClickViewDetails = (id: string) => router.push('/warehouse/purchasing/rr
 const onClickEdit = (id: string) => router.push('/warehouse/purchasing/rr/' + id)
 const onClickAdd = () => router.push('/warehouse/purchasing/rr/create')
 
+const debouncedSearchRrNumbers = debounce((input: string, loading: (status: boolean) => void) => {
+    searchRrNumbers(input, loading);
+}, 500);
+
+const debouncedSearchPoNumbers = debounce((input: string, loading: (status: boolean) => void) => {
+    searchPoNumbers(input, loading);
+}, 500);
+
+const debouncedSearchEmployees = debounce((input: string, loading: (status: boolean) => void) => {
+    searchEmployees(input, loading);
+}, 500);
 
 </script>
 
