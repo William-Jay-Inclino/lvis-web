@@ -251,7 +251,6 @@ const rrDataErrors = ref({ ..._rrDataErrorsInitial })
 
 // DROPDOWNS
 const employees = ref<Employee[]>([])
-const brands = ref<Brand[]>([])
 const units = ref<Unit[]>([])
 const items = ref<Item[]>([])
 
@@ -262,7 +261,6 @@ onMounted(async () => {
     const response = await rrApi.fetchFormDataInCreate()
 
     employees.value = addPropertyFullName(response.employees)
-    brands.value = response.brands
     units.value = response.units
     rrData.value.approvers = response.approvers
     pos.value = response.pos

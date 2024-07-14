@@ -489,39 +489,6 @@
                             </div>
                         </td>
                     </tr>
-                    <tr v-if="permissions.warehouse.canManageItemBrand">
-                        <td class="text-muted align-middle">Item Brand Mgmt</td>
-                        <td class="text-muted">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" :class="{ 'non-clickable': isViewOnly }" type="checkbox"
-                                    v-model="permissions.warehouse.canManageItemBrand.create">
-                                <label class="form-check-label">
-                                    Create
-                                </label>
-                            </div>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" :class="{ 'non-clickable': isViewOnly }" type="checkbox"
-                                    v-model="permissions.warehouse.canManageItemBrand.read">
-                                <label class="form-check-label">
-                                    Read
-                                </label>
-                            </div>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" :class="{ 'non-clickable': isViewOnly }" type="checkbox"
-                                    v-model="permissions.warehouse.canManageItemBrand.update">
-                                <label class="form-check-label">
-                                    Update
-                                </label>
-                            </div>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" :class="{ 'non-clickable': isViewOnly }" type="checkbox"
-                                    v-model="permissions.warehouse.canManageItemBrand.delete">
-                                <label class="form-check-label">
-                                    Delete
-                                </label>
-                            </div>
-                        </td>
-                    </tr>
                     <tr v-if="permissions.warehouse.canManageUnit">
                         <td class="text-muted align-middle">Unit Mgmt</td>
                         <td class="text-muted">

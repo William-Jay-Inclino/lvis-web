@@ -75,24 +75,9 @@ export interface UpdateApproverInput {
     order: number
 }
 
-
-
-// export interface Employee {
-//     id: string
-//     firstname: string
-//     middlename: string
-//     lastname: string
-//     fullname?: string
-// }
-
 export interface ItemType {
     id: string;
     name: string;
-}
-
-export interface Brand {
-    id: string
-    name: string
 }
 
 export interface Unit {
@@ -111,15 +96,6 @@ export interface CancelResponse {
     cancelled_at?: Date
     cancelled_by?: string
 }
-
-
-// export interface Supplier {
-//     id: string;
-//     name: string;
-//     contact: string;
-//     vat_type: VAT_TYPE,
-// }
-
 
 export interface Department {
     id: string

@@ -56,10 +56,6 @@ export async function create(input: CreateMeqsSupplierInput): Promise<MutationRe
                     vat_type
                     canvass_item {
                         id 
-                        brand {
-                            id 
-                            name
-                        }
                         unit {
                             id 
                             name 
@@ -146,10 +142,6 @@ export async function update(id: string, input: UpdateMeqsSupplierInput): Promis
                     vat_type
                     canvass_item {
                         id 
-                        brand {
-                            id 
-                            name
-                        }
                         unit {
                             id 
                             name 

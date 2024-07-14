@@ -3,7 +3,6 @@ import type { Item } from "../item/item.type"
 export interface CanvassItem {
     id: string
     canvass_id: string
-    brand: Brand | null
     unit: Unit | null
     item: Item | null
     description: string
@@ -17,7 +16,6 @@ export interface CanvassItem {
 export interface CreateCanvassItemInput {
     canvass_id: string
     description: string
-    brand: Brand | null
     unit: Unit | null
     item: Item | null
     quantity: number
@@ -26,7 +24,6 @@ export interface CreateCanvassItemInput {
 
 export interface UpdateCanvassItemInput {
     description: string
-    brand: Brand | null
     unit: Unit | null
     item: Item | null
     quantity: number

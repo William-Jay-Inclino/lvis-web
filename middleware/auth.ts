@@ -96,7 +96,6 @@ export default defineNuxtRouteMiddleware((to, from) => {
 
             // stock inventory
             const isItemModule = to.name?.toString().includes(MODULES.ITEM)
-            const isItemBrandModule = to.name?.toString().includes(MODULES.ITEM_BRAND)
             const isItemTypeModule = to.name?.toString().includes(MODULES.ITEM_TYPE)
 
 
@@ -160,12 +159,6 @@ export default defineNuxtRouteMiddleware((to, from) => {
 
             if (isItemModule) {
                 if (!canAccessItem(to.name as ROUTES, permissions)) return redirectTo401Page()
-                return
-
-            }
-
-            if (isItemBrandModule) {
-                if (!canAccessItemBrand(to.name as ROUTES, permissions)) return redirectTo401Page()
                 return
 
             }
@@ -462,21 +455,6 @@ function canAccessItem(route: ROUTES, permissions: WarehousePermissions) {
     if (route === ROUTES.ITEM_CREATE) return !!permissions.canManageItem.create
     if (route === ROUTES.ITEM_UPDATE) return !!permissions.canManageItem.update
     if (route === ROUTES.ITEM_VIEW) return !!permissions.canManageItem.viewDetails
-
-
-    return true
-
-}
-
-function canAccessItemBrand(route: ROUTES, permissions: WarehousePermissions) {
-
-    console.log('canAccessItemBrand', route, permissions)
-
-    if (!permissions.canManageItemBrand) return false
-
-    if (route === ROUTES.ITEM_BRAND_INDEX) return !!permissions.canManageItemBrand.read
-    if (route === ROUTES.ITEM_BRAND_CREATE) return !!permissions.canManageItemBrand.create
-    if (route === ROUTES.ITEM_BRAND_UPDATE) return !!permissions.canManageItemBrand.update
 
 
     return true

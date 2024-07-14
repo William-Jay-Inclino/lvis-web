@@ -118,12 +118,6 @@ export const warehousePermissions: WarehousePermissions = {
         update: false,
         delete: false,
     },
-    canManageItemBrand: {
-        create: false,
-        read: false,
-        update: false,
-        delete: false,
-    },
 }
 
 export const permissions: UserPermissions = {

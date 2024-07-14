@@ -116,9 +116,6 @@ export async function findOne(id: string): Promise<Canvass | undefined> {
                     unit {
                         name
                     }
-                    brand {
-                        name
-                    }
                     quantity
                     item {
                         id
@@ -203,7 +200,6 @@ export async function findOne(id: string): Promise<Canvass | undefined> {
 
 export async function fetchFormDataInCreate(): Promise<{
     employees: Employee[],
-    brands: Brand[],
     units: Unit[],
     items: Item[],
 }> {
@@ -212,16 +208,12 @@ export async function fetchFormDataInCreate(): Promise<{
     const query = `
         query {
             employees(page: 1, pageSize: 10) {
-            data {
-                id
-                firstname
-                middlename
-                lastname
-            }
-            },
-            brands{
-                id
-                name
+                data {
+                    id
+                    firstname
+                    middlename
+                    lastname
+                }
             }
             units{
                 id
@@ -247,7 +239,6 @@ export async function fetchFormDataInCreate(): Promise<{
         console.log('response', response)
 
         let employees = []
-        let brands = []
         let units = []
         let items = []
 
@@ -261,10 +252,6 @@ export async function fetchFormDataInCreate(): Promise<{
             employees = response.data.data.employees.data
         }
 
-        if (data.brands) {
-            brands = data.brands
-        }
-
         if (data.units) {
             units = data.units
         }
@@ -275,7 +262,6 @@ export async function fetchFormDataInCreate(): Promise<{
 
         return {
             employees,
-            brands,
             units,
             items
         }
@@ -284,7 +270,6 @@ export async function fetchFormDataInCreate(): Promise<{
         console.error(error);
         return {
             employees: [],
-            brands: [],
             units: [],
             items: []
         }
@@ -296,7 +281,6 @@ export async function fetchFormDataInCreate(): Promise<{
 export async function fetchFormDataInUpdate(id: string): Promise<{
     canvass: Canvass | undefined,
     employees: Employee[],
-    brands: Brand[],
     units: Unit[],
     items: Item[]
 }> {
@@ -321,10 +305,6 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                 canvass_items{
                     id
                     description
-                    brand {
-                        id
-                        name
-                    }
                     unit {
                         id
                         name
@@ -358,10 +338,6 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                     }
                 }
             }
-            brands{
-                id
-                name
-            }
             units{
                 id
                 name
@@ -374,7 +350,6 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
         console.log('response', response)
 
         let employees = []
-        let brands = []
         let units = []
         let items = []
 
@@ -394,10 +369,6 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
             employees = response.data.data.employees.data
         }
 
-        if (data.brands) { 
-            brands = data.brands
-        }
-
         if (data.units) {
             units = data.units
         }
@@ -409,7 +380,6 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
         return {
             canvass,
             employees,
-            brands,
             units,
             items
         }
@@ -419,7 +389,6 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
         return {
             canvass: undefined,
             employees: [],
-            brands: [],
             units: [],
             items: []
         }
@@ -486,14 +455,8 @@ export async function create(input: CreateCanvassInput): Promise<MutationRespons
 
     const canvassItems = input.canvass_items.map(item => {
 
-        let brandId = null
         let unitId = null
         let itemId = null
-
-        if (item.brand) {
-            brandId = `"${item.brand.id}"`
-        }
-
         if (item.unit) {
             unitId = `"${item.unit.id}"`
         }
@@ -505,7 +468,6 @@ export async function create(input: CreateCanvassInput): Promise<MutationRespons
         return `
         {
           description: "${item.description}"
-          brand_id: ${brandId}
           unit_id: ${unitId}
           item_id: ${itemId}
           quantity: ${item.quantity}

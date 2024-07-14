@@ -51,7 +51,7 @@
                 <div v-show="currentStep === 2" class="row justify-content-center pt-5">
                     <div class="col-lg-10 col-md-10 col-sm-12">
         
-                        <WarehouseCanvassItems :canvass-items="formData.canvass_items" :brands="brands" :units="units"
+                        <WarehouseCanvassItems :canvass-items="formData.canvass_items" :units="units"
                             :items="items" @add-item="addCanvassItem" @edit-item="editCanvassItem"
                             @remove-item="removeCanvassItem" @searched-items="handleSearchedItems"/>
         
@@ -152,7 +152,6 @@ const formDataErrors = ref({ ..._formDataErrorsInitial })
 
 // DROPDOWNS
 const employees = ref<Employee[]>([])
-const brands = ref<Brand[]>([])
 const units = ref<Unit[]>([])
 const items = ref<Item[]>([])
 
@@ -165,7 +164,6 @@ onMounted(async () => {
     const response = await api.fetchFormDataInCreate()
 
     employees.value = addPropertyFullName(response.employees)
-    brands.value = response.brands
     units.value = response.units
     items.value = response.items.map(i => ({ ...i, label: `${i.code} - ${i.name}` }))
 

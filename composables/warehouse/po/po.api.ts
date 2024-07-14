@@ -278,10 +278,6 @@ export async function fetchFormDataInCreate(): Promise<{
                             canvass_item {
                                 id 
                                 description
-                                brand {
-                                    id 
-                                    name
-                                }
                                 unit {
                                     id 
                                     name 
@@ -658,10 +654,6 @@ export async function findOne(id: string): Promise<PO | undefined> {
                         canvass_item {
                             id 
                             description
-                            brand {
-                                id 
-                                name
-                            }
                             unit {
                                 id 
                                 name 
@@ -820,10 +812,6 @@ export async function fetchPosByPoNumber(payload: string): Promise<PO[]> {
                         canvass_item {
                             id 
                             description
-                            brand {
-                                id 
-                                name
-                            }
                             unit {
                                 id 
                                 name 

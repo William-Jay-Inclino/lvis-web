@@ -263,7 +263,6 @@ export async function fetchDataInSearchFilters(): Promise<{
 export async function fetchFormDataInCreate(): Promise<{
     pos: PO[],
     approvers: RrApproverSettings[],
-    brands: Brand[],
     units: Unit[],
     employees: Employee[],
     items: Item[]
@@ -294,10 +293,6 @@ export async function fetchFormDataInCreate(): Promise<{
                             canvass_item {
                                 id 
                                 description
-                                brand {
-                                    id 
-                                    name
-                                }
                                 unit {
                                     id 
                                     name 
@@ -329,10 +324,6 @@ export async function fetchFormDataInCreate(): Promise<{
                 label
                 order
             },
-            brands{
-                id
-                name
-            },
             units{
                 id
                 name
@@ -361,7 +352,6 @@ export async function fetchFormDataInCreate(): Promise<{
 
         let pos = []
         let approvers = []
-        let brands = []
         let units = []
         let employees = []
         let items = []
@@ -380,10 +370,6 @@ export async function fetchFormDataInCreate(): Promise<{
             approvers = data.rrApproverSettings
         }
 
-        if (data.brands) { // temp
-            brands = data.brands
-        }
-
         if (data.items && data.items.data) {
             items = response.data.data.items.data
         }
@@ -399,7 +385,6 @@ export async function fetchFormDataInCreate(): Promise<{
         return {
             pos,
             approvers,
-            brands,
             units,
             employees,
             items,
@@ -410,7 +395,6 @@ export async function fetchFormDataInCreate(): Promise<{
         return {
             pos: [],
             approvers: [],
-            brands: [],
             units: [],
             employees: [],
             items: []
@@ -465,10 +449,6 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                         price
                         vat_type
                         canvass_item {
-                            brand {
-                                id 
-                                name
-                            }
                             unit {
                                 id 
                                 name 
@@ -611,10 +591,6 @@ export async function findOne(id: string): Promise<RR | undefined> {
                         price
                         vat_type
                         canvass_item {
-                            brand {
-                                id 
-                                name
-                            }
                             unit {
                                 id 
                                 name 

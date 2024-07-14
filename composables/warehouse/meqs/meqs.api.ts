@@ -367,10 +367,6 @@ export async function findOne(id: string): Promise<MEQS | undefined> {
                             id
                             canvass_id
                             description
-                            brand{
-                                id
-                                name
-                            }
                             unit{
                                 id
                                 name
@@ -398,10 +394,6 @@ export async function findOne(id: string): Promise<MEQS | undefined> {
                             id
                             canvass_id
                             description
-                            brand{
-                                id
-                                name
-                            }
                             unit{
                                 id
                                 name
@@ -429,10 +421,6 @@ export async function findOne(id: string): Promise<MEQS | undefined> {
                             id
                             canvass_id
                             description
-                            brand{
-                                id
-                                name
-                            }
                             unit{
                                 id
                                 name
@@ -469,9 +457,6 @@ export async function findOne(id: string): Promise<MEQS | undefined> {
                         canvass_item{
                             id
                             description
-                            brand{
-                                name
-                            }
                             unit{
                                 name
                             }
@@ -545,10 +530,6 @@ export async function fetchFormDataInCreate(): Promise<{
                             id
                             canvass_id
                             description
-                            brand{
-                                id
-                                name
-                            }
                             unit{
                                 id
                                 name
@@ -578,10 +559,6 @@ export async function fetchFormDataInCreate(): Promise<{
                             id
                             canvass_id
                             description
-                            brand{
-                                id
-                                name
-                            }
                             unit{
                                 id
                                 name
@@ -611,10 +588,6 @@ export async function fetchFormDataInCreate(): Promise<{
                             id
                             canvass_id
                             description
-                            brand{
-                                id
-                                name
-                            }
                             unit{
                                 id
                                 name
@@ -737,10 +710,6 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                             id
                             canvass_id
                             description
-                            brand{
-                                id
-                                name
-                            }
                             unit{
                                 id
                                 name
@@ -766,10 +735,6 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                             id
                             canvass_id
                             description
-                            brand{
-                                id
-                                name
-                            }
                             unit{
                                 id
                                 name
@@ -795,10 +760,6 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                             id
                             canvass_id
                             description
-                            brand{
-                                id
-                                name
-                            }
                             unit{
                                 id
                                 name
@@ -844,10 +805,6 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
                         vat_type
                         canvass_item {
                             id 
-                            brand {
-                                id 
-                                name
-                            }
                             unit {
                                 id 
                                 name 
@@ -1222,10 +1179,6 @@ export async function fetchMeqsByMeqsNumber(payload: string): Promise<MEQS[]> {
                         canvass_item {
                             id 
                             description
-                            brand {
-                                id 
-                                name
-                            }
                             unit {
                                 id 
                                 name 

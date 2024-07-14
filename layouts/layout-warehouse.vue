@@ -66,10 +66,6 @@
                                     <nuxt-link class="dropdown-item" to="/warehouse/stock-inventory/item-type">Item
                                         Type</nuxt-link>
                                 </li>
-                                <li v-if="canView('canManageItemBrand', authUser)">
-                                    <nuxt-link class="dropdown-item" to="/warehouse/stock-inventory/item-brand">Item
-                                        Brand</nuxt-link>
-                                </li>
                             </ul>
                         </li>
                         <li v-if="canViewDataManagement(authUser)" class="nav-item dropdown">
@@ -198,10 +194,6 @@
                                 <nuxt-link class="dropdown-item" to="/warehouse/stock-inventory/item-type">Item
                                     Type</nuxt-link>
                             </li>
-                            <li v-if="canView('canManageItemBrand', authUser)">
-                                <nuxt-link class="dropdown-item" to="/warehouse/stock-inventory/item-brand">Item
-                                    Brand</nuxt-link>
-                            </li>
                         </ul>
                     </li>
                     <li v-if="canViewDataManagement(authUser)" class="nav-item dropdown">
@@ -298,7 +290,6 @@ function canViewStockInventory(authUser: AuthUser) {
 
     return (
         (!!warehousePermissions.canManageItem && warehousePermissions.canManageItem.search) ||
-        (!!warehousePermissions.canManageItemBrand && warehousePermissions.canManageItemBrand.read) ||
         (!!warehousePermissions.canManageItemType && warehousePermissions.canManageItemType.read)
     )
 }

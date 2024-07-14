@@ -137,7 +137,6 @@ export enum MODULES {
 
     // =======================  STOCK INVENTORY ======================= 
     ITEM = 'ITEM',
-    ITEM_BRAND = 'ITEM_BRAND',
     ITEM_TYPE = 'ITEM_TYPE',
 
 
@@ -251,12 +250,6 @@ export enum ROUTES {
     ITEM_CREATE = `${SERVICES.WAREHOUSE}_ITEM_CREATE`,
     ITEM_UPDATE = `${SERVICES.WAREHOUSE}_ITEM_UPDATE`,
     ITEM_VIEW = `${SERVICES.WAREHOUSE}_ITEM_VIEW`,
-
-    // =======================  ITEM BRAND ======================= 
-    ITEM_BRAND_INDEX = `${SERVICES.WAREHOUSE}_ITEM_BRAND_INDEX`,
-    ITEM_BRAND_CREATE = `${SERVICES.WAREHOUSE}_ITEM_BRAND_CREATE`,
-    ITEM_BRAND_UPDATE = `${SERVICES.WAREHOUSE}_ITEM_BRAND_UPDATE`,
-    ITEM_BRAND_VIEW = `${SERVICES.WAREHOUSE}_ITEM_BRAND_VIEW`,
 
     // =======================  ITEM ======================= 
     ITEM_TYPE_INDEX = `${SERVICES.WAREHOUSE}_ITEM_TYPE_INDEX`,

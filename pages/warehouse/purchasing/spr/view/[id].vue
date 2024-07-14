@@ -192,7 +192,6 @@
                                                 <th class="bg-secondary text-white"> No. </th>
                                                 <th class="bg-secondary text-white"> Description </th>
                                                 <th class="bg-secondary text-white"> Item Class </th>
-                                                <th class="bg-secondary text-white"> Brand </th>
                                                 <th class="bg-secondary text-white"> Unit </th>
                                                 <th class="bg-secondary text-white"> Quantity </th>
                                             </tr>
@@ -202,7 +201,6 @@
                                                 <td> {{ count + 1 }} </td>
                                                 <td> {{ i.item ? `${ i.item.code } - ${ i.description }` : i.description }} </td>
                                                 <td> {{ i.item ? 'Stock' : 'Non-Stock' }} </td>
-                                                <td> {{ i.brand ? i.brand.name : 'N/A' }} </td>
                                                 <td> {{ i.unit ? i.unit.name : 'N/A' }} </td>
                                                 <td> {{ i.quantity }} </td>
                                             </tr>

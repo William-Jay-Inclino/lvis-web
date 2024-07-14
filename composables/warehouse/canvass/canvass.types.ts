@@ -1,9 +1,10 @@
-import type { Brand, Employee, Unit } from "~/composables/common.types";
+import type { Unit } from "~/composables/common.types";
 import type { CanvassItem } from "./canvass-item.types"
 import type { RV } from "../rv/rv.types";
 import type { Item } from "../item/item.type";
 import type { JO } from "../jo/jo.types";
 import type { SPR } from "../spr/spr.types";
+import type { Employee } from "~/composables/system/employee/employee.types";
 
 
 export interface Canvass {
@@ -52,7 +53,6 @@ export interface UpdateCanvassInput {
 }
 
 export interface CreateCanvassItemSubInput {
-    brand: Brand | null
     unit: Unit | null
     item: Item | null
     description: string

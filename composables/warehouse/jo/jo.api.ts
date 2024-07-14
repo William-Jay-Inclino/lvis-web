@@ -187,9 +187,6 @@ export async function findOne(id: string): Promise<JO | undefined> {
                         unit {
                             name
                         }
-                        brand {
-                            name
-                        }
                         quantity
                         item {
                             id
@@ -771,10 +768,6 @@ export async function fetchJOsByJoNumber(payload: string): Promise<JO[]> {
                         id
                         canvass_id
                         description
-                        brand{
-                            id
-                            name
-                        }
                         unit{
                             id
                             name

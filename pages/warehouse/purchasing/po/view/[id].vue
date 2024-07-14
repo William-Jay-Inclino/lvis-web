@@ -192,7 +192,6 @@
                                         <th class="bg-secondary text-white">No</th>
                                         <th class="bg-secondary text-white">Description</th>
                                         <th class="bg-secondary text-white">Item Class</th>
-                                        <th class="bg-secondary text-white">Brand</th>
                                         <th class="bg-secondary text-white">Unit</th>
                                         <th class="bg-secondary text-white">Qty</th>
                                         <th class="bg-secondary text-white">VAT Type</th>
@@ -207,8 +206,6 @@
                                         <td class="text-muted"> {{ i + 1 }} </td>
                                         <td class="text-muted"> {{ item.canvass_item.description }} </td>
                                         <td class="text-muted"> {{ item.canvass_item.item ? 'Stock' : 'Non-Stock' }} </td>
-                                        <td class="text-muted"> {{ item.canvass_item.brand ? item.canvass_item.brand.name :
-                'N/A' }} </td>
                                         <td class="text-muted"> {{ item.canvass_item.unit ? item.canvass_item.unit.name : 'N/A'
                                             }} </td>
                                         <td class="text-muted"> {{ item.canvass_item.quantity }} </td>

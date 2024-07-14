@@ -78,7 +78,7 @@
                     <div class="col-lg-10 col-md-10 col-sm-12">
         
                         <WarehouseCanvassItems :canvass-is-reference-in-r-r="canvass.is_reference_in_rr"
-                            :canvass-items="canvass.canvass_items" :brands="brands" :units="units" :items="items"
+                            :canvass-items="canvass.canvass_items" :units="units" :items="items"
                             :is-adding="isAddingItem" :is-editing="isEditingItem" @add-item="addCanvassItem"
                             @edit-item="editCanvassItem" @remove-item="removeCanvassItem" @searched-items="handleSearchedItems"/>
         
@@ -163,7 +163,6 @@ const _canvassErrorsInitial = {
 
 // DROPDOWNS
 const employees = ref<Employee[]>([])
-const brands = ref<Brand[]>([])
 const units = ref<Unit[]>([])
 const items = ref<Item[]>([])
 
@@ -211,7 +210,6 @@ onMounted(async () => {
         i.fullname = getFullname(i.firstname, i.middlename, i.lastname)
         return i
     })
-    brands.value = response.brands
     units.value = response.units
     items.value = response.items.map(i => ({ ...i, label: `${i.code} - ${i.name}` }))
 

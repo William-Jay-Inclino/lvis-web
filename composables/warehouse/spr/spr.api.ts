@@ -186,9 +186,6 @@ export async function findOne(id: string): Promise<SPR | undefined> {
                         unit {
                             name
                         }
-                        brand {
-                            name
-                        }
                         quantity
                         item {
                             id
@@ -766,10 +763,6 @@ export async function fetchSPRsBySprNumber(payload: string): Promise<SPR[]> {
                         id
                         canvass_id
                         description
-                        brand{
-                            id
-                            name
-                        }
                         unit{
                             id
                             name

@@ -3,13 +3,8 @@ import { sendRequest } from "~/utils/api"
 
 export async function create(input: CreateCanvassItemInput): Promise<MutationResponse> {
 
-    let brandId = null
     let unitId = null
     let itemId = null
-
-    if (input.brand) {
-        brandId = `"${input.brand.id}"`
-    }
 
     if (input.unit) {
         unitId = `"${input.unit.id}"`
@@ -25,7 +20,6 @@ export async function create(input: CreateCanvassItemInput): Promise<MutationRes
                 input: {
                     canvass_id: "${input.canvass_id}"
                     description: "${input.description}"
-                    brand_id: ${brandId}
                     unit_id: ${unitId}
                     item_id: ${itemId}
                     quantity: ${input.quantity}
@@ -34,10 +28,6 @@ export async function create(input: CreateCanvassItemInput): Promise<MutationRes
                 id
                 canvass_id
                 description
-                brand {
-                    id 
-                    name
-                }
                 unit {
                     id
                     name
@@ -81,13 +71,8 @@ export async function update(id: string, input: UpdateCanvassItemInput): Promise
 
     console.log('input', input)
 
-    let brandId = null
     let unitId = null
     let itemId = null
-
-    if (input.brand) {
-        brandId = `"${input.brand.id}"`
-    }
 
     if (input.unit) {
         unitId = `"${input.unit.id}"`
@@ -103,7 +88,6 @@ export async function update(id: string, input: UpdateCanvassItemInput): Promise
                 id: "${id}",
                 input: {
                     description: "${input.description}"
-                    brand_id: ${brandId}
                     unit_id: ${unitId}
                     item_id: ${itemId}
                     quantity: ${input.quantity}
@@ -112,10 +96,6 @@ export async function update(id: string, input: UpdateCanvassItemInput): Promise
                 id
                 canvass_id
                 description
-                brand {
-                    id 
-                    name
-                }
                 unit {
                     id
                     name

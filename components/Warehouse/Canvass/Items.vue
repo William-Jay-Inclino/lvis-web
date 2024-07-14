@@ -18,7 +18,6 @@
                         <th class="bg-secondary text-white">No.</th>
                         <th class="bg-secondary text-white">Description</th>
                         <th class="bg-secondary text-white">Item Class</th>
-                        <th class="bg-secondary text-white">Brand</th>
                         <th class="bg-secondary text-white">Unit</th>
                         <th class="bg-secondary text-white">Quantity </th>
                         <th class="bg-secondary text-white text-center">
@@ -32,7 +31,6 @@
                         <td class="text-muted"> {{ i + 1 }} </td>
                         <td class="text-muted"> {{ item.description }} </td>
                         <td class="text-muted"> {{ item.item ? 'Stock' : 'Non-Stock' }} </td>
-                        <td class="text-muted"> {{ item.brand ? item.brand.name : 'N/A' }} </td>
                         <td class="text-muted"> {{ item.unit ? item.unit.name : 'N/A' }} </td>
                         <td class="text-muted"> {{ item.quantity }} </td>
                         <td class="text-muted text-center">
@@ -132,13 +130,6 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Brand</label>
-                            <client-only>
-                                <v-select :options="brands" label="name" v-model="canvassItem.brand"></v-select>
-                            </client-only>
-                        </div>
-
-                        <div class="mb-3">
                             <label class="form-label">
                                 Quantity <span class="text-danger">*</span>
                             </label>
@@ -187,10 +178,6 @@ const props = defineProps({
         type: Array as () => CanvassItem[],
         default: () => [],
     },
-    brands: {
-        type: Array as () => Brand[],
-        default: () => [],
-    },
     units: {
         type: Array as () => Unit[],
         default: () => [],
@@ -230,7 +217,6 @@ const _canvassItemErrorsInitial = {
 const _canvassItemInitial: CanvassItem = {
     id: '',
     canvass_id: '',
-    brand: null,
     unit: null,
     item: null,
     description: '',

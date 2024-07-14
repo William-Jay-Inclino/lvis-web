@@ -183,9 +183,6 @@ export async function findOne(id: string): Promise<RV | undefined> {
                         unit {
                             name
                         }
-                        brand {
-                            name
-                        }
                         quantity
                         item {
                             id
@@ -755,10 +752,6 @@ export async function fetchRVsByRvNumber(payload: string): Promise<RV[]> {
                         id
                         canvass_id
                         description
-                        brand{
-                            id
-                            name
-                        }
                         unit{
                             id
                             name

@@ -24,22 +24,10 @@
                                             <label class="form-check-label">Description</label>
                                         </div>
                                     </div>
-                                    <!-- <div class="col-6">
-                                        <div class="form-check form-switch">
-                                            <input v-model="showItemCode" class="form-check-input" type="checkbox">
-                                            <label class="form-check-label">Item Code</label>
-                                        </div>
-                                    </div> -->
                                     <div class="col-6">
                                         <div class="form-check form-switch">
                                             <input v-model="showClass" class="form-check-input" type="checkbox">
                                             <label class="form-check-label">Class</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="form-check form-switch">
-                                            <input v-model="showBrand" class="form-check-input" type="checkbox">
-                                            <label class="form-check-label">Brand</label>
                                         </div>
                                     </div>
                                     <div class="col-6">
@@ -114,7 +102,6 @@
                             <tr>
                                 <th v-show="showDescription" class="bg-secondary text-white">Description</th>
                                 <th v-show="showClass" class="bg-secondary text-white">Item Class</th>
-                                <th v-show="showBrand" class="bg-secondary text-white">Brand</th>
                                 <th v-show="showUnit" class="bg-secondary text-white">Unit</th>
                                 <th v-show="showDelivered" class="bg-secondary text-white">Qty Request</th>
                                 <th v-show="showAccepted" class="bg-secondary text-white">
@@ -139,10 +126,6 @@
                                 </td>
                                 <td v-show="showClass" class="text-muted align-middle">
                                     {{ rrItem.meqs_supplier_item.canvass_item.item ? 'Stock' : 'Non-Stock' }}
-                                </td>
-                                <td v-show="showBrand" class="text-muted align-middle">
-                                    {{ rrItem.meqs_supplier_item.canvass_item.brand ?
-                                                rrItem.meqs_supplier_item.canvass_item.brand.name : 'N/A' }}
                                 </td>
                                 <td v-show="showUnit" class="text-muted align-middle">
                                     {{ rrItem.meqs_supplier_item.canvass_item.unit ?
@@ -235,7 +218,6 @@ const toast = useToast();
 const showDescription = ref(true)
 const showItemCode = ref(true)
 const showClass = ref(true)
-const showBrand = ref(false)
 const showUnit = ref(false)
 const showDelivered = ref(true)
 const showAccepted = ref(true)
