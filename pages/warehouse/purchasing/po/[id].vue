@@ -7,7 +7,7 @@
                 <h2 class="text-warning">Update PO</h2>
                 <hr>
 
-                <div v-if="isAdmin(authUser)" class="row pt-3 mb-5">
+                <!-- <div v-if="isAdmin(authUser)" class="row pt-3 mb-5">
                     <div class="col">
                         <ul class="nav nav-tabs justify-content-center">
                             <li class="nav-item" @click="isPODetailForm = true">
@@ -22,7 +22,7 @@
                             </li>
                         </ul>
                     </div>
-                </div>
+                </div> -->
 
 
                 <div v-show="isPODetailForm" class="row justify-content-center">
@@ -83,7 +83,7 @@
                 </div>
 
 
-                <div v-show="!isPODetailForm" class="row justify-content-center pt-5">
+                <!-- <div v-show="!isPODetailForm" class="row justify-content-center pt-5">
 
                     <div class="col-12">
                         <WarehouseApprover :approvers="poData.po_approvers" :employees="employees"
@@ -92,7 +92,7 @@
                             @addApprover="addApprover" @editApprover="editApprover" @removeApprover="removeApprover" @searched-employees="handleSearchedEmployees"/>
                     </div>
 
-                </div>
+                </div> -->
 
 
                 <div class="row justify-content-center pt-3">

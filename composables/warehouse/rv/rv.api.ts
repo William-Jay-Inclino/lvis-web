@@ -156,9 +156,18 @@ export async function findByRvNumber(rvNumber: string): Promise<RV | undefined> 
 }
 
 export async function findOne(id: string): Promise<RV | undefined> {
+
+    console.log('isValidRcNumber(id)', isValidRcNumber(id));
+    let args = ''
+    if(isValidRcNumber(id)){
+        args = `rv_number: "${id}"`
+    } else {
+        args = `id: "${id}"`
+    }
+
     const query = `
         query {
-            rv(id: "${id}") {
+            rv(${args}) {
                 id
                 rv_number
                 status

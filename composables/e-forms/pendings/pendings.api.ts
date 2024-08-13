@@ -17,6 +17,14 @@ export async function getPendingsByEmployeeId(employeeId: string): Promise<{ pen
                     reference_id 
                     transaction_date
                 }
+                pending_approvals2 {
+                    id
+                    approver_id
+                    reference_number
+                    reference_table
+                    description
+                    transaction_date
+                }
             }
         }
     `;

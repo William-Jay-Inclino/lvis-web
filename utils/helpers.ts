@@ -178,3 +178,8 @@ export function isBlankStatus(itemStatus: APPROVAL_STATUS, approverStatus: APPRO
 export function logout() {
     localStorage.removeItem('authUser');
 }
+
+export function isValidRcNumber(input: string) {
+    const regex = /^\d{2}-\d{5}$/;
+    return regex.test(input);
+}

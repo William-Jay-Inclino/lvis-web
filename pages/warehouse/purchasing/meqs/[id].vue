@@ -25,11 +25,11 @@
                                     <i class="fas fa-medal"></i> Awarding
                                 </a>
                             </li>
-                            <li v-if="isAdmin(authUser)" class="nav-item" @click="onClickTab(FORM_TYPE.APPROVER)">
+                            <!-- <li v-if="isAdmin(authUser)" class="nav-item" @click="onClickTab(FORM_TYPE.APPROVER)">
                                 <a class="nav-link" :class="{ 'active': form === FORM_TYPE.APPROVER }" href="#">
                                     <i class="fas fa-users"></i> Approvers
                                 </a>
-                            </li>
+                            </li> -->
                         </ul>
                     </div>
                 </div>
@@ -99,7 +99,7 @@
                 </div>
         
         
-                <div v-show="form === FORM_TYPE.APPROVER" class="row justify-content-center pt-5">
+                <!-- <div v-show="form === FORM_TYPE.APPROVER" class="row justify-content-center pt-5">
         
                     <div class="col-12">
                         <WarehouseApprover :approvers="meqsData.meqs_approvers" :employees="employees"
@@ -108,7 +108,7 @@
                             @addApprover="addApprover" @editApprover="editApprover" @removeApprover="removeApprover" @searched-employees="handleSearchedEmployees"/>
                     </div>
         
-                </div>
+                </div> -->
         
                 <div v-show="form === FORM_TYPE.SUPPLIER" class="row justify-content-center pt-5">
         

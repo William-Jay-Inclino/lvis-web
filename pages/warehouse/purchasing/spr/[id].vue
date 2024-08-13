@@ -7,7 +7,7 @@
                 <h2 class="text-warning">Update SPR</h2>
                 <hr>
         
-                <div v-if="isAdmin(authUser)" class="row pt-3 mb-5">
+                <!-- <div v-if="isAdmin(authUser)" class="row pt-3 mb-5">
                     <div class="col">
                         <ul class="nav nav-tabs justify-content-center">
                             <li class="nav-item" @click="isSPRDetailForm = true">
@@ -22,7 +22,7 @@
                             </li>
                         </ul>
                     </div>
-                </div>
+                </div> -->
         
                 <div v-show="isSPRDetailForm" class="row justify-content-center">
                     <div class="col-lg-6">
@@ -126,7 +126,7 @@
                     </div>
                 </div>
         
-                <div v-show="!isSPRDetailForm" class="row justify-content-center pt-5">
+                <!-- <div v-show="!isSPRDetailForm" class="row justify-content-center pt-5">
         
                     <div class="col-12">
                         <WarehouseApprover :approvers="sprData.spr_approvers" :employees="employees"
@@ -136,7 +136,7 @@
                     </div>
         
         
-                </div>
+                </div> -->
         
         
                 <div class="row justify-content-center pt-3">

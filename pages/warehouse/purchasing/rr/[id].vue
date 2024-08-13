@@ -20,11 +20,11 @@
                                     <i class="fas fa-shopping-cart"></i> Items
                                 </a>
                             </li>
-                            <li class="nav-item" @click="form = FORM_TYPE.APPROVER">
+                            <!-- <li class="nav-item" @click="form = FORM_TYPE.APPROVER">
                                 <a class="nav-link" :class="{ 'active': form === FORM_TYPE.APPROVER }" href="#">
                                     <i class="fas fa-users"></i> Approvers
                                 </a>
-                            </li>
+                            </li> -->
                         </ul>
                     </div>
                 </div>
@@ -139,7 +139,7 @@
                     </div>
                 </div>
         
-                <div v-show="form === FORM_TYPE.APPROVER" class="row justify-content-center pt-5">
+                <!-- <div v-show="form === FORM_TYPE.APPROVER" class="row justify-content-center pt-5">
         
                     <div class="col-12">
                         <WarehouseApprover :approvers="rrData.rr_approvers" :employees="employees"
@@ -148,7 +148,7 @@
                             @addApprover="addApprover" @editApprover="editApprover" @removeApprover="removeApprover"  @searched-employees="handleSearchedEmployees"/>
                     </div>
         
-                </div>
+                </div> -->
         
         
                 <div class="row justify-content-center pt-3">
