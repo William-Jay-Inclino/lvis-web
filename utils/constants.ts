@@ -1,107 +1,5 @@
 import { DEPARTMENT_STATUS } from "~/composables/common.types"
 
-export const approvalStatus = {
-    [APPROVAL_STATUS.PENDING]: {
-        value: APPROVAL_STATUS.PENDING,
-        label: 'Pending',
-        color: 'orange',
-    },
-    [APPROVAL_STATUS.APPROVED]: {
-        value: APPROVAL_STATUS.APPROVED,
-        label: 'Approved',
-        color: 'success',
-    },
-    [APPROVAL_STATUS.DISAPPROVED]: {
-        value: APPROVAL_STATUS.DISAPPROVED,
-        label: 'Disapproved',
-        color: 'danger',
-    },
-    [APPROVAL_STATUS.CANCELLED]: {
-        value: APPROVAL_STATUS.CANCELLED,
-        label: 'Cancelled',
-        color: 'warning',
-    },
-}
-
-export const userStatus = {
-    [USER_STATUS.ACTIVE]: {
-        value: USER_STATUS.ACTIVE,
-        label: 'Active',
-        color: 'success',
-    },
-    [USER_STATUS.INACTIVE]: {
-        value: USER_STATUS.INACTIVE,
-        label: 'Inactive',
-        color: 'danger',
-    },
-}
-
-export const departmentStatus = {
-    [DEPARTMENT_STATUS.ACTIVE]: {
-        value: DEPARTMENT_STATUS.ACTIVE,
-        label: 'Active',
-        color: 'success',
-    },
-    [DEPARTMENT_STATUS.INACTIVE]: {
-        value: DEPARTMENT_STATUS.INACTIVE,
-        label: 'Inactive',
-        color: 'danger',
-    },
-}
-
-export const VAT = {
-    [VAT_TYPE.NONE]: {
-        value: VAT_TYPE.NONE,
-        label: 'Non-VAT'
-    },
-    [VAT_TYPE.INC]: {
-        value: VAT_TYPE.INC,
-        label: 'INC'
-    },
-    [VAT_TYPE.EXC]: {
-        value: VAT_TYPE.EXC,
-        label: 'EXC'
-    },
-    [VAT_TYPE.EXEMPT]: {
-        value: VAT_TYPE.EXC,
-        label: 'VAT-Exempt'
-    }
-}
-
-export const itemClass = {
-    [ITEM_CLASS.NON_STOCK]: {
-        value: ITEM_CLASS.NON_STOCK,
-        label: 'Non-Stock'
-    },
-    [ITEM_CLASS.STOCK]: {
-        value: ITEM_CLASS.STOCK,
-        label: 'Stock'
-    }
-}
-
-export const itemTransaction = {
-    [ITEM_TRANSACTION_TYPE.STOCK_IN]: {
-        value: ITEM_TRANSACTION_TYPE.STOCK_IN,
-        label: 'Stock In'
-    },
-    [ITEM_TRANSACTION_TYPE.STOCK_OUT]: {
-        value: ITEM_TRANSACTION_TYPE.STOCK_OUT,
-        label: 'Stock Out'
-    }
-}
-
-export const NOTE_OPTIONS = [
-    'Design',
-    'Features',
-    'Performance',
-    'Brand',
-    'Durability',
-    'Reliability',
-    'Convenience',
-    'Comfort',
-    'Tradition',
-    'Proven and Tested'
-]
 
 export enum SERVICES {
     WAREHOUSE = 'WAREHOUSE',
@@ -257,3 +155,125 @@ export enum ROUTES {
     ITEM_TYPE_UPDATE = `${SERVICES.WAREHOUSE}_ITEM_TYPE_UPDATE`,
     ITEM_TYPE_VIEW = `${SERVICES.WAREHOUSE}_ITEM_TYPE_VIEW`,
 }
+
+export enum DB_ENTITY {
+    RV = 'request_voucher',
+    SPR = 'spare_parts_request',
+    JO = 'job_order',
+    MEQS = 'material_equipment_quotation_summary',
+    PO = 'purchase_order',
+    RR = 'receiving_report',
+}
+
+export const approvalStatus = {
+    [APPROVAL_STATUS.PENDING]: {
+        value: APPROVAL_STATUS.PENDING,
+        label: 'Pending',
+        color: 'orange',
+    },
+    [APPROVAL_STATUS.APPROVED]: {
+        value: APPROVAL_STATUS.APPROVED,
+        label: 'Approved',
+        color: 'success',
+    },
+    [APPROVAL_STATUS.DISAPPROVED]: {
+        value: APPROVAL_STATUS.DISAPPROVED,
+        label: 'Disapproved',
+        color: 'danger',
+    },
+    [APPROVAL_STATUS.CANCELLED]: {
+        value: APPROVAL_STATUS.CANCELLED,
+        label: 'Cancelled',
+        color: 'warning',
+    },
+}
+
+export const userStatus = {
+    [USER_STATUS.ACTIVE]: {
+        value: USER_STATUS.ACTIVE,
+        label: 'Active',
+        color: 'success',
+    },
+    [USER_STATUS.INACTIVE]: {
+        value: USER_STATUS.INACTIVE,
+        label: 'Inactive',
+        color: 'danger',
+    },
+}
+
+export const departmentStatus = {
+    [DEPARTMENT_STATUS.ACTIVE]: {
+        value: DEPARTMENT_STATUS.ACTIVE,
+        label: 'Active',
+        color: 'success',
+    },
+    [DEPARTMENT_STATUS.INACTIVE]: {
+        value: DEPARTMENT_STATUS.INACTIVE,
+        label: 'Inactive',
+        color: 'danger',
+    },
+}
+
+export const VAT = {
+    [VAT_TYPE.NONE]: {
+        value: VAT_TYPE.NONE,
+        label: 'Non-VAT'
+    },
+    [VAT_TYPE.INC]: {
+        value: VAT_TYPE.INC,
+        label: 'INC'
+    },
+    [VAT_TYPE.EXC]: {
+        value: VAT_TYPE.EXC,
+        label: 'EXC'
+    },
+    [VAT_TYPE.EXEMPT]: {
+        value: VAT_TYPE.EXC,
+        label: 'VAT-Exempt'
+    }
+}
+
+export const itemClass = {
+    [ITEM_CLASS.NON_STOCK]: {
+        value: ITEM_CLASS.NON_STOCK,
+        label: 'Non-Stock'
+    },
+    [ITEM_CLASS.STOCK]: {
+        value: ITEM_CLASS.STOCK,
+        label: 'Stock'
+    }
+}
+
+export const itemTransaction = {
+    [ITEM_TRANSACTION_TYPE.STOCK_IN]: {
+        value: ITEM_TRANSACTION_TYPE.STOCK_IN,
+        label: 'Stock In'
+    },
+    [ITEM_TRANSACTION_TYPE.STOCK_OUT]: {
+        value: ITEM_TRANSACTION_TYPE.STOCK_OUT,
+        label: 'Stock Out'
+    }
+}
+
+export const NOTE_OPTIONS = [
+    'Design',
+    'Features',
+    'Performance',
+    'Brand',
+    'Durability',
+    'Reliability',
+    'Convenience',
+    'Comfort',
+    'Tradition',
+    'Proven and Tested'
+]
+
+export const MODULE_MAPPER = {
+    [DB_ENTITY.RV]: 'rv',
+    [DB_ENTITY.SPR]: 'spr',
+    [DB_ENTITY.JO]: 'jo',
+    [DB_ENTITY.MEQS]: 'meqs',
+    [DB_ENTITY.PO]: 'po',
+    [DB_ENTITY.RR]: 'rr',
+}
+
