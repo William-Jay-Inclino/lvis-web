@@ -31,3 +31,9 @@ export interface Pending {
     description: string
     transaction_date: Date
 }
+
+export const enum APPROVER_TYPE {
+    COMMON = 'common',
+    BUDGET_OFFICER = 'budger_officer',
+    FINANCE_MANAGER = 'finance_manager',
+}

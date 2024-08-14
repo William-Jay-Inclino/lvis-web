@@ -41,7 +41,7 @@
                                                 data-bs-target="#pendingModal">
                                                 <i class="fas fa-check-circle text-success"></i>
                                             </button>
-                                            <button @click="onDefaultDisapprove(i)" class="btn btn-light w-50">
+                                            <button @click="onClickDisapprove(i)" class="btn btn-light w-50">
                                                 <i class="fas fa-times-circle text-danger"></i>
                                             </button>
                                         </td>
@@ -79,7 +79,7 @@ definePageMeta({
     layout: "layout-e-form"
 })
 
-import { PENDING_APPROVAL_TYPE, PENDING_TRANSACTION, type Pending, type PendingApproval } from '~/composables/e-forms/pendings/pendings.types';
+import { APPROVER_TYPE, PENDING_APPROVAL_TYPE, PENDING_TRANSACTION, type Pending, type PendingApproval } from '~/composables/e-forms/pendings/pendings.types';
 import * as pendingsApi from '~/composables/e-forms/pendings/pendings.api'
 import Swal from 'sweetalert2'
 import { useToast } from "vue-toastification";
@@ -101,7 +101,7 @@ const accounts = ref<Account[]>([])
 
 type ModalData = {
     pendingTransaction: PENDING_TRANSACTION,
-    pendingApproval: PendingApproval | null,
+    pendingApproval: Pending | null,
     accounts: Account[],
     classifications: Classification[]
 }
@@ -157,10 +157,10 @@ function updateTotalPendingsOfUser(authUser: AuthUser, totalPendings: number) {
 
 function onClickApprove(indx: number) {
     console.log('onClickApprove', indx)
-    // const item = pendings.value[indx]
+    const item = pendings.value[indx]
 
-    // modalData.value.pendingApproval = item
-    // modalData.value.pendingTransaction = PENDING_TRANSACTION.APPROVE
+    modalData.value.pendingApproval = item
+    modalData.value.pendingTransaction = PENDING_TRANSACTION.APPROVE
 }
 
 function onClickDisapprove(indx: number) {
@@ -172,7 +172,7 @@ function onClickDisapprove(indx: number) {
 }
 
 
-function onDefaultApprove(indx: number) {
+function onApprove(indx: number, approverType: APPROVER_TYPE) {
 
     const item = pendings.value[indx]
     const status = APPROVAL_STATUS.APPROVED
@@ -201,7 +201,7 @@ function onDefaultApprove(indx: number) {
 
 }
 
-function onDefaultDisapprove(indx: number) {
+function onDisapprove(indx: number) {
 
     const item = pendings.value[indx]
     const status = APPROVAL_STATUS.DISAPPROVED
