@@ -5,19 +5,19 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title text-warning" id="exampleModalLabel">
-                        {{ pendingTransaction }} Confirmation
+                        Approval Confirmation
                     </h5>
                     <button @click="closeModal" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" v-if="pendingApproval">
                     <div class="alert alert-info" role="alert">
-                        Are you sure you want to <b>{{ pendingTransaction.toUpperCase() }}</b> transaction <b>{{
+                        Are you sure you want to <b>APPROVE</b> transaction <b>{{
                             pendingApproval.description }}</b> ?
                     </div>
                     <div class="mb-3">
                         <label class="form-label"> Remarks </label>
                         <textarea class="form-control" rows="3" v-model="remarks"></textarea>
-                        <small class="text-muted fst-italic" v-if="pendingTransaction === PENDING_TRANSACTION.APPROVE">
+                        <small class="text-muted fst-italic">
                             This field is optional </small>
                         <small class="text-danger fst-italic" v-if="formErrors.remarks">
                             This field is required </small>
@@ -44,12 +44,9 @@
                         data-bs-dismiss="modal">
                         Cancel
                     </button>
-                    <button v-if="pendingTransaction === PENDING_TRANSACTION.APPROVE" @click="approve"
+                    <button @click="approve"
                         class="btn btn-success" :disabled="isApproving">
                         {{ isApproving ? 'Approving...' : 'Approve' }}
-                    </button>
-                    <button v-else @click="disapprove" class="btn btn-danger" :disabled="isDisapproving">
-                        {{ isDisapproving ? 'Disapproving...' : 'Disapprove' }}
                     </button>
                 </div>
             </div>
@@ -60,26 +57,21 @@
 
 
 <script setup lang="ts">
-import { PENDING_TRANSACTION } from '~/composables/e-forms/pendings/pendings.types';
+import { type Pending } from '~/composables/e-forms/pendings/pendings.types';
 import type { Account } from '~/composables/system/account/account';
-import { type PendingApproval } from '~/composables/system/employee/employee.types';
 import type { Employee } from '~/composables/system/employee/employee.types';
 
 const emits = defineEmits([
     'approve-budget-officer',
-    'disapprove-budget-officer',
     'approve-finance-manager',
-    'disapprove-finance-manager',
 ])
 
 const props = defineProps<{
     employee: Employee,
-    pendingTransaction: PENDING_TRANSACTION,
-    pendingApproval: PendingApproval | null,
+    pendingApproval: Pending | null,
     accounts: Account[],
     classifications: Classification[],
-    isApproving: boolean,
-    isDisapproving: boolean,
+    isApproving: boolean
 }>();
 
 const _initialFormErrors = {
@@ -129,35 +121,6 @@ function approve() {
 
 }
 
-function disapprove() {
-    console.log('disapprove')
-
-    if (!isValidDisapprove()) return
-
-    if (props.employee.is_budget_officer) {
-        const payload = {
-            pendingApproval: props.pendingApproval,
-            classification: classification.value,
-            remarks: remarks.value
-        }
-        emits('disapprove-budget-officer', payload, closePendingModal.value)
-
-        return
-    }
-
-
-    if (props.employee.is_finance_manager) {
-        const payload = {
-            pendingApproval: props.pendingApproval,
-            fundSource: fundSource.value,
-            remarks: remarks.value
-        }
-        emits('disapprove-finance-manager', payload, closePendingModal.value)
-
-        return
-    }
-}
-
 function isValidApprove() {
 
     formErrors.value = { ..._initialFormErrors }
@@ -180,31 +143,6 @@ function isValidApprove() {
 
 }
 
-function isValidDisapprove() {
-
-    formErrors.value = { ..._initialFormErrors }
-
-    if (remarks.value.trim() === '') {
-        formErrors.value.remarks = true
-    }
-
-    if (!!props.employee.is_budget_officer && !classification.value) {
-        formErrors.value.classification = true
-    }
-
-    if (!!props.employee.is_finance_manager && !fundSource.value) {
-        formErrors.value.fundSource = true
-    }
-
-    const hasError = Object.values(formErrors.value).includes(true);
-
-    if (hasError) {
-        return false
-    }
-
-    return true
-
-}
 
 function closeModal() {
     remarks.value = ''

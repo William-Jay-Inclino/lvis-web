@@ -1,4 +1,4 @@
-import type { Pending } from "./pendings.types";
+import type { ApproveOrDisapprovePayload, Pending } from "./pendings.types";
 import type { Classification } from "~/composables/system/classification/classification";
 import type { Account } from "~/composables/system/account/account";
 
@@ -77,16 +77,30 @@ export async function getPendingsByEmployeeId(employeeId: string): Promise<{
 
 }
 
-export async function approvePending(id: string) {
+export async function approvePending(payload: ApproveOrDisapprovePayload): Promise<{success: boolean, msg: string}> {
+
+    const {
+        id,
+        remarks,
+        classification_id,
+        fund_source_id,
+    } = payload
+
+    const _classification_id = !!classification_id ? `"${classification_id}"` : null
+    const _fund_source_id = !!fund_source_id ? `"${fund_source_id}"` : null
+
         const mutation = `
-        mutation {
-            approve_pending(
-                id: ${id}
-            ) {
-                success
-                msg
-            }
-        }`;
+            mutation {
+                approve_pending(
+                    id: ${id},
+                    remarks: "${remarks}",
+                    classification_id: ${_classification_id},
+                    fund_source_id: ${_fund_source_id},
+                ) {
+                    success
+                    msg
+                }
+            }`;
 
     try {
         const response = await sendRequest(mutation);
@@ -95,14 +109,17 @@ export async function approvePending(id: string) {
         if (response.data && response.data.data && response.data.data.approve_pending) {
 
             if(!!response.data.data.approve_pending.success) {
-               // TBA
+               return {
+                   success: true,
+                   msg: 'Approved successfully!',
+               };
+            } else {
+                return {
+                    success: false,
+                    msg: `Failed to approve. Please reload the page and then try again`,
+                };
             }
 
-            return {
-                success: true,
-                msg: 'Canvass created successfully!',
-                data: response.data.data.createCanvass
-            };
         }
 
         throw new Error(JSON.stringify(response.data.errors));
@@ -112,7 +129,64 @@ export async function approvePending(id: string) {
 
         return {
             success: false,
-            msg: 'Failed to create Canvass. Please contact system administrator'
+            msg: 'Failed to approve. Please contact system administrator'
         };
     }
+}
+
+export async function disapprovePending(payload: ApproveOrDisapprovePayload): Promise<{success: boolean, msg: string}> {
+
+    const {
+        id,
+        remarks,
+        classification_id,
+        fund_source_id,
+    } = payload
+
+    const _classification_id = !!classification_id ? `"${classification_id}"` : null
+    const _fund_source_id = !!fund_source_id ? `"${fund_source_id}"` : null
+    
+    const mutation = `
+        mutation {
+            disapprove_pending(
+                id: ${id},
+                remarks: "${remarks}",
+                classification_id: ${_classification_id},
+                fund_source_id: ${_fund_source_id},
+            ) {
+                success
+                msg
+            }
+        }`;
+
+try {
+    const response = await sendRequest(mutation);
+    console.log('response', response);
+
+    if (response.data && response.data.data && response.data.data.disapprove_pending) {
+
+        if(!!response.data.data.disapprove_pending.success) {
+           return {
+               success: true,
+               msg: 'Disapproved successfully!',
+           };
+        } else {
+            return {
+                success: false,
+                msg: `Failed to disapprove. Please reload the page and then try again`,
+            };
+        }
+
+    }
+
+    throw new Error(JSON.stringify(response.data.errors));
+
+} catch (error) {
+    console.error(error);
+
+    return {
+        success: false,
+        msg: 'Failed to disapprove. Please contact system administrator'
+    };
+}
 }

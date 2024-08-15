@@ -1,3 +1,4 @@
+import type { Pending } from "~/composables/e-forms/pendings/pendings.types"
 import type { Position } from "../position/position"
 import type { UserEmployee } from "../user/user.types"
 
@@ -13,7 +14,7 @@ export interface Employee {
     // derived / resolvers 
 
     // is_approver?: boolean
-    pending_approvals?: PendingApproval[]
+    pending_approvals?: Pending[]
     total_pending_approvals?: number
     is_budget_officer?: boolean
     is_finance_manager?: boolean
@@ -44,20 +45,20 @@ export interface MutationResponse {
     data?: Employee
 }
 
-export enum PENDING_APPROVAL_TYPE {
-    RV = 'RV',
-    SPR = 'SPR',
-    JO = 'JO',
-    MEQS = 'MEQS',
-    PO = 'PO',
-    RR = 'RR'
-}
+// export enum PENDING_APPROVAL_TYPE {
+//     RV = 'RV',
+//     SPR = 'SPR',
+//     JO = 'JO',
+//     MEQS = 'MEQS',
+//     PO = 'PO',
+//     RR = 'RR'
+// }
 
-export interface PendingApproval {
-    id: string
-    type: PENDING_APPROVAL_TYPE
-    description: string
-    reference_id: string
-    transaction_date: Date
+// export interface PendingApproval {
+//     id: string
+//     type: PENDING_APPROVAL_TYPE
+//     description: string
+//     reference_id: string
+//     transaction_date: Date
 
-}
+// }

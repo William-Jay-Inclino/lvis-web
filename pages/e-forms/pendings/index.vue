@@ -36,13 +36,21 @@
                                             </nuxt-link>
                                         </td>
                                         <td class="text-muted align-middle"> {{ formatDate(item.transaction_date) }} </td>
-                                        <td class="text-center align-middle">
-                                            <button @click="onClickApprove(i)" class="btn btn-light w-50" data-bs-toggle="modal"
+                                        <td v-if="!isDefaultApproval(item)" class="text-center align-middle">
+                                            <button @click="onClickApprove(i)" class="btn btn-light w-50 text-success" data-bs-toggle="modal"
                                                 data-bs-target="#pendingModal">
-                                                <i class="fas fa-check-circle text-success"></i>
+                                                <i class="fas fa-check-circle"></i> Approve
                                             </button>
-                                            <button @click="onClickDisapprove(i)" class="btn btn-light w-50">
-                                                <i class="fas fa-times-circle text-danger"></i>
+                                            <button @click="handleCommonDisapprove(i)" class="btn btn-light w-50 text-danger">
+                                                <i class="fas fa-times-circle"></i> Disapprove
+                                            </button>
+                                        </td>
+                                        <td v-else class="text-center align-middle">
+                                            <button @click="handleCommonApprove(i)" class="btn btn-light w-50 text-success">
+                                                <i class="fas fa-check-circle"></i> Approve
+                                            </button>
+                                            <button @click="handleCommonDisapprove(i)" class="btn btn-light w-50 text-danger">
+                                                <i class="fas fa-times-circle"></i> Disapprove
                                             </button>
                                         </td>
                                     </tr>
@@ -54,12 +62,14 @@
                     </div>
                 </div>
         
-                <!-- <EformsPendingModal v-if="isBudgetOfficer || isFinanceManager" :employee="authUser.user.user_employee.employee"
-                    :pending-approval="modalData.pendingApproval" :pending-transaction="modalData.pendingTransaction"
-                    :accounts="accounts" :classifications="classifications" :is-approving="isApproving"
-                    :is-disapproving="isDisapproving" @approve-budget-officer="onApproveBudgetOfficer"
-                    @disapprove-budget-officer="onDisapproveBudgetOfficer" @approve-finance-manager="onApproveFinanceManager"
-                    @disapprove-finance-manager="onDisapproveFinanceManager" /> -->
+                <EformsPendingModal v-if="isBudgetOfficer || isFinanceManager" 
+                    :employee="authUser.user.user_employee.employee"
+                    :pending-approval="modalData.pendingApproval"
+                    :accounts="accounts" 
+                    :classifications="classifications" 
+                    :is-approving="isApproving"
+                    @approve-budget-officer="handleApproveBudgetOfficer" 
+                    @approve-finance-manager="handleApproveFinanceManager"/>
     
             </div>
 
@@ -79,35 +89,41 @@ definePageMeta({
     layout: "layout-e-form"
 })
 
-import { APPROVER_TYPE, PENDING_APPROVAL_TYPE, PENDING_TRANSACTION, type Pending, type PendingApproval } from '~/composables/e-forms/pendings/pendings.types';
+import { type Pending } from '~/composables/e-forms/pendings/pendings.types';
 import * as pendingsApi from '~/composables/e-forms/pendings/pendings.api'
 import Swal from 'sweetalert2'
 import { useToast } from "vue-toastification";
-import { APPROVAL_STATUS, DB_ENTITY, type AuthUser } from '#imports';
+import { DB_ENTITY, type AuthUser } from '#imports';
 import type { Account } from '~/composables/system/account/account';
 import type { Classification } from '~/composables/system/classification/classification';
 import { MODULE_MAPPER } from '~/utils/constants';
 
 const isLoadingPage = ref(true)
 const isApproving = ref(false)
-const isDisapproving = ref(false)
 
 
 const authUser = ref<AuthUser>()
-const toast = useToast();
 const pendings = ref<Pending[]>([])
 const classifications = ref<Classification[]>([])
 const accounts = ref<Account[]>([])
 
 type ModalData = {
-    pendingTransaction: PENDING_TRANSACTION,
     pendingApproval: Pending | null,
     accounts: Account[],
     classifications: Classification[]
 }
 
+interface ApprovalProps {
+    pendingApproval: Pending,
+    classification?: Classification,
+    fundSource?: Account,
+    remarks: string,
+    closeBtnModal: HTMLButtonElement
+    status: 'approve' | 'disapprove'
+    approvePending: () => Promise<{success: boolean, msg: string}>
+}
+
 const modalData = ref<ModalData>({
-    pendingTransaction: PENDING_TRANSACTION.APPROVE,
     pendingApproval: null,
     accounts: [],
     classifications: []
@@ -147,6 +163,25 @@ function getLink(entity: DB_ENTITY, reference_number: string) {
     return `/warehouse/purchasing/${module}/view/` + reference_number
 }
 
+function isDefaultApproval(pending: Pending) {
+
+    const pendingIsJO = pending.reference_table === DB_ENTITY.JO
+    const pendingIsRV = pending.reference_table === DB_ENTITY.RV
+    const pendingIsSPR = pending.reference_table === DB_ENTITY.SPR
+    const pendingIsPO = pending.reference_table === DB_ENTITY.PO
+
+    if (isBudgetOfficer.value && (pendingIsJO || pendingIsRV || pendingIsSPR)) {
+        return false
+    }
+
+    if (isFinanceManager.value && pendingIsPO) {
+        return false
+    }
+
+    return true
+
+}
+
 function updateTotalPendingsOfUser(authUser: AuthUser, totalPendings: number) {
     console.log('updateTotalPendingsOfUser()', authUser, totalPendings)
     authUser.user.user_employee!.employee.total_pending_approvals = totalPendings
@@ -154,28 +189,16 @@ function updateTotalPendingsOfUser(authUser: AuthUser, totalPendings: number) {
     localStorage.setItem('authUser', updatedAuthUser);
 }
 
-
 function onClickApprove(indx: number) {
     console.log('onClickApprove', indx)
     const item = pendings.value[indx]
 
     modalData.value.pendingApproval = item
-    modalData.value.pendingTransaction = PENDING_TRANSACTION.APPROVE
 }
 
-function onClickDisapprove(indx: number) {
-    console.log('onClickApprove', indx)
-    // const item = pendings.value[indx]
-
-    // modalData.value.pendingApproval = item
-    // modalData.value.pendingTransaction = PENDING_TRANSACTION.DISAPPROVE
-}
-
-
-function onApprove(indx: number, approverType: APPROVER_TYPE) {
+function handleCommonApprove(indx: number) {
 
     const item = pendings.value[indx]
-    const status = APPROVAL_STATUS.APPROVED
 
     Swal.fire({
         title: "Approve Confirmation",
@@ -195,17 +218,43 @@ function onApprove(indx: number, approverType: APPROVER_TYPE) {
             const inputValue = Swal.getInput()?.value;
             const notes = inputValue || '';
 
+            const response = await pendingsApi.approvePending({
+                id: item.id,
+                remarks: notes,
+            })
+
+            if (response.success) {
+
+                Swal.fire({
+                    text: response.msg,
+                    icon: 'success',
+                    position: 'top',
+                });
+
+                pendings.value.splice(indx, 1)
+
+                updateTotalPendingsOfUser(authUser.value!, pendings.value.length)
+
+                } else {
+
+                Swal.fire({
+                    title: 'Error!',
+                    text: response.msg,
+                    icon: 'error',
+                    position: 'top',
+                })
+
+            }
+
         },
         allowOutsideClick: () => !Swal.isLoading()
     })
 
 }
 
-function onDisapprove(indx: number) {
+function handleCommonDisapprove(indx: number) {
 
     const item = pendings.value[indx]
-    const status = APPROVAL_STATUS.DISAPPROVED
-
 
     Swal.fire({
         title: "Disapprove Confirmation",
@@ -230,10 +279,125 @@ function onDisapprove(indx: number) {
             const inputValue = Swal.getInput()?.value;
             const notes = inputValue || '';
 
+            const response = await pendingsApi.disapprovePending({
+                id: item.id,
+                remarks: notes,
+            })
+
+            if (response.success) {
+
+                Swal.fire({
+                    text: response.msg,
+                    icon: 'success',
+                    position: 'top',
+                });
+
+                pendings.value.splice(indx, 1)
+
+                updateTotalPendingsOfUser(authUser.value!, pendings.value.length)
+
+                } else {
+
+                Swal.fire({
+                    title: 'Error!',
+                    text: response.msg,
+                    icon: 'error',
+                    position: 'top',
+                })
+
+            }
+
         },
         allowOutsideClick: () => !Swal.isLoading()
     })
 
+}
+
+async function handleApproveBudgetOfficer(payload: {
+    pendingApproval: Pending,
+    classification: Classification,
+    remarks: string
+}, closeBtnModal: HTMLButtonElement) {
+    console.log('handleApproveBudgetOfficer', payload)
+
+    const data: ApprovalProps = {
+        pendingApproval: payload.pendingApproval,
+        classification: payload.classification,
+        remarks: payload.remarks,
+        closeBtnModal,
+        status: 'approve',
+        approvePending: () => pendingsApi.approvePending({
+            id: payload.pendingApproval.id,
+            remarks: payload.remarks,
+            classification_id: payload.classification.id
+        })
+    }
+
+    await handleApproveWithUpdates(data)
+
+}
+
+async function handleApproveFinanceManager(payload: {
+    pendingApproval: Pending,
+    fundSource: Account,
+    remarks: string
+}, closeBtnModal: HTMLButtonElement) {
+    console.log('handleApproveFinanceManager', payload)
+
+    const data: ApprovalProps = {
+        pendingApproval: payload.pendingApproval,
+        fundSource: payload.fundSource,
+        remarks: payload.remarks,
+        closeBtnModal,
+        status: 'approve',
+        approvePending: () => pendingsApi.approvePending({
+            id: payload.pendingApproval.id,
+            remarks: payload.remarks,
+            fund_source_id: payload.fundSource.id
+        })
+    }
+
+    await handleApproveWithUpdates(data)
+
+}
+
+// this is for approval of budget officer & finance manager
+async function handleApproveWithUpdates(payload: ApprovalProps) {
+    console.log('onApproveBudgetOfficer', payload)
+
+
+    const indx = pendings.value.findIndex(i => i.id === payload.pendingApproval.id)
+
+    if (indx === -1) {
+        console.error('pending approval not found with id of ', payload.pendingApproval.id)
+        return
+    }
+
+    isApproving.value = true
+    const response = await payload.approvePending()
+    isApproving.value = false
+
+    if (response.success) {
+
+        Swal.fire({
+            text: response.msg,
+            icon: 'success',
+            position: 'top',
+        });
+
+        pendings.value.splice(indx, 1)
+        updateTotalPendingsOfUser(authUser.value!, pendings.value.length)
+
+    } else {
+        Swal.fire({
+            title: 'Error!',
+            text: `Failed to ${payload.status}. Please reload the page and then try again`,
+            icon: 'error',
+            position: 'top',
+        })
+    }
+
+    payload.closeBtnModal.click()
 }
 
 </script>

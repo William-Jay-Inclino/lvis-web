@@ -156,9 +156,17 @@ export async function findBySprNumber(sprNumber: string): Promise<SPR | undefine
 }
 
 export async function findOne(id: string): Promise<SPR | undefined> {
+
+    let args = ''
+    if(isValidRcNumber(id)){
+        args = `spr_number: "${id}"`
+    } else {
+        args = `id: "${id}"`
+    }
+
     const query = `
         query {
-            spr(id: "${id}") {
+            spr(${args}) {
                 id
                 spr_number
                 status

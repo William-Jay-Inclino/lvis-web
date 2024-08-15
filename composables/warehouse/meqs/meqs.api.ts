@@ -341,9 +341,17 @@ export async function findAll(payload: { page: number, pageSize: number, date_re
 }
 
 export async function findOne(id: string): Promise<MEQS | undefined> {
+
+    let args = ''
+    if(isValidRcNumber(id)){
+        args = `meqs_number: "${id}"`
+    } else {
+        args = `id: "${id}"`
+    }
+
     const query = `
         query {
-            meq(id: "${id}") {
+            meq(${args}) {
                 id
                 meqs_number
                 created_by

@@ -554,9 +554,17 @@ export async function create(input: CreatePoInput): Promise<MutationResponse> {
 }
 
 export async function findOne(id: string): Promise<PO | undefined> {
+
+    let args = ''
+    if(isValidRcNumber(id)){
+        args = `po_number: "${id}"`
+    } else {
+        args = `id: "${id}"`
+    }
+
     const query = `
         query {
-            po(id: "${id}") {
+            po(${args}) {
                 id
                 po_number
                 status

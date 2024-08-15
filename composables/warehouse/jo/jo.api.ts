@@ -156,9 +156,17 @@ export async function findByJoNumber(joNumber: string): Promise<JO | undefined> 
 }
 
 export async function findOne(id: string): Promise<JO | undefined> {
+
+    let args = ''
+    if(isValidRcNumber(id)){
+        args = `jo_number: "${id}"`
+    } else {
+        args = `id: "${id}"`
+    }
+
     const query = `
         query {
-            jo(id: "${id}") {
+            jo(${args}) {
                 id
                 jo_number
                 status

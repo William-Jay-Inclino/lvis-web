@@ -440,7 +440,7 @@
                                 </button>
                             </div>
                             <div v-if="!item.cancelled_at">
-                                <button v-if="isAdminOrOwner(item.created_by, authUser)" class="btn btn-warning me-2"
+                                <button v-if="isAdminOrOwner(item.created_by, authUser) && !isApproved" class="btn btn-warning me-2"
                                     @click="onCancelRr()">
                                     <i class="fas fa-times-circle"></i> Cancel RR
                                 </button>
@@ -537,6 +537,7 @@ const grossTotalSummary = computed(() => {
 
 const totalPriceSummary = computed(() => grossTotalSummary.value - item.value!.delivery_charge)
 
+const isApproved = computed( () => item.value && item.value.status === APPROVAL_STATUS.APPROVED)
 
 const meqs = computed(() => {
 

@@ -517,9 +517,17 @@ export async function fetchFormDataInUpdate(id: string): Promise<{
 }
 
 export async function findOne(id: string): Promise<RR | undefined> {
+
+    let args = ''
+    if(isValidRcNumber(id)){
+        args = `rr_number: "${id}"`
+    } else {
+        args = `id: "${id}"`
+    }
+
     const query = `
         query {
-            rr(id: "${id}") {
+            rr(${args}) {
                 id
                 rr_number
                 rr_date
